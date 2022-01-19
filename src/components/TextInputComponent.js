@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     fontSize: fp(15),
     alignSelf: 'center',
-    fontFamily: 'Montserrat-Regular',
+    fontFamily: 'ProductSans-Regular',
     //letterSpacing: -0.4,
   },
 });

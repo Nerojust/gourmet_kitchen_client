@@ -9,6 +9,7 @@ import {deviceWidth} from '../../utils/responsive-screen';
 import {DismissKeyboard} from '../../utils/utils';
 import {BackViewMoreSettings} from '../../components/Header';
 import {NavigationContainer} from '@react-navigation/native';
+import ViewProviderComponent from '../../components/ViewProviderComponent';
 
 // create a component
 const OrderDetailsScreen = ({navigation}) => {
@@ -17,13 +18,9 @@ const OrderDetailsScreen = ({navigation}) => {
   const [address, setAddress] = useState('');
   const [isFullNameFieldFocused, setIsFullNameFieldFocused] = useState(false);
 
-  return (
-    <DismissKeyboard>
-      <KeyboardObserverComponent>
-        <BackViewMoreSettings
-          backText="New Order"
-          onClose={() => navigation.goBack()}
-        />
+  const renderInputFields = () => {
+    return (
+      <>
         <View style={[styles.actions, {paddingVertical: 13}]}>
           <ProductSansBold style={styles.actiontext}>
             BASIC DETAILS
@@ -54,17 +51,43 @@ const OrderDetailsScreen = ({navigation}) => {
           }}
           onSubmitEditing={event => {}}
         />
-      </KeyboardObserverComponent>
-    </DismissKeyboard>
+      </>
+    );
+  };
+  return (
+    <ViewProviderComponent>
+      <DismissKeyboard>
+        <KeyboardObserverComponent>
+          <BackViewMoreSettings
+            backText="New Order"
+            onClose={() => navigation.goBack()}
+          />
+          {renderInputFields()}
+        </KeyboardObserverComponent>
+      </DismissKeyboard>
+    </ViewProviderComponent>
   );
 };
 
 // define your styles
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    //flex: 1,
     justifyContent: 'center',
     backgroundColor: COLOURS.zupa_gray_bg,
+  },
+  actions: {
+    justifyContent: 'center',
+    //height: hp(65),
+    alignItems: 'flex-start'
+  },
+  actiontext: {
+    fontSize: 12,
+    //lineHeight: hp(19),
+    color: COLOURS.labelTextColor,
+    fontWeight: 'bold',
+    left: deviceWidth * 0.07,
+    marginTop: 10
   },
 });
 

@@ -22,6 +22,7 @@ import {
 import { getStatusBarHeight } from 'react-native-iphone-x-helper';
 import ProductSansBold from './Text/ProductSansBold';
 import { COLOURS } from '../utils/Colours';
+import ProductSans from './Text/ProductSans';
 
 
 export const BackViewMoreSettings = ({
@@ -42,7 +43,7 @@ export const BackViewMoreSettings = ({
           style={{ width: 25, height: 18 }}
         />
       </TouchableOpacity>
-      
+
       <ProductSansBold
         style={{ fontSize: 19, flex: 1.3, color: COLOURS.gray2 }}
         numberOfLines={1}
