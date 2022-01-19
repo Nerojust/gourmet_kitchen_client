@@ -12,13 +12,14 @@ import {
   Image,
   StatusBar,
   TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import {GET_RIDER_REQUESTS} from './Api';
 import {COLOURS} from '../utils/Colours';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {DrawerActions} from '@react-navigation/routers';
 
-export const toggleDrawer = (navigation) => {
+export const toggleDrawer = navigation => {
   navigation.dispatch(DrawerActions.toggleDrawer());
 };
 export const CustomStatusBar = ({
@@ -78,7 +79,6 @@ export const clearStorage = async () => {
   }
 };
 
-
 let currentCount = 0;
 export const useDoubleBackPressExit = (exitHandler: () => void) => {
   if (Platform.OS === 'ios') return;
@@ -101,22 +101,21 @@ const backPressHandler = () => {
     currentCount = 0;
   }, 2000);
 };
-export const DismissKeyboard = ({ children, handleClose }) => (
-  <TouchableWithoutFeedback onPress={handleClose}>
+export const DismissKeyboard = ({children}) => (
+  <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
     {children}
   </TouchableWithoutFeedback>
 );
-export  const dismissLoaderButton = (loadingButtonRef) => {
+export const dismissLoaderButton = loadingButtonRef => {
   if (loadingButtonRef.current) {
     loadingButtonRef.current.showLoading(false);
   }
 };
-export const showLoaderButton = (loadingButtonRef) => {
+export const showLoaderButton = loadingButtonRef => {
   loadingButtonRef.current.showLoading(true);
 };
 
-
-export const validatePassword = (password) => {
+export const validatePassword = password => {
   const pass = /^[a-zA-Z0-9.,\\s]{3,40}$/;
   if (pass.test(password) === false) {
     Alert.alert('Invalid password character/s');
@@ -125,7 +124,7 @@ export const validatePassword = (password) => {
   return true;
 };
 
-export const validateNumber = (number) => {
+export const validateNumber = number => {
   const num = /[0-9]{1,11}$/;
   if (num.test(number) === false) {
     Alert.alert('Invalid number character/s');
@@ -135,8 +134,9 @@ export const validateNumber = (number) => {
   return true;
 };
 
-export const validateEmail = (email) => {
-  const emailadd = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+export const validateEmail = email => {
+  const emailadd =
+    /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   if (emailadd.test(email) === false) {
     //alert("Invalid email character/s");
     return false;
@@ -235,7 +235,7 @@ export function getReadableDateAndTime(stringDate) {
   return parseInt(y) + ' year' + (parseInt(y) > 1 ? 's' : '') + ' ago';
 }
 
-export const getTodaysDate = (date) => {
+export const getTodaysDate = date => {
   var dateFormat = require('dateformat');
   var now = new Date();
 
@@ -254,7 +254,7 @@ export const storeValue = async (key, value) => {
     console.log(error);
   }
 };
-export const deleteValue = async (key) => {
+export const deleteValue = async key => {
   try {
     await AsyncStorage.removeItem(key);
     console.log('deleted successfully from storage');
@@ -262,7 +262,7 @@ export const deleteValue = async (key) => {
     console.log(error);
   }
 };
-export const removeItemValue = async (key) => {
+export const removeItemValue = async key => {
   try {
     await AsyncStorage.removeItem(key);
     return true;
@@ -271,7 +271,7 @@ export const removeItemValue = async (key) => {
   }
 };
 
-export const getValue = async (key) => {
+export const getValue = async key => {
   try {
     const value = await AsyncStorage.getItem(key);
     if (value !== null) {
@@ -309,8 +309,8 @@ export const getOrdersRequest = (
     redirect: 'follow',
   };
   fetch(GET_RIDER_REQUESTS, requestOptions)
-    .then((response) => response.json())
-    .then((responseJson) => {
+    .then(response => response.json())
+    .then(responseJson => {
       if (responseJson) {
         if (!responseJson.code) {
           if (responseJson.length > 0) {
@@ -343,7 +343,7 @@ export const getOrdersRequest = (
       setRefreshing(false);
       setIsLoading(false);
     })
-    .catch((error) => {
+    .catch(error => {
       console.log('error block', error);
       handleError(error);
       setRefreshing(false);

@@ -1,6 +1,7 @@
 //import liraries
 import React, { Component } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { COLOURS } from '../../utils/Colours';
 
 // create a component
 const BreadListScreen = () => {
@@ -17,7 +18,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#2c3e50',
+        backgroundColor: COLOURS.zupa_gray_bg,
     },
 });
 
