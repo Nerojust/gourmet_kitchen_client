@@ -2,13 +2,25 @@
 import React, {Component} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import { COLOURS } from '../../utils/Colours';
+import { BackViewMoreSettings } from '../../components/Header';
+import { KeyboardObserverComponent } from '../../components/KeyboardObserverComponent';
+import ViewProviderComponent from '../../components/ViewProviderComponent';
+import { DismissKeyboard } from '../../utils/utils';
 
 // create a component
-const StoreSalesScreen = () => {
+const StoreSalesScreen = ({navigation}) => {
   return (
-    <View style={styles.container}>
-      <Text>StoreSalesScreen </Text>
-    </View>
+    <ViewProviderComponent>
+      <DismissKeyboard>
+        <KeyboardObserverComponent>
+          <BackViewMoreSettings
+            backText="Store Sales"
+            onClose={() => navigation.goBack()}
+          />
+         
+        </KeyboardObserverComponent>
+      </DismissKeyboard>
+    </ViewProviderComponent>
   );
 };
 

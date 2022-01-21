@@ -20,29 +20,26 @@ const OrderProductComponent = ({item, colourType, handleClick}) => {
     : 'green';
   return (
     <TouchableOpacity style={styles.item} onPress={() => handleClick(item)}>
+      <ProductSans style={styles.nameText}>
+        {item?.customername.trim()}
+      </ProductSans>
       <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-        <ProductSans style={styles.nameText}>
-          {item?.customername.trim()}
-        </ProductSans>
-        <ProductSansBold style={styles.itemsText}>
-          {orderItems.length + (orderItems.length > 1 ? ' items' : ' item')}
-        </ProductSansBold>
-      </View>
+        <View style={{justifyContent: 'space-between'}}>
+          <Text style={styles.bakedText}>1 of {orderItems.length} baked</Text>
 
-      <Text style={styles.bakedText}>1 of {orderItems.length} baked</Text>
+          <ColourComponent colourType={delay} />
+        </View>
 
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}>
-        <ColourComponent colourType={delay} />
         <View>
-          <ProductSans style={styles.delayHeaderText}>Delay</ProductSans>
-          <ProductSans style={styles.delayText}>
-            {getReadableDateAndTime(item?.createdat)}
-          </ProductSans>
+          <ProductSansBold style={styles.itemsText}>
+            {orderItems.length + (orderItems.length > 1 ? ' items' : ' item')}
+          </ProductSansBold>
+          <View style={{paddingTop: 5}}>
+            <ProductSans style={styles.delayHeaderText}>Delay</ProductSans>
+            <ProductSans style={styles.delayText}>
+              {getReadableDateAndTime(item?.createdat)}
+            </ProductSans>
+          </View>
         </View>
       </View>
     </TouchableOpacity>
@@ -52,7 +49,7 @@ const OrderProductComponent = ({item, colourType, handleClick}) => {
 // define your styles
 const styles = StyleSheet.create({
   item: {
-    backgroundColor: COLOURS.lightGray4,
+    backgroundColor: COLOURS.white,
     padding: 10,
     marginVertical: 5,
     marginHorizontal: 16,
@@ -62,10 +59,11 @@ const styles = StyleSheet.create({
   },
   itemsText: {
     color: COLOURS.textInputColor,
-    fontSize: fp(19),
+    fontSize: fp(16),
+    //paddingRight:30
   },
   bakedText: {
-    fontSize: fp(15),
+    fontSize: fp(16),
     color: COLOURS.red1,
     paddingTop: 5,
   },
@@ -78,11 +76,11 @@ const styles = StyleSheet.create({
     color: COLOURS.textInputColor,
   },
   delayHeaderText: {
-    fontSize: fp(15),
+    fontSize: fp(14),
     color: COLOURS.gray,
   },
   delayText: {
-    fontSize: fp(17),
+    fontSize: fp(16),
     color: COLOURS.zupaBlue,
   },
 });

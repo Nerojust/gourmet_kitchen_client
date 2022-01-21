@@ -15,7 +15,9 @@ import LoaderShimmerComponent from '../../components/LoaderShimmerComponent';
 import OrderProductComponent from '../../components/OrderProductComponent';
 import ViewProviderComponent from '../../components/ViewProviderComponent';
 import {getAllOrderedProducts} from '../../store/actions/orders';
+import ProductSans from '../../components/Text/ProductSans';
 import {COLOURS} from '../../utils/Colours';
+import {fp} from '../../utils/responsive-screen';
 
 // create a component
 const OrdersScreen = ({navigation}) => {
@@ -40,10 +42,49 @@ const OrdersScreen = ({navigation}) => {
   const renderItems = ({item, index}) => {
     return <OrderProductComponent item={item} handleClick={handleClick} />;
   };
+  const handleStateDispatch = state => {
+    dispatch(getAllOrderedProducts(state));
+  };
+  const renderHeaderView = () => {
+    return (
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-evenly',
+          alignItems: 'center',
+          paddingVertical: 10,
+        }}>
+        <TouchableOpacity onPress={() => handleStateDispatch('pending')}>
+          <ProductSans
+            style={{fontSize: fp(15), color: COLOURS.gray, fontWeight: '700'}}>
+            Pending
+          </ProductSans>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => handleStateDispatch('incomplete')}>
+          <ProductSans
+            style={{fontSize: fp(15), color: COLOURS.red, fontWeight: '700'}}>
+            Incomplete
+          </ProductSans>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => handleStateDispatch('complete')}>
+          <ProductSans
+            style={{
+              fontSize: fp(15),
+              color: COLOURS.green3,
+              fontWeight: '700',
+            }}>
+            Complete
+          </ProductSans>
+        </TouchableOpacity>
+      </View>
+    );
+  };
 
   return (
-    <ViewProviderComponent style={styles.container}>
+    <ViewProviderComponent>
       <HeaderComponent name="Orders" isDashboard />
+      {renderHeaderView()}
       <FlatList
         data={orders}
         renderItem={renderItems}
