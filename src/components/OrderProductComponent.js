@@ -10,7 +10,6 @@ import ProductSansBold from './Text/ProductSansBold';
 
 // create a component
 const OrderProductComponent = ({item, colourType, handleClick}) => {
-  var orderItems = JSON.parse(item?.orderitems);
   var delay = getReadableDateAndTime(item?.createdat)
     .toLowerCase()
     .endsWith('hours')
@@ -20,19 +19,20 @@ const OrderProductComponent = ({item, colourType, handleClick}) => {
     : 'green';
   return (
     <TouchableOpacity style={styles.item} onPress={() => handleClick(item)}>
-      <ProductSans style={styles.nameText}>
-        {item?.customername.trim()}
-      </ProductSans>
+      <ProductSans style={styles.nameText}>{item?.name.trim()}</ProductSans>
       <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
         <View style={{justifyContent: 'space-between'}}>
-          <Text style={styles.bakedText}>1 of {orderItems.length} baked</Text>
+          <Text style={styles.bakedText}>
+            1 of {item.products.length} baked
+          </Text>
 
           <ColourComponent colourType={delay} />
         </View>
 
         <View>
           <ProductSansBold style={styles.itemsText}>
-            {orderItems.length + (orderItems.length > 1 ? ' items' : ' item')}
+            {item.products.length +
+              (item.products.length > 1 ? ' items' : ' item')}
           </ProductSansBold>
           <View style={{paddingTop: 5}}>
             <ProductSans style={styles.delayHeaderText}>Delay</ProductSans>

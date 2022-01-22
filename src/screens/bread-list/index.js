@@ -12,18 +12,34 @@ import LoaderShimmerComponent from '../../components/LoaderShimmerComponent';
 import BreadListItemComponent from '../../components/BreadListItemComponent';
 import ProductSans from '../../components/Text/ProductSans';
 import {fp} from '../../utils/responsive-screen';
-import {getAllOrderedProductsStats} from '../../store/actions/orders';
+import {
+  getAllOrderedProductsStats,
+  getAllOrderedProductsStats1,
+} from '../../store/actions/orders';
 
 // create a component
 const BreadListScreen = ({navigation}) => {
   const dispatch = useDispatch();
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const {orders, orderedProductsStats, ordersLoading} = useSelector(
-    x => x.orders,
-  );
-//console.log("products", orderedProductsStats)
+  const [newListArray, setNewListArray] = useState([]);
+  const {orders, orderedProductsStats, orderedProducts, ordersLoading} =
+    useSelector(x => x.orders);
+  //console.log("products", orderedProducts)
   useEffect(() => {
     dispatch(getAllOrderedProductsStats());
+  }, []);
+  useEffect(() => {
+    dispatch(getAllOrderedProductsStats1());
+
+    if(orderedProducts.length>0){
+      orderedProducts.map((item,i)=>{
+        //console.log("single ", item.name)
+        console.log( orderedProductsStats[0])
+       if(item.id ==  orderedProductsStats[0]){
+         console.log("here")
+       }
+      })
+    }
   }, []);
 
   const handleClick = item => {

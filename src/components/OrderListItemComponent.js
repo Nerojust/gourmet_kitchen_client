@@ -12,7 +12,7 @@ import ProductSansBold from './Text/ProductSansBold';
 // create a component
 const OrderListItemComponent = ({item}) => {
   console.log('item', item);
-  var name = item?.name;
+  var name = item?.name||"NONE";
   var quantity = item?.quantity;
   var price = item?.price;
 

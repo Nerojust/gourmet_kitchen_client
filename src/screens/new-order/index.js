@@ -328,10 +328,13 @@ const NewOrderScreen = ({navigation}) => {
       newBasketArray.map((data, i) => {
         console.log('dddd', data);
         var item = {
-          id: data?.selectedProduct?.id,
+          id: data?.selectedProduct?.baseProductId,
           name: data?.selectedProduct?.name,
           quantity: data?.quantity,
           price: data?.selectedProduct?.unitPrice,
+          countFulfilled: 0,
+          expectedFulfillCount: data?.quantity,
+          isFullfilled: false,
         };
         productArray.push(item);
       });
@@ -451,9 +454,6 @@ const NewOrderScreen = ({navigation}) => {
   };
   const handleLoadProductsBottomSheet = () => {
     dismissTextInput(fullNameRef);
-    dismissTextInput(addressRef);
-    //dismissTextInput(phoneNumberRef);
-
     showBottomSheet(productSheetRef);
 
     dispatch(getAllProducts('', 0, 0, null));

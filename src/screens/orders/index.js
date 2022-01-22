@@ -24,7 +24,7 @@ const OrdersScreen = ({navigation}) => {
   const dispatch = useDispatch();
   const {orders, ordersLoading} = useSelector(state => state.orders);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  //console.log('redux orders', orders);
+ // console.log('redux orders', orders);
 
   useEffect(() => {
     dispatch(getAllOrderedProducts());

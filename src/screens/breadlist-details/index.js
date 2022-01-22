@@ -19,14 +19,14 @@ const BreadListDetailsScreen = ({navigation, route}) => {
   console.log('bread details', route.params.bread);
   const [ovenCount, setOvenCount] = useState();
   const [isOvenCountFocused, setIsOvenCountFocused] = useState(false);
-  var {name, count} = route.params.bread;
+  var {name, sum:count} = route.params.bread;
   const ovenCountRef = useRef();
 
   const renderDetails = () => {
     return (
       <View style={{marginHorizontal: 25, marginTop: 10}}>
         <View style={styles.customerNameView}>
-          <ProductSansBold style={[styles.labelText, {left: 0}]}>
+          <ProductSansBold style={[styles.actiontext, {left: 0}]}>
             TOTAL NEEDED
           </ProductSansBold>
 
@@ -36,55 +36,55 @@ const BreadListDetailsScreen = ({navigation, route}) => {
         </View>
 
         <View style={styles.customerNameView}>
-          <ProductSansBold style={[styles.labelText, {left: 0}]}>
+          <ProductSansBold style={[styles.actiontext, {left: 0}]}>
             PENDING
           </ProductSansBold>
 
           <Averta style={styles.custName} numberOfLines={5}>
-            {count.toString()}
+            {count-ovenCount||"0"}
           </Averta>
         </View>
 
         <View
           style={[styles.customerNameView, {paddingTop: 5, marginRight: 10}]}>
-          <ProductSansBold style={[styles.labelText, {left: 0}]}>
+          <ProductSansBold style={[styles.actiontext, {left: 0}]}>
             IN OVEN
           </ProductSansBold>
           <Averta style={styles.address} numberOfLines={5}>
-            {ovenCount.toString()||"0"}
+            {ovenCount &&ovenCount.toString() || '0'}
           </Averta>
         </View>
-
-        <View style={[styles.actions, {paddingVertical: 13}]}>
-          <ProductSansBold style={styles.actiontext}>
+        <View
+          style={[styles.customerNameView, {paddingTop: 5, marginRight: 10}]}>
+          <ProductSansBold style={[styles.actiontext, {left: 0}]}>
             OVEN COUNT
           </ProductSansBold>
+        
+          <TextInputComponent
+            placeholder={'Enter Oven Count'}
+            handleTextChange={text => setOvenCount(text)}
+            defaultValue={ovenCount}
+            returnKeyType={'next'}
+            keyboardType={'default'}
+            secureTextEntry={false}
+            capitalize={'sentences'}
+            heightfigure={50}
+            widthFigure={deviceWidth / 1.15}
+            refValue={ovenCountRef}
+            props={
+              isOvenCountFocused
+                ? {borderColor: COLOURS.blue}
+                : {borderColor: COLOURS.zupa_gray_bg}
+            }
+            handleTextInputFocus={() => {
+              setIsOvenCountFocused(true);
+            }}
+            handleBlur={() => {
+              setIsOvenCountFocused(false);
+            }}
+            onSubmitEditing={event => {}}
+          />
         </View>
-
-        <TextInputComponent
-          placeholder={'Enter Oven Count'}
-          handleTextChange={text => setOvenCount(text)}
-          defaultValue={ovenCount}
-          returnKeyType={'next'}
-          keyboardType={'default'}
-          secureTextEntry={false}
-          capitalize={'sentences'}
-          heightfigure={50}
-          widthFigure={deviceWidth / 1.15}
-          refValue={ovenCountRef}
-          props={
-            isOvenCountFocused
-              ? {borderColor: COLOURS.blue}
-              : {borderColor: COLOURS.zupa_gray_bg}
-          }
-          handleTextInputFocus={() => {
-            setIsOvenCountFocused(true);
-          }}
-          handleBlur={() => {
-            setIsOvenCountFocused(false);
-          }}
-          onSubmitEditing={event => {}}
-        />
       </View>
     );
   };
@@ -170,8 +170,8 @@ const styles = StyleSheet.create({
     //lineHeight: hp(19),
     color: COLOURS.labelTextColor,
     fontWeight: 'bold',
-    // left: deviceWidth * 0.07,
-    marginTop: 10,
+    paddingTop: 5,
+    paddingBottom: 12,
   },
   labelText: {
     fontSize: fp(13),

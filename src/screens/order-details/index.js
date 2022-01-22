@@ -15,9 +15,9 @@ import OrderListItemComponent from '../../components/OrderListItemComponent';
 
 // create a component
 const OrderDetailsScreen = ({navigation, route}) => {
-  //console.log('order details', route.params.order);
-  var orderItems = JSON.parse(route.params.order.orderitems);
-  var {customername, customeraddress, status, createdat} = route.params.order;
+  console.log('order details', route.params.order);
+  var orderItems = route.params.order.products;
+  var {name, status, createdat} = route.params.order;
 
   const renderDetails = () => {
     return (
@@ -28,7 +28,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
           </ProductSansBold>
           <TouchableOpacity onPress={null}>
             <AvertaBold style={styles.custName}>
-              {customername ? capitalizeWord(customername.trim()) : 'None'}
+              {name ? capitalizeWord(name.trim()) : 'None'}
             </AvertaBold>
           </TouchableOpacity>
         </View>

@@ -2,6 +2,51 @@ import client from '../../utils/Api';
 import {dateFilterParser} from '../../utils/DateFilter';
 import {clearStorage, handleError} from '../../utils/utils';
 
+export const getAllOrderedProductsStats1 = (status) => {
+  console.log('About to get Products stats');
+  return dispatch => {
+    dispatch({
+      type: 'GET_ALL_PRODUCTS_STATS_PENDING',
+      loading: true,
+      error: null,
+    });
+    var getUrl = `/orders/products`;
+    //console.log("geturl", getUrl);
+    return client
+      .get(getUrl)
+      .then(response => {
+        if (response?.data) {
+          console.log(
+            'Products gotten successfully',
+            response?.data?.recordCount,
+          );
+          if (response?.data?.isSuccessful) {
+            dispatch({
+              type: 'GET_ALL_PRODUCTS_STATS_SUCCESS',
+              loading: false,
+              data: response?.data?.results,
+            });
+            return response?.data?.results;
+          } else {
+            dispatch({
+              type: 'GET_ALL_PRODUCTS_STATS_FAILED',
+              loading: false,
+              error: response?.data?.message,
+            });
+          }
+        }
+      })
+      .catch(error => {
+        console.log('Products stats failed', error);
+        handleError(error, dispatch, 'get orders list');
+        dispatch({
+          type: 'GET_ALL_PRODUCTS_STATS_FAILED',
+          loading: false,
+          error: error.message,
+        });
+      });
+  };
+};
 export const getAllOrderedProductsStats = (status) => {
   console.log('About to get all orders stats');
   return dispatch => {
@@ -10,7 +55,7 @@ export const getAllOrderedProductsStats = (status) => {
       loading: true,
       error: null,
     });
-    var getUrl = `/orders/stats`;
+    var getUrl = `/orders/count`;
     //console.log("geturl", getUrl);
     return client
       .get(getUrl)
@@ -26,7 +71,7 @@ export const getAllOrderedProductsStats = (status) => {
               loading: false,
               data: response?.data?.results,
             });
-            return response?.data;
+            return response?.data?.results;
           } else {
             dispatch({
               type: 'GET_ALL_ORDERED_PRODUCTS_STATS_FAILED',
