@@ -1,6 +1,6 @@
 //import liraries
-import React, {Component} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import React, {Component, useState, useEffect} from 'react';
+import {View, Text, StyleSheet, FlatList, RefreshControl} from 'react-native';
 import {COLOURS} from '../../utils/Colours';
 import {BackViewMoreSettings} from '../../components/Header';
 import {KeyboardObserverComponent} from '../../components/KeyboardObserverComponent';
@@ -12,33 +12,32 @@ import LoaderShimmerComponent from '../../components/LoaderShimmerComponent';
 import BreadListItemComponent from '../../components/BreadListItemComponent';
 import ProductSans from '../../components/Text/ProductSans';
 import {fp} from '../../utils/responsive-screen';
+import {getAllOrderedProductsStats} from '../../store/actions/orders';
 
 // create a component
 const BreadListScreen = ({navigation}) => {
   const dispatch = useDispatch();
-  const {orders, ordersLoading} = useSelector(x => x.orders);
-  var data = [
-    {
-      name: 'Banana Bread',
-      quantity: 5,
-    },
-    {
-      name: 'Banana Choc',
-      quantity: 5,
-    },
-    {
-      name: 'Rice Bread',
-      quantity: 5,
-    },
-    {
-      name: 'Green Bread',
-      quantity: 5,
-    },
-    {
-      name: 'Chocolate Bread',
-      quantity: 5,
-    },
-  ];
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const {orders, orderedProductsStats, ordersLoading} = useSelector(
+    x => x.orders,
+  );
+//console.log("products", orderedProductsStats)
+  useEffect(() => {
+    dispatch(getAllOrderedProductsStats());
+  }, []);
+
+  const handleClick = item => {
+    navigation.navigate('BreadListDetails', {
+      bread: item,
+    });
+  };
+  const renderDetails = ({item}) => (
+    <BreadListItemComponent item={item} onClick={handleClick} />
+  );
+  const onRefresh = async () => {
+    dispatch(getAllOrderedProductsStats());
+    setIsRefreshing(false);
+  };
   return (
     <ViewProviderComponent>
       <DismissKeyboard>
@@ -53,9 +52,17 @@ const BreadListScreen = ({navigation}) => {
               Pending Bread List
             </ProductSans>
           </View>
-          {data.map((item, i) => {
-            return <BreadListItemComponent item={item} />;
-          })}
+          <FlatList
+            data={orderedProductsStats}
+            keyboardShouldPersistTaps={'handled'}
+            //ListHeaderComponent={renderDetails()}
+            renderItem={renderDetails}
+            refreshControl={
+              <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+            }
+            keyExtractor={item => item.id}
+          />
+
           <LoaderShimmerComponent isLoading={ordersLoading} />
         </KeyboardObserverComponent>
       </DismissKeyboard>
@@ -72,7 +79,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLOURS.zupa_gray_bg,
   },
   pendingBreadListText: {
-    color: COLOURS.textInputColor,
+    color: COLOURS.labelTextColor,
     fontSize: fp(17),
     alignSelf: 'center',
     fontWeight: 'bold',

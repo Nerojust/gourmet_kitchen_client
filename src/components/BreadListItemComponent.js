@@ -6,13 +6,16 @@ import {fp} from '../utils/responsive-screen';
 import ProductSans from './Text/ProductSans';
 
 // create a component
-const BreadListItemComponent = ({item}) => {
-  console.log('item', item);
-  
+const BreadListItemComponent = ({item, onClick}) => {
+  //console.log('item', item);
+
   return (
-    <TouchableOpacity style={styles.customerNameView} activeOpacity={0.6}>
-      <ProductSans style={styles.labelText}>{item?.name}</ProductSans>
-      <ProductSans style={styles.productName}>{item?.quantity}</ProductSans>
+    <TouchableOpacity
+      style={styles.customerNameView}
+      activeOpacity={0.6}
+      onPress={() => onClick(item)}>
+      <ProductSans style={styles.productName}>{item?.name}</ProductSans>
+      <ProductSans style={styles.labelText}>{item?.count}</ProductSans>
     </TouchableOpacity>
   );
 };

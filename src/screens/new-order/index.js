@@ -203,35 +203,6 @@ const NewOrderScreen = ({navigation}) => {
         />
 
         <View style={[styles.actions, {paddingVertical: 13}]}>
-          <ProductSansBold style={styles.actiontext}>ADDRESS</ProductSansBold>
-        </View>
-
-        <TextInputComponent
-          placeholder={'Enter address'}
-          handleTextChange={text => setAddress(text)}
-          defaultValue={address}
-          returnKeyType={'next'}
-          keyboardType={'default'}
-          secureTextEntry={false}
-          capitalize={'sentences'}
-          heightfigure={50}
-          widthFigure={deviceWidth / 1.15}
-          refValue={addressRef}
-          props={
-            isAddressFieldFocused
-              ? {borderColor: COLOURS.blue}
-              : {borderColor: COLOURS.zupa_gray_bg}
-          }
-          handleTextInputFocus={() => {
-            setAddressFieldFocused(true);
-          }}
-          handleBlur={() => {
-            setAddressFieldFocused(false);
-          }}
-          onSubmitEditing={event => {}}
-        />
-
-        <View style={[styles.actions, {paddingVertical: 13}]}>
           <ProductSansBold style={styles.actiontext}>
             SELECT PRODUCTS
           </ProductSansBold>
@@ -348,10 +319,6 @@ const NewOrderScreen = ({navigation}) => {
         return;
       }
 
-      if (!address) {
-        alert('Address is required');
-        return;
-      }
       if (!selectedProduct) {
         alert('Please select a product');
         return;
@@ -372,7 +339,6 @@ const NewOrderScreen = ({navigation}) => {
       const orderPayload = {
         customer: {
           name: fullName,
-          address,
         },
         product: productArray,
         status: 'pending',

@@ -35,16 +35,6 @@ const OrderDetailsScreen = ({navigation, route}) => {
 
         <View
           style={[styles.customerNameView, {paddingTop: 5, marginRight: 10}]}>
-          <ProductSansBold style={[styles.labelText, {left: 0}]}>
-            ADDRESS
-          </ProductSansBold>
-          <Averta style={styles.address} numberOfLines={5}>
-            {customeraddress ? customeraddress.trim() : 'None'}
-          </Averta>
-        </View>
-
-        <View
-          style={[styles.customerNameView, {paddingTop: 5, marginRight: 10}]}>
           <ProductSansBold
             style={[styles.labelText, {paddingBottom: 12, left: 0}]}>
             ORDER DATE

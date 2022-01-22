@@ -1,6 +1,7 @@
 const initialState = {
   phoneArray: [],
   orders: [],
+  orderedProductsStats:[],
   order:{},
   ordersLoading: false,
   error: '',
@@ -50,6 +51,25 @@ export default (state = initialState, action) => {
         ordersLoading: action.loading,
       };
     case 'GET_ALL_ORDERED_PRODUCTS_FAILED':
+      return {
+        ...state,
+        ordersLoading: action.loading,
+        error: action.error,
+      };
+   
+      case 'GET_ALL_ORDERED_PRODUCTS_STATS_PENDING':
+      return {
+        ...state,
+        ordersLoading: action.loading,
+       
+      };
+    case 'GET_ALL_ORDERED_PRODUCTS_STATS_SUCCESS':
+      return {
+        ...state,
+        orderedProductsStats: action.data,
+        ordersLoading: action.loading,
+      };
+    case 'GET_ALL_ORDERED_PRODUCTS_STATS_FAILED':
       return {
         ...state,
         ordersLoading: action.loading,

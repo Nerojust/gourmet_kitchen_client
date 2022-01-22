@@ -2,6 +2,51 @@ import client from '../../utils/Api';
 import {dateFilterParser} from '../../utils/DateFilter';
 import {clearStorage, handleError} from '../../utils/utils';
 
+export const getAllOrderedProductsStats = (status) => {
+  console.log('About to get all orders stats');
+  return dispatch => {
+    dispatch({
+      type: 'GET_ALL_ORDERED_PRODUCTS_STATS_PENDING',
+      loading: true,
+      error: null,
+    });
+    var getUrl = `/orders/stats`;
+    //console.log("geturl", getUrl);
+    return client
+      .get(getUrl)
+      .then(response => {
+        if (response?.data) {
+          console.log(
+            'Order stats gotten successfully',
+            response?.data?.recordCount,
+          );
+          if (response?.data?.isSuccessful) {
+            dispatch({
+              type: 'GET_ALL_ORDERED_PRODUCTS_STATS_SUCCESS',
+              loading: false,
+              data: response?.data?.results,
+            });
+            return response?.data;
+          } else {
+            dispatch({
+              type: 'GET_ALL_ORDERED_PRODUCTS_STATS_FAILED',
+              loading: false,
+              error: response?.data?.message,
+            });
+          }
+        }
+      })
+      .catch(error => {
+        console.log('Getting orders stats failed', error);
+        handleError(error, dispatch, 'get orders list');
+        dispatch({
+          type: 'GET_ALL_ORDERED_PRODUCTS_STATS_FAILED',
+          loading: false,
+          error: error.message,
+        });
+      });
+  };
+};
 export const getAllOrderedProducts = (status) => {
   console.log('About to get all orders');
   return dispatch => {
