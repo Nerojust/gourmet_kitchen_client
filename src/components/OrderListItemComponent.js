@@ -1,8 +1,9 @@
 //import liraries
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, ViewBase} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
 import {COLOURS} from '../utils/Colours';
-import { NAIRA } from '../utils/Constants';
+import {NAIRA} from '../utils/Constants';
+import {IMAGES} from '../utils/Images';
 import {deviceWidth, fp} from '../utils/responsive-screen';
 import {formatNumberComma, getReadableDateAndTime} from '../utils/utils';
 import ColourComponent from './ColorComponent';
@@ -11,26 +12,52 @@ import ProductSansBold from './Text/ProductSansBold';
 
 // create a component
 const OrderListItemComponent = ({item}) => {
-  console.log('item', item);
-  var name = item?.name||"NONE";
+  //console.log('item', item);
+  var name = item?.name || 'NONE';
   var quantity = item?.quantity;
   var price = item?.price;
 
   return (
     <View style={styles.customerNameView}>
-      <ProductSans style={styles.labelText}>Product Name</ProductSans>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          paddingVertical: 5,
+        }}>
+        <ProductSans style={styles.labelText}>Product Name</ProductSans>
+        {item.isfulfilled ? (
+          <Image
+            source={IMAGES.urlGood}
+            style={{
+              width: 20,
+              height: 20,
+            }}
+            resizeMode="contain"
+          />
+        ) : (
+          <Image />
+        )}
+      </View>
       <ProductSans style={styles.productName}>{name.trim()}</ProductSans>
 
-      <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop:10}}>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          paddingVertical: 5,
+          marginTop: 10,
+        }}>
         <View>
           <ProductSans style={styles.labelText}>Price</ProductSans>
-          <ProductSans style={styles.priceName}>{NAIRA}{formatNumberComma(price)}</ProductSans>
+          <ProductSans style={styles.priceName}>
+            {NAIRA}
+            {formatNumberComma(price)}
+          </ProductSans>
         </View>
         <View>
           <ProductSans style={styles.labelText}>Quantity</ProductSans>
-          <ProductSans style={styles.quantityName}>
-            {quantity}
-          </ProductSans>
+          <ProductSans style={styles.quantityName}>{quantity}</ProductSans>
         </View>
       </View>
     </View>
@@ -62,7 +89,7 @@ const styles = StyleSheet.create({
     fontSize: fp(15),
     color: COLOURS.textInputColor,
     fontWeight: 'bold',
-    alignSelf:'center'
+    alignSelf: 'center',
   },
   customerNameView: {
     backgroundColor: COLOURS.white,
@@ -74,7 +101,7 @@ const styles = StyleSheet.create({
   labelText: {
     fontSize: fp(13),
     color: COLOURS.labelTextColor,
-    paddingTop: 5,
+    paddingTop: 3,
     paddingBottom: 5,
     // left: 12,
   },

@@ -1,45 +1,100 @@
-//import liraries
+// import liraries
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, ViewBase} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ViewBase,
+  Image,
+} from 'react-native';
 import {COLOURS} from '../utils/Colours';
+import {IMAGES} from '../utils/Images';
 import {deviceWidth, fp} from '../utils/responsive-screen';
-import {getReadableDateAndTime} from '../utils/utils';
+import {getColourCode, getReadableDateAndTime} from '../utils/utils';
 import ColourComponent from './ColorComponent';
 import ProductSans from './Text/ProductSans';
 import ProductSansBold from './Text/ProductSansBold';
 
 // create a component
-const OrderProductComponent = ({item, colourType, handleClick}) => {
-  var delay = getReadableDateAndTime(item?.createdat)
-    .toLowerCase()
-    .endsWith('hours')
-    ? 'red'
-    : getReadableDateAndTime(item?.createdat).toLowerCase().endsWith('minutes')
-    ? 'orange'
-    : 'green';
+const OrderProductComponent = ({item, handleClick}) => {
+  //console.log("item",item.products[0].isfulfilled)
+  let productCount = 0;
+  let fulfilledQCount = 0;
+  let quantityQCount = 0;
+  let colourResult = getColourCode(item?.createdat);
+  let isAllFulfilled = false;
+  let fulfillCount = 0;
+  item.products.map((product, i) => {
+    //console.log('iii', product);
+    if (product.isfulfilled) {
+      fulfillCount++;
+    }
+    fulfilledQCount = fulfilledQCount + product.fulfilledquantity;
+    quantityQCount = quantityQCount + product.quantity;
+    if (fulfillCount == item.products.length) {
+      isAllFulfilled = true;
+    }
+  });
   return (
     <TouchableOpacity style={styles.item} onPress={() => handleClick(item)}>
-      <ProductSans style={styles.nameText}>{item?.name.trim()}</ProductSans>
-      <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+        }}>
+        <ProductSans style={styles.nameText}>{item?.name.trim()}</ProductSans>
+
+        {isAllFulfilled ? (
+          <Image
+            source={IMAGES.urlGood}
+            style={{
+              width: 20,
+              height: 20,
+            }}
+            resizeMode="contain"
+          />
+        ) : (
+          <Image />
+        )}
+      </View>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+        }}>
         <View style={{justifyContent: 'space-between'}}>
           <Text style={styles.bakedText}>
-            1 of {item.products.length} baked
+            {fulfilledQCount + ' of ' + quantityQCount + ' baked'}
           </Text>
 
-          <ColourComponent colourType={delay} />
+          <ColourComponent
+            colourType={
+              !item.products[0].isfulfilled ? colourResult : COLOURS.gray
+            }
+          />
         </View>
 
-        <View>
+        <View style={{marginTop: 5}}>
           <ProductSansBold style={styles.itemsText}>
-            {item.products.length +
-              (item.products.length > 1 ? ' items' : ' item')}
+            {item?.products.length +
+              (item?.products.length > 1 ? ' items' : ' item')}{' '}
           </ProductSansBold>
-          <View style={{paddingTop: 5}}>
-            <ProductSans style={styles.delayHeaderText}>Delay</ProductSans>
-            <ProductSans style={styles.delayText}>
-              {getReadableDateAndTime(item?.createdat)}
-            </ProductSans>
-          </View>
+          {colourResult == COLOURS.red ? (
+            <View style={{paddingTop: 5}}>
+              <ProductSans style={styles.delayHeaderText}>
+                Delayed by
+              </ProductSans>
+              <ProductSans style={styles.delayText}>
+                {getReadableDateAndTime(item?.createdat)}{' '}
+              </ProductSans>
+            </View>
+          ) : (
+            <View style={{paddingTop: 5}}>
+              <ProductSans style={styles.delayHeaderText}></ProductSans>
+              <ProductSans style={styles.delayText}></ProductSans>
+            </View>
+          )}
         </View>
       </View>
     </TouchableOpacity>
@@ -60,15 +115,15 @@ const styles = StyleSheet.create({
   itemsText: {
     color: COLOURS.textInputColor,
     fontSize: fp(16),
-    //paddingRight:30
+    // paddingRight:30
   },
   bakedText: {
     fontSize: fp(16),
-    color: COLOURS.red1,
+    color: COLOURS.purple,
     paddingTop: 5,
   },
   nameText: {
-    fontSize: fp(22),
+    fontSize: fp(17),
     color: COLOURS.textInputColor,
   },
   smallTitle: {
@@ -77,13 +132,14 @@ const styles = StyleSheet.create({
   },
   delayHeaderText: {
     fontSize: fp(14),
-    color: COLOURS.gray,
+    color: COLOURS.labelTextColor,
   },
   delayText: {
     fontSize: fp(16),
-    color: COLOURS.zupaBlue,
+    color: COLOURS.yellow1,
+    fontWeight: 'bold',
   },
 });
 
-//make this component available to the app
+// make this component available to the app
 export default OrderProductComponent;

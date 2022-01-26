@@ -45,7 +45,10 @@ const OrderDetailsScreen = ({navigation, route}) => {
         </View>
 
         <View
-          style={[styles.customerNameView, {paddingTop: 5, marginRight: 10}]}>
+          style={[
+            styles.customerNameView,
+            {paddingTop: 5, marginRight: 10, marginBottom: 30},
+          ]}>
           <ProductSansBold
             style={[styles.labelText, {paddingBottom: 12, left: 0}]}>
             ORDERED PRODUCTS

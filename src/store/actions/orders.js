@@ -2,22 +2,22 @@ import client from '../../utils/Api';
 import {dateFilterParser} from '../../utils/DateFilter';
 import {clearStorage, handleError} from '../../utils/utils';
 
-export const getAllOrderedProductsStats1 = (status) => {
-  console.log('About to get Products stats');
+export const getAllOrderedProductsStats = status => {
+  console.log('About to get all orders stats');
   return dispatch => {
     dispatch({
       type: 'GET_ALL_PRODUCTS_STATS_PENDING',
       loading: true,
       error: null,
     });
-    var getUrl = `/orders/products`;
+    var getUrl = `/orders/count`;
     //console.log("geturl", getUrl);
     return client
       .get(getUrl)
       .then(response => {
         if (response?.data) {
           console.log(
-            'Products gotten successfully',
+            'Order stats gotten successfully',
             response?.data?.recordCount,
           );
           if (response?.data?.isSuccessful) {
@@ -37,7 +37,7 @@ export const getAllOrderedProductsStats1 = (status) => {
         }
       })
       .catch(error => {
-        console.log('Products stats failed', error);
+        console.log('Getting orders stats failed', error);
         handleError(error, dispatch, 'get orders list');
         dispatch({
           type: 'GET_ALL_PRODUCTS_STATS_FAILED',
@@ -47,52 +47,7 @@ export const getAllOrderedProductsStats1 = (status) => {
       });
   };
 };
-export const getAllOrderedProductsStats = (status) => {
-  console.log('About to get all orders stats');
-  return dispatch => {
-    dispatch({
-      type: 'GET_ALL_ORDERED_PRODUCTS_STATS_PENDING',
-      loading: true,
-      error: null,
-    });
-    var getUrl = `/orders/count`;
-    //console.log("geturl", getUrl);
-    return client
-      .get(getUrl)
-      .then(response => {
-        if (response?.data) {
-          console.log(
-            'Order stats gotten successfully',
-            response?.data?.recordCount,
-          );
-          if (response?.data?.isSuccessful) {
-            dispatch({
-              type: 'GET_ALL_ORDERED_PRODUCTS_STATS_SUCCESS',
-              loading: false,
-              data: response?.data?.results,
-            });
-            return response?.data?.results;
-          } else {
-            dispatch({
-              type: 'GET_ALL_ORDERED_PRODUCTS_STATS_FAILED',
-              loading: false,
-              error: response?.data?.message,
-            });
-          }
-        }
-      })
-      .catch(error => {
-        console.log('Getting orders stats failed', error);
-        handleError(error, dispatch, 'get orders list');
-        dispatch({
-          type: 'GET_ALL_ORDERED_PRODUCTS_STATS_FAILED',
-          loading: false,
-          error: error.message,
-        });
-      });
-  };
-};
-export const getAllOrderedProducts = (status) => {
+export const getAllOrderedProducts = (status = 'pending') => {
   console.log('About to get all orders');
   return dispatch => {
     dispatch({
@@ -100,7 +55,7 @@ export const getAllOrderedProducts = (status) => {
       loading: true,
       error: null,
     });
-    var getUrl = `/orders`;
+    var getUrl = `/orders?status=${status}`;
     //console.log("geturl", getUrl);
     return client
       .get(getUrl)
@@ -116,7 +71,7 @@ export const getAllOrderedProducts = (status) => {
               loading: false,
               data: response?.data?.results,
             });
-            return response?.data;
+            return response?.data?.results;
           } else {
             dispatch({
               type: 'GET_ALL_ORDERED_PRODUCTS_FAILED',
@@ -127,10 +82,57 @@ export const getAllOrderedProducts = (status) => {
         }
       })
       .catch(error => {
-        console.log('Getting dashboard orders failed', error);
+        console.log('Getting orders failed', error);
         handleError(error, dispatch, 'get orders list');
         dispatch({
           type: 'GET_ALL_ORDERED_PRODUCTS_FAILED',
+          loading: false,
+          error: error.message,
+        });
+      });
+  };
+};
+export const updateOrderListProductCount = payload => {
+  console.log('About to update oven count');
+  return dispatch => {
+    dispatch({
+      type: 'UPDATE_OVEN_COUNT_PENDING',
+      loading: true,
+      error: null,
+    });
+    var url = `/orders/updateOrders`;
+    //console.log("geturl", getUrl);
+    return client
+      .patch(url, payload)
+      .then(response => {
+        if (response?.data) {
+          console.log(
+            'Orders gotten successfully',
+            response?.data?.recordCount,
+          );
+          if (response?.data?.isSuccessful) {
+            dispatch({
+              type: 'UPDATE_OVEN_COUNT_SUCCESS',
+              loading: false,
+              data: response?.data?.results,
+            });
+            dispatch(getAllOrderedProductsStats());
+            dispatch(getAllOrderedProducts())
+            return response?.data?.results;
+          } else {
+            dispatch({
+              type: 'UPDATE_OVEN_COUNT_FAILED',
+              loading: false,
+              error: response?.data?.message,
+            });
+          }
+        }
+      })
+      .catch(error => {
+        console.log('Getting orders failed', error);
+        handleError(error, dispatch, 'get orders list');
+        dispatch({
+          type: 'UPDATE_OVEN_COUNT_FAILED',
           loading: false,
           error: error.message,
         });
@@ -159,7 +161,7 @@ export const createOrder = orderPayload => {
             loading: false,
           });
           //alert('Order created successfully');
-          dispatch(getAllOrderedProducts());
+          dispatch(getAllOrderedProducts("pending"));
           return response.data?.results;
         }
       })

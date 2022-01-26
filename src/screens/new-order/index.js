@@ -326,15 +326,11 @@ const NewOrderScreen = ({navigation}) => {
 
       var productArray = [];
       newBasketArray.map((data, i) => {
-        console.log('dddd', data);
+        //console.log('dddd', data);
         var item = {
           id: data?.selectedProduct?.baseProductId,
-          name: data?.selectedProduct?.name,
           quantity: data?.quantity,
           price: data?.selectedProduct?.unitPrice,
-          countFulfilled: 0,
-          expectedFulfillCount: data?.quantity,
-          isFullfilled: false,
         };
         productArray.push(item);
       });
@@ -344,9 +340,6 @@ const NewOrderScreen = ({navigation}) => {
           name: fullName,
         },
         product: productArray,
-        status: 'pending',
-        inoven: false,
-        fulfilled: false,
       };
 
       console.log('order payload', orderPayload);
@@ -361,7 +354,6 @@ const NewOrderScreen = ({navigation}) => {
         })
         .catch(() => {
           console.log('error creating order');
-          //  dismissLoader(submitOrderRef);
         });
     });
   };

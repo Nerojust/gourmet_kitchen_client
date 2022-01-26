@@ -10,9 +10,8 @@ import {name as appName} from './app.json';
 export default function Main() {
   LogBox.ignoreAllLogs(true);
   LogBox.ignoreLogs(['Unrecognized font family']);
-  LogBox.ignoreLogs([
-    "EventEmitter.removeListener('keyboardDidShow', ...): Method ",
-  ]);
+  LogBox.ignoreLogs(["EventEmitter.removeListener"]);
+  LogBox.ignoreLogs(["Can't perform a React state"]);
   return <App />;
 }
 AppRegistry.registerComponent(appName, () => Main);

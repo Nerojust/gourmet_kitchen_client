@@ -1,12 +1,52 @@
 //import liraries
 import React, {Component} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, Animated} from 'react-native';
 import {COLOURS} from '../utils/Colours';
 
 // create a component
-const ColourComponent = ({colourType}) => {
-  return <View style={styles.container(colourType)}></View>;
-};
+export default class ColourComponent extends Component {
+  constructor() {
+    super();
+    this.state = {
+      animation: new Animated.Value(1),
+    };
+  }
+  componentDidMount() {
+    this.startAnimation();
+  }
+  startAnimation = () => {
+    setInterval(() => {
+      Animated.timing(this.state.animation, {
+        toValue: 0,
+        timing: 600,
+        useNativeDriver: true,
+      }).start(() => {
+        Animated.timing(this.state.animation, {
+          toValue: 1,
+          duration: 600,
+          useNativeDriver: true,
+        }).start();
+      });
+    }, 2000);
+  };
+  render() {
+    //console.log('colourtype is ', this.props.colourType);
+    const animatedStyle = {
+      opacity: this.state.animation,
+    };
+    return (
+      <View>
+        <Animated.View
+          style={[
+            styles.container(this.props.colourType),
+            animatedStyle,
+            this.props.style,
+          ]}
+        />
+      </View>
+    );
+  }
+}
 
 // define your styles
 const styles = StyleSheet.create({
@@ -14,17 +54,9 @@ const styles = StyleSheet.create({
     //flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor:
-      colourType == 'green'
-        ? COLOURS.green2
-        : colourType == 'orange'
-        ? COLOURS.orange
-        : COLOURS.gray,
+    backgroundColor: colourType,
     borderRadius: 20,
     width: 15,
     height: 15,
   }),
 });
-
-//make this component available to the app
-export default ColourComponent;

@@ -12,36 +12,22 @@ import LoaderShimmerComponent from '../../components/LoaderShimmerComponent';
 import BreadListItemComponent from '../../components/BreadListItemComponent';
 import ProductSans from '../../components/Text/ProductSans';
 import {fp} from '../../utils/responsive-screen';
-import {
-  getAllOrderedProductsStats,
-  getAllOrderedProductsStats1,
-} from '../../store/actions/orders';
+import {getAllOrderedProductsStats} from '../../store/actions/orders';
 
 // create a component
 const BreadListScreen = ({navigation}) => {
   const dispatch = useDispatch();
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [newListArray, setNewListArray] = useState([]);
-  const {orders, orderedProductsStats, orderedProducts, ordersLoading} =
-    useSelector(x => x.orders);
-  //console.log("products", orderedProducts)
+  const {orderedProducts, ordersLoading} = useSelector(x => x.orders);
+  //console.log('products', orderedProducts);
+
   useEffect(() => {
+    fetchAllData();
+  }, []);
+
+  const fetchAllData = () => {
     dispatch(getAllOrderedProductsStats());
-  }, []);
-  useEffect(() => {
-    dispatch(getAllOrderedProductsStats1());
-
-    if(orderedProducts.length>0){
-      orderedProducts.map((item,i)=>{
-        //console.log("single ", item.name)
-        console.log( orderedProductsStats[0])
-       if(item.id ==  orderedProductsStats[0]){
-         console.log("here")
-       }
-      })
-    }
-  }, []);
-
+  };
   const handleClick = item => {
     navigation.navigate('BreadListDetails', {
       bread: item,
@@ -50,10 +36,12 @@ const BreadListScreen = ({navigation}) => {
   const renderDetails = ({item}) => (
     <BreadListItemComponent item={item} onClick={handleClick} />
   );
+
   const onRefresh = async () => {
-    dispatch(getAllOrderedProductsStats());
+    fetchAllData();
     setIsRefreshing(false);
   };
+
   return (
     <ViewProviderComponent>
       <DismissKeyboard>
@@ -69,14 +57,13 @@ const BreadListScreen = ({navigation}) => {
             </ProductSans>
           </View>
           <FlatList
-            data={orderedProductsStats}
+            data={orderedProducts}
             keyboardShouldPersistTaps={'handled'}
-            //ListHeaderComponent={renderDetails()}
             renderItem={renderDetails}
             refreshControl={
               <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
             }
-            keyExtractor={item => item.id}
+            keyExtractor={item => Math.random()}
           />
 
           <LoaderShimmerComponent isLoading={ordersLoading} />

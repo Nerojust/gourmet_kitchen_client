@@ -1,14 +1,9 @@
 //import liraries
-import React, { Component } from 'react';
+import React from 'react';
 import {
   View,
-  Text,
   StyleSheet,
-  Image,
-  ScrollView,
-  Platform,
-  TouchableOpacity
-} from 'react-native';
+  Image} from 'react-native';
 import { COLOURS } from '../utils/Colours';
 import { deviceWidth, hp } from '../utils/responsive-screen';
 import ProductSans from './Text/ProductSans';
@@ -18,11 +13,7 @@ import ProductSansBold from './Text/ProductSansBold';
 const SuccessPageComponent = ({
   image,
   headerName1,
-  headerSubName,
-  buttonName1,
-  buttonName2,
-  singleTextName,
-  onPress1
+  headerSubName
 }) => {
   return (
     <View style={styles.container}>
@@ -59,16 +50,6 @@ const SuccessPageComponent = ({
         >
           {headerSubName}
         </ProductSans>
-
-        {/* <TouchableOpacity
-          style={[styles.button, { marginTop: hp(20) }]}
-          activeOpacity={0.7}
-          onPress={onPress1}
-        >
-          <ProductSansBold style={styles.buttonText}>
-            {buttonName1}
-          </ProductSansBold>
-        </TouchableOpacity> */}
       </View>
     </View>
   );

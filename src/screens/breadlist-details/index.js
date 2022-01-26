@@ -1,26 +1,32 @@
 //import liraries
-import React, {Component, useState, useRef} from 'react';
+import React, {useState, useRef} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, FlatList} from 'react-native';
 import {BackViewMoreSettings} from '../../components/Header';
 import {KeyboardObserverComponent} from '../../components/KeyboardObserverComponent';
 import ViewProviderComponent from '../../components/ViewProviderComponent';
-import {capitalizeWord, DismissKeyboard} from '../../utils/utils';
+import {DismissKeyboard} from '../../utils/utils';
 import Averta from '../../components/Text/Averta';
-import AvertaBold from '../../components/Text/AvertaBold';
 import {deviceWidth, fp} from '../../utils/responsive-screen';
 import {COLOURS} from '../../utils/Colours';
-import moment from 'moment';
 import ProductSansBold from '../../components/Text/ProductSansBold';
-import OrderListItemComponent from '../../components/OrderListItemComponent';
 import TextInputComponent from '../../components/TextInputComponent';
+import {useDispatch, useSelector} from 'react-redux';
+import LoaderShimmerComponent from '../../components/LoaderShimmerComponent';
+import CustomSuccessModal from '../../components/CustomSuccessModal';
+import {DIALOG_TIMEOUT} from '../../utils/Constants';
+import {updateOrderListProductCount} from '../../store/actions/orders';
 
 // create a component
 const BreadListDetailsScreen = ({navigation, route}) => {
-  console.log('bread details', route.params.bread);
+  //console.log('bread details', route.params.bread);
   const [ovenCount, setOvenCount] = useState();
+  const [pendingCount, setPendingCount] = useState('0');
   const [isOvenCountFocused, setIsOvenCountFocused] = useState(false);
-  var {name, sum:count} = route.params.bread;
+  var {productid, name, sum: count} = route.params.bread;
+  const dispatch = useDispatch();
   const ovenCountRef = useRef();
+  const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false);
+  const {isOrderUpdated, updateOrderLoading} = useSelector(x => x.orders);
 
   const renderDetails = () => {
     return (
@@ -41,7 +47,7 @@ const BreadListDetailsScreen = ({navigation, route}) => {
           </ProductSansBold>
 
           <Averta style={styles.custName} numberOfLines={5}>
-            {count-ovenCount||"0"}
+            {parseInt(pendingCount)}
           </Averta>
         </View>
 
@@ -51,7 +57,7 @@ const BreadListDetailsScreen = ({navigation, route}) => {
             IN OVEN
           </ProductSansBold>
           <Averta style={styles.address} numberOfLines={5}>
-            {ovenCount &&ovenCount.toString() || '0'}
+            {(ovenCount && ovenCount.toString()) || '0'}
           </Averta>
         </View>
         <View
@@ -59,10 +65,10 @@ const BreadListDetailsScreen = ({navigation, route}) => {
           <ProductSansBold style={[styles.actiontext, {left: 0}]}>
             OVEN COUNT
           </ProductSansBold>
-        
+
           <TextInputComponent
             placeholder={'Enter Oven Count'}
-            handleTextChange={text => setOvenCount(text)}
+            handleTextChange={handleOvenChange}
             defaultValue={ovenCount}
             returnKeyType={'next'}
             keyboardType={'default'}
@@ -89,6 +95,22 @@ const BreadListDetailsScreen = ({navigation, route}) => {
     );
   };
 
+  const handleOvenChange = text => {
+    if (text) {
+      if (parseInt(text) > count) {
+        setPendingCount('0');
+        setOvenCount('');
+        alert('Number must be less than or equal to ' + count);
+        return
+      }
+      setOvenCount(text);
+      setPendingCount(count - text);
+    } else {
+      setPendingCount('0');
+      setOvenCount('');
+    }
+  };
+
   const handleSubmit = () => {
     if (!ovenCount) {
       alert('Oven count is required');
@@ -98,8 +120,43 @@ const BreadListDetailsScreen = ({navigation, route}) => {
       alert('Oven count must be greater than zero');
       return;
     }
+    var payload = {
+      count: parseInt(ovenCount),
+      productid: productid,
+    };
+    console.log('payload', payload);
+    
+    dispatch(updateOrderListProductCount(payload))
+      .then((result, error) => {
+        if (result) {
+          showSuccessDialog();
+          resetFields();
+        }
+      })
+      .catch(error => {
+        console.log('updadte error', error);
+      });
   };
 
+  const renderSuccessModal = () => (
+    <CustomSuccessModal
+      isModalVisible={isSuccessModalVisible}
+      dismissModal={showSuccessDialog}
+      message={'Order List Updated Successfully'}
+    />
+  );
+  const resetFields = () => {
+    setPendingCount('0');
+    setOvenCount('');
+  };
+
+  const showSuccessDialog = () => {
+    setIsSuccessModalVisible(!isSuccessModalVisible);
+    setTimeout(() => {
+      setIsSuccessModalVisible(false);
+      navigation.goBack();
+    }, DIALOG_TIMEOUT);
+  };
   const displaySubmitButton = () => {
     return (
       <TouchableOpacity
@@ -108,8 +165,6 @@ const BreadListDetailsScreen = ({navigation, route}) => {
         style={{
           marginTop: 5,
           justifyContent: 'center',
-          //   marginBottom:
-          //     keyboardHeight > 0 ? (Platform.OS == 'ios' ? 250 : 100) : 20,
           backgroundColor: COLOURS.zupaBlue,
           height: 50,
           borderRadius: 10,
@@ -118,7 +173,7 @@ const BreadListDetailsScreen = ({navigation, route}) => {
           marginTop: 30,
         }}>
         <Text style={{color: COLOURS.white, fontSize: 14, fontWeight: '700'}}>
-          Submit
+          Update Order List
         </Text>
       </TouchableOpacity>
     );
@@ -138,11 +193,13 @@ const BreadListDetailsScreen = ({navigation, route}) => {
               <>
                 {renderDetails()}
                 {displaySubmitButton()}
+                {renderSuccessModal()}
               </>
             }
             renderItem={null}
             keyExtractor={item => item.id}
           />
+          <LoaderShimmerComponent isLoading={updateOrderLoading} />
         </KeyboardObserverComponent>
       </DismissKeyboard>
     </ViewProviderComponent>

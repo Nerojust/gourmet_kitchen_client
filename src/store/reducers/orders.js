@@ -5,6 +5,8 @@ const initialState = {
   orderedProducts:[],
   order:{},
   ordersLoading: false,
+  updateOrderLoading:false,
+  isOrderUpdated:false,
   error: '',
 };
 
@@ -94,6 +96,26 @@ export default (state = initialState, action) => {
       return {
         ...state,
         ordersLoading: action.loading,
+        error: action.error,
+      };
+    
+      case 'UPDATE_OVEN_COUNT_PENDING':
+      return {
+        ...state,
+        updateOrderLoading: action.loading,
+       
+      };
+    case 'UPDATE_OVEN_COUNT_SUCCESS':
+      return {
+        ...state,
+        isOrderUpdated: true,
+        updateOrderLoading: action.loading,
+      };
+    case 'UPDATE_OVEN_COUNT_FAILED':
+      return {
+        ...state,
+        isOrderUpdated: false,
+        updateOrderLoading: action.loading,
         error: action.error,
       };
 

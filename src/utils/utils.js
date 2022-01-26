@@ -32,7 +32,17 @@ export const capitalizeWord = string => {
   //console.log('final word', result.join(','));
   return result.join(' ');
 };
-
+export function findEarliestDate(dates) {
+  if (dates.length == 0) return null;
+  var earliestDate = dates[0];
+  for (var i = 1; i < dates.length; i++) {
+    var currentDate = dates[i];
+    if (currentDate < earliestDate) {
+      earliestDate = currentDate;
+    }
+  }
+  return earliestDate;
+}
 export const showLoader = ref => {
   ref.current.showLoading(true);
 };
@@ -261,6 +271,25 @@ export const handleError = (errormessage, dispatch, extMessage) => {
   }
 };
 
+export function getColourCode(stringDate) {
+  var currDate = new Date();
+  var diffMs = currDate.getTime() - new Date(stringDate).getTime();
+  var sec = diffMs / 1000;
+  var colourType = '';
+
+  var min = sec / 60;
+  //console.log('min time is ', parseInt(min));
+  if (min < 10) {
+    colourType = COLOURS.green2;
+  } else if (min < 20) {
+    colourType = COLOURS.yellow1;
+  } else if (min > 30) {
+    colourType = COLOURS.red;
+  } else {
+    colourType = COLOURS.red;
+  }
+  return colourType;
+}
 export function getReadableDateAndTime(stringDate) {
   var currDate = new Date();
   var diffMs = currDate.getTime() - new Date(stringDate).getTime();
@@ -269,26 +298,26 @@ export function getReadableDateAndTime(stringDate) {
   if (sec < 0) return 'now';
 
   if (sec < 60)
-    return parseInt(sec) + ' second' + (parseInt(sec) > 1 ? 's' : '') + ' ago';
+    return parseInt(sec) + ' second' + (parseInt(sec) > 1 ? 's' : '') + '';
 
   var min = sec / 60;
   if (min < 60)
-    return parseInt(min) + ' minute' + (parseInt(min) > 1 ? 's' : '') + ' ago';
+    return parseInt(min) + ' minute' + (parseInt(min) > 1 ? 's' : '') + '';
 
   var h = min / 60;
   if (h < 24)
-    return parseInt(h) + ' hour' + (parseInt(h) > 1 ? 's' : '') + ' ago';
+    return parseInt(h) + ' hour' + (parseInt(h) > 1 ? 's' : '') + '';
 
   var d = h / 24;
   if (d < 30)
-    return parseInt(d) + ' day' + (parseInt(d) > 1 ? 's' : '') + ' ago';
+    return parseInt(d) + ' day' + (parseInt(d) > 1 ? 's' : '') + '';
 
   var m = d / 30;
   if (m < 12)
-    return parseInt(m) + ' month' + (parseInt(m) > 1 ? 's' : '') + ' ago';
+    return parseInt(m) + ' month' + (parseInt(m) > 1 ? 's' : '') + '';
 
   var y = m / 12;
-  return parseInt(y) + ' year' + (parseInt(y) > 1 ? 's' : '') + ' ago';
+  return parseInt(y) + ' year' + (parseInt(y) > 1 ? 's' : '') + '';
 }
 
 export const getTodaysDate = date => {

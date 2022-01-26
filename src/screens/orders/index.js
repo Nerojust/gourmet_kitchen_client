@@ -22,16 +22,19 @@ import {fp} from '../../utils/responsive-screen';
 // create a component
 const OrdersScreen = ({navigation}) => {
   const dispatch = useDispatch();
-  const {orders, ordersLoading} = useSelector(state => state.orders);
+  const {orders,error, ordersLoading} = useSelector(state => state.orders);
   const [isRefreshing, setIsRefreshing] = useState(false);
- // console.log('redux orders', orders);
+ //console.log('redux orders', orders.length);
 
   useEffect(() => {
-    dispatch(getAllOrderedProducts());
+   fetchAllData("pending")
   }, []);
 
+  const fetchAllData=(status)=>{
+    dispatch(getAllOrderedProducts(status));
+  }
   const onRefresh = async () => {
-    dispatch(getAllOrderedProducts());
+    fetchAllData("pending")
     setIsRefreshing(false);
   };
   const handleClick = item => {
@@ -43,7 +46,7 @@ const OrdersScreen = ({navigation}) => {
     return <OrderProductComponent item={item} handleClick={handleClick} />;
   };
   const handleStateDispatch = state => {
-    dispatch(getAllOrderedProducts(state));
+    fetchAllData(state)
   };
   const renderHeaderView = () => {
     return (
@@ -86,12 +89,31 @@ const OrdersScreen = ({navigation}) => {
       <HeaderComponent name="Orders" isDashboard />
       {renderHeaderView()}
       <FlatList
-        data={orders}
+        data={orders.sort()}
         renderItem={renderItems}
         keyExtractor={item => item.id}
-        refreshControl={
+         refreshControl={
           <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
         }
+        ListEmptyComponent={
+          <View>
+            {!ordersLoading ? (
+              <View
+                style={{
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  flex: 1,
+                  top: 300,
+                }}>
+                <ProductSans
+                  style={{fontSize: 16, color: COLOURS.textInputColor}}>
+                  No record found
+                </ProductSans>
+              </View>
+            ) : null}
+          </View>
+        }
+       
       />
       <AddComponent goto={() => navigation.navigate('NewOrder')} />
       <LoaderShimmerComponent isLoading={ordersLoading} />
