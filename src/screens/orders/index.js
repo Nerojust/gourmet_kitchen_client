@@ -22,19 +22,55 @@ import {fp} from '../../utils/responsive-screen';
 // create a component
 const OrdersScreen = ({navigation}) => {
   const dispatch = useDispatch();
-  const {orders,error, ordersLoading} = useSelector(state => state.orders);
+  const {orders, error, ordersLoading} = useSelector(state => state.orders);
   const [isRefreshing, setIsRefreshing] = useState(false);
- //console.log('redux orders', orders.length);
+  const [completedOrdersArray, setCompletedOrdersArray] = useState([]);
+  const [inCompleteOrdersArray, setIncompleteOrdersArray] = useState([]);
+  const [pendingOrdersArray, setPendingOrdersArray] = useState([]);
+  //console.log('redux orders', orders.length);
+  const [orderState, setOrderState] = useState('pending');
+  let pendingArray = [];
+  let completeArray = [];
+  let incompleteArray = [];
 
   useEffect(() => {
-   fetchAllData("pending")
+    fetchAllData('pending');
   }, []);
 
-  const fetchAllData=(status)=>{
+  // useEffect(() => {
+  //   let count = 0;
+  //   let unfulfilledCount = 0;
+  //   orders.forEach((item, i) => {
+  //     item.products.map((product, i) => {
+  //       //console.log('item', product);
+  //       if (product.isfulfilled) {
+  //         count++;
+  //       } else {
+  //         unfulfilledCount++;
+  //       }
+  //       if (count == item.products.length) {
+  //         completeArray.push(item);
+  //       }
+  //       if (unfulfilledCount == item.products.length) {
+  //         pendingArray.push(item);
+  //       } else {
+  //         incompleteArray.push(item);
+  //       }
+  //     });
+  //     setPendingOrdersArray(pendingArray);
+  //     setCompletedOrdersArray(completeArray);
+  //     setIncompleteOrdersArray(incompleteArray);
+  //     pendingArray.length = 0;
+  //     completeArray.length = 0;
+  //     incompleteArray.length = 0;
+  //   });
+  // }, [orders, orderState]);
+
+  const fetchAllData = status => {
     dispatch(getAllOrderedProducts(status));
-  }
+  };
   const onRefresh = async () => {
-    fetchAllData("pending")
+    fetchAllData('pending');
     setIsRefreshing(false);
   };
   const handleClick = item => {
@@ -46,7 +82,11 @@ const OrdersScreen = ({navigation}) => {
     return <OrderProductComponent item={item} handleClick={handleClick} />;
   };
   const handleStateDispatch = state => {
-    fetchAllData(state)
+    fetchAllData(state);
+    // setPendingOrdersArray([]);
+    // setCompletedOrdersArray([]);
+    // setIncompleteOrdersArray([]);
+    // setOrderState(state);
   };
   const renderHeaderView = () => {
     return (
@@ -89,10 +129,17 @@ const OrdersScreen = ({navigation}) => {
       <HeaderComponent name="Orders" isDashboard />
       {renderHeaderView()}
       <FlatList
-        data={orders.sort()}
+        data={orders}
+        // data={
+        //   orderState == 'pending'
+        //     ? pendingOrdersArray
+        //     : orderState == 'completed'
+        //     ? completedOrdersArray
+        //     : inCompleteOrdersArray
+        // }
         renderItem={renderItems}
         keyExtractor={item => item.id}
-         refreshControl={
+        refreshControl={
           <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
         }
         ListEmptyComponent={
@@ -113,7 +160,6 @@ const OrdersScreen = ({navigation}) => {
             ) : null}
           </View>
         }
-       
       />
       <AddComponent goto={() => navigation.navigate('NewOrder')} />
       <LoaderShimmerComponent isLoading={ordersLoading} />
