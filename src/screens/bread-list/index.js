@@ -19,7 +19,7 @@ const BreadListScreen = ({navigation}) => {
   const dispatch = useDispatch();
   const [isRefreshing, setIsRefreshing] = useState(false);
   const {orderedProducts, ordersLoading} = useSelector(x => x.orders);
-  //console.log('products', orderedProducts);
+  //console.log('products', orderedProducts.length);
 
   useEffect(() => {
     fetchAllData();
@@ -64,6 +64,24 @@ const BreadListScreen = ({navigation}) => {
               <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
             }
             keyExtractor={item => Math.random()}
+            ListEmptyComponent={
+              <View>
+                {!ordersLoading ? (
+                  <View
+                    style={{
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      flex: 1,
+                      top: 300,
+                    }}>
+                    <ProductSans
+                      style={{fontSize: 16, color: COLOURS.textInputColor}}>
+                      No record found
+                    </ProductSans>
+                  </View>
+                ) : null}
+              </View>
+            }
           />
 
           <LoaderShimmerComponent isLoading={ordersLoading} />

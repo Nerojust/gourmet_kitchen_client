@@ -37,35 +37,6 @@ const OrdersScreen = ({navigation}) => {
     fetchAllData('pending');
   }, []);
 
-  // useEffect(() => {
-  //   let count = 0;
-  //   let unfulfilledCount = 0;
-  //   orders.forEach((item, i) => {
-  //     item.products.map((product, i) => {
-  //       //console.log('item', product);
-  //       if (product.isfulfilled) {
-  //         count++;
-  //       } else {
-  //         unfulfilledCount++;
-  //       }
-  //       if (count == item.products.length) {
-  //         completeArray.push(item);
-  //       }
-  //       if (unfulfilledCount == item.products.length) {
-  //         pendingArray.push(item);
-  //       } else {
-  //         incompleteArray.push(item);
-  //       }
-  //     });
-  //     setPendingOrdersArray(pendingArray);
-  //     setCompletedOrdersArray(completeArray);
-  //     setIncompleteOrdersArray(incompleteArray);
-  //     pendingArray.length = 0;
-  //     completeArray.length = 0;
-  //     incompleteArray.length = 0;
-  //   });
-  // }, [orders, orderState]);
-
   const fetchAllData = status => {
     dispatch(getAllOrderedProducts(status));
   };
@@ -83,10 +54,6 @@ const OrdersScreen = ({navigation}) => {
   };
   const handleStateDispatch = state => {
     fetchAllData(state);
-    // setPendingOrdersArray([]);
-    // setCompletedOrdersArray([]);
-    // setIncompleteOrdersArray([]);
-    // setOrderState(state);
   };
   const renderHeaderView = () => {
     return (
@@ -130,13 +97,6 @@ const OrdersScreen = ({navigation}) => {
       {renderHeaderView()}
       <FlatList
         data={orders}
-        // data={
-        //   orderState == 'pending'
-        //     ? pendingOrdersArray
-        //     : orderState == 'completed'
-        //     ? completedOrdersArray
-        //     : inCompleteOrdersArray
-        // }
         renderItem={renderItems}
         keyExtractor={item => item.id}
         refreshControl={

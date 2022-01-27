@@ -67,12 +67,13 @@ const OrderProductComponent = ({item, handleClick}) => {
           <Text style={styles.bakedText}>
             {fulfilledQCount + ' of ' + quantityQCount + ' baked'}
           </Text>
-
-          <ColourComponent
-            colourType={
-              !item.products[0].isfulfilled ? colourResult : COLOURS.gray
-            }
-          />
+          {!item.isfulfilled ? (
+            <ColourComponent
+              colourType={
+                !item.products[0].isfulfilled ? colourResult : COLOURS.gray
+              }
+            />
+          ) : null}
         </View>
 
         <View style={{marginTop: 5}}>
@@ -80,13 +81,14 @@ const OrderProductComponent = ({item, handleClick}) => {
             {item?.products.length +
               (item?.products.length > 1 ? ' items' : ' item')}{' '}
           </ProductSansBold>
-          {colourResult == COLOURS.red ? (
+
+          {!item.isfulfilled && colourResult == COLOURS.red ? (
             <View style={{paddingTop: 5}}>
               <ProductSans style={styles.delayHeaderText}>
                 Delayed by
               </ProductSans>
               <ProductSans style={styles.delayText}>
-                {getReadableDateAndTime(item?.createdat)}{' '}
+                {getReadableDateAndTime(item?.createdat)}
               </ProductSans>
             </View>
           ) : (

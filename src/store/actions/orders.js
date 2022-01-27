@@ -56,7 +56,7 @@ export const getAllOrderedProducts = (status = 'pending') => {
       error: null,
     });
     var getUrl = `/orders?status=${status}`;
-    //console.log("geturl", getUrl);
+    console.log("geturl", getUrl);
     return client
       .get(getUrl)
       .then(response => {
