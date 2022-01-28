@@ -5,8 +5,8 @@ import axios from 'axios';
 // const baseURL = 'https://zupa-api.dev.intelia.io'; //dev link
 //const baseURL = 'https://zupa-prod-api.dev.intelia.io'; //prod link
 
- const baseURL = "http://localhost:8089/api/"
-//const baseURL = "https://gourmet-kitchen-api-oq8ef.ondigitalocean.app/api/"
+// const baseURL = "http://localhost:8089/api/"
+const baseURL = "https://gourmet-kitchen-api-oq8ef.ondigitalocean.app/api/"
 
 let client = axios.create({
   baseURL,

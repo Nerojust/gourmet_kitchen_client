@@ -1,5 +1,5 @@
 //import liraries
-import React, {Component, useState,useEffect, useRef} from 'react';
+import React, {Component, useState, useEffect, useRef} from 'react';
 import {
   View,
   Text,
@@ -47,6 +47,7 @@ import {useSelector} from 'react-redux';
 import {IMAGES} from '../../utils/Images';
 import CustomSuccessModal from '../../components/CustomSuccessModal';
 import {createOrder} from '../../store/actions/orders';
+import LoaderShimmerComponent from '../../components/LoaderShimmerComponent';
 
 // create a component
 const NewOrderScreen = ({navigation}) => {
@@ -72,10 +73,10 @@ const NewOrderScreen = ({navigation}) => {
   const [isProductSelected, setIsProductSelected] = useState(false);
   var basketArray = [];
   const [newBasketArray, setNewBasketArray] = useState(basketArray);
-
+  const {createOrderLoading} = useSelector(x => x.orders);
 
   useEffect(() => {
-    dispatch(getAllZupaProducts())
+    dispatch(getAllZupaProducts());
   }, []);
   const addDetailsToOrderSummary = () => {
     if (selectedProduct?.name != null) {
@@ -473,6 +474,7 @@ const NewOrderScreen = ({navigation}) => {
             renderItem={null}
             //keyExtractor={item => Date.now()}
           />
+          <LoaderShimmerComponent isLoading={createOrderLoading} />
         </KeyboardObserverComponent>
       </DismissKeyboard>
     </ViewProviderComponent>

@@ -26,7 +26,7 @@ import {getAllZupaProducts} from '../../store/actions/products';
 // create a component
 const OrdersScreen = ({navigation}) => {
   const dispatch = useDispatch();
-  const {orders, error, ordersLoading} = useSelector(state => state.orders);
+  const {orders, createOrderLoading,error, ordersLoading} = useSelector(state => state.orders);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
@@ -34,7 +34,7 @@ const OrdersScreen = ({navigation}) => {
   }, []);
 
   useEffect(() => {
-    //dispatch(getAllZupaProducts())
+    dispatch(getAllZupaProducts())
   }, []);
 
   const fetchAllData = status => {

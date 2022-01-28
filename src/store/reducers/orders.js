@@ -5,6 +5,7 @@ const initialState = {
   orderedProducts:[],
   order:{},
   ordersLoading: false,
+  createOrderLoading:false,
   updateOrderLoading:false,
   isOrderUpdated:false,
   error: '',
@@ -24,7 +25,26 @@ export default (state = initialState, action) => {
         orders: [],
       };
 
-    case 'GET_SINGLE_ORDERED_PRODUCTS_PENDING':
+    case 'CREATE_ORDER_PENDING':
+      return {
+        ...state,
+        createOrderLoading: action.loading,
+      };
+    case 'CREATE_ORDER_SUCCESS':
+      return {
+        ...state,
+        order: action.data,
+        createOrderLoading: action.loading,
+      };
+    case 'CREATE_ORDER_FAILED':
+      return {
+        ...state,
+        createOrderLoading: action.loading,
+        error: action.error,
+      };
+  
+  
+      case 'GET_SINGLE_ORDERED_PRODUCTS_PENDING':
       return {
         ...state,
         ordersLoading: action.loading,
