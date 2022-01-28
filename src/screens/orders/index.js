@@ -36,7 +36,7 @@ const OrdersScreen = ({navigation}) => {
   useEffect(() => {
     //dispatch(getAllZupaProducts())
   }, []);
-  
+
   const fetchAllData = status => {
     dispatch(getAllOrderedProducts(status));
   };
@@ -82,7 +82,7 @@ const OrdersScreen = ({navigation}) => {
           </ProductSans>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => handleStateDispatch('complete')}>
+        <TouchableOpacity onPress={() => handleStateDispatch('completed')}>
           <ProductSans
             style={{
               fontSize: fp(15),

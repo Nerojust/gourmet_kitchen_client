@@ -1,5 +1,5 @@
 //import liraries
-import React, {Component, useState, useRef} from 'react';
+import React, {Component, useState,useEffect, useRef} from 'react';
 import {
   View,
   Text,
@@ -35,7 +35,7 @@ import {
 import {BackViewMoreSettings} from '../../components/Header';
 import useKeyboardHeight from 'react-native-use-keyboard-height';
 
-import {getAllProducts} from '../../store/actions/products';
+import {getAllProducts, getAllZupaProducts} from '../../store/actions/products';
 import {BottomSheetProductComponent} from '../../components/BottomSheetComponent';
 import QuantityProductComponent from '../../components/QuantityProductComponent';
 import {ACTIVE_OPACITY, DIALOG_TIMEOUT} from '../../utils/Constants';
@@ -73,6 +73,10 @@ const NewOrderScreen = ({navigation}) => {
   var basketArray = [];
   const [newBasketArray, setNewBasketArray] = useState(basketArray);
 
+
+  useEffect(() => {
+    dispatch(getAllZupaProducts())
+  }, []);
   const addDetailsToOrderSummary = () => {
     if (selectedProduct?.name != null) {
       //console.log("selected", selectedProduct);
