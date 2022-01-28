@@ -2,7 +2,8 @@ import client from '../../utils/Api';
 import client2 from '../../utils/Api';
 import {handleError, LIMIT_FIGURE} from '../../utils/utils';
 import {dateFilterParser} from './../../utils/DateFilter';
-import {APP_TOKEN} from '../../utils/Constants'
+import {APP_TOKEN} from '../../utils/Constants';
+import { getAllOrderedProductsStats } from './orders';
 
 export const clearProductsArray = () => {
   return dispatch => {
@@ -10,6 +11,55 @@ export const clearProductsArray = () => {
       type: 'PRODUCT_DATA',
     });
     console.log('cleared products redux array');
+  };
+};
+
+export const getAllZupaProducts = status => {
+  console.log('About to zupa products');
+  return dispatch => {
+    dispatch({
+      type: 'GET_ALL_ZUPA_PRODUCTS_PENDING',
+      loading: true,
+      error: null,
+    });
+    var getUrl = `/productsToday`;
+    //console.log("geturl", getUrl);
+    return client
+      .get(getUrl)
+      .then(response => {
+        if (response?.data) {
+          console.log(
+            'ZUPA products gotten successfully',
+            response?.data?.message,
+          );
+          if (response?.data?.isSuccessful) {
+            dispatch({
+              type: 'GET_ALL_ZUPA_PRODUCTS_SUCCESS',
+              loading: false,
+              data: response?.data?.results,
+              message: response.data?.message,
+            });
+           
+            //alert(response?.data?.message);
+            return response?.data?.results;
+          } else {
+            dispatch({
+              type: 'GET_ALL_ZUPA_PRODUCTS_FAILED',
+              loading: false,
+              error: response?.data?.message,
+            });
+          }
+        }
+      })
+      .catch(error => {
+        console.log('zupa products getting failed', error);
+        handleError(error, dispatch, 'get orders list');
+        dispatch({
+          type: 'GET_ALL_ZUPA_PRODUCTS_FAILED',
+          loading: false,
+          error: error.message,
+        });
+      });
   };
 };
 

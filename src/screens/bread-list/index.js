@@ -13,12 +13,14 @@ import BreadListItemComponent from '../../components/BreadListItemComponent';
 import ProductSans from '../../components/Text/ProductSans';
 import {fp} from '../../utils/responsive-screen';
 import {getAllOrderedProductsStats} from '../../store/actions/orders';
+import { getAllZupaProducts } from '../../store/actions/products';
 
 // create a component
 const BreadListScreen = ({navigation}) => {
   const dispatch = useDispatch();
   const [isRefreshing, setIsRefreshing] = useState(false);
   const {orderedProducts, ordersLoading} = useSelector(x => x.orders);
+  const {products, productsLoading} = useSelector(x => x.products);
   //console.log('products', orderedProducts.length);
 
   useEffect(() => {
@@ -42,6 +44,12 @@ const BreadListScreen = ({navigation}) => {
     setIsRefreshing(false);
   };
 
+  const handleRefreshZupaProducts=()=>{
+    console.log("refreshing action")
+    dispatch(getAllOrderedProductsStats());
+    dispatch(getAllZupaProducts())
+  }
+
   return (
     <ViewProviderComponent>
       <DismissKeyboard>
@@ -49,6 +57,8 @@ const BreadListScreen = ({navigation}) => {
           <BackViewMoreSettings
             backText="Bread List"
             onClose={() => navigation.goBack()}
+            shouldDisplayRefresh
+            handleRefresh={handleRefreshZupaProducts}
           />
 
           <View>
@@ -84,6 +94,7 @@ const BreadListScreen = ({navigation}) => {
             }
           />
 
+          {/* <LoaderShimmerComponent isLoading={productsLoading} /> */}
           <LoaderShimmerComponent isLoading={ordersLoading} />
         </KeyboardObserverComponent>
       </DismissKeyboard>

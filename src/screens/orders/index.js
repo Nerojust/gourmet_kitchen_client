@@ -14,47 +14,52 @@ import HeaderComponent from '../../components/HeaderComponent';
 import LoaderShimmerComponent from '../../components/LoaderShimmerComponent';
 import OrderProductComponent from '../../components/OrderProductComponent';
 import ViewProviderComponent from '../../components/ViewProviderComponent';
-import {getAllOrderedProducts} from '../../store/actions/orders';
+import {
+  getAllOrderedProducts,
+  getAllOrderedProductsStats,
+} from '../../store/actions/orders';
 import ProductSans from '../../components/Text/ProductSans';
 import {COLOURS} from '../../utils/Colours';
 import {fp} from '../../utils/responsive-screen';
+import {getAllZupaProducts} from '../../store/actions/products';
 
 // create a component
 const OrdersScreen = ({navigation}) => {
   const dispatch = useDispatch();
   const {orders, error, ordersLoading} = useSelector(state => state.orders);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [completedOrdersArray, setCompletedOrdersArray] = useState([]);
-  const [inCompleteOrdersArray, setIncompleteOrdersArray] = useState([]);
-  const [pendingOrdersArray, setPendingOrdersArray] = useState([]);
-  //console.log('redux orders', orders.length);
-  const [orderState, setOrderState] = useState('pending');
-  let pendingArray = [];
-  let completeArray = [];
-  let incompleteArray = [];
 
   useEffect(() => {
     fetchAllData('pending');
   }, []);
 
+  useEffect(() => {
+    //dispatch(getAllZupaProducts())
+  }, []);
+  
   const fetchAllData = status => {
     dispatch(getAllOrderedProducts(status));
   };
+
   const onRefresh = async () => {
     fetchAllData('pending');
     setIsRefreshing(false);
   };
+
   const handleClick = item => {
     navigation.navigate('OrderDetails', {
       order: item,
     });
   };
+
   const renderItems = ({item, index}) => {
     return <OrderProductComponent item={item} handleClick={handleClick} />;
   };
+
   const handleStateDispatch = state => {
     fetchAllData(state);
   };
+
   const renderHeaderView = () => {
     return (
       <View
@@ -126,16 +131,6 @@ const OrdersScreen = ({navigation}) => {
     </ViewProviderComponent>
   );
 };
-
-// define your styles
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    //alignItems: 'center',
-    backgroundColor: COLOURS.zupa_gray_bg,
-  },
-});
 
 //make this component available to the app
 export default OrdersScreen;

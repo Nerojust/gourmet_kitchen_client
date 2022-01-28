@@ -3,22 +3,19 @@ import {
   StackCardInterpolationProps,
   StackNavigationOptions,
   TransitionSpecs,
-} from "@react-navigation/stack";
+} from '@react-navigation/stack';
 
 export const horizontalAnimation: StackNavigationOptions = {
   headerShown: false,
   detachPreviousScreen: true,
   gestureEnabled: true,
-  gestureDirection: "horizontal",
+  gestureDirection: 'horizontal',
   transitionSpec: {
     open: TransitionSpecs.TransitionIOSSpec,
     close: TransitionSpecs.TransitionIOSSpec,
   },
   headerStyleInterpolator: HeaderStyleInterpolators.forFade,
-  cardStyleInterpolator: ({
-    current,
-    layouts,
-  }: StackCardInterpolationProps) => {
+  cardStyleInterpolator: ({current, layouts}: StackCardInterpolationProps) => {
     return {
       cardStyle: {
         transform: [
@@ -38,16 +35,13 @@ export const verticalAnimation: StackNavigationOptions = {
   headerShown: false,
   detachPreviousScreen: true,
   gestureEnabled: true,
-  gestureDirection: "vertical",
+  gestureDirection: 'vertical',
   transitionSpec: {
     open: TransitionSpecs.TransitionIOSSpec,
     close: TransitionSpecs.TransitionIOSSpec,
   },
   headerStyleInterpolator: HeaderStyleInterpolators.forSlideUp,
-  cardStyleInterpolator: ({
-    current,
-    layouts,
-  }: StackCardInterpolationProps) => {
+  cardStyleInterpolator: ({current, layouts}: StackCardInterpolationProps) => {
     return {
       cardStyle: {
         transform: [

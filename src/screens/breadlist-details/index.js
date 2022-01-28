@@ -21,6 +21,7 @@ const BreadListDetailsScreen = ({navigation, route}) => {
   //console.log('bread details', route.params.bread);
   const [ovenCount, setOvenCount] = useState();
   const [pendingCount, setPendingCount] = useState('0');
+  const [surplusCount, setSurplusCount] = useState('0');
   const [isOvenCountFocused, setIsOvenCountFocused] = useState(false);
   var {productid, name, sum: count} = route.params.bread;
   const dispatch = useDispatch();
@@ -47,7 +48,7 @@ const BreadListDetailsScreen = ({navigation, route}) => {
           </ProductSansBold>
 
           <Averta style={styles.custName} numberOfLines={5}>
-            {parseInt(pendingCount)}
+            {parseInt(pendingCount) < 0 ? '0' : parseInt(pendingCount)}
           </Averta>
         </View>
 
@@ -58,6 +59,15 @@ const BreadListDetailsScreen = ({navigation, route}) => {
           </ProductSansBold>
           <Averta style={styles.address} numberOfLines={5}>
             {(ovenCount && ovenCount.toString()) || '0'}
+          </Averta>
+        </View>
+        <View
+          style={[styles.customerNameView, {paddingTop: 5, marginRight: 10}]}>
+          <ProductSansBold style={[styles.actiontext, {left: 0}]}>
+            SURPLUS
+          </ProductSansBold>
+          <Averta style={styles.address} numberOfLines={5}>
+            {surplusCount || '0'}
           </Averta>
         </View>
         <View
@@ -97,17 +107,24 @@ const BreadListDetailsScreen = ({navigation, route}) => {
 
   const handleOvenChange = text => {
     if (text) {
-      if (parseInt(text) > count) {
-        setPendingCount('0');
-        setOvenCount('');
-        alert('Number must be less than or equal to ' + count);
-        return
-      }
+      // if (parseInt(text) > count) {
+      //   setPendingCount('0');
+      //   setOvenCount('');
+      //   alert('Number must be less than or equal to ' + count);
+      //   return
+      // }
       setOvenCount(text);
       setPendingCount(count - text);
+      if (count - text < 0) {
+        console.log('surplus is ', text - count);
+        setSurplusCount(text - count);
+      } else {
+        setSurplusCount('0');
+      }
     } else {
       setPendingCount('0');
       setOvenCount('');
+      setSurplusCount('');
     }
   };
 
@@ -125,7 +142,7 @@ const BreadListDetailsScreen = ({navigation, route}) => {
       productid: productid,
     };
     console.log('payload', payload);
-    
+
     dispatch(updateOrderListProductCount(payload))
       .then((result, error) => {
         if (result) {

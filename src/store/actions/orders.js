@@ -2,6 +2,7 @@ import client from '../../utils/Api';
 import {dateFilterParser} from '../../utils/DateFilter';
 import {clearStorage, handleError} from '../../utils/utils';
 
+
 export const getAllOrderedProductsStats = status => {
   console.log('About to get all orders stats');
   return dispatch => {
