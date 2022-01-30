@@ -28,22 +28,20 @@ const OrdersScreen = ({navigation}) => {
   const dispatch = useDispatch();
   const {orders, createOrderLoading,error, ordersLoading} = useSelector(state => state.orders);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [statusState, setStatusState] = useState("pending")
 
   useEffect(() => {
-    fetchAllData('pending');
-  }, []);
-
-  useEffect(() => {
-    dispatch(getAllZupaProducts())
-  }, []);
-
+    fetchAllData(statusState);
+  }, [statusState]);
+  
   const fetchAllData = status => {
     dispatch(getAllOrderedProducts(status));
     dispatch(getAllProducts('', 0, 0, null))
+    dispatch(getAllZupaProducts())
   };
 
   const onRefresh = async () => {
-    fetchAllData('pending');
+    fetchAllData();
     setIsRefreshing(false);
   };
 
@@ -57,10 +55,6 @@ const OrdersScreen = ({navigation}) => {
     return <OrderProductComponent item={item} handleClick={handleClick} />;
   };
 
-  const handleStateDispatch = state => {
-    fetchAllData(state);
-  };
-
   const renderHeaderView = () => {
     return (
       <View
@@ -70,20 +64,20 @@ const OrdersScreen = ({navigation}) => {
           alignItems: 'center',
           paddingVertical: 10,
         }}>
-        <TouchableOpacity onPress={() => handleStateDispatch('pending')}>
+        <TouchableOpacity onPress={() => setStatusState('pending')}>
           <ProductSans
             style={{fontSize: fp(15), color: COLOURS.gray, fontWeight: '700'}}>
             Pending
           </ProductSans>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => handleStateDispatch('incomplete')}>
+        <TouchableOpacity onPress={() => setStatusState('incomplete')}>
           <ProductSans
             style={{fontSize: fp(15), color: COLOURS.red, fontWeight: '700'}}>
             Incomplete
           </ProductSans>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => handleStateDispatch('completed')}>
+        <TouchableOpacity onPress={() => setStatusState('completed')}>
           <ProductSans
             style={{
               fontSize: fp(15),

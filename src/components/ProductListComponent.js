@@ -152,12 +152,12 @@ const ProductListComponent = ({
               activeOpacity={1}
               onPress={() => Keyboard.dismiss()}>
               <EmptyComponent
-                title={'No products found'}
+                title={'No product/s found'}
                 image={IMAGES.noProducts}
                 style={{top: -160}}>
                 <TouchableOpacity
                   activeOpacity={ACTIVE_OPACITY}
-                  onPress={() => handleRefresh(true, false, false)}>
+                  onPress={handleRefresh}>
                   <ProductSansBold
                     style={[
                       styles.noResultText,
@@ -167,11 +167,11 @@ const ProductListComponent = ({
                   </ProductSansBold>
                 </TouchableOpacity>
 
-                <Averta style={{color: COLOURS.textInputColor, fontSize: 12}}>
+                {/* <Averta style={{color: COLOURS.textInputColor, fontSize: 12}}>
                   Click the icon to add products
-                </Averta>
+                </Averta> */}
               </EmptyComponent>
-              <AddComponent goto={handleAddProduct} />
+              {/* <AddComponent goto={handleAddProduct} /> */}
             </TouchableOpacity>
           )}
         </>

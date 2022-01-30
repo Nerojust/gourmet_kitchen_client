@@ -75,10 +75,11 @@ const NewOrderScreen = ({navigation}) => {
   const [newBasketArray, setNewBasketArray] = useState(basketArray);
   const {createOrderLoading} = useSelector(x => x.orders);
 
-  useEffect(() => {
+  // useEffect(() => {
     
-    dispatch(getAllZupaProducts());
-  }, []);
+  //   dispatch(getAllZupaProducts());
+  // }, []);
+
   const addDetailsToOrderSummary = () => {
     if (selectedProduct?.name != null) {
       //console.log("selected", selectedProduct);
@@ -123,10 +124,10 @@ const NewOrderScreen = ({navigation}) => {
     dismissBottomSheetDialog(productSheetRef);
   };
 
-  const handleRefreshIncaseOfNetworkFailure = isProduct => {
-    if (isProduct) {
+  const handleRefreshIncaseOfNetworkFailure =() => {
+
       dispatch(getAllProducts('', 0, 0, null));
-    }
+    
   };
   const renderProductBottomSheet = () => {
     return (
