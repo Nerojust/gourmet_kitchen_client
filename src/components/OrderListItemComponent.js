@@ -1,4 +1,5 @@
 //import liraries
+import moment from 'moment';
 import React, {Component} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
 import {COLOURS} from '../utils/Colours';
@@ -25,8 +26,8 @@ const OrderListItemComponent = ({item}) => {
           justifyContent: 'space-between',
           paddingVertical: 5,
         }}>
-        <ProductSans style={styles.labelText}>Product Name</ProductSans>
-        {item.isfulfilled ? (
+        <ProductSans style={styles.labelText}>PRODUCT NAME</ProductSans>
+        {item?.isfulfilled ? (
           <Image
             source={IMAGES.urlGood}
             style={{
@@ -46,20 +47,48 @@ const OrderListItemComponent = ({item}) => {
           flexDirection: 'row',
           justifyContent: 'space-between',
           paddingVertical: 5,
-          marginTop: 10,
+          marginTop: 3,
         }}>
         <View>
-          <ProductSans style={styles.labelText}>Price</ProductSans>
+          <ProductSans style={styles.labelText}>CATEGORY</ProductSans>
+          <ProductSans style={styles.priceName}>
+            {item?.category || 'None'}
+          </ProductSans>
+        </View>
+        <View>
+          <ProductSans style={styles.labelText}>SIZE</ProductSans>
+          <ProductSans style={styles.quantityName}>
+            {item?.productsize || 'None'}
+          </ProductSans>
+        </View>
+      </View>
+
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          paddingVertical: 5,
+        }}>
+        <View>
+          <ProductSans style={styles.labelText}>PRICE</ProductSans>
           <ProductSans style={styles.priceName}>
             {NAIRA}
             {formatNumberComma(price)}
           </ProductSans>
         </View>
         <View>
-          <ProductSans style={styles.labelText}>Quantity</ProductSans>
+          <ProductSans style={styles.labelText}>QUANTITY</ProductSans>
           <ProductSans style={styles.quantityName}>{quantity}</ProductSans>
         </View>
       </View>
+      {item?.isfulfilled ? (
+        <View style={{marginTop: 10}}>
+          <ProductSans style={styles.labelText}>UPDATED AT</ProductSans>
+          <ProductSans style={styles.priceName}>
+            {item.updatedat ? moment(item.updatedat).format('LLLL') : 'None'}
+          </ProductSans>
+        </View>
+      ) : null}
     </View>
   );
 };

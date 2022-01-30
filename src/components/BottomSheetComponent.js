@@ -27,7 +27,7 @@ export function BottomSheetProductComponent({
       closeOnDragDown={true}
       closeOnPressMask={true}
       closeOnPressBack={true}
-      keyboardAvoidingViewEnabled={false}
+      keyboardAvoidingViewEnabled={true}
       //height={deviceHeight / 1.04}
       height={Platform.OS == 'ios' ? deviceHeight / 1.04 : deviceHeight / 1.055}
       customStyles={{

@@ -79,30 +79,30 @@ export const AppStack = () => {
                   </TouchableOpacity>
                 );
 
-              // case 'StoreSalesStack':
-              //   return (
-              //     <TouchableOpacity
-              //       style={styles.mainView}
-              //       activeOpacity={0.6}
-              //       onPress={() => navigation.navigate('StoreSalesStack')}>
-              //       <Image
-              //         source={
-              //           focused
-              //             ? IMAGES.activeDashboard
-              //             : IMAGES.inActiveDashboard
-              //         }
-              //         resizeMode={'contain'}
-              //         style={[styles.productImage]}
-              //       />
-              //       <ProductSans
-              //         style={[
-              //           styles.textStyle,
-              //           !focused ? {color: COLOURS.gray3} : null,
-              //         ]}>
-              //         Store Sales
-              //       </ProductSans>
-              //     </TouchableOpacity>
-              //   );
+              case 'StoreSalesStack':
+                return (
+                  <TouchableOpacity
+                    style={styles.mainView}
+                    activeOpacity={0.6}
+                    onPress={() => navigation.navigate('StoreSalesStack')}>
+                    <Image
+                      source={
+                        focused
+                          ? IMAGES.activeDashboard
+                          : IMAGES.inActiveDashboard
+                      }
+                      resizeMode={'contain'}
+                      style={[styles.productImage]}
+                    />
+                    <ProductSans
+                      style={[
+                        styles.textStyle,
+                        !focused ? {color: COLOURS.gray3} : null,
+                      ]}>
+                      Store Sales
+                    </ProductSans>
+                  </TouchableOpacity>
+                );
 
               default:
                 'OrdersStack';
@@ -111,10 +111,10 @@ export const AppStack = () => {
         })}>
         <Tab.Screen name="OrdersStack" component={OrderStackNavigator} />
         <Tab.Screen name="BreadListStack" component={BreadListStackNavigator} />
-        {/* <Tab.Screen
+        <Tab.Screen
           name="StoreSalesStack"
           component={StoreSalesStackNavigator}
-        /> */}
+        />
       </Tab.Navigator>
     </NavigationContainer>
   );

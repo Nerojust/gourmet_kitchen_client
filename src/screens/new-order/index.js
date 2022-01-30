@@ -76,6 +76,7 @@ const NewOrderScreen = ({navigation}) => {
   const {createOrderLoading} = useSelector(x => x.orders);
 
   useEffect(() => {
+    
     dispatch(getAllZupaProducts());
   }, []);
   const addDetailsToOrderSummary = () => {
@@ -299,7 +300,7 @@ const NewOrderScreen = ({navigation}) => {
           justifyContent: 'center',
           marginBottom:
             keyboardHeight > 0 ? (Platform.OS == 'ios' ? 250 : 100) : 20,
-          backgroundColor: COLOURS.zupaBlue,
+          backgroundColor: COLOURS.blue,
           height: 50,
           borderRadius: 10,
           marginHorizontal: 20,
@@ -336,6 +337,7 @@ const NewOrderScreen = ({navigation}) => {
           id: data?.selectedProduct?.baseProductId,
           quantity: data?.quantity,
           price: data?.selectedProduct?.unitPrice,
+          size: data?.selectedProduct?.categorySize?.name
         };
         productArray.push(item);
       });
@@ -453,7 +455,7 @@ const NewOrderScreen = ({navigation}) => {
     dismissTextInput(fullNameRef);
     showBottomSheet(productSheetRef);
 
-    dispatch(getAllProducts('', 0, 0, null));
+    //dispatch(getAllProducts('', 0, 0, null));
   };
 
   return (

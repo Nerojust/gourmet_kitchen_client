@@ -21,7 +21,7 @@ import {
 import ProductSans from '../../components/Text/ProductSans';
 import {COLOURS} from '../../utils/Colours';
 import {fp} from '../../utils/responsive-screen';
-import {getAllZupaProducts} from '../../store/actions/products';
+import {getAllProducts, getAllZupaProducts} from '../../store/actions/products';
 
 // create a component
 const OrdersScreen = ({navigation}) => {
@@ -39,6 +39,7 @@ const OrdersScreen = ({navigation}) => {
 
   const fetchAllData = status => {
     dispatch(getAllOrderedProducts(status));
+    dispatch(getAllProducts('', 0, 0, null))
   };
 
   const onRefresh = async () => {

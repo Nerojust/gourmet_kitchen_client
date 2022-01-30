@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19162" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
-    <device id="retina4_7" orientation="portrait" appearance="light"/>
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19144"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -14,22 +13,40 @@
             <objects>
                 <viewController id="01J-lp-oVM" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Ze5-6b-2t3">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Zupa Kitchen" textAlignment="center" lineBreakMode="middleTruncation" baselineAdjustment="alignBaselines" minimumFontSize="18" translatesAutoresizingMaskIntoConstraints="NO" id="GJd-Yh-RWb">
-                                <rect key="frame" x="0.0" y="312" width="375" height="43"/>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="36"/>
-                                <color key="textColor" systemColor="tintColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="splashscreen" highlighted="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xBz-mg-yT2">
+                                <rect key="frame" x="123" y="222" width="168" height="452"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="188" id="RQY-aQ-D1L"/>
+                                    <constraint firstAttribute="height" constant="465" id="v72-eH-TGP"/>
+                                </constraints>
+                            </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Bcu-3y-fUS"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="Bcu-3y-fUS" firstAttribute="centerX" secondItem="GJd-Yh-RWb" secondAttribute="centerX" id="Q3B-4B-g5h"/>
-                            <constraint firstItem="GJd-Yh-RWb" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="bottom" multiplier="1/3" constant="1" id="moa-c2-u7t"/>
-                            <constraint firstItem="GJd-Yh-RWb" firstAttribute="leading" secondItem="Bcu-3y-fUS" secondAttribute="leading" symbolic="YES" id="x7j-FC-K8j"/>
+                            <constraint firstItem="xBz-mg-yT2" firstAttribute="top" secondItem="Bcu-3y-fUS" secondAttribute="top" constant="172" id="2m1-nb-G4C"/>
+                            <constraint firstItem="Bcu-3y-fUS" firstAttribute="bottom" secondItem="xBz-mg-yT2" secondAttribute="bottom" constant="181" id="3gR-6I-qK8"/>
+                            <constraint firstItem="xBz-mg-yT2" firstAttribute="trailing" secondItem="Bcu-3y-fUS" secondAttribute="trailing" constant="-113" id="7h2-HB-nxl"/>
+                            <constraint firstItem="xBz-mg-yT2" firstAttribute="top" secondItem="Bcu-3y-fUS" secondAttribute="top" constant="172" id="7vf-HO-ptf"/>
+                            <constraint firstItem="xBz-mg-yT2" firstAttribute="leading" secondItem="Bcu-3y-fUS" secondAttribute="leading" constant="113" id="HFc-pa-hRb"/>
+                            <constraint firstItem="xBz-mg-yT2" firstAttribute="leading" secondItem="Bcu-3y-fUS" secondAttribute="leading" constant="113" id="O0u-Bd-Ig0"/>
+                            <constraint firstItem="xBz-mg-yT2" firstAttribute="leading" secondItem="Bcu-3y-fUS" secondAttribute="leading" constant="113" id="O9C-z1-a7d"/>
+                            <constraint firstItem="Bcu-3y-fUS" firstAttribute="bottom" secondItem="xBz-mg-yT2" secondAttribute="bottom" constant="181" id="OeU-uL-ZJi"/>
+                            <constraint firstItem="xBz-mg-yT2" firstAttribute="top" secondItem="Bcu-3y-fUS" secondAttribute="top" constant="172" id="Yfj-Jp-JHB"/>
+                            <constraint firstItem="xBz-mg-yT2" firstAttribute="top" secondItem="Bcu-3y-fUS" secondAttribute="top" constant="172" id="Z6g-x9-ppR"/>
+                            <constraint firstItem="xBz-mg-yT2" firstAttribute="leading" secondItem="Bcu-3y-fUS" secondAttribute="leading" constant="113" id="bSM-Wj-oK7"/>
+                            <constraint firstItem="xBz-mg-yT2" firstAttribute="bottom" secondItem="Bcu-3y-fUS" secondAttribute="bottom" constant="-181" id="bYf-ea-8XP"/>
+                            <constraint firstItem="Bcu-3y-fUS" firstAttribute="bottom" secondItem="xBz-mg-yT2" secondAttribute="bottom" constant="181" id="fpW-n3-8DI"/>
+                            <constraint firstItem="xBz-mg-yT2" firstAttribute="trailing" secondItem="Bcu-3y-fUS" secondAttribute="trailing" constant="-113" id="hda-0o-eLx"/>
+                            <constraint firstItem="xBz-mg-yT2" firstAttribute="trailing" secondItem="Bcu-3y-fUS" secondAttribute="trailing" constant="-113" id="knx-0p-XeR"/>
+                            <constraint firstItem="xBz-mg-yT2" firstAttribute="leading" secondItem="Bcu-3y-fUS" secondAttribute="leading" constant="113" id="nud-W6-Wbj"/>
+                            <constraint firstItem="xBz-mg-yT2" firstAttribute="trailing" secondItem="Bcu-3y-fUS" secondAttribute="trailing" constant="-113" id="tQv-60-x4X"/>
+                            <constraint firstItem="Bcu-3y-fUS" firstAttribute="trailing" secondItem="xBz-mg-yT2" secondAttribute="trailing" constant="113" id="u9k-jD-dKh"/>
+                            <constraint firstItem="Bcu-3y-fUS" firstAttribute="bottom" secondItem="xBz-mg-yT2" secondAttribute="bottom" constant="181" id="wR4-5O-Kod"/>
+                            <constraint firstItem="xBz-mg-yT2" firstAttribute="top" secondItem="Bcu-3y-fUS" secondAttribute="top" constant="172" id="xt9-JF-Z6v"/>
                         </constraints>
                     </view>
                 </viewController>
@@ -39,11 +56,9 @@
         </scene>
     </scenes>
     <resources>
+        <image name="splashscreen" width="512" height="512"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
-        <systemColor name="tintColor">
-            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

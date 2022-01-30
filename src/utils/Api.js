@@ -1,25 +1,18 @@
 import axios from 'axios';
 
-//const baseURL = 'https://dev.api.zupa.ng'; //new dev link
-//const baseURL = 'https://api.zupa.ng'; //new prod link
-// const baseURL = 'https://zupa-api.dev.intelia.io'; //dev link
-//const baseURL = 'https://zupa-prod-api.dev.intelia.io'; //prod link
-
-// const baseURL = "http://localhost:8089/api/"
-const baseURL = "https://gourmet-kitchen-api-oq8ef.ondigitalocean.app/api/"
+const baseURL = "http://localhost:8089/api/"
+//const baseURL = 'https://gourmet-kitchen-api-oq8ef.ondigitalocean.app/api/';
 
 let client = axios.create({
   baseURL,
 });
-
-
 
 client.interceptors.response.use(
   function (response) {
     //console.log("rrhhhhhr", response)
     return Promise.resolve(response);
   },
-  (error) => {
+  error => {
     //console.log("errrrrrrorrr", error)
     //return Promise.reject(error);
     if (error?.response?.status === 401) {

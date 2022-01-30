@@ -15,9 +15,9 @@ import OrderListItemComponent from '../../components/OrderListItemComponent';
 
 // create a component
 const OrderDetailsScreen = ({navigation, route}) => {
-  //console.log('order details', route.params.order);
+  console.log('order details', route.params.order);
   var orderItems = route.params.order.products;
-  var {name, status, createdat} = route.params.order;
+  var {name, status, createdat, updatedat, isfulfilled} = route.params.order;
 
   const renderDetails = () => {
     return (
@@ -43,6 +43,18 @@ const OrderDetailsScreen = ({navigation, route}) => {
             {createdat ? moment(createdat).format('LLLL') : 'None'}
           </Averta>
         </View>
+        {isfulfilled ? (
+          <View
+            style={[styles.customerNameView, {paddingTop: 5, marginRight: 10}]}>
+            <ProductSansBold
+              style={[styles.labelText, {paddingBottom: 12, left: 0}]}>
+              FULFILLED DATE
+            </ProductSansBold>
+            <Averta style={styles.address}>
+              {createdat ? moment(createdat).format('LLLL') : 'None'}
+            </Averta>
+          </View>
+        ) : null}
 
         <View
           style={[
