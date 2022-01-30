@@ -75,11 +75,6 @@ const NewOrderScreen = ({navigation}) => {
   const [newBasketArray, setNewBasketArray] = useState(basketArray);
   const {createOrderLoading} = useSelector(x => x.orders);
 
-  // useEffect(() => {
-    
-  //   dispatch(getAllZupaProducts());
-  // }, []);
-
   const addDetailsToOrderSummary = () => {
     if (selectedProduct?.name != null) {
       //console.log("selected", selectedProduct);
@@ -124,10 +119,8 @@ const NewOrderScreen = ({navigation}) => {
     dismissBottomSheetDialog(productSheetRef);
   };
 
-  const handleRefreshIncaseOfNetworkFailure =() => {
-
-      dispatch(getAllProducts('', 0, 0, null));
-    
+  const handleRefreshIncaseOfNetworkFailure = () => {
+    dispatch(getAllProducts('', 0, 0, null));
   };
   const renderProductBottomSheet = () => {
     return (
@@ -174,6 +167,7 @@ const NewOrderScreen = ({navigation}) => {
       setProductInputValue(text);
     }
   };
+  
   const renderInputFields = () => {
     return (
       <>
@@ -298,9 +292,10 @@ const NewOrderScreen = ({navigation}) => {
         onPress={handleAddProduct}
         style={{
           marginTop: 5,
+          
           justifyContent: 'center',
           marginBottom:
-            keyboardHeight > 0 ? (Platform.OS == 'ios' ? 250 : 100) : 20,
+            keyboardHeight > 0 ? (Platform.OS == 'ios' ? 270 : 100) : 20,
           backgroundColor: COLOURS.blue,
           height: 50,
           borderRadius: 10,
@@ -338,7 +333,7 @@ const NewOrderScreen = ({navigation}) => {
           id: data?.selectedProduct?.baseProductId,
           quantity: data?.quantity,
           price: data?.selectedProduct?.unitPrice,
-          size: data?.selectedProduct?.categorySize?.name
+          size: data?.selectedProduct?.categorySize?.name,
         };
         productArray.push(item);
       });

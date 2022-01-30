@@ -45,7 +45,7 @@ const BreadListScreen = ({navigation}) => {
   };
 
   const handleRefreshZupaProducts=()=>{
-    console.log("refreshing action")
+    //console.log("refreshing action")
     dispatch(getAllOrderedProductsStats());
     dispatch(getAllZupaProducts())
   }
@@ -55,17 +55,13 @@ const BreadListScreen = ({navigation}) => {
       <DismissKeyboard>
         <KeyboardObserverComponent>
           <BackViewMoreSettings
-            backText="Bread List"
+            backText="Pending Bread List"
             onClose={() => navigation.goBack()}
             shouldDisplayRefresh
             handleRefresh={handleRefreshZupaProducts}
           />
 
-          <View>
-            <ProductSans style={styles.pendingBreadListText}>
-              Pending Bread List
-            </ProductSans>
-          </View>
+       
           <FlatList
             data={orderedProducts}
             keyboardShouldPersistTaps={'handled'}

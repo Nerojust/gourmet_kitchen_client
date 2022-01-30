@@ -280,9 +280,9 @@ export function getColourCode(stringDate) {
   var min = sec / 60;
   //console.log('min time is ', parseInt(min));
   if (min < 10) {
-    colourType = COLOURS.green2;
+    //colourType = COLOURS.green2;
   } else if (min < 20) {
-    colourType = COLOURS.yellow1;
+    //colourType = COLOURS.yellow1;
   } else if (min > 30) {
     colourType = COLOURS.red;
   } else {

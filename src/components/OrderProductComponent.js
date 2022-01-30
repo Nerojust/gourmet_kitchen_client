@@ -19,7 +19,11 @@ import ProductSansBold from './Text/ProductSansBold';
 // create a component
 const OrderProductComponent = ({item, handleClick}) => {
   //console.log("item",item.products[0].isfulfilled)
-  let productCount = 0;
+  var currDate = new Date();
+  var diffMs = currDate.getTime() - new Date(item?.createdat).getTime();
+  var sec = diffMs / 1000;
+  var min = sec / 60;
+
   let fulfilledQCount = 0;
   let quantityQCount = 0;
   let colourResult = getColourCode(item?.createdat);
@@ -67,13 +71,21 @@ const OrderProductComponent = ({item, handleClick}) => {
           <Text style={styles.bakedText}>
             {fulfilledQCount + ' of ' + quantityQCount + ' baked'}
           </Text>
-          {!item.isfulfilled ? (
+          {min > 30 ? (
             <ColourComponent
-              colourType={
-                !item.products[0].isfulfilled ? colourResult : COLOURS.gray
-              }
+              colourType={!item.products[0].isfulfilled ? colourResult : null}
             />
-          ) : null}
+          ) : (
+            <View
+              style={{
+                justifyContent: 'center',
+                alignItems: 'center',
+                backgroundColor: COLOURS.gray,
+                borderRadius: 20,
+                width: 15,
+                height: 15,
+              }}/>
+          )}
         </View>
 
         <View style={{marginTop: 5}}>
@@ -82,7 +94,7 @@ const OrderProductComponent = ({item, handleClick}) => {
               (item?.products.length > 1 ? ' items' : ' item')}{' '}
           </ProductSansBold>
 
-          {!item.isfulfilled && colourResult == COLOURS.red ? (
+          {!item.isfulfilled ? (
             <View style={{paddingTop: 5}}>
               <ProductSans style={styles.delayHeaderText}>
                 Delayed by

@@ -22,22 +22,27 @@ import ProductSans from '../../components/Text/ProductSans';
 import {COLOURS} from '../../utils/Colours';
 import {fp} from '../../utils/responsive-screen';
 import {getAllProducts, getAllZupaProducts} from '../../store/actions/products';
+import SliderTabComponent from '../../components/SliderTabComponent';
 
 // create a component
 const OrdersScreen = ({navigation}) => {
   const dispatch = useDispatch();
-  const {orders, createOrderLoading,error, ordersLoading} = useSelector(state => state.orders);
+  const {orders, createOrderLoading, error, ordersLoading} = useSelector(
+    state => state.orders,
+  );
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [statusState, setStatusState] = useState("pending")
+  const [statusState, setStatusState] = useState('pending');
+  const [selectedTab, setSelectedTab] = useState(0);
+  const [isTabClicked, setIsTabClicked] = useState(false);
 
   useEffect(() => {
     fetchAllData(statusState);
-  }, [statusState]);
-  
+  }, [statusState, selectedTab]);
+
   const fetchAllData = status => {
     dispatch(getAllOrderedProducts(status));
-    dispatch(getAllProducts('', 0, 0, null))
-    dispatch(getAllZupaProducts())
+    dispatch(getAllProducts('', 0, 0, null));
+    dispatch(getAllZupaProducts());
   };
 
   const onRefresh = async () => {
@@ -91,10 +96,47 @@ const OrdersScreen = ({navigation}) => {
     );
   };
 
+  const handlePendingOrders = () => {
+    selectTab(0);
+    setStatusState("pending")
+  };
+  const handleIncompleteOrders = () => {
+    selectTab(1);
+    setStatusState("incompleted")
+  };
+  const handleCompleteOrders = () => {
+    selectTab(2);
+    setStatusState("completed")
+  };
+
+  const selectTab = tabIndex => {
+    //tabRef.current.animateNextTransition();
+    if (tabIndex == 0) {
+      setSelectedTab(tabIndex);
+      setIsTabClicked(true);
+    } else if (tabIndex == 1) {
+      setSelectedTab(tabIndex);
+      setIsTabClicked(true);
+    } else if (tabIndex == 2) {
+      setSelectedTab(tabIndex);
+      setIsTabClicked(true);
+    }
+  };
+
   return (
     <ViewProviderComponent>
       <HeaderComponent name="Orders" isDashboard />
-      {renderHeaderView()}
+      {/* {renderHeaderView()} */}
+      <SliderTabComponent
+        isTabClicked={isTabClicked}
+        name1={'Pending'}
+        name2={'Incomplete'}
+        name3={'Complete'}
+        selectedTab={selectedTab}
+        onPress1={handlePendingOrders}
+        onPress2={handleIncompleteOrders}
+        onPress3={handleCompleteOrders}
+      />
       <FlatList
         data={orders}
         renderItem={renderItems}
