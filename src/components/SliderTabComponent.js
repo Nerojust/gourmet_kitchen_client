@@ -1,20 +1,20 @@
 //import liraries
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   View,
   StyleSheet,
   TouchableOpacity,
   Platform,
-  Animated
+  Animated,
 } from 'react-native';
 import {
   deviceHeight,
   deviceWidth,
   fp,
   hp,
-  wp
+  wp,
 } from '../utils/responsive-screen';
-import { COLOURS } from '../utils/Colours';
+import {COLOURS} from '../utils/Colours';
 import ProductSans from './Text/ProductSans';
 
 // create a component
@@ -28,7 +28,7 @@ const SliderTabComponent = ({
   onPress3,
   style,
   selectedTab,
-  isTabClicked
+  isTabClicked,
 }) => {
   const [active, setActive] = useState(0);
   const [xTabOne, setXTabOne] = useState(0);
@@ -36,10 +36,10 @@ const SliderTabComponent = ({
   const [xTabThree, setXTabThree] = useState(0);
   const [translateX, setTranslateX] = useState(new Animated.Value(0));
 
-  const handleSlide = (type) => {
+  const handleSlide = type => {
     Animated.timing(translateX, {
       toValue: type,
-      duration: 330
+      duration: 330,
     }).start();
   };
 
@@ -47,7 +47,7 @@ const SliderTabComponent = ({
     handleSlide(xTabOne);
     setActive(0);
     //setTimeout(() => {
-      onPress1();
+    onPress1();
     //}, 330);
   };
 
@@ -55,48 +55,43 @@ const SliderTabComponent = ({
     handleSlide(xTabTwo);
     setActive(1);
     //setTimeout(() => {
-      onPress2();
-   // }, 313);
+    onPress2();
+    // }, 313);
   };
 
   const pressed3 = () => {
     handleSlide(xTabThree);
     setActive(2);
     //setTimeout(() => {
-      onPress3();
+    onPress3();
     //}, 330);
   };
 
   return (
     <View style={styles.containerView}>
-      <View style={styles.parentView}>
+      <TouchableOpacity style={styles.parentView} activeOpacity={0.7}>
         <View style={styles.mainView}>
           <Animated.View style={styles.animatedStyle(translateX, active)} />
           <TouchableOpacity
             style={styles.tabView}
-            onLayout={(event) => setXTabOne(event.nativeEvent.layout.x)}
-            onPress={pressed1}
-          >
+            onLayout={event => setXTabOne(event.nativeEvent.layout.x)}
+            onPress={pressed1}>
             <ProductSans style={styles.allText(active)}>{name1}</ProductSans>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.tabView}
-            onLayout={(event) => setXTabTwo(event.nativeEvent.layout.x)}
-            onPress={pressed2}
-          >
-            <ProductSans style={styles.centerText(active)}>
-              {name2}
-            </ProductSans>
+            onLayout={event => setXTabTwo(event.nativeEvent.layout.x)}
+            onPress={pressed2}>
+            <ProductSans style={styles.centerText(active)}>{name2}</ProductSans>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.tabView}
-            onLayout={(event) => setXTabThree(event.nativeEvent.layout.x)}
-            onPress={pressed3}
-          >
+            onLayout={event => setXTabThree(event.nativeEvent.layout.x)}
+            onPress={pressed3}>
             <ProductSans style={styles.onlineText(active)}>{name3}</ProductSans>
           </TouchableOpacity>
         </View>
-      </View>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -105,25 +100,25 @@ const SliderTabComponent = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center'
+    justifyContent: 'center',
     // alignItems: "center",
     // backgroundColor: "#2c3e50",
   },
   titleTabText: {
     fontSize: fp(14),
-    color: COLOURS.labelTextColor
+    color: COLOURS.labelTextColor,
     //right: -10,
   },
   swipeView: {
     paddingTop: 3,
-    backgroundColor: COLOURS.white
+    backgroundColor: COLOURS.white,
   },
   tabView: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 20,
-    borderColor: COLOURS.blue
+    borderColor: COLOURS.blue,
   },
   sliderBg: {
     position: 'absolute',
@@ -136,7 +131,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: COLOURS.blue,
     borderRadius: 20,
-    paddingHorizontal: 5
+    paddingHorizontal: 5,
   },
   animatedStyle: (translateX, active) => ({
     position: 'absolute',
@@ -148,16 +143,16 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     transform: [
       {
-        translateX: translateX
-      }
-    ]
+        translateX: translateX,
+      },
+    ],
   }),
   mainView: {
     flexDirection: 'row',
     height: '100%',
     position: 'relative',
     width: '90%',
-    borderRadius: 20
+    borderRadius: 20,
   },
   parentView: {
     width: '70%',
@@ -168,29 +163,29 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 20,
-    backgroundColor: COLOURS.lightGray5
+    backgroundColor: COLOURS.lightGray5,
   },
   containerView: {
     //flex: 1,
     borderRadius: 20,
     paddingVertical: hp(3),
-    backgroundColor: COLOURS.white
+    backgroundColor: COLOURS.white,
   },
-  allText: (active) => ({
+  allText: active => ({
     color: active === 0 ? COLOURS.white : COLOURS.textInputColor,
     left: active == 0 ? wp(-5) : 0,
     textAlign: 'center',
-    fontSize: fp(14)
+    fontSize: fp(14),
   }),
-  centerText: (active) => ({
+  centerText: active => ({
     color: active === 1 ? COLOURS.white : COLOURS.textInputColor,
     textAlign: 'center',
-    fontSize: fp(14)
+    fontSize: fp(14),
   }),
-  onlineText: (active) => ({
+  onlineText: active => ({
     color: active === 2 ? COLOURS.white : COLOURS.textInputColor,
     textAlign: 'center',
-    fontSize: fp(14)
+    fontSize: fp(14),
   }),
   tabSelectorView: {
     flexDirection: 'row',
@@ -203,11 +198,11 @@ const styles = StyleSheet.create({
     //height:  Platform.OS == "ios" ? wp(deviceHeight * 0.040):wp(deviceHeight * 0.045),
     height: fp(40),
     backgroundColor: COLOURS.lightGray5,
-    borderRadius: 20
+    borderRadius: 20,
     //paddingHorizontal: 25,
     //overflow:"hidden"
     //flex: 1,
-  }
+  },
 });
 
 //make this component available to the app

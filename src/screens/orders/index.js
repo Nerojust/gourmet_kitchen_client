@@ -60,57 +60,21 @@ const OrdersScreen = ({navigation}) => {
     return <OrderProductComponent item={item} handleClick={handleClick} />;
   };
 
-  const renderHeaderView = () => {
-    return (
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-evenly',
-          alignItems: 'center',
-          paddingVertical: 10,
-        }}>
-        <TouchableOpacity onPress={() => setStatusState('pending')}>
-          <ProductSans
-            style={{fontSize: fp(15), color: COLOURS.gray, fontWeight: '700'}}>
-            Pending
-          </ProductSans>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => setStatusState('incomplete')}>
-          <ProductSans
-            style={{fontSize: fp(15), color: COLOURS.red, fontWeight: '700'}}>
-            Incomplete
-          </ProductSans>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={() => setStatusState('completed')}>
-          <ProductSans
-            style={{
-              fontSize: fp(15),
-              color: COLOURS.green3,
-              fontWeight: '700',
-            }}>
-            Complete
-          </ProductSans>
-        </TouchableOpacity>
-      </View>
-    );
-  };
-
   const handlePendingOrders = () => {
     selectTab(0);
-    setStatusState("pending")
+    setStatusState('pending');
   };
   const handleIncompleteOrders = () => {
     selectTab(1);
-    setStatusState("incompleted")
+    setStatusState('incompleted');
   };
   const handleCompleteOrders = () => {
     selectTab(2);
-    setStatusState("completed")
+    setStatusState('completed');
   };
 
   const selectTab = tabIndex => {
-    //tabRef.current.animateNextTransition();
+  
     if (tabIndex == 0) {
       setSelectedTab(tabIndex);
       setIsTabClicked(true);
@@ -126,7 +90,7 @@ const OrdersScreen = ({navigation}) => {
   return (
     <ViewProviderComponent>
       <HeaderComponent name="Orders" isDashboard />
-      {/* {renderHeaderView()} */}
+ 
       <SliderTabComponent
         isTabClicked={isTabClicked}
         name1={'Pending'}

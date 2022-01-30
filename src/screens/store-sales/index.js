@@ -1,14 +1,44 @@
 //import liraries
-import React, {Component} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
-import { COLOURS } from '../../utils/Colours';
-import { BackViewMoreSettings } from '../../components/Header';
-import { KeyboardObserverComponent } from '../../components/KeyboardObserverComponent';
+import React, {Component, useState, useEffect} from 'react';
+import {View, Text, StyleSheet, FlatList, RefreshControl} from 'react-native';
+import {COLOURS} from '../../utils/Colours';
+import {BackViewMoreSettings} from '../../components/Header';
+import {KeyboardObserverComponent} from '../../components/KeyboardObserverComponent';
 import ViewProviderComponent from '../../components/ViewProviderComponent';
-import { DismissKeyboard } from '../../utils/utils';
+import {DismissKeyboard} from '../../utils/utils';
+import AddComponent from '../../components/AddComponent';
+import LoaderShimmerComponent from '../../components/LoaderShimmerComponent';
+import ProductSans from '../../components/Text/ProductSans';
+import {useSelector, useDispatch} from 'react-redux';
+import {getAllSurplus} from '../../store/actions/surplus';
+import SurplusListItemComponent from '../../components/SurplusListItemComponent';
 
 // create a component
 const StoreSalesScreen = ({navigation}) => {
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const {surplus, surplusLoading, updateSurplusLoading, createSurplusLoading} =
+    useSelector(x => x.surplus);
+
+  //console.log('redux surplus', surplus);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getAllSurplus());
+  }, []);
+
+  const renderItems = ({item, index}) => {
+    return <SurplusListItemComponent item={item} handleClick={handleClick} />;
+  };
+
+  const handleClick = item => {
+    navigation.navigate('StoreSalesDetails', {
+      sales: item,
+    });
+  };
+  const onRefresh = () => {
+   // console.log('refreshed');
+    dispatch(getAllSurplus());
+  };
   return (
     <ViewProviderComponent>
       <DismissKeyboard>
@@ -17,7 +47,35 @@ const StoreSalesScreen = ({navigation}) => {
             backText="Store Sales"
             onClose={() => navigation.goBack()}
           />
-         
+
+          <FlatList
+            data={surplus}
+            renderItem={renderItems}
+            keyExtractor={item => item.id}
+            refreshControl={
+              <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+            }
+            ListEmptyComponent={
+              <View>
+                {!surplusLoading ? (
+                  <View
+                    style={{
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      flex: 1,
+                      top: 300,
+                    }}>
+                    <ProductSans
+                      style={{fontSize: 16, color: COLOURS.textInputColor}}>
+                      No record found
+                    </ProductSans>
+                  </View>
+                ) : null}
+              </View>
+            }
+          />
+
+          <LoaderShimmerComponent isLoading={surplusLoading} />
         </KeyboardObserverComponent>
       </DismissKeyboard>
     </ViewProviderComponent>
