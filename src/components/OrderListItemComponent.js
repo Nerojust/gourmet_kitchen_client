@@ -89,6 +89,15 @@ const OrderListItemComponent = ({item}) => {
           </ProductSans>
         </View>
       ) : null}
+     
+      {item?.ispartiallyfulfilled ? (
+        <View style={{marginTop: 10}}>
+          <ProductSans style={styles.labelText}>QUANTITY BAKED</ProductSans>
+          <ProductSans style={styles.priceName}>
+            {item?.fulfilledquantity} of {item?.quantity}
+          </ProductSans>
+        </View>
+      ) : null}
     </View>
   );
 };
