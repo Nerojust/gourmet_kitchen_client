@@ -94,6 +94,7 @@ export default (state = initialState, action) => {
       return {
         ...state,
         updateSurplusLoading: action.loading,
+        isSurplusUpdated:false
       };
     case 'UPDATE_SURPLUS_SUCCESS':
       return {

@@ -2,6 +2,14 @@ import client from '../../utils/Api';
 import {dateFilterParser} from '../../utils/DateFilter';
 import {clearStorage, handleError} from '../../utils/utils';
 
+export const setOrderStatus = status => {
+  return dispatch => {
+    dispatch({
+      type: 'SELECTED_ORDER_STATUS',
+      status: status,
+    });
+  };
+};
 
 export const getAllOrderedProductsStats = status => {
   console.log('About to get all orders stats');
@@ -57,7 +65,7 @@ export const getAllOrderedProducts = (status = 'pending') => {
       error: null,
     });
     var getUrl = `/orders?status=${status}`;
-    console.log("geturl", getUrl);
+    console.log('geturl', getUrl);
     return client
       .get(getUrl)
       .then(response => {
@@ -93,8 +101,8 @@ export const getAllOrderedProducts = (status = 'pending') => {
       });
   };
 };
-export const updateOrderListProductCount = payload => {
-  console.log('About to update oven count');
+export const updateOrderListProductCount = (payload, status) => {
+  console.log('About to update oven count with status', status);
   return dispatch => {
     dispatch({
       type: 'UPDATE_OVEN_COUNT_PENDING',
@@ -118,7 +126,7 @@ export const updateOrderListProductCount = payload => {
               data: response?.data?.results,
             });
             dispatch(getAllOrderedProductsStats());
-            dispatch(getAllOrderedProducts())
+            dispatch(getAllOrderedProducts(status));
             return response?.data?.results;
           } else {
             dispatch({
@@ -162,7 +170,7 @@ export const createOrder = orderPayload => {
             loading: false,
           });
           //alert('Order created successfully');
-          dispatch(getAllOrderedProducts("pending"));
+          dispatch(getAllOrderedProducts('pending'));
           return response.data?.results;
         }
       })

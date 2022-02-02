@@ -17,6 +17,7 @@ import ViewProviderComponent from '../../components/ViewProviderComponent';
 import {
   getAllOrderedProducts,
   getAllOrderedProductsStats,
+  setOrderStatus,
 } from '../../store/actions/orders';
 import ProductSans from '../../components/Text/ProductSans';
 import {COLOURS} from '../../utils/Colours';
@@ -35,14 +36,15 @@ const OrdersScreen = ({navigation}) => {
   const [selectedTab, setSelectedTab] = useState(0);
   const [isTabClicked, setIsTabClicked] = useState(false);
 
+
   useEffect(() => {
     fetchAllData(statusState);
   }, [statusState, selectedTab]);
 
-  const fetchAllData = status => {
-    dispatch(getAllOrderedProducts(status));
+  const fetchAllData = () => {
+    dispatch(getAllOrderedProducts(statusState));
     dispatch(getAllProducts('', 0, 0, null));
-    dispatch(getAllZupaProducts());
+    //dispatch(getAllZupaProducts());
   };
 
   const onRefresh = async () => {
@@ -51,6 +53,7 @@ const OrdersScreen = ({navigation}) => {
   };
 
   const handleClick = item => {
+   
     navigation.navigate('OrderDetails', {
       order: item,
     });
@@ -63,14 +66,17 @@ const OrdersScreen = ({navigation}) => {
   const handlePendingOrders = () => {
     selectTab(0);
     setStatusState('pending');
+    dispatch(setOrderStatus("pending"))
   };
   const handleIncompleteOrders = () => {
     selectTab(1);
-    setStatusState('incompleted');
+    setStatusState('incomplete');
+    dispatch(setOrderStatus("incomplete"))
   };
   const handleCompleteOrders = () => {
     selectTab(2);
     setStatusState('completed');
+    dispatch(setOrderStatus("completed"))
   };
 
   const selectTab = tabIndex => {
@@ -87,6 +93,11 @@ const OrdersScreen = ({navigation}) => {
     }
   };
 
+const handleNewOrder=()=>{
+  selectTab(0)
+  handlePendingOrders()
+  navigation.navigate('NewOrder')
+}
   return (
     <ViewProviderComponent>
       <HeaderComponent name="Orders" isDashboard />
@@ -127,7 +138,7 @@ const OrdersScreen = ({navigation}) => {
           </View>
         }
       />
-      <AddComponent goto={() => navigation.navigate('NewOrder')} />
+      <AddComponent goto={handleNewOrder} />
       <LoaderShimmerComponent isLoading={ordersLoading} />
     </ViewProviderComponent>
   );

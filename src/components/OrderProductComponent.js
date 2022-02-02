@@ -49,7 +49,7 @@ const OrderProductComponent = ({item, handleClick}) => {
         }}>
         <ProductSans style={styles.nameText}>{item?.name.trim()}</ProductSans>
 
-        {isAllFulfilled ? (
+        {item?.isfulfilled ? (
           <Image
             source={IMAGES.urlGood}
             style={{
@@ -73,7 +73,7 @@ const OrderProductComponent = ({item, handleClick}) => {
           </Text>
           {min > 30 ? (
             <ColourComponent
-              colourType={!item.products[0].isfulfilled ? colourResult : null}
+              colourType={!item?.products[0]?.isfulfilled ? colourResult : null}
             />
           ) : (
             <View

@@ -4,6 +4,7 @@ const initialState = {
   orderedProductsStats:[],
   orderedProducts:[],
   order:{},
+  selectedOrderStatus:'',
   ordersLoading: false,
   createOrderLoading:false,
   updateOrderLoading:false,
@@ -23,6 +24,11 @@ export default (state = initialState, action) => {
       return {
         ...state,
         orders: [],
+      };
+    case 'SELECTED_ORDER_STATUS':
+      return {
+        ...state,
+        selectedOrderStatus: action.status,
       };
 
     case 'CREATE_ORDER_PENDING':

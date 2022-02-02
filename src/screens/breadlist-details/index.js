@@ -15,19 +15,21 @@ import LoaderShimmerComponent from '../../components/LoaderShimmerComponent';
 import CustomSuccessModal from '../../components/CustomSuccessModal';
 import {DIALOG_TIMEOUT} from '../../utils/Constants';
 import {updateOrderListProductCount} from '../../store/actions/orders';
+import { createSurplus } from '../../store/actions/surplus';
 
 // create a component
 const BreadListDetailsScreen = ({navigation, route}) => {
-  //console.log('bread details', route.params.bread);
+  console.log('bread details', route.params.bread);
   const [ovenCount, setOvenCount] = useState();
   const [pendingCount, setPendingCount] = useState('0');
   const [surplusCount, setSurplusCount] = useState('0');
   const [isOvenCountFocused, setIsOvenCountFocused] = useState(false);
-  var {productid, name, sum: count} = route.params.bread;
+  var {productid, category, productsize, name, sum: count} = route.params.bread;
   const dispatch = useDispatch();
   const ovenCountRef = useRef();
   const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false);
-  const {isOrderUpdated, updateOrderLoading} = useSelector(x => x.orders);
+  const {isOrderUpdated, updateOrderLoading,selectedOrderStatus} = useSelector(x => x.orders);
+  console.log("state is ",selectedOrderStatus)
 
   const renderDetails = () => {
     return (
@@ -127,7 +129,35 @@ const BreadListDetailsScreen = ({navigation, route}) => {
       setSurplusCount('');
     }
   };
+  const handleCreateSurplus = () => {
+    if (!surplusCount) {
+      alert('Surplus count is required');
+      return;
+    }
+    if (surplusCount.length < 1 || surplusCount == '0') {
+      alert('Surplus count must be greater than zero');
+      return;
+    }
+    var payload = {
+      count: parseInt(surplusCount),
+      productId: productid,
+      productName: name,
+      productCategory: category,
+      productSize: productsize,
+    };
+    console.log('surplus payload', payload);
 
+    dispatch(createSurplus(payload))
+      .then((result, error) => {
+        if (result) {
+          showSuccessDialog();
+          resetFields();
+        }
+      })
+      .catch(error => {
+        console.log('updadte error', error);
+      });
+  };
   const handleSubmit = () => {
     if (!ovenCount) {
       alert('Oven count is required');
@@ -142,12 +172,13 @@ const BreadListDetailsScreen = ({navigation, route}) => {
       productid: productid,
     };
     console.log('payload', payload);
-
-    dispatch(updateOrderListProductCount(payload))
+ 
+    dispatch(updateOrderListProductCount(payload,selectedOrderStatus))
       .then((result, error) => {
         if (result) {
-          showSuccessDialog();
-          resetFields();
+          handleCreateSurplus()
+          // showSuccessDialog();
+          // resetFields();
         }
       })
       .catch(error => {

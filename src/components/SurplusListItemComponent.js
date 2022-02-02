@@ -23,7 +23,7 @@ const SurplusListItemComponent = ({item, handleClick}) => {
           //paddingVertical: 5,
         }}>
         <ProductSans style={styles.labelText}>PRODUCT</ProductSans>
-        <TouchableOpacity activeOpacity={0.6}>
+        <TouchableOpacity activeOpacity={0.6}  onPress={() => handleClick(item)}>
           <Image
             source={IMAGES.editImage}
             style={{
@@ -106,8 +106,10 @@ const styles = StyleSheet.create({
     backgroundColor: COLOURS.white,
     padding: 10,
     marginVertical: 5,
-    paddingHorizontal: 25,
+    marginHorizontal: 16,
+    paddingHorizontal: 20,
     borderRadius: 10,
+    flex: 1,
   },
   labelText: {
     fontSize: fp(16),

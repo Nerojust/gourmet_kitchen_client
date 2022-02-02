@@ -2,6 +2,8 @@ import client from '../../utils/Api';
 import {dateFilterParser} from '../../utils/DateFilter';
 import {clearStorage, handleError} from '../../utils/utils';
 
+
+
 export const createSurplus = orderPayload => {
   console.log('About to create a new surplus');
   //console.log("order payload", orderPayload);
@@ -16,14 +18,14 @@ export const createSurplus = orderPayload => {
       .post(`/surplus`, orderPayload)
       .then(response => {
         if (response.data?.isSuccessful) {
-          console.log('Order created successfully');
+          console.log('surplus created successfully');
 
           dispatch({
             type: 'CREATE_SURPLUS_SUCCESS',
             loading: false,
           });
           //alert('Order created successfully');
-          dispatch(getAllSurplus('pending'));
+          dispatch(getAllSurplus());
           return response.data?.results;
         }
       })
@@ -134,11 +136,11 @@ export const updateSurplusById = (id, payload) => {
       .patch(url, payload)
       .then(response => {
         if (response?.data) {
+          if (response?.data?.isSuccessful) {
           console.log(
-            'Orders gotten successfully',
+            'Surplus updated successfully',
             response?.data?.recordCount,
           );
-          if (response?.data?.isSuccessful) {
             dispatch({
               type: 'UPDATE_SURPLUS_SUCCESS',
               loading: false,
@@ -157,10 +159,10 @@ export const updateSurplusById = (id, payload) => {
         }
       })
       .catch(error => {
-        console.log('Getting orders failed', error);
-        handleError(error, dispatch, 'get orders list');
+        console.log('Updating surplus failed', error);
+        handleError(error, dispatch, 'updating surplus');
         dispatch({
-          type: 'UPDATE_OVEN_COUNT_FAILED',
+          type: 'UPDATE_SURPLUS_FAILED',
           loading: false,
           error: error.message,
         });

@@ -32,7 +32,7 @@ const StoreSalesScreen = ({navigation}) => {
 
   const handleClick = item => {
     navigation.navigate('StoreSalesDetails', {
-      sales: item,
+      surplus: item,
     });
   };
   const onRefresh = () => {
