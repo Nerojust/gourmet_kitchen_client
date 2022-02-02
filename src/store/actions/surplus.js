@@ -121,6 +121,54 @@ export const getSurplusById = id => {
   };
 };
 
+export const deductSurplusCount = ( payload) => {
+  console.log('About to deduct count from surplus');
+
+  return dispatch => {
+    dispatch({
+      type: 'DEDUCT_SURPLUS_PENDING',
+      loading: true,
+      error: null,
+    });
+    var url = `/surplus/deduct`;
+    //console.log("geturl", getUrl);
+    return client
+      .post(url, payload)
+      .then(response => {
+        if (response?.data) {
+          if (response?.data?.isSuccessful) {
+          console.log(
+            'Surplus deducted successfully',
+            response?.data?.recordCount,
+          );
+            dispatch({
+              type: 'DEDUCT_SURPLUS_SUCCESS',
+              loading: false,
+              data: response?.data?.results,
+            });
+
+            dispatch(getAllSurplus());
+            return response?.data?.results;
+          } else {
+            dispatch({
+              type: 'DEDUCT_SURPLUS_FAILED',
+              loading: false,
+              error: response?.data?.message,
+            });
+          }
+        }
+      })
+      .catch(error => {
+        console.log('deducting surplus failed', error);
+        handleError(error, dispatch, 'deducting surplus');
+        dispatch({
+          type: 'DEDUCT_SURPLUS_FAILED',
+          loading: false,
+          error: error.message,
+        });
+      });
+  };
+};
 export const updateSurplusById = (id, payload) => {
   console.log('About to update surplus');
 

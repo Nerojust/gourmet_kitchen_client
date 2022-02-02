@@ -1,10 +1,17 @@
 //import liraries
-import React, {useState, useRef,useEffect} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, FlatList} from 'react-native';
+import React, {useState, useRef, useEffect} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  FlatList,
+  Alert,
+} from 'react-native';
 import {BackViewMoreSettings} from '../../components/Header';
 import {KeyboardObserverComponent} from '../../components/KeyboardObserverComponent';
 import ViewProviderComponent from '../../components/ViewProviderComponent';
-import {DismissKeyboard} from '../../utils/utils';
+import {DismissKeyboard, displayDialog} from '../../utils/utils';
 import Averta from '../../components/Text/Averta';
 import {deviceWidth, fp} from '../../utils/responsive-screen';
 import {COLOURS} from '../../utils/Colours';
@@ -15,12 +22,16 @@ import LoaderShimmerComponent from '../../components/LoaderShimmerComponent';
 import CustomSuccessModal from '../../components/CustomSuccessModal';
 import {DIALOG_TIMEOUT} from '../../utils/Constants';
 import {updateOrderListProductCount} from '../../store/actions/orders';
-import {createSurplus, updateSurplusById} from '../../store/actions/surplus';
+import {
+  createSurplus,
+  deductSurplusCount,
+  updateSurplusById,
+} from '../../store/actions/surplus';
 
 // create a component
 const StoreSalesDetailsScreen = ({navigation, route}) => {
-  const [pendingCount, setPendingCount] = useState('0');
   const [surplusCount, setSurplusCount] = useState('0');
+  const [surplusCountDeduct, setSurplusCountDeduct] = useState('0');
   const [isSurplusFocused, setIsSurplusFocused] = useState(false);
   var {
     productid,
@@ -31,21 +42,125 @@ const StoreSalesDetailsScreen = ({navigation, route}) => {
     issurplus,
     count,
   } = route?.params?.surplus;
+  var edit = route.params.edit;
+  //console.log('Edit', edit);
   //console.log(route?.params?.surplus);
   const dispatch = useDispatch();
   const surplusRef = useRef();
   const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false);
-  const {updateSurplusLoading, isSurplusUpdated} = useSelector(x => x.surplus);
+  const [remainingCount, setRemainingCount] = useState('0');
+  const {updateSurplusLoading, isSurplusUpdated, deductSurplusLoading} =
+    useSelector(x => x.surplus);
+  const [inputSurplusCount, setinputSurplusCount] = useState();
+  const [inputSurplusCountDeduct, setInputSurplusCountDeduct] = useState();
+  const [remainingSurplusCount, setRemaningSurplusCount] = useState('0');
+  const [remainingSurplusCountDeduct, setRemaningSurplusCountDeduct] =
+    useState('0');
 
   const handleSurplusChange = text => {
     if (text) {
-      setSurplusCount(text);
+      // if (parseInt(text) > count) {
+      //   setRemaningSurplusCount('0');
+      //   setinputSurplusCount('');
+      //   alert('Number must be less than or equal to ' + count);
+      //   return;
+      // }
+      setinputSurplusCount(text);
+      setRemaningSurplusCount(count - text);
+      if (count - text < 0) {
+        console.log('surplus is ', text - count);
+        setSurplusCount(text - count);
+      } else {
+        setSurplusCount('0');
+      }
     } else {
+      setRemaningSurplusCount('0');
+      setinputSurplusCount('');
+      setSurplusCount('');
+    }
+  };
+  const handleSurplusChangeDeduct = text => {
+    if (text) {
+      // if (parseInt(text) > count) {
+      //   setRemaningSurplusCount('0');
+      //   setinputSurplusCount('');
+      //   alert('Number must be less than or equal to ' + count);
+      //   return;
+      // }
+      setinputSurplusCount(text);
+      setRemaningSurplusCount(count - text);
+      if (count - text < 0) {
+        console.log('surplus is ', text - count);
+        setSurplusCount(text - count);
+      } else {
+        setSurplusCount('0');
+      }
+    } else {
+      setRemaningSurplusCount('0');
+      setinputSurplusCount('');
       setSurplusCount('');
     }
   };
 
   const renderDetails = () => {
+    return (
+      <View style={{marginHorizontal: 25, marginTop: 10}}>
+        <View style={styles.customerNameView}>
+          <ProductSansBold style={[styles.actiontext, {left: 0}]}>
+            TOTAL SURPLUS
+          </ProductSansBold>
+
+          <Averta style={styles.custName} numberOfLines={5}>
+            {count.toString()}
+          </Averta>
+        </View>
+
+        {/* <View
+          style={[styles.customerNameView, {paddingTop: 5, marginRight: 10}]}>
+          <ProductSansBold style={[styles.actiontext, {left: 0}]}>
+            REMAINING SURPLUS
+          </ProductSansBold>
+          <Averta style={styles.address} numberOfLines={5}>
+            {parseInt(remainingSurplusCount) < 0
+              ? '0'
+              : parseInt(remainingSurplusCount)}
+          </Averta>
+        </View> */}
+        <View
+          style={[styles.customerNameView, {paddingTop: 5, marginRight: 10}]}>
+          <ProductSansBold style={[styles.actiontext, {left: 0}]}>
+            SURPLUS COUNT
+          </ProductSansBold>
+
+          <TextInputComponent
+            placeholder={'Enter new surplus count'}
+            handleTextChange={handleSurplusChange}
+            defaultValue={inputSurplusCount}
+            returnKeyType={'next'}
+            keyboardType={'default'}
+            secureTextEntry={false}
+            capitalize={'sentences'}
+            heightfigure={50}
+            widthFigure={deviceWidth / 1.15}
+            refValue={surplusRef}
+            props={
+              isSurplusFocused
+                ? {borderColor: COLOURS.blue}
+                : {borderColor: COLOURS.zupa_gray_bg}
+            }
+            handleTextInputFocus={() => {
+              setIsSurplusFocused(true);
+            }}
+            handleBlur={() => {
+              setIsSurplusFocused(false);
+            }}
+            onSubmitEditing={event => {}}
+          />
+        </View>
+      </View>
+    );
+  };
+  const renderDeductDetails = () => {
     return (
       <View style={{marginHorizontal: 25, marginTop: 10}}>
         <View style={styles.customerNameView}>
@@ -64,7 +179,9 @@ const StoreSalesDetailsScreen = ({navigation, route}) => {
             REMAINING SURPLUS
           </ProductSansBold>
           <Averta style={styles.address} numberOfLines={5}>
-            {parseInt(surplusCount) < 0 ? '0' : surplusCount}
+            {parseInt(remainingSurplusCount) < 0
+              ? '0'
+              : parseInt(remainingSurplusCount)}
           </Averta>
         </View>
         <View
@@ -75,8 +192,8 @@ const StoreSalesDetailsScreen = ({navigation, route}) => {
 
           <TextInputComponent
             placeholder={'Enter number to deduct from surplus'}
-            handleTextChange={handleSurplusChange}
-            defaultValue={surplusCount}
+            handleTextChange={handleSurplusChangeDeduct}
+            defaultValue={inputSurplusCountDeduct}
             returnKeyType={'next'}
             keyboardType={'default'}
             secureTextEntry={false}
@@ -102,17 +219,22 @@ const StoreSalesDetailsScreen = ({navigation, route}) => {
     );
   };
 
-  const handleSubmit = () => {
-    if (!surplusCount) {
+  const handleSubmitUpdateSurplus = () => {
+    if (!inputSurplusCount) {
       alert('Surplus count is required');
       return;
     }
-    if (surplusCount.length < 1 || surplusCount == '0') {
+    console.log('input', inputSurplusCount);
+    if (inputSurplusCount.length < 1) {
       alert('Surplus count must be greater than zero');
       return;
     }
     var payload = {
-      count: parseInt(surplusCount),
+      count: parseInt(inputSurplusCount),
+      productCategory: productcategory,
+      productSize: productsize,
+      productName: productname,
+      productId: productid,
     };
     console.log('surplus payload', payload);
 
@@ -130,12 +252,66 @@ const StoreSalesDetailsScreen = ({navigation, route}) => {
       });
   };
 
+  const handleSubmitDeductSurplus = () => {
+    if (!inputSurplusCount) {
+      alert('Surplus count is required');
+      return;
+    }
+    console.log('input', inputSurplusCount);
+    if (inputSurplusCount.length < 1) {
+      alert('Surplus count must be greater than zero');
+      return;
+    }
+    var payload = {
+      count: parseInt(inputSurplusCount),
+      productCategory: productcategory,
+      productSize: productsize,
+      productName: productname,
+      productId: productid,
+    };
+    console.log('surplus payload', payload);
 
+    dispatch(deductSurplusCount(payload))
+      .then((result, error) => {
+        if (result) {
+          //if (isSurplusUpdated) {
+          showSuccessDialog();
+          resetFields();
+          //}
+        }
+      })
+      .catch(error => {
+        console.log('updadte error', error);
+      });
+  };
+  const handleValidation = () => {
+    if (inputSurplusCount) {
+      Alert.alert(
+        'Alert',
+        'Do you want to update this surplus count for this item?',
+        [
+          {
+            text: 'No',
+            onPress: () => {
+              console.log('cancel Pressed');
+            },
+          },
+          {
+            text: 'Yes',
+            onPress: () => handleSubmitUpdateSurplus(),
+          },
+        ],
+        {cancelable: true},
+      );
+    } else {
+      alert('Input is required');
+    }
+  };
   const displaySubmitButton = () => {
     return (
       <TouchableOpacity
         activeOpacity={0.6}
-        onPress={handleSubmit}
+        onPress={edit ? handleValidation : handleSubmitDeductSurplus}
         style={{
           marginTop: 5,
           justifyContent: 'center',
@@ -148,12 +324,12 @@ const StoreSalesDetailsScreen = ({navigation, route}) => {
         }}>
         <Text
           style={{color: COLOURS.white, fontSize: fp(15), fontWeight: '700'}}>
-          Update Surplus Count
+          {edit ? 'Change Surplus Count' : 'Deduct From Surplus Count'}
         </Text>
       </TouchableOpacity>
     );
   };
-  
+
   const showSuccessDialog = () => {
     setIsSuccessModalVisible(!isSuccessModalVisible);
     setTimeout(() => {
@@ -185,7 +361,7 @@ const StoreSalesDetailsScreen = ({navigation, route}) => {
             keyboardShouldPersistTaps={'handled'}
             ListHeaderComponent={
               <>
-                {renderDetails()}
+                {edit ? renderDetails() : renderDeductDetails()}
                 {displaySubmitButton()}
                 {renderSuccessModal()}
               </>
@@ -193,6 +369,7 @@ const StoreSalesDetailsScreen = ({navigation, route}) => {
             renderItem={null}
             keyExtractor={item => item.id}
           />
+          <LoaderShimmerComponent isLoading={deductSurplusLoading} />
           <LoaderShimmerComponent isLoading={updateSurplusLoading} />
         </KeyboardObserverComponent>
       </DismissKeyboard>

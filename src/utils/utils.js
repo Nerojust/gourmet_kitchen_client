@@ -120,7 +120,7 @@ export const CustomStatusBar = ({
 export const displayDialog = (message, method) => {
   Alert.alert(
     'Alert',
-    message,
+    "Do you want to update this surplus count for this item?",
     [
       {
         text: 'No',

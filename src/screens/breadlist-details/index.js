@@ -14,8 +14,8 @@ import {useDispatch, useSelector} from 'react-redux';
 import LoaderShimmerComponent from '../../components/LoaderShimmerComponent';
 import CustomSuccessModal from '../../components/CustomSuccessModal';
 import {DIALOG_TIMEOUT} from '../../utils/Constants';
-import {updateOrderListProductCount} from '../../store/actions/orders';
-import { createSurplus } from '../../store/actions/surplus';
+import {getAllOrderedProducts, updateOrderListProductCount} from '../../store/actions/orders';
+import {createSurplus} from '../../store/actions/surplus';
 
 // create a component
 const BreadListDetailsScreen = ({navigation, route}) => {
@@ -28,8 +28,10 @@ const BreadListDetailsScreen = ({navigation, route}) => {
   const dispatch = useDispatch();
   const ovenCountRef = useRef();
   const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false);
-  const {isOrderUpdated, updateOrderLoading,selectedOrderStatus} = useSelector(x => x.orders);
-  console.log("state is ",selectedOrderStatus)
+  const {isOrderUpdated, updateOrderLoading, selectedOrderStatus} = useSelector(
+    x => x.orders,
+  );
+  console.log('state is ', selectedOrderStatus);
 
   const renderDetails = () => {
     return (
@@ -172,13 +174,17 @@ const BreadListDetailsScreen = ({navigation, route}) => {
       productid: productid,
     };
     console.log('payload', payload);
- 
-    dispatch(updateOrderListProductCount(payload,selectedOrderStatus))
+
+    dispatch(updateOrderListProductCount(payload, selectedOrderStatus))
       .then((result, error) => {
         if (result) {
-          handleCreateSurplus()
-          // showSuccessDialog();
-          // resetFields();
+          if (surplusCount > 0) {
+            handleCreateSurplus();
+          } else {
+            showSuccessDialog();
+            resetFields();
+            dispatch(getAllOrderedProducts('incomplete'))
+          }
         }
       })
       .catch(error => {

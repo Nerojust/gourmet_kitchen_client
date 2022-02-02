@@ -5,6 +5,7 @@ const initialState = {
   createSurplusLoading: false,
   updateSurplusLoading: false,
   isSurplusUpdated: false,
+  deductSurplusLoading: false,
   deleteSurplusLoading: false,
   hasDeletedSurplus: false,
   error: '',
@@ -107,6 +108,26 @@ export default (state = initialState, action) => {
         ...state,
         isSurplusUpdated: false,
         updateSurplusLoading: action.loading,
+        error: action.error,
+      };
+
+      case 'DEDUCT_SURPLUS_PENDING':
+      return {
+        ...state,
+        deductSurplusLoading: action.loading,
+        isSurplusUpdated:false
+      };
+    case 'DEDUCT_SURPLUS_SUCCESS':
+      return {
+        ...state,
+        isSurplusUpdated: true,
+        deductSurplusLoading: action.loading,
+      };
+    case 'DEDUCT_SURPLUS_FAILED':
+      return {
+        ...state,
+        isSurplusUpdated: false,
+        deductSurplusLoading: action.loading,
         error: action.error,
       };
 

@@ -7,14 +7,14 @@ import {fp} from '../utils/responsive-screen';
 import ProductSans from './Text/ProductSans';
 
 // create a component
-const SurplusListItemComponent = ({item, handleClick}) => {
+const SurplusListItemComponent = ({item, handleEditClick,handleNormalClick}) => {
   //console.log('item', item);
 
   return (
     <TouchableOpacity
       style={styles.customerNameView}
       activeOpacity={0.6}
-      onPress={() => handleClick(item)}
+      onPress={() => handleNormalClick(item)}
     >
       <View
         style={{
@@ -23,7 +23,7 @@ const SurplusListItemComponent = ({item, handleClick}) => {
           //paddingVertical: 5,
         }}>
         <ProductSans style={styles.labelText}>PRODUCT</ProductSans>
-        <TouchableOpacity activeOpacity={0.6}  onPress={() => handleClick(item)}>
+        <TouchableOpacity activeOpacity={0.6}  onPress={() => handleEditClick(item)}>
           <Image
             source={IMAGES.editImage}
             style={{

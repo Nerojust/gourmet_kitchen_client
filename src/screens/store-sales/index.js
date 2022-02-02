@@ -27,12 +27,19 @@ const StoreSalesScreen = ({navigation}) => {
   }, []);
 
   const renderItems = ({item, index}) => {
-    return <SurplusListItemComponent item={item} handleClick={handleClick} />;
+    return <SurplusListItemComponent item={item} handleEditClick={handleChangeSurplusClick} handleNormalClick={handleNormalClick} />;
   };
 
-  const handleClick = item => {
+  const handleChangeSurplusClick = item => {
     navigation.navigate('StoreSalesDetails', {
       surplus: item,
+      edit:true
+    });
+  };
+  const handleNormalClick = item => {
+    navigation.navigate('StoreSalesDetails', {
+      surplus: item,
+      edit:false
     });
   };
   const onRefresh = () => {
