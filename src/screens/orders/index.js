@@ -24,6 +24,7 @@ import {COLOURS} from '../../utils/Colours';
 import {fp} from '../../utils/responsive-screen';
 import {getAllProducts, getAllZupaProducts} from '../../store/actions/products';
 import SliderTabComponent from '../../components/SliderTabComponent';
+import {useIsFocused} from '@react-navigation/native';
 
 // create a component
 const OrdersScreen = ({navigation}) => {
@@ -35,16 +36,24 @@ const OrdersScreen = ({navigation}) => {
   const [statusState, setStatusState] = useState('pending');
   const [selectedTab, setSelectedTab] = useState(0);
   const [isTabClicked, setIsTabClicked] = useState(false);
-
+  const isFocused = useIsFocused();
 
   useEffect(() => {
-    fetchAllData(statusState);
-  }, [statusState, selectedTab]);
+    const unsubscribe = navigation.addListener('focus', () => {
+      fetchAllData(statusState);
+    });
+    dispatch(getAllOrderedProducts(statusState));
+    return unsubscribe;
+  }, [navigation, statusState, selectedTab]);
+
+  // useEffect(() => {
+  //   fetchAllData(statusState);
+  // }, [statusState, selectedTab]);
 
   const fetchAllData = () => {
     dispatch(getAllOrderedProducts(statusState));
     dispatch(getAllProducts('', 0, 0, null));
-    //dispatch(getAllZupaProducts());
+    dispatch(getAllZupaProducts());
   };
 
   const onRefresh = async () => {
@@ -53,7 +62,6 @@ const OrdersScreen = ({navigation}) => {
   };
 
   const handleClick = item => {
-   
     navigation.navigate('OrderDetails', {
       order: item,
     });
@@ -66,21 +74,20 @@ const OrdersScreen = ({navigation}) => {
   const handlePendingOrders = () => {
     selectTab(0);
     setStatusState('pending');
-    dispatch(setOrderStatus("pending"))
+    dispatch(setOrderStatus('pending'));
   };
   const handleIncompleteOrders = () => {
     selectTab(1);
     setStatusState('incomplete');
-    dispatch(setOrderStatus("incomplete"))
+    dispatch(setOrderStatus('incomplete'));
   };
   const handleCompleteOrders = () => {
     selectTab(2);
     setStatusState('completed');
-    dispatch(setOrderStatus("completed"))
+    dispatch(setOrderStatus('completed'));
   };
 
   const selectTab = tabIndex => {
-  
     if (tabIndex == 0) {
       setSelectedTab(tabIndex);
       setIsTabClicked(true);
@@ -93,15 +100,14 @@ const OrdersScreen = ({navigation}) => {
     }
   };
 
-const handleNewOrder=()=>{
-  selectTab(0)
-  handlePendingOrders()
-  navigation.navigate('NewOrder')
-}
+  const handleNewOrder = () => {
+    navigation.navigate('NewOrder');
+  };
+
   return (
     <ViewProviderComponent>
       <HeaderComponent name="Orders" isDashboard />
- 
+
       <SliderTabComponent
         isTabClicked={isTabClicked}
         name1={'Pending'}
@@ -112,6 +118,7 @@ const handleNewOrder=()=>{
         onPress2={handleIncompleteOrders}
         onPress3={handleCompleteOrders}
       />
+
       <FlatList
         data={orders}
         renderItem={renderItems}

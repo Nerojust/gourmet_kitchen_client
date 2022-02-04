@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-const baseURL = "http://localhost:8089/api/"
-//const baseURL = 'https://gourmet-kitchen-api-oq8ef.ondigitalocean.app/api/';
+//const baseURL = "http://localhost:8089/api/"
+const baseURL = 'https://gourmet-kitchen-api-oq8ef.ondigitalocean.app/api/';
 
 let client = axios.create({
   baseURL,

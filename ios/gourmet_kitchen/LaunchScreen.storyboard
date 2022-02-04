@@ -17,7 +17,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="splashscreen" highlighted="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xBz-mg-yT2">
-                                <rect key="frame" x="123" y="222" width="168" height="452"/>
+                                <rect key="frame" x="140" y="352" width="135" height="193"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="188" id="RQY-aQ-D1L"/>
                                     <constraint firstAttribute="height" constant="465" id="v72-eH-TGP"/>
@@ -32,9 +32,11 @@
                             <constraint firstItem="xBz-mg-yT2" firstAttribute="trailing" secondItem="Bcu-3y-fUS" secondAttribute="trailing" constant="-113" id="7h2-HB-nxl"/>
                             <constraint firstItem="xBz-mg-yT2" firstAttribute="top" secondItem="Bcu-3y-fUS" secondAttribute="top" constant="172" id="7vf-HO-ptf"/>
                             <constraint firstItem="xBz-mg-yT2" firstAttribute="leading" secondItem="Bcu-3y-fUS" secondAttribute="leading" constant="113" id="HFc-pa-hRb"/>
+                            <constraint firstItem="Bcu-3y-fUS" firstAttribute="trailing" secondItem="xBz-mg-yT2" secondAttribute="trailing" id="NB6-E0-BQA"/>
                             <constraint firstItem="xBz-mg-yT2" firstAttribute="leading" secondItem="Bcu-3y-fUS" secondAttribute="leading" constant="113" id="O0u-Bd-Ig0"/>
                             <constraint firstItem="xBz-mg-yT2" firstAttribute="leading" secondItem="Bcu-3y-fUS" secondAttribute="leading" constant="113" id="O9C-z1-a7d"/>
                             <constraint firstItem="Bcu-3y-fUS" firstAttribute="bottom" secondItem="xBz-mg-yT2" secondAttribute="bottom" constant="181" id="OeU-uL-ZJi"/>
+                            <constraint firstItem="Bcu-3y-fUS" firstAttribute="bottom" secondItem="xBz-mg-yT2" secondAttribute="bottom" id="Q9g-bE-DGI"/>
                             <constraint firstItem="xBz-mg-yT2" firstAttribute="top" secondItem="Bcu-3y-fUS" secondAttribute="top" constant="172" id="Yfj-Jp-JHB"/>
                             <constraint firstItem="xBz-mg-yT2" firstAttribute="top" secondItem="Bcu-3y-fUS" secondAttribute="top" constant="172" id="Z6g-x9-ppR"/>
                             <constraint firstItem="xBz-mg-yT2" firstAttribute="leading" secondItem="Bcu-3y-fUS" secondAttribute="leading" constant="113" id="bSM-Wj-oK7"/>
@@ -45,7 +47,9 @@
                             <constraint firstItem="xBz-mg-yT2" firstAttribute="leading" secondItem="Bcu-3y-fUS" secondAttribute="leading" constant="113" id="nud-W6-Wbj"/>
                             <constraint firstItem="xBz-mg-yT2" firstAttribute="trailing" secondItem="Bcu-3y-fUS" secondAttribute="trailing" constant="-113" id="tQv-60-x4X"/>
                             <constraint firstItem="Bcu-3y-fUS" firstAttribute="trailing" secondItem="xBz-mg-yT2" secondAttribute="trailing" constant="113" id="u9k-jD-dKh"/>
+                            <constraint firstItem="xBz-mg-yT2" firstAttribute="leading" secondItem="Bcu-3y-fUS" secondAttribute="leading" id="vSm-vg-cqw"/>
                             <constraint firstItem="Bcu-3y-fUS" firstAttribute="bottom" secondItem="xBz-mg-yT2" secondAttribute="bottom" constant="181" id="wR4-5O-Kod"/>
+                            <constraint firstItem="xBz-mg-yT2" firstAttribute="top" secondItem="Bcu-3y-fUS" secondAttribute="top" id="wVm-Cl-dXC"/>
                             <constraint firstItem="xBz-mg-yT2" firstAttribute="top" secondItem="Bcu-3y-fUS" secondAttribute="top" constant="172" id="xt9-JF-Z6v"/>
                         </constraints>
                     </view>

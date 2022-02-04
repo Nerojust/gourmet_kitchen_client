@@ -81,12 +81,12 @@ const StoreSalesDetailsScreen = ({navigation, route}) => {
   };
   const handleSurplusChangeDeduct = text => {
     if (text) {
-      // if (parseInt(text) > count) {
-      //   setRemaningSurplusCount('0');
-      //   setinputSurplusCount('');
-      //   alert('Number must be less than or equal to ' + count);
-      //   return;
-      // }
+      if (parseInt(text) > count) {
+        setRemaningSurplusCount('0');
+        setinputSurplusCount('');
+        alert('Number must be less than or equal to ' + count);
+        return;
+      }
       setinputSurplusCount(text);
       setRemaningSurplusCount(count - text);
       if (count - text < 0) {
@@ -221,7 +221,7 @@ const StoreSalesDetailsScreen = ({navigation, route}) => {
 
   const handleSubmitUpdateSurplus = () => {
     if (!inputSurplusCount) {
-      alert('Surplus count is required');
+      alert('Enter the number to deduct');
       return;
     }
     console.log('input', inputSurplusCount);
@@ -304,7 +304,7 @@ const StoreSalesDetailsScreen = ({navigation, route}) => {
         {cancelable: true},
       );
     } else {
-      alert('Input is required');
+      alert('Enter the new surplus count');
     }
   };
   const displaySubmitButton = () => {

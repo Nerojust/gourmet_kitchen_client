@@ -75,6 +75,11 @@ const NewOrderScreen = ({navigation}) => {
   const [newBasketArray, setNewBasketArray] = useState(basketArray);
   const {createOrderLoading} = useSelector(x => x.orders);
 
+  useEffect(() => {
+    dispatch(getAllProducts('', 0, 0, null));
+    dispatch(getAllZupaProducts());
+  }, []);
+
   const addDetailsToOrderSummary = () => {
     if (selectedProduct?.name != null) {
       //console.log("selected", selectedProduct);
@@ -153,6 +158,11 @@ const NewOrderScreen = ({navigation}) => {
 
   const handleProductInputSearchText = text => {
     if (text) {
+      products.sort((a, b) => {
+        if (b.name > a.name) return -1;
+        if (b.name < a.name) return 1;
+        return 0;
+      });
       const newData = products?.filter(item => {
         const itemData = item?.name
           ? item?.name.toUpperCase()
@@ -167,7 +177,7 @@ const NewOrderScreen = ({navigation}) => {
       setProductInputValue(text);
     }
   };
-  
+
   const renderInputFields = () => {
     return (
       <>
@@ -292,7 +302,7 @@ const NewOrderScreen = ({navigation}) => {
         onPress={handleAddProduct}
         style={{
           marginTop: 5,
-          
+
           justifyContent: 'center',
           marginBottom:
             keyboardHeight > 0 ? (Platform.OS == 'ios' ? 270 : 100) : 20,

@@ -40,6 +40,7 @@ const SliderTabComponent = ({
     Animated.timing(translateX, {
       toValue: type,
       duration: 330,
+      useNativeDriver: false,
     }).start();
   };
 

@@ -22,10 +22,17 @@ const BreadListScreen = ({navigation}) => {
   const {orderedProducts, ordersLoading} = useSelector(x => x.orders);
   const {products, productsLoading} = useSelector(x => x.products);
   //console.log('products', orderedProducts.length);
+useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      fetchAllData();
+      //Put your Data loading function here instead of my loadData()
+    });
 
-  useEffect(() => {
-    fetchAllData();
-  }, []);
+    return unsubscribe;
+  }, [navigation]);
+  // useEffect(() => {
+  //   fetchAllData();
+  // }, []);
 
   const fetchAllData = () => {
     dispatch(getAllOrderedProductsStats());

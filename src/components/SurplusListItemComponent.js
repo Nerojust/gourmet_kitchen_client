@@ -7,15 +7,18 @@ import {fp} from '../utils/responsive-screen';
 import ProductSans from './Text/ProductSans';
 
 // create a component
-const SurplusListItemComponent = ({item, handleEditClick,handleNormalClick}) => {
+const SurplusListItemComponent = ({
+  item,
+  handleEditClick,
+  handleNormalClick,
+}) => {
   //console.log('item', item);
 
   return (
     <TouchableOpacity
       style={styles.customerNameView}
       activeOpacity={0.6}
-      onPress={() => handleNormalClick(item)}
-    >
+      onPress={() => handleNormalClick(item)}>
       <View
         style={{
           flexDirection: 'row',
@@ -23,7 +26,9 @@ const SurplusListItemComponent = ({item, handleEditClick,handleNormalClick}) => 
           //paddingVertical: 5,
         }}>
         <ProductSans style={styles.labelText}>PRODUCT</ProductSans>
-        <TouchableOpacity activeOpacity={0.6}  onPress={() => handleEditClick(item)}>
+        <TouchableOpacity
+          activeOpacity={0.6}
+          onPress={() => handleEditClick(item)}>
           <Image
             source={IMAGES.editImage}
             style={{
@@ -46,12 +51,12 @@ const SurplusListItemComponent = ({item, handleEditClick,handleNormalClick}) => 
           paddingVertical: 5,
           marginTop: 3,
         }}>
-        <View>
+        {/* <View>
           <ProductSans style={styles.labelText}>CATEGORY</ProductSans>
           <ProductSans style={styles.priceName}>
             {item?.productcategory || 'None'}
           </ProductSans>
-        </View>
+        </View> */}
 
         <View style={{marginRight: 10}}>
           <ProductSans style={styles.labelText}>SIZE</ProductSans>
@@ -59,10 +64,12 @@ const SurplusListItemComponent = ({item, handleEditClick,handleNormalClick}) => 
             {item?.productsize || 'None'}
           </ProductSans>
         </View>
-      </View>
-      <View style={{marginTop: 10}}>
-        <ProductSans style={styles.labelText}>SURPLUS COUNT</ProductSans>
-        <ProductSans style={styles.priceName}>{item?.count || '0'}</ProductSans>
+        <View>
+          <ProductSans style={styles.labelText}>SURPLUS COUNT</ProductSans>
+          <ProductSans style={[styles.priceName, {alignSelf: 'center'}]}>
+            {item?.count || '0'}
+          </ProductSans>
+        </View>
       </View>
     </TouchableOpacity>
   );

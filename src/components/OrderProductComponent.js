@@ -1,4 +1,5 @@
 // import liraries
+import moment from 'moment';
 import React, {Component} from 'react';
 import {
   View,
@@ -42,74 +43,88 @@ const OrderProductComponent = ({item, handleClick}) => {
   });
   return (
     <TouchableOpacity style={styles.item} onPress={() => handleClick(item)}>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-        }}>
-        <ProductSans style={styles.nameText}>{item?.name.trim()}</ProductSans>
+      <View>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+          }}>
+          <ProductSans style={styles.nameText}>{item?.name.trim()}</ProductSans>
 
-        {item?.isfulfilled ? (
-          <Image
-            source={IMAGES.urlGood}
-            style={{
-              width: 20,
-              height: 20,
-            }}
-            resizeMode="contain"
-          />
-        ) : (
-          <Image />
-        )}
-      </View>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-        }}>
-        <View style={{justifyContent: 'space-between'}}>
-          <Text style={styles.bakedText}>
-            {fulfilledQCount + ' of ' + quantityQCount + ' baked'}
-          </Text>
-          {min > 30 ? (
-            <ColourComponent
-              colourType={!item?.products[0]?.isfulfilled ? colourResult : null}
+          {item?.isfulfilled ? (
+            <Image
+              source={IMAGES.urlGood}
+              style={{
+                width: 20,
+                height: 20,
+              }}
+              resizeMode="contain"
             />
           ) : (
-            <View
-              style={{
-                justifyContent: 'center',
-                alignItems: 'center',
-                backgroundColor: COLOURS.gray,
-                borderRadius: 20,
-                width: 15,
-                height: 15,
-              }}/>
+            <Image />
           )}
         </View>
 
-        <View style={{marginTop: 5}}>
-          <ProductSansBold style={styles.itemsText}>
-            {item?.products.length +
-              (item?.products.length > 1 ? ' items' : ' item')}{' '}
-          </ProductSansBold>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+          }}>
+          <View style={{justifyContent: 'space-between'}}>
+            <Text style={styles.bakedText}>
+              {fulfilledQCount + ' of ' + quantityQCount + ' baked'}
+            </Text>
+            {min > 30 ? (
+              <ColourComponent
+                colourType={
+                  !item?.products[0]?.isfulfilled ? colourResult : null
+                }
+              />
+            ) : (
+              <>
+                {item?.status != 'completed' ? (
+                  <View
+                    style={{
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      backgroundColor: COLOURS.gray,
+                      borderRadius: 20,
+                      width: 15,
+                      height: 15,
+                    }}
+                  />
+                ) : null}
+              </>
+            )}
+          </View>
 
-          {!item.isfulfilled ? (
-            <View style={{paddingTop: 5}}>
-              <ProductSans style={styles.delayHeaderText}>
-                Delayed by
-              </ProductSans>
-              <ProductSans style={styles.delayText}>
-                {getReadableDateAndTime(item?.createdat)}
-              </ProductSans>
-            </View>
-          ) : (
-            <View style={{paddingTop: 5}}>
-              <ProductSans style={styles.delayHeaderText}></ProductSans>
-              <ProductSans style={styles.delayText}></ProductSans>
-            </View>
-          )}
+          <View style={{marginTop: 5}}>
+            <ProductSansBold style={[styles.itemsText]}>
+              {item?.products.length +
+                (item?.products.length > 1 ? ' items' : ' item')}{' '}
+            </ProductSansBold>
+
+            {!item.isfulfilled ? (
+              <View style={{paddingTop: 5}}>
+                <ProductSans style={styles.delayHeaderText}>
+                  Delayed by
+                </ProductSans>
+                <ProductSans style={styles.delayText}>
+                  {getReadableDateAndTime(item?.createdat)}
+                </ProductSans>
+              </View>
+            ) : (
+              <View style={{paddingTop: 5}}>
+                <ProductSans style={styles.delayText}></ProductSans>
+              </View>
+            )}
+          </View>
         </View>
+        {item.isfulfilled ? (
+          <ProductSans style={styles.delayHeaderText}>
+            {moment(item.updatedat).format('LLLL')}
+          </ProductSans>
+        ) : null}
       </View>
     </TouchableOpacity>
   );

@@ -46,29 +46,14 @@ const OrderListItemComponent = ({item}) => {
         style={{
           flexDirection: 'row',
           justifyContent: 'space-between',
-          paddingVertical: 5,
-          marginTop: 3,
+          paddingVertical: 10,
         }}>
-        <View>
-          <ProductSans style={styles.labelText}>CATEGORY</ProductSans>
-          <ProductSans style={styles.priceName}>
-            {item?.category || 'None'}
-          </ProductSans>
-        </View>
         <View>
           <ProductSans style={styles.labelText}>SIZE</ProductSans>
           <ProductSans style={styles.quantityName}>
             {item?.productsize || 'None'}
           </ProductSans>
         </View>
-      </View>
-
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          paddingVertical: 5,
-        }}>
         <View>
           <ProductSans style={styles.labelText}>PRICE</ProductSans>
           <ProductSans style={styles.priceName}>
@@ -89,7 +74,7 @@ const OrderListItemComponent = ({item}) => {
           </ProductSans>
         </View>
       ) : null}
-     
+
       {item?.ispartiallyfulfilled ? (
         <View style={{marginTop: 10}}>
           <ProductSans style={styles.labelText}>QUANTITY BAKED</ProductSans>

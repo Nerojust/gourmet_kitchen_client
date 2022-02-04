@@ -23,8 +23,17 @@ const StoreSalesScreen = ({navigation}) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getAllSurplus());
-  }, []);
+    const unsubscribe = navigation.addListener('focus', () => {
+      dispatch(getAllSurplus());
+      //Put your Data loading function here instead of my loadData()
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
+  // useEffect(() => {
+  //   dispatch(getAllSurplus());
+  // }, []);
 
   const renderItems = ({item, index}) => {
     return <SurplusListItemComponent item={item} handleEditClick={handleChangeSurplusClick} handleNormalClick={handleNormalClick} />;
