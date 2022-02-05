@@ -56,7 +56,7 @@ export const getAllOrderedProductsStats = status => {
       });
   };
 };
-export const getAllOrderedProducts = (status = 'pending') => {
+export const getAllOrderedProducts = status => {
   console.log('About to get all orders');
   return dispatch => {
     dispatch({
@@ -170,7 +170,7 @@ export const createOrder = orderPayload => {
             loading: false,
           });
           //alert('Order created successfully');
-          dispatch(getAllOrderedProducts('pending'));
+          dispatch(getAllOrderedProducts(''));
           return response.data?.results;
         }
       })
@@ -213,6 +213,43 @@ export const getOrder = id => {
         handleError(error, dispatch, 'get order');
         dispatch({
           type: 'GET_SINGLE_ORDERED_PRODUCTS_FAILED',
+          loading: false,
+          error: error.message,
+        });
+      });
+  };
+};
+export const deleteAllOrders = id => {
+  console.log('About to delete all orders');
+  
+  return dispatch => {
+    dispatch({
+      type: 'DELETE_ORDERS_PENDING',
+      loading: true,
+      error: null,
+    });
+
+    return client
+      .delete(`/orders/deleteAll`)
+      .then(response => {
+        if (response.data) {
+          console.log('Deleted all orders successfully');
+          dispatch(getAllOrderedProducts(""))
+          dispatch({
+            type: 'DELETE_ORDERS_SUCCESS',
+            loading: false,
+            data: response.data,
+          });
+          
+          return response.data;
+        }
+      })
+
+      .catch(error => {
+        console.log('Error deleting all orders', error);
+        handleError(error, dispatch, 'get order');
+        dispatch({
+          type: 'DELETE_ORDERS_FAILED',
           loading: false,
           error: error.message,
         });

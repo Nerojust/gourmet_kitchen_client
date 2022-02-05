@@ -7,6 +7,7 @@ import {
   FlatList,
   TouchableOpacity,
   RefreshControl,
+  Alert,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import AddComponent from '../../components/AddComponent';
@@ -15,6 +16,7 @@ import LoaderShimmerComponent from '../../components/LoaderShimmerComponent';
 import OrderProductComponent from '../../components/OrderProductComponent';
 import ViewProviderComponent from '../../components/ViewProviderComponent';
 import {
+  deleteAllOrders,
   getAllOrderedProducts,
   getAllOrderedProductsStats,
   setOrderStatus,
@@ -29,11 +31,11 @@ import {useIsFocused} from '@react-navigation/native';
 // create a component
 const OrdersScreen = ({navigation}) => {
   const dispatch = useDispatch();
-  const {orders, createOrderLoading, error, ordersLoading} = useSelector(
+  const {orders, deleteAllOrdersLoading, error, ordersLoading} = useSelector(
     state => state.orders,
   );
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [statusState, setStatusState] = useState('pending');
+  const [statusState, setStatusState] = useState('');
   const [selectedTab, setSelectedTab] = useState(0);
   const [isTabClicked, setIsTabClicked] = useState(false);
   const isFocused = useIsFocused();
@@ -71,10 +73,10 @@ const OrdersScreen = ({navigation}) => {
     return <OrderProductComponent item={item} handleClick={handleClick} />;
   };
 
-  const handlePendingOrders = () => {
+  const handleAllOrders = () => {
     selectTab(0);
-    setStatusState('pending');
-    dispatch(setOrderStatus('pending'));
+    setStatusState('');
+    dispatch(setOrderStatus(''));
   };
   const handleIncompleteOrders = () => {
     selectTab(1);
@@ -103,18 +105,43 @@ const OrdersScreen = ({navigation}) => {
   const handleNewOrder = () => {
     navigation.navigate('NewOrder');
   };
+  const handleDeleteOrders = () => {
+    console.log('delete clicked');
+
+    Alert.alert(
+      'Alert',
+      'Do you want to delete all order records?',
+      [
+        {
+          text: 'No',
+          onPress: () => {
+            console.log('cancel Pressed');
+          },
+        },
+        {
+          text: 'Yes',
+          onPress: () => dispatch(deleteAllOrders()),
+        },
+      ],
+      {cancelable: true},
+    );
+  };
 
   return (
     <ViewProviderComponent>
-      <HeaderComponent name="Orders" isDashboard />
+      <HeaderComponent
+        name="Orders"
+        isDashboard
+        performDelete={handleDeleteOrders}
+      />
 
       <SliderTabComponent
         isTabClicked={isTabClicked}
-        name1={'Pending'}
+        name1={'All'}
         name2={'Incomplete'}
         name3={'Complete'}
         selectedTab={selectedTab}
-        onPress1={handlePendingOrders}
+        onPress1={handleAllOrders}
         onPress2={handleIncompleteOrders}
         onPress3={handleCompleteOrders}
       />
@@ -146,6 +173,7 @@ const OrdersScreen = ({navigation}) => {
         }
       />
       <AddComponent goto={handleNewOrder} />
+      <LoaderShimmerComponent isLoading={deleteAllOrdersLoading} />
       <LoaderShimmerComponent isLoading={ordersLoading} />
     </ViewProviderComponent>
   );

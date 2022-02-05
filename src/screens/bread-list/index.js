@@ -65,7 +65,7 @@ useEffect(() => {
             backText="Pending Bread List"
             onClose={() => navigation.goBack()}
             shouldDisplayRefresh
-            handleRefresh={handleRefreshZupaProducts}
+           // handleRefresh={handleRefreshZupaProducts}
           />
 
        

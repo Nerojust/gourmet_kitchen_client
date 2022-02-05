@@ -41,7 +41,7 @@ export const BackViewMoreSettings = ({
         numberOfLines={1}>
         {backText}
       </ProductSansBold>
-      {shouldDisplayRefresh ? (
+      {/* {shouldDisplayRefresh ? (
         <TouchableOpacity
           onPress={handleRefresh}
           style={{flex: 0.2, right: 10}}>
@@ -53,7 +53,7 @@ export const BackViewMoreSettings = ({
         </TouchableOpacity>
       ) : (
         <View style={{flex: 0.2, right: 10}}></View>
-      )}
+      )} */}
     </View>
   );
 };

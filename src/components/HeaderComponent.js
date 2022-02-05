@@ -10,7 +10,7 @@ import {COLOURS} from '../utils/Colours';
 import {deviceHeight, deviceWidth, fp, wp} from '../utils/responsive-screen';
 import ProductSansBold from './Text/ProductSansBold';
 
-const HeaderComponent = ({name, isDashboard}) => {
+const HeaderComponent = ({name, isDashboard,performDelete}) => {
   return (
     <View
       style={[
@@ -30,6 +30,13 @@ const HeaderComponent = ({name, isDashboard}) => {
         <ProductSansBold style={[styles.titleHeaderText]}>
           {name}
         </ProductSansBold>
+        <TouchableOpacity onPress={performDelete}>
+          <Image
+            source={require('../assets/images/delete.png')}
+            style={styles.deleteImage}
+            resizeMode={'contain'}
+          />
+        </TouchableOpacity>
       </>
     </View>
   );
@@ -79,6 +86,11 @@ const styles = StyleSheet.create({
   zupaLogo: {
     width: wp(30),
     height: wp(30),
+    marginLeft: 20,
+  },
+  deleteImage: {
+    width: wp(20),
+    height: wp(20),
     marginLeft: 20,
   },
   titleHeaderText: {

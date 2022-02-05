@@ -263,9 +263,9 @@ export const handleError = (errormessage, dispatch, extMessage) => {
     );
     return;
   } else {
-    alert(
-      'Oops!, we ran into a little issue, no worries, just refresh the page.',
-    );
+    // alert(
+    //   'Oops!, we ran into a little issue, no worries, just refresh the page.',
+    // );
     // alert(error + '');
     return;
   }

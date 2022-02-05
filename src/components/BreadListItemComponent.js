@@ -15,6 +15,7 @@ const BreadListItemComponent = ({item, onClick}) => {
       activeOpacity={0.6}
       onPress={() => onClick(item)}>
       <ProductSans style={styles.productName}>{item?.name.trim()}</ProductSans>
+      <ProductSans style={styles.labelText}>{item?.productsize.trim()}</ProductSans>
       <ProductSans style={styles.labelText}>{item?.sum||"0"}</ProductSans>
     </TouchableOpacity>
   );

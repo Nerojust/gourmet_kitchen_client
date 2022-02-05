@@ -1,14 +1,15 @@
 const initialState = {
   phoneArray: [],
   orders: [],
-  orderedProductsStats:[],
-  orderedProducts:[],
-  order:{},
-  selectedOrderStatus:'',
+  orderedProductsStats: [],
+  orderedProducts: [],
+  order: {},
+  selectedOrderStatus: '',
   ordersLoading: false,
-  createOrderLoading:false,
-  updateOrderLoading:false,
-  isOrderUpdated:false,
+  deleteAllOrdersLoading: false,
+  createOrderLoading: false,
+  updateOrderLoading: false,
+  isOrderUpdated: false,
   error: '',
 };
 
@@ -31,6 +32,23 @@ export default (state = initialState, action) => {
         selectedOrderStatus: action.status,
       };
 
+    case 'DELETE_ORDERS_PENDING':
+      return {
+        ...state,
+        deleteAllOrdersLoading: action.loading,
+      };
+    case 'DELETE_ORDERS_SUCCESS':
+      return {
+        ...state,
+        deleteAllOrdersLoading: action.loading,
+      };
+    case 'DELETE_ORDERS_FAILED':
+      return {
+        ...state,
+        deleteAllOrdersLoading: action.loading,
+        error: action.error,
+      };
+
     case 'CREATE_ORDER_PENDING':
       return {
         ...state,
@@ -48,9 +66,8 @@ export default (state = initialState, action) => {
         createOrderLoading: action.loading,
         error: action.error,
       };
-  
-  
-      case 'GET_SINGLE_ORDERED_PRODUCTS_PENDING':
+
+    case 'GET_SINGLE_ORDERED_PRODUCTS_PENDING':
       return {
         ...state,
         ordersLoading: action.loading,
@@ -85,12 +102,11 @@ export default (state = initialState, action) => {
         ordersLoading: action.loading,
         error: action.error,
       };
-   
-      case 'GET_ALL_ORDERED_PRODUCTS_STATS_PENDING':
+
+    case 'GET_ALL_ORDERED_PRODUCTS_STATS_PENDING':
       return {
         ...state,
         ordersLoading: action.loading,
-       
       };
     case 'GET_ALL_ORDERED_PRODUCTS_STATS_SUCCESS':
       return {
@@ -104,13 +120,11 @@ export default (state = initialState, action) => {
         ordersLoading: action.loading,
         error: action.error,
       };
-    
-      
-      case 'GET_ALL_PRODUCTS_STATS_PENDING':
+
+    case 'GET_ALL_PRODUCTS_STATS_PENDING':
       return {
         ...state,
         ordersLoading: action.loading,
-       
       };
     case 'GET_ALL_PRODUCTS_STATS_SUCCESS':
       return {
@@ -124,12 +138,11 @@ export default (state = initialState, action) => {
         ordersLoading: action.loading,
         error: action.error,
       };
-    
-      case 'UPDATE_OVEN_COUNT_PENDING':
+
+    case 'UPDATE_OVEN_COUNT_PENDING':
       return {
         ...state,
         updateOrderLoading: action.loading,
-       
       };
     case 'UPDATE_OVEN_COUNT_SUCCESS':
       return {
