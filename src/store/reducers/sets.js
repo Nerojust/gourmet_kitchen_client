@@ -111,25 +111,7 @@ const initialState = {
           error: action.error,
         };
   
-        case 'DEDUCT_SETS_PENDING':
-        return {
-          ...state,
-          deductsetsLoading: action.loading,
-          isSetsUpdated:false
-        };
-      case 'DEDUCT_SETS_SUCCESS':
-        return {
-          ...state,
-          isSetsUpdated: true,
-          deductsetsLoading: action.loading,
-        };
-      case 'DEDUCT_SETS_FAILED':
-        return {
-          ...state,
-          isSetsUpdated: false,
-          deductsetsLoading: action.loading,
-          error: action.error,
-        };
+    
   
       default:
         return state;

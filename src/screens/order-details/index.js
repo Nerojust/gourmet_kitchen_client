@@ -15,9 +15,10 @@ import OrderListItemComponent from '../../components/OrderListItemComponent';
 
 // create a component
 const OrderDetailsScreen = ({navigation, route}) => {
-  console.log('order details', route.params.order);
+  //console.log('order details', route.params.order);
   var orderItems = route?.params?.order?.products;
-  var {name, status, createdat, updatedat, isfulfilled} = route?.params?.order;
+  var {name, status, isset, createdat, updatedat, isfulfilled} =
+    route?.params?.order;
 
   const renderDetails = () => {
     return (
@@ -65,7 +66,11 @@ const OrderDetailsScreen = ({navigation, route}) => {
             style={[styles.labelText, {paddingBottom: 12, left: 0}]}>
             ORDERED PRODUCTS
           </ProductSansBold>
-
+          {isset ? (
+            <AvertaBold style={[styles.custName, {alignSelf: 'flex-end'}]}>
+              SET PACKAGE
+            </AvertaBold>
+          ) : null}
           {orderItems.length > 0 &&
             orderItems.map((item, index) => {
               return (

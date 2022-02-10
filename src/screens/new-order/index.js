@@ -373,9 +373,10 @@ const NewOrderScreen = ({navigation}) => {
         return;
       }
 
-      var productArray = [];
+      let productArray = [];
+      let orderPayload ={}
       newBasketArray.map((data, i) => {
-        console.log('dddd', data);
+        //console.log('dddd', data);
         if (data?.selectedProduct?.type != 'custom') {
           var item = {
             id: data?.selectedProduct?.baseProductId,
@@ -384,21 +385,27 @@ const NewOrderScreen = ({navigation}) => {
             size: data?.selectedProduct?.categorySize?.name,
           };
           productArray.push(item);
+           orderPayload = {
+            customer: {
+              name: fullName,
+            },
+            products: productArray,
+          };
         } else {
           var item = {
             id: data?.selectedProduct?.id,
             type: 'custom',
           };
           productArray.push(item);
+           orderPayload = {
+            customer: {
+              name: fullName,
+            },
+            type: 'custom',
+            products: productArray,
+          };
         }
       });
-
-      const orderPayload = {
-        customer: {
-          name: fullName,
-        },
-        products: productArray,
-      };
 
       console.log('order payload', orderPayload);
 
@@ -413,7 +420,7 @@ const NewOrderScreen = ({navigation}) => {
         .catch(() => {
           console.log('error creating order');
         });
-    });
+   });
   };
   const renderSuccessModal = () => (
     <CustomSuccessModal

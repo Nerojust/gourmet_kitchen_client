@@ -31,6 +31,3 @@ client.interceptors.response.use(
 );
 
 export default client;
-
-export const LOGIN_URL = baseURL + '/auth/rider/login';
-export const GET_RIDER_REQUESTS = baseURL + '/rider-requests';

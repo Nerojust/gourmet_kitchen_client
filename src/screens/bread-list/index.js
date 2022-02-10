@@ -57,14 +57,14 @@ const BreadListScreen = ({navigation}) => {
     fetchAllData();
     setIsRefreshing(false);
   };
-
-  const openCreateSetPage = () => {};
+  
   const openSettingsMenu = item => {
     // console.log("clicked is ", item);
     if (item == 'manageSets') {
       navigation.navigate('SetList');
     }
   };
+
   return (
     <ViewProviderComponent>
       <DismissKeyboard>

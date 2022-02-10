@@ -19,7 +19,7 @@ import ProductSansBold from './Text/ProductSansBold';
 
 // create a component
 const OrderProductComponent = ({item, handleClick}) => {
-  //console.log("item",item.products[0].isfulfilled)
+ //console.log('item', item.isset);
   var currDate = new Date();
   var diffMs = currDate.getTime() - new Date(item?.createdat).getTime();
   var sec = diffMs / 1000;
@@ -44,6 +44,11 @@ const OrderProductComponent = ({item, handleClick}) => {
   return (
     <TouchableOpacity style={styles.item} onPress={() => handleClick(item)}>
       <View>
+        {item.isset ? (
+          <View style={{alignItems: 'flex-end', paddingVertical: 5}}>
+            <ProductSansBold style={[styles.itemsText,{fontWeight:'bold'}]}>Set</ProductSansBold>
+          </View>
+        ) : null}
         <View
           style={{
             flexDirection: 'row',
