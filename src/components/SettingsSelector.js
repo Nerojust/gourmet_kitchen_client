@@ -1,6 +1,6 @@
 import React, {PureComponent,useState} from 'react';
 import {StyleSheet,  View, Text,Image, TouchableOpacity} from 'react-native';
-import Menu, {MenuItem, MenuDivider} from 'react-native-material-menu';
+import { Menu, MenuItem, MenuDivider } from 'react-native-material-menu';
 import {COLOURS} from '../utils/Colours';
 import {deviceWidth, hp, wp} from '../utils/responsive-screen';
 import AvertaBold from './Text/AvertaBold';
@@ -38,7 +38,7 @@ export default class SettingsSelector extends PureComponent {
       <Menu
         animationDuration={200}
         ref={this.setMenuRef}
-        button={
+        anchor={
           <TouchableOpacity
             onPress={this.openMenu}
             style={styles.transpClickableBg}
@@ -52,54 +52,23 @@ export default class SettingsSelector extends PureComponent {
         }
       >
         <>
-          <MenuItem onPress={() => this.onPressItem('Edit')}>
-            <AvertaBold style={styles.text}>Edit</AvertaBold>
+          <MenuItem onPress={() => this.onPressItem('manageSets')}>
+            <AvertaBold style={styles.text}>Manage Sets</AvertaBold>
           </MenuItem>
           <MenuDivider />
-          <MenuItem onPress={() => this.onPressItem('Send to dispatch')}>
+          {/* <MenuItem onPress={() => this.onPressItem('setList')}>
             <AvertaBold style={[styles.text, { color: COLOURS.blue }]}>
-              Send to dispatch
+              View Custom Set List
             </AvertaBold>
           </MenuItem>
-          <MenuDivider />
-          <MenuItem onPress={() => this.onPressItem('Print')}>
-            <AvertaBold style={styles.text}>Print</AvertaBold>
-          </MenuItem>
-          <MenuDivider />
-          <MenuItem onPress={() => this.onPressItem('Delete')}>
-            <AvertaBold style={[styles.text, { color: COLOURS.red }]}>
-              Delete
-            </AvertaBold>
-          </MenuItem>
+          <MenuDivider /> */}
+         
         </>
       </Menu>
     );
   }
 }
 
-// export default function App() {
-//   const [visible, setVisible] = useState(false);
-
-//   const hideMenu = () => setVisible(false);
-
-//   const showMenu = () => setVisible(true);
-
-//   return (
-//     <View style={{ height: '100%', alignItems: 'center', justifyContent: 'center' }}>
-//       <Menu
-//         visible={visible}
-//         anchor={<Text onPress={showMenu}>Show menu</Text>}
-//         onRequestClose={hideMenu}
-//       >
-//         <MenuItem onPress={hideMenu}>Menu item 1</MenuItem>
-//         <MenuItem onPress={hideMenu}>Menu item 2</MenuItem>
-//         <MenuItem disabled>Disabled item</MenuItem>
-//         <MenuDivider />
-//         <MenuItem onPress={hideMenu}>Menu item 4</MenuItem>
-//       </Menu>
-//     </View>
-//   );
-// }
 const styles = StyleSheet.create({
   statusText: {
     // width: wp(70),
@@ -110,7 +79,7 @@ const styles = StyleSheet.create({
   transpClickableBg: {
     width: 40,
     height: 20,
-    backgroundColor: COLOURS.white,
+    //backgroundColor: COLOURS.white,
     justifyContent: 'center',
     alignItems: 'center',
     right: deviceWidth * 0.02,
@@ -123,37 +92,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  line: {
-    width: '100%',
-    height: 0.5,
-    backgroundColor: COLOURS.lightGray,
-  },
-  dropDownMenu: {
-    flex: 1,
-    height: 30,
-    width: 300,
-    position: 'absolute',
-    // borderWidth: 1,
-    backgroundColor: 'white',
-  },
-  container: {
-    position: 'absolute',
-    width: '100%',
-    height: 44 * 5,
-    zIndex: 100,
-    // borderWidth: 1,
-  },
-  iconshape: {
-    width: wp(42),
-    height: wp(42),
-    backgroundColor: 'rgba(110,122,255,0.17)',
-    borderRadius: wp(21),
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  harrow: {
-    fontSize: hp(10),
-    marginLeft: wp(4),
-  },
+ 
+ 
 });

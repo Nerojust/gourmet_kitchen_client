@@ -1,4 +1,4 @@
-import React, {Component, PureComponent} from 'react';
+import React, {Component, useState} from 'react';
 import {
   StyleSheet,
   View,
@@ -13,11 +13,13 @@ import {
   TouchableOpacity,
   Platform,
 } from 'react-native';
-import {hp, wp, deviceHeight, deviceWidth} from '../utils/responsive-screen';
+import {hp, wp, fp,deviceHeight, deviceWidth} from '../utils/responsive-screen';
 import {getStatusBarHeight} from 'react-native-iphone-x-helper';
 import ProductSansBold from './Text/ProductSansBold';
 import {COLOURS} from '../utils/Colours';
 import {IMAGES} from '../utils/Images';
+import {Menu, MenuItem, MenuDivider} from 'react-native-material-menu';
+import SettingsSelector from './SettingsSelector';
 
 export const BackViewMoreSettings = ({
   onClose,
@@ -38,23 +40,35 @@ export const BackViewMoreSettings = ({
       </TouchableOpacity>
 
       <ProductSansBold
-        style={{fontSize: 19, flex: 1.3, color: COLOURS.gray2}}
+        style={{fontSize: fp(19), flex: 1.3, color: COLOURS.gray2}}
         numberOfLines={1}>
         {backText}
       </ProductSansBold>
 
-      {shouldDisplayAdd ? (
-        <TouchableOpacity style={{flex: 0.15, right: 10}} onPress={handleClick}>
-          <Image
-            source={IMAGES.addImage}
-            resizeMode={'contain'}
-            style={{width: 16, height: 16, tintColor: COLOURS.zupaBlue}}
-          />
-        </TouchableOpacity>
-      ) : (
-        <View style={{flex: 0.2, right: 10}}></View>
-      )}
+      <View
+        style={{
+          flexDirection: 'row',
+          flex: 0.2,
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}>
+          
+        {shouldDisplayAdd ? (
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={handleClick}>
+            {renderSettingsMore(handleClick)}
+          </TouchableOpacity>
+        ) : null}
+      </View>
     </View>
+  );
+};
+export const renderSettingsMore = handleMoreClick => {
+  return (
+    <SettingsSelector
+      onPressIcon={handleMoreClick}
+    />
   );
 };
 
@@ -73,55 +87,5 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0.4,
     borderBottomColor: COLOURS.lightGray,
   },
-  searchView: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: deviceWidth,
-    backgroundColor: COLOURS.zupa_gray_bg,
-    // borderBottomWidth: hp(0.5),
-    borderColor: COLOURS.lightGray,
-    borderTopWidth: 0.4,
-    //opacity: this.props.opacity,
-  },
-  dateSelectorBoxView: {
-    flexDirection: 'row',
-    right: deviceWidth * 0.08,
-  },
-
-  headerContainerView: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    width: deviceWidth,
-    height: Platform.OS == 'ios' ? deviceHeight * 0.08 : deviceHeight * 0.07,
-    backgroundColor: COLOURS.white,
-  },
-  zupaLogo: {
-    width: wp(30),
-    height: wp(30),
-    marginLeft: 20,
-  },
-  titleHeaderText: {
-    fontSize: 19,
-    flex: 0.9,
-    left: 20,
-    color: COLOURS.gray2,
-  },
-  imageIcon: {width: 21, height: 21},
-  periodText: {
-    fontSize: 13,
-    color: COLOURS.textInputColor,
-    marginRight: wp(8),
-    alignSelf: 'center',
-  },
-  overlay: {
-    position: 'absolute',
-    top: 0,
-    width: deviceWidth,
-    height: hp(73) + getStatusBarHeight(),
-    borderBottomWidth: 0.4,
-    backgroundColor: 'rgba(44,63,94,0.27)',
-    borderColor: '#EAECF0',
-    // marginTop: Platform.OS === 'ios' ? getStatusBarHeight() : 0,
-    zIndex: 10000,
-  },
+  
 });

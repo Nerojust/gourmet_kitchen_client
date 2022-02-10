@@ -5,6 +5,8 @@ import { horizontalAnimation } from '../Animation';
 import BreadListScreen from '../../screens/bread-list';
 import BreadListDetailsScreen from '../../screens/breadlist-details';
 import NewSetScreen from '../../screens/new-set';
+import SetListScreen from '../../screens/setlist';
+import SetDetailsScreen from '../../screens/set-details';
 
 const BreadList = createNativeStackNavigator();
 
@@ -17,6 +19,8 @@ export const BreadListStackNavigator = () => {
       <BreadList.Screen name="BreadList" component={BreadListScreen} />
       <BreadList.Screen name="BreadListDetails" component={BreadListDetailsScreen} />
       <BreadList.Screen name="AddSet" component={NewSetScreen} />
+      <BreadList.Screen name="SetList" component={SetListScreen} />
+      <BreadList.Screen name="SetDetails" component={SetDetailsScreen} />
     </BreadList.Navigator>
   );
 };

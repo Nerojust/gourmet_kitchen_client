@@ -13,7 +13,7 @@ import BreadListItemComponent from '../../components/BreadListItemComponent';
 import ProductSans from '../../components/Text/ProductSans';
 import {fp} from '../../utils/responsive-screen';
 import {getAllOrderedProductsStats} from '../../store/actions/orders';
-import {getAllZupaProducts} from '../../store/actions/products';
+import {Menu, MenuItem, MenuDivider} from 'react-native-material-menu';
 
 // create a component
 const BreadListScreen = ({navigation}) => {
@@ -22,6 +22,13 @@ const BreadListScreen = ({navigation}) => {
   const {orderedProducts, ordersLoading} = useSelector(x => x.orders);
   const {products, productsLoading} = useSelector(x => x.products);
   //console.log('products', orderedProducts.length);
+
+  const [visible, setVisible] = useState(false);
+
+  const hideMenu = () => setVisible(false);
+
+  const showMenu = () => setVisible(true);
+
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       fetchAllData();
@@ -51,10 +58,13 @@ const BreadListScreen = ({navigation}) => {
     setIsRefreshing(false);
   };
 
-  const openCreateSetPage = () => {
-    navigation.navigate('AddSet');
+  const openCreateSetPage = () => {};
+  const openSettingsMenu = item => {
+    // console.log("clicked is ", item);
+    if (item == 'manageSets') {
+      navigation.navigate('SetList');
+    }
   };
-
   return (
     <ViewProviderComponent>
       <DismissKeyboard>
@@ -63,7 +73,7 @@ const BreadListScreen = ({navigation}) => {
             backText="Pending Bread List"
             onClose={() => navigation.goBack()}
             shouldDisplayAdd
-            handleClick={openCreateSetPage}
+            handleClick={openSettingsMenu}
           />
 
           <FlatList
