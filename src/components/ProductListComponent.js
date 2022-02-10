@@ -24,7 +24,7 @@ import {capitalizeWord, formatNumberComma, NAIRA_} from '../utils/utils';
 import {deviceWidth, deviceHeight} from '../utils/responsive-screen';
 import {COLOURS} from '../utils/Colours';
 import {ACTIVE_OPACITY} from '../utils/Constants';
-import { IMAGES } from '../utils/Images';
+import {IMAGES} from '../utils/Images';
 
 const ProductListComponent = ({
   dataSource,
@@ -40,7 +40,7 @@ const ProductListComponent = ({
 }) => {
   const renderItem = ({item}) => {
     var catName = item?.category?.name;
-    // console.log("the name is ", catName);
+    //console.log("the name is ", item.name);
     return (
       <FlatList
         data={item?.products}
@@ -63,7 +63,11 @@ const ProductListComponent = ({
           <View style={{justifyContent: 'center'}}>
             <AvertaBold
               style={[styles.itemText, {fontWeight: 'bold', flex: 1}]}>
-              {item ? capitalizeWord(item?.name.trim()) : null}
+              {item?.name
+                ? capitalizeWord(item?.name.trim())
+                : item?.productname
+                ? capitalizeWord(item?.productname.trim())
+                : null}
             </AvertaBold>
             <View style={{flexDirection: 'row'}}>
               <Averta style={[styles.itemText, {flex: 1}]}>
@@ -75,10 +79,15 @@ const ProductListComponent = ({
                   : null}
               </Averta>
             </View>
-            <ProductSans style={styles.itemPriceText}>
-              {NAIRA_}
-              {formatNumberComma(item?.unitPrice)}
-            </ProductSans>
+            {!item?.categorySize? (
+              <ProductSans style={styles.itemPriceText}>
+                Custom
+              </ProductSans>
+            ) : (
+              <ProductSans style={styles.itemPriceText}>
+                {NAIRA_ + formatNumberComma(item?.unitPrice)}
+              </ProductSans>
+            )}
           </View>
         </TouchableOpacity>
 

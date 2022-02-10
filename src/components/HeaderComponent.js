@@ -8,9 +8,16 @@ import {
 } from 'react-native';
 import {COLOURS} from '../utils/Colours';
 import {deviceHeight, deviceWidth, fp, wp} from '../utils/responsive-screen';
+import SettingsSelector from './SettingsSelector';
 import ProductSansBold from './Text/ProductSansBold';
 
-const HeaderComponent = ({name, isDashboard,performDelete}) => {
+export const HeaderComponent = ({
+  name,
+  isDashboard,
+  performDelete,
+  shouldDisplayMoreIcon,
+  handleMoreClick,
+}) => {
   return (
     <View
       style={[
@@ -37,12 +44,25 @@ const HeaderComponent = ({name, isDashboard,performDelete}) => {
             resizeMode={'contain'}
           />
         </TouchableOpacity>
+
+        {/* <View
+          style={{
+            flexDirection: 'row',
+            flex: 0.2,
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}>
+        
+                <SettingsSelector
+                  onPressIcon={handleMoreClick}
+                />
+              
+         
+        </View> */}
       </>
     </View>
   );
 };
-
-export default HeaderComponent;
 
 const styles = StyleSheet.create({
   iconImage: {width: 21, height: 21},
@@ -89,8 +109,8 @@ const styles = StyleSheet.create({
     marginLeft: 20,
   },
   deleteImage: {
-    width: wp(20),
-    height: wp(20),
+    width: wp(19),
+    height: wp(19),
     marginLeft: 20,
   },
   titleHeaderText: {

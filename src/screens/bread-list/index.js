@@ -13,7 +13,7 @@ import BreadListItemComponent from '../../components/BreadListItemComponent';
 import ProductSans from '../../components/Text/ProductSans';
 import {fp} from '../../utils/responsive-screen';
 import {getAllOrderedProductsStats} from '../../store/actions/orders';
-import { getAllZupaProducts } from '../../store/actions/products';
+import {getAllZupaProducts} from '../../store/actions/products';
 
 // create a component
 const BreadListScreen = ({navigation}) => {
@@ -22,7 +22,7 @@ const BreadListScreen = ({navigation}) => {
   const {orderedProducts, ordersLoading} = useSelector(x => x.orders);
   const {products, productsLoading} = useSelector(x => x.products);
   //console.log('products', orderedProducts.length);
-useEffect(() => {
+  useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       fetchAllData();
       //Put your Data loading function here instead of my loadData()
@@ -51,11 +51,9 @@ useEffect(() => {
     setIsRefreshing(false);
   };
 
-  const handleRefreshZupaProducts=()=>{
-    //console.log("refreshing action")
-    dispatch(getAllOrderedProductsStats());
-    dispatch(getAllZupaProducts())
-  }
+  const openCreateSetPage = () => {
+    navigation.navigate('AddSet');
+  };
 
   return (
     <ViewProviderComponent>
@@ -64,11 +62,10 @@ useEffect(() => {
           <BackViewMoreSettings
             backText="Pending Bread List"
             onClose={() => navigation.goBack()}
-            shouldDisplayRefresh
-           // handleRefresh={handleRefreshZupaProducts}
+            shouldDisplayAdd
+            handleClick={openCreateSetPage}
           />
 
-       
           <FlatList
             data={orderedProducts}
             keyboardShouldPersistTaps={'handled'}

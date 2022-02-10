@@ -41,7 +41,7 @@ const SurplusListItemComponent = ({
       </View>
       <View>
         <ProductSans style={styles.priceName}>
-          {item?.productname || 'None'}
+          {item?.productname.trim() || 'None'}
         </ProductSans>
       </View>
       <View
@@ -51,17 +51,10 @@ const SurplusListItemComponent = ({
           paddingVertical: 5,
           marginTop: 3,
         }}>
-        {/* <View>
-          <ProductSans style={styles.labelText}>CATEGORY</ProductSans>
-          <ProductSans style={styles.priceName}>
-            {item?.productcategory || 'None'}
-          </ProductSans>
-        </View> */}
-
         <View style={{marginRight: 10}}>
           <ProductSans style={styles.labelText}>SIZE</ProductSans>
           <ProductSans style={styles.quantityName}>
-            {item?.productsize || 'None'}
+            {item?.productsize.trim() || 'None'}
           </ProductSans>
         </View>
         <View>

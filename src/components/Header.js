@@ -17,12 +17,13 @@ import {hp, wp, deviceHeight, deviceWidth} from '../utils/responsive-screen';
 import {getStatusBarHeight} from 'react-native-iphone-x-helper';
 import ProductSansBold from './Text/ProductSansBold';
 import {COLOURS} from '../utils/Colours';
+import {IMAGES} from '../utils/Images';
 
 export const BackViewMoreSettings = ({
   onClose,
   backText,
-  shouldDisplayRefresh = false,
-  handleRefresh,
+  shouldDisplayAdd = false,
+  handleClick,
 }) => {
   return (
     <View style={[styles.exitView]}>
@@ -41,19 +42,18 @@ export const BackViewMoreSettings = ({
         numberOfLines={1}>
         {backText}
       </ProductSansBold>
-      {/* {shouldDisplayRefresh ? (
-        <TouchableOpacity
-          onPress={handleRefresh}
-          style={{flex: 0.2, right: 10}}>
+
+      {shouldDisplayAdd ? (
+        <TouchableOpacity style={{flex: 0.15, right: 10}} onPress={handleClick}>
           <Image
-            source={require('../assets/images/refresh.png')}
+            source={IMAGES.addImage}
             resizeMode={'contain'}
-            style={{width: 30, height: 22}}
+            style={{width: 16, height: 16, tintColor: COLOURS.zupaBlue}}
           />
         </TouchableOpacity>
       ) : (
         <View style={{flex: 0.2, right: 10}}></View>
-      )} */}
+      )}
     </View>
   );
 };

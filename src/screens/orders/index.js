@@ -11,7 +11,6 @@ import {
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import AddComponent from '../../components/AddComponent';
-import HeaderComponent from '../../components/HeaderComponent';
 import LoaderShimmerComponent from '../../components/LoaderShimmerComponent';
 import OrderProductComponent from '../../components/OrderProductComponent';
 import ViewProviderComponent from '../../components/ViewProviderComponent';
@@ -27,6 +26,7 @@ import {fp} from '../../utils/responsive-screen';
 import {getAllProducts, getAllZupaProducts} from '../../store/actions/products';
 import SliderTabComponent from '../../components/SliderTabComponent';
 import {useIsFocused} from '@react-navigation/native';
+import { HeaderComponent } from '../../components/HeaderComponent';
 
 // create a component
 const OrdersScreen = ({navigation}) => {
@@ -47,10 +47,6 @@ const OrdersScreen = ({navigation}) => {
     dispatch(getAllOrderedProducts(statusState));
     return unsubscribe;
   }, [navigation, statusState, selectedTab]);
-
-  // useEffect(() => {
-  //   fetchAllData(statusState);
-  // }, [statusState, selectedTab]);
 
   const fetchAllData = () => {
     dispatch(getAllOrderedProducts(statusState));
@@ -133,6 +129,7 @@ const OrdersScreen = ({navigation}) => {
         name="Orders"
         isDashboard
         performDelete={handleDeleteOrders}
+        shouldDisplayMoreIcon
       />
 
       <SliderTabComponent

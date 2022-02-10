@@ -48,26 +48,25 @@ import {IMAGES} from '../../utils/Images';
 import CustomSuccessModal from '../../components/CustomSuccessModal';
 import {createOrder} from '../../store/actions/orders';
 import LoaderShimmerComponent from '../../components/LoaderShimmerComponent';
-import {getAllSets} from '../../store/actions/sets';
+import { createSet } from '../../store/actions/sets';
 
 // create a component
-const NewOrderScreen = ({navigation}) => {
+const NewSetScreen = ({navigation}) => {
   const dispatch = useDispatch();
-  const [fullName, setFullName] = useState('');
+  const [setName, setSetName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [address, setAddress] = useState('');
-  const [isFullNameFieldFocused, setIsFullNameFieldFocused] = useState(false);
+  const [issetNameFieldFocused, setIssetNameFieldFocused] = useState(false);
   const [isAddressFieldFocused, setAddressFieldFocused] = useState(false);
   const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false);
   const productSheetRef = useRef();
   const submitOrderRef = useRef();
   const phoneNumberRef = useRef();
   const addressRef = useRef();
-  const fullNameRef = useRef();
+  const setNameRef = useRef();
   const [selectedProduct, setSelectedProduct] = useState({});
   const {products, productsLoading} = useSelector(state => state.products);
   var productsData = Object.assign([], products);
-  //console.log("pdts",productsData)
   const [quantity, setQuantity] = useState(1);
   const keyboardHeight = useKeyboardHeight();
   const [filteredProductData, setFilteredProductsData] = useState(productsData);
@@ -75,35 +74,11 @@ const NewOrderScreen = ({navigation}) => {
   const [isProductSelected, setIsProductSelected] = useState(false);
   var basketArray = [];
   const [newBasketArray, setNewBasketArray] = useState(basketArray);
-  const {createOrderLoading} = useSelector(x => x.orders);
-  const {sets} = useSelector(x => x.sets);
-  const [mergedArrayProducts, setMergedArrayProducts] = useState(products);
-  //console.log("sets",sets)
-  let additionalArray = [];
+  const {createSetsLoading} = useSelector(x => x.sets);
 
   useEffect(() => {
-    dispatch(getAllSets());
-    dispatch(getAllZupaProducts());
     dispatch(getAllProducts('', 0, 0, null));
   }, []);
-
-  useEffect(() => {
-    sets.forEach(async (item, i) => {
-      let newObject = {};
-      item.type = 'custom';
-      // console.log('item', item.name);
-
-      newObject.name = item.name;
-      newObject.products = [item];
-
-      if (newObject) {
-        additionalArray.push(newObject);
-      }
-    });
-    // console.log('new object', additionalArray);
-    setMergedArrayProducts([...additionalArray, ...products]);
-    setFilteredProductsData([...additionalArray, ...products]);
-  }, [sets]);
 
   const addDetailsToOrderSummary = () => {
     if (selectedProduct?.name != null) {
@@ -117,22 +92,13 @@ const NewOrderScreen = ({navigation}) => {
       //console.log("basket", basketArray, newBasketArray.length);
       newBasketArray.map(order => {
         //"orderid", order;
-        if (selectedProduct.type != 'custom') {
-          if (selectedProduct?.id === order?.selectedProduct?.id) {
-            isProductExisting = true;
-            alert(
-              'You already have this in your cart, please update the quantity',
-            );
-            setIsProductSelected(false);
-            return;
-          }
-        } else {
-          if (selectedProduct?.name === order?.selectedProduct?.name) {
-            isProductExisting = true;
-            alert('You already have this in your cart');
-            setIsProductSelected(false);
-            return;
-          }
+        if (selectedProduct?.id === order?.selectedProduct?.id) {
+          isProductExisting = true;
+          alert(
+            'You already have this in your cart',
+          );
+          setIsProductSelected(false);
+          return;
         }
       });
       if (!isProductExisting) {
@@ -161,6 +127,7 @@ const NewOrderScreen = ({navigation}) => {
   const handleRefreshIncaseOfNetworkFailure = () => {
     dispatch(getAllProducts('', 0, 0, null));
   };
+
   const renderProductBottomSheet = () => {
     return (
       <BottomSheetProductComponent
@@ -169,9 +136,7 @@ const NewOrderScreen = ({navigation}) => {
         isProductLoading={productsLoading}
         filteredDataSource={filteredProductData}
         dataSource={
-          productInputValue.length > 0
-            ? filteredProductData
-            : mergedArrayProducts
+          productInputValue.length > 0 ? filteredProductData : products
         }
         closeAction={handleCloseActionProduct}
         handleSingleItemPress={handleSingleItemPress}
@@ -183,11 +148,12 @@ const NewOrderScreen = ({navigation}) => {
       />
     );
   };
+
   const handleCloseActionProduct = () => {
     setProductInputValue('');
-    setFilteredProductsData([]);
     dismissBottomSheetDialog(productSheetRef);
   };
+  
   const handleProductSubmitSearchext = text => {
     console.log('submit text', productInputValue);
     //dispatch(ProductActions.searchAllBaseProducts(text, 400, 0));
@@ -195,12 +161,12 @@ const NewOrderScreen = ({navigation}) => {
 
   const handleProductInputSearchText = text => {
     if (text) {
-      mergedArrayProducts.sort((a, b) => {
+      products.sort((a, b) => {
         if (b.name > a.name) return -1;
         if (b.name < a.name) return 1;
         return 0;
       });
-      const newData = mergedArrayProducts?.filter(item => {
+      const newData = products?.filter(item => {
         const itemData = item?.name
           ? item?.name.toUpperCase()
           : ''.toUpperCase();
@@ -210,7 +176,7 @@ const NewOrderScreen = ({navigation}) => {
       setFilteredProductsData(newData);
       setProductInputValue(text);
     } else {
-      setFilteredProductsData(mergedArrayProducts);
+      setFilteredProductsData(products);
       setProductInputValue(text);
     }
   };
@@ -219,37 +185,34 @@ const NewOrderScreen = ({navigation}) => {
     return (
       <>
         <View style={[styles.actions, {paddingVertical: 13}]}>
-          <ProductSansBold style={styles.actiontext}>
-            BASIC DETAILS
-          </ProductSansBold>
+          <ProductSansBold style={styles.actiontext}>SET NAME</ProductSansBold>
         </View>
 
         <TextInputComponent
-          placeholder={'Full Name'}
-          handleTextChange={text => setFullName(text)}
-          defaultValue={fullName}
+          placeholder={'Enter Set Name'}
+          handleTextChange={text => setSetName(text)}
+          defaultValue={setName}
           returnKeyType={'next'}
           keyboardType={'default'}
           secureTextEntry={false}
-          refValue={fullNameRef}
+          refValue={setNameRef}
           capitalize={'sentences'}
           heightfigure={50}
           widthFigure={deviceWidth / 1.15}
-          //refValue={fullNameRef}
+          //refValue={setNameRef}
           props={
-            isFullNameFieldFocused
+            issetNameFieldFocused
               ? {borderColor: COLOURS.blue}
               : {borderColor: COLOURS.zupa_gray_bg}
           }
           handleTextInputFocus={() => {
-            setIsFullNameFieldFocused(true);
+            setIssetNameFieldFocused(true);
           }}
           handleBlur={() => {
-            setIsFullNameFieldFocused(false);
+            setIssetNameFieldFocused(false);
           }}
           onSubmitEditing={event => {}}
         />
-
         <View style={[styles.actions, {paddingVertical: 13}]}>
           <ProductSansBold style={styles.actiontext}>
             SELECT PRODUCTS
@@ -282,11 +245,9 @@ const NewOrderScreen = ({navigation}) => {
 
         {isProductSelected ? addDetailsToOrderSummary() : null}
 
-        <View style={[styles.spaceBetweenInputs, {marginTop: 15}]} />
+        <View style={[styles.spaceBetweenInputs, {marginTop: 10}]} />
 
         {/* order summary section */}
-
-        <View style={[styles.spaceBetweenInputs, {marginTop: 0}]} />
 
         {newBasketArray.length > 0 ? (
           <View style={{flexDirection: 'row'}}>
@@ -313,7 +274,7 @@ const NewOrderScreen = ({navigation}) => {
           <>
             <ProductSansBold
               style={[styles.actiontext, {fontSize: 12, marginTop: 10}]}>
-              ORDER SUMMARY
+              SET SUMMARY
             </ProductSansBold>
             <View style={styles.imageContainer}>
               <Image
@@ -321,7 +282,7 @@ const NewOrderScreen = ({navigation}) => {
                 source={require('../../assets/images/noproduct.png')}
               />
               <Averta style={styles.imageText}>
-                Cart is empty, add products now
+                Set List is empty, add products to make a set
               </Averta>
             </View>
           </>
@@ -350,21 +311,16 @@ const NewOrderScreen = ({navigation}) => {
           alignItems: 'center',
         }}>
         <Text style={{color: COLOURS.white, fontSize: 14, fontWeight: '700'}}>
-          Submit
+          Create Set
         </Text>
-        {/* <LoaderButtonComponent
-          buttonRef={submitOrderRef}
-          title={'Submit Order'}
-          method={handleAddProduct}
-        /> */}
       </TouchableOpacity>
     );
   };
 
   const handleAddProduct = async () => {
     requestAnimationFrame(() => {
-      if (!fullName) {
-        alert('Customer name is required');
+      if (!setName) {
+        alert('Set name is required');
         return;
       }
 
@@ -375,34 +331,25 @@ const NewOrderScreen = ({navigation}) => {
 
       var productArray = [];
       newBasketArray.map((data, i) => {
-        console.log('dddd', data);
-        if (data?.selectedProduct?.type != 'custom') {
-          var item = {
-            id: data?.selectedProduct?.baseProductId,
-            quantity: data?.quantity,
-            price: data?.selectedProduct?.unitPrice,
-            size: data?.selectedProduct?.categorySize?.name,
-          };
-          productArray.push(item);
-        } else {
-          var item = {
-            id: data?.selectedProduct?.id,
-            type: 'custom',
-          };
-          productArray.push(item);
-        }
+        //console.log('dddd', data);
+        var item = {
+          productid: data?.selectedProduct?.baseProductId,
+          productname: data?.selectedProduct?.name.trim(),
+          quantity: 1,
+          price: data?.selectedProduct?.unitPrice,
+          productsize: data?.selectedProduct?.categorySize?.name.trim(),
+        };
+        productArray.push(item);
       });
 
       const orderPayload = {
-        customer: {
-          name: fullName,
-        },
+        name: setName,
         products: productArray,
       };
 
       console.log('order payload', orderPayload);
 
-      dispatch(createOrder(orderPayload))
+      dispatch(createSet(orderPayload))
         .then(response => {
           //console.log("inside result", response);
           if (response) {
@@ -424,7 +371,7 @@ const NewOrderScreen = ({navigation}) => {
     />
   );
   const resetFields = () => {
-    setFullName('');
+    setSetName('');
     setSelectedProduct({});
   };
 
@@ -448,22 +395,14 @@ const NewOrderScreen = ({navigation}) => {
   };
 
   const deleteFromOrderBasket = order => {
-    if (order.selectedProduct.type == 'custom') {
-      setNewBasketArray(
-        newBasketArray.filter(
-          item => item?.selectedProduct?.id !== order?.selectedProduct?.id,
-        ),
-      );
-    } else {
-      setNewBasketArray(
-        newBasketArray.filter(
-          item => item?.selectedProduct?.name !== order?.selectedProduct?.name,
-        ),
-      );
-    }
+    setNewBasketArray(
+      newBasketArray.filter(
+        item => item?.selectedProduct?.id !== order?.selectedProduct?.id,
+      ),
+    );
   };
   const renderBasket = ({item, index}) => {
-    //console.log('render Item is ', item, index);
+    //console.log("render Item is ", item, index);
     //console.log('data is ', newBasketArray);
 
     return (
@@ -474,30 +413,28 @@ const NewOrderScreen = ({navigation}) => {
           <Averta style={styles.productNameText} numberOfLines={4}>
             {item ? item?.selectedProduct?.name.trim() : ''}
           </Averta>
-          {item?.selectedProduct?.type != 'custom' ? (
-            <>
-              <QuantityProductComponent
-                style={{marginLeft: 15}}
-                item={item}
-                sendValue={value => handleqty(value, item)}
-              />
 
-              <AvertaBold style={styles.unitPriceText}>
-                {item
-                  ? formatNumberComma(
-                      item?.selectedProduct?.unitPrice * item?.quantity,
-                    )
-                  : ''}
-              </AvertaBold>
-            </>
-          ) :  <View style={{flex: 0.5}} />}
-         
+          {/* <QuantityProductComponent
+            style={{marginLeft: 15}}
+            item={item}
+            sendValue={value => handleqty(value, item)}
+          /> */}
+
+          <AvertaBold style={styles.unitPriceText}>
+            {item
+              ? formatNumberComma(
+                  item?.selectedProduct?.unitPrice * item?.quantity,
+                )
+              : ''}
+          </AvertaBold>
+
           <View style={styles.deleteItemBasketView}>
             <DataTable>
               {
                 <TouchableOpacity
                   style={styles.deleteIcon}
                   onPress={() => deleteFromOrderBasket(item)}>
+                  {/* <IMAGES.svgCancel width={wp(11)} height={wp(11)} /> */}
                   <Image
                     source={IMAGES.cancel}
                     style={{width: 11, height: 11}}
@@ -512,10 +449,8 @@ const NewOrderScreen = ({navigation}) => {
     );
   };
   const handleLoadProductsBottomSheet = () => {
-    dismissTextInput(fullNameRef);
+    dismissTextInput(setNameRef);
     showBottomSheet(productSheetRef);
-
-    //dispatch(getAllProducts('', 0, 0, null));
   };
 
   return (
@@ -523,7 +458,7 @@ const NewOrderScreen = ({navigation}) => {
       <DismissKeyboard>
         <KeyboardObserverComponent>
           <BackViewMoreSettings
-            backText="New Order"
+            backText="Create Set"
             onClose={() => navigation.goBack()}
           />
           {renderSuccessModal()}
@@ -536,7 +471,7 @@ const NewOrderScreen = ({navigation}) => {
             renderItem={null}
             //keyExtractor={item => Date.now()}
           />
-          <LoaderShimmerComponent isLoading={createOrderLoading} />
+          <LoaderShimmerComponent isLoading={createSetsLoading} />
         </KeyboardObserverComponent>
       </DismissKeyboard>
     </ViewProviderComponent>
@@ -606,7 +541,7 @@ const styles = StyleSheet.create({
   productNameText: {
     color: COLOURS.text_color,
     alignSelf: 'center',
-    flex: 0.5,
+    flex: 1,
     fontSize: fp(14),
     marginLeft: 5,
   },
@@ -619,7 +554,7 @@ const styles = StyleSheet.create({
   },
   basketContainer: {
     flexDirection: 'row',
-    height: deviceHeight * 0.11,
+    height: deviceHeight / 13,
     width: deviceWidth,
     backgroundColor: COLOURS.white,
   },
@@ -673,4 +608,4 @@ const styles = StyleSheet.create({
 });
 
 //make this component available to the app
-export default NewOrderScreen;
+export default NewSetScreen;
