@@ -19,12 +19,12 @@ import ProductSansBold from './Text/ProductSansBold';
 
 // create a component
 const OrderProductComponent = ({item, handleClick}) => {
- //console.log('item', item.isset);
+ //console.log('item', item?.products[0]?.isfulfilled);
   var currDate = new Date();
   var diffMs = currDate.getTime() - new Date(item?.createdat).getTime();
   var sec = diffMs / 1000;
   var min = sec / 60;
-
+//console.log("min",min)
   let fulfilledQCount = 0;
   let quantityQCount = 0;
   let colourResult = getColourCode(item?.createdat);
@@ -46,7 +46,7 @@ const OrderProductComponent = ({item, handleClick}) => {
       <View>
         {item.isset ? (
           <View style={{alignItems: 'flex-end', paddingVertical: 5}}>
-            <ProductSansBold style={[styles.itemsText,{fontWeight:'bold'}]}>Set</ProductSansBold>
+            <ProductSansBold style={[styles.itemsText,{fontWeight:'100'}]}>Set</ProductSansBold>
           </View>
         ) : null}
         <View
@@ -82,7 +82,7 @@ const OrderProductComponent = ({item, handleClick}) => {
             {min > 30 ? (
               <ColourComponent
                 colourType={
-                  !item?.products[0]?.isfulfilled ? colourResult : null
+                  !isAllFulfilled? colourResult : null
                 }
               />
             ) : (
@@ -127,7 +127,7 @@ const OrderProductComponent = ({item, handleClick}) => {
         </View>
         {item.isfulfilled ? (
           <ProductSans style={styles.delayHeaderText}>
-            {moment(item.updatedat).format('LLLL')}
+            {moment(item.updatedat).format('LLL')}
           </ProductSans>
         ) : null}
       </View>

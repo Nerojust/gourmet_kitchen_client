@@ -23,23 +23,14 @@ const BreadListScreen = ({navigation}) => {
   const {products, productsLoading} = useSelector(x => x.products);
   //console.log('products', orderedProducts.length);
 
-  const [visible, setVisible] = useState(false);
-
-  const hideMenu = () => setVisible(false);
-
-  const showMenu = () => setVisible(true);
-
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       fetchAllData();
       //Put your Data loading function here instead of my loadData()
     });
-
+fetchAllData()
     return unsubscribe;
   }, [navigation]);
-  // useEffect(() => {
-  //   fetchAllData();
-  // }, []);
 
   const fetchAllData = () => {
     dispatch(getAllOrderedProductsStats());
@@ -104,7 +95,6 @@ const BreadListScreen = ({navigation}) => {
             }
           />
 
-          {/* <LoaderShimmerComponent isLoading={productsLoading} /> */}
           <LoaderShimmerComponent isLoading={ordersLoading} />
         </KeyboardObserverComponent>
       </DismissKeyboard>

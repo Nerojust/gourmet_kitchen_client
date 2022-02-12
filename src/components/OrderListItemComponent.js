@@ -69,8 +69,8 @@ const OrderListItemComponent = ({item}) => {
       {item?.isfulfilled ? (
         <View style={{marginTop: 10}}>
           <ProductSans style={styles.labelText}>UPDATED AT</ProductSans>
-          <ProductSans style={styles.priceName}>
-            {item.updatedat ? moment(item.updatedat).format('LLLL') : 'None'}
+          <ProductSans style={[styles.priceName,{ fontWeight: 'normal',}]}>
+            {item.updatedat ? moment(item.updatedat).format('LT') : 'None'}
           </ProductSans>
         </View>
       ) : null}

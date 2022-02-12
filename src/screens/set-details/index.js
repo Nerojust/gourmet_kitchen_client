@@ -41,7 +41,7 @@ const SetDetailsScreen = ({navigation, route}) => {
             DATE CREATED
           </ProductSansBold>
           <Averta style={styles.address}>
-            {createdat ? moment(createdat).format('LLLL') : 'None'}
+            {createdat ? moment(createdat).format('LLL') : 'None'}
           </Averta>
         </View>
 

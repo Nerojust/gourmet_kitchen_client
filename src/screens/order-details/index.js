@@ -41,7 +41,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
             ORDER DATE
           </ProductSansBold>
           <Averta style={styles.address}>
-            {createdat ? moment(createdat).format('LLLL') : 'None'}
+            {createdat ? moment(createdat).format('LLL') : 'None'}
           </Averta>
         </View>
         {isfulfilled ? (
@@ -52,7 +52,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
               FULFILLED DATE
             </ProductSansBold>
             <Averta style={styles.address}>
-              {createdat ? moment(updatedat).format('LLLL') : 'None'}
+              {createdat ? moment(updatedat).format('LLL') : 'None'}
             </Averta>
           </View>
         ) : null}
@@ -67,7 +67,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
             ORDERED PRODUCTS
           </ProductSansBold>
           {isset ? (
-            <AvertaBold style={[styles.custName, {alignSelf: 'flex-end'}]}>
+            <AvertaBold style={[styles.custName, {alignSelf: 'flex-end',fontWeight:'100'}]}>
               SET PACKAGE
             </AvertaBold>
           ) : null}

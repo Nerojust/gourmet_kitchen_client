@@ -1,4 +1,5 @@
 //import liraries
+import moment from 'moment';
 import React, {Component} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
 import {COLOURS} from '../utils/Colours';
@@ -64,6 +65,12 @@ const SurplusListItemComponent = ({
           </ProductSans>
         </View>
       </View>
+        <View style={{marginTop:0}}>
+          <ProductSans style={styles.labelText}>ENTERED INTO OVEN AT {item.createdat ? moment(item.createdat).format('LT') : 'None'}</ProductSans>
+          {/* <ProductSans style={[styles.priceName,{ fontWeight: 'normal',}]}>
+            {item.createdat ? moment(item.createdat).format('LT') : 'None'}
+          </ProductSans> */}
+        </View>
     </TouchableOpacity>
   );
 };

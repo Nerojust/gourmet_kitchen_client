@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
   },
   containerView: {
     //flex: 1,
-    borderRadius: 20,
+    //borderRadius: 20,
     paddingVertical: hp(3),
     backgroundColor: COLOURS.white,
   },

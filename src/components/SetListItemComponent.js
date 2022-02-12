@@ -27,7 +27,7 @@ const SetListItemComponent = ({item, index}) => {
           paddingVertical: 5,
         }}>
         <ProductSans style={styles.labelText}>
-          {'SET NAME ' + (index + 1)}
+          {'SET ITEM NAME ' + (index + 1)}
         </ProductSans>
 
         <ProductSans style={styles.productName}>{name.trim()}</ProductSans>
