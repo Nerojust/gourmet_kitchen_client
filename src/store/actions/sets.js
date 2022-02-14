@@ -78,7 +78,7 @@ export const createSet = orderPayload => {
           dispatch(getAllSets());
           dispatch(getAllSets());
           return response.data?.results;
-        }else{
+        } else {
           dispatch({
             type: 'CREATE_SETS_FAILED',
             loading: false,
@@ -132,12 +132,12 @@ export const getSetById = id => {
   };
 };
 
-export const deleteById = id => {
+export const deleteSetById = id => {
   console.log('About to delete one set with id ' + id);
 
   return dispatch => {
     dispatch({
-      type: 'DELETE_SINGLE_SETS_PENDING',
+      type: 'DELETE_SINGLE_SET_PENDING',
       loading: true,
       error: null,
     });
@@ -146,15 +146,18 @@ export const deleteById = id => {
       .delete(`/sets/${id}`)
       .then(response => {
         if (response.data) {
-          console.log('Deleted single set successfully', id);
-          dispatch(getAllSets(''));
-          dispatch({
-            type: 'DELETE_SINGLE_SETS_SUCCESS',
-            loading: false,
-            data: response.data,
-          });
+          if (response?.data?.isSuccessful) {
+            console.log('Deleted single set successfully', id, response.data);
+            alert('Deleted single set successfully');
+            dispatch(getAllSets(''));
+            dispatch({
+              type: 'DELETE_SINGLE_SET_SUCCESS',
+              loading: false,
+              //data: response.data,
+            });
 
-          return response.data;
+            return response.data;
+          }
         }
       })
 
@@ -162,7 +165,7 @@ export const deleteById = id => {
         console.log('Error deleting single set', error);
         handleError(error, dispatch, 'deleting set');
         dispatch({
-          type: 'DELETE_SINGLE_SETS_FAILED',
+          type: 'DELETE_SINGLE_SET_FAILED',
           loading: false,
           error: error.message,
         });

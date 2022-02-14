@@ -20,11 +20,13 @@ import {COLOURS} from '../utils/Colours';
 import {IMAGES} from '../utils/Images';
 import {Menu, MenuItem, MenuDivider} from 'react-native-material-menu';
 import SettingsSelector from './SettingsSelector';
+import DeleteSelector from './DeleteSelector';
 
 export const BackViewMoreSettings = ({
   onClose,
   backText,
   shouldDisplayAdd = false,
+  shouldDisplayDelete = false,
   handleClick,
 }) => {
   return (
@@ -60,6 +62,13 @@ export const BackViewMoreSettings = ({
             {renderSettingsMore(handleClick)}
           </TouchableOpacity>
         ) : null}
+        {shouldDisplayDelete ? (
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={handleClick}>
+            {renderDelete(handleClick)}
+          </TouchableOpacity>
+        ) : null}
       </View>
     </View>
   );
@@ -68,6 +77,13 @@ export const renderSettingsMore = handleMoreClick => {
   return (
     <SettingsSelector
       onPressIcon={handleMoreClick}
+    />
+  );
+};
+export const renderDelete = handleClick => {
+  return (
+    <DeleteSelector
+      onPressIcon={handleClick}
     />
   );
 };

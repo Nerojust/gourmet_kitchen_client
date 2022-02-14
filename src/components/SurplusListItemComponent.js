@@ -66,7 +66,7 @@ const SurplusListItemComponent = ({
         </View>
       </View>
         <View style={{marginTop:0}}>
-          <ProductSans style={styles.labelText}>ENTERED INTO OVEN AT {item.createdat ? moment(item.createdat).format('LT') : 'None'}</ProductSans>
+          <ProductSans style={styles.labelText}>ENTERED OVEN AT {item.createdat ? moment(item.createdat).format('LT') : 'None'}</ProductSans>
           {/* <ProductSans style={[styles.priceName,{ fontWeight: 'normal',}]}>
             {item.createdat ? moment(item.createdat).format('LT') : 'None'}
           </ProductSans> */}

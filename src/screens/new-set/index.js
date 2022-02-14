@@ -48,7 +48,7 @@ import {IMAGES} from '../../utils/Images';
 import CustomSuccessModal from '../../components/CustomSuccessModal';
 import {createOrder} from '../../store/actions/orders';
 import LoaderShimmerComponent from '../../components/LoaderShimmerComponent';
-import { createSet } from '../../store/actions/sets';
+import { createSet, getAllSets } from '../../store/actions/sets';
 
 // create a component
 const NewSetScreen = ({navigation}) => {
@@ -354,6 +354,7 @@ const NewSetScreen = ({navigation}) => {
           //console.log("inside result", response);
           if (response) {
             showSuccessDialog();
+            dispatch(getAllSets());
             resetFields();
           }
         })

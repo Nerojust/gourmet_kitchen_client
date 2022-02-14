@@ -5,7 +5,7 @@ import {COLOURS} from '../utils/Colours';
 import {deviceWidth, hp, wp} from '../utils/responsive-screen';
 import AvertaBold from './Text/AvertaBold';
 
-export default class SettingsSelector extends PureComponent {
+export default class DeleteSelector extends PureComponent {
   constructor(props) {
     super(props);
 
@@ -50,8 +50,8 @@ export default class SettingsSelector extends PureComponent {
           </TouchableOpacity>
         }>
         <>
-          <MenuItem onPress={() => this.onPressItem('manageSets')}>
-            <AvertaBold style={styles.text}>Manage Sets</AvertaBold>
+          <MenuItem onPress={() => this.onPressItem('deleteSet')}>
+            <AvertaBold style={styles.text}>Delete Set</AvertaBold>
           </MenuItem>
           <MenuDivider />
         </>

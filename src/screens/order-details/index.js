@@ -44,7 +44,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
             {createdat ? moment(createdat).format('LLL') : 'None'}
           </Averta>
         </View>
-        {isfulfilled ? (
+        {/* {isfulfilled ? (
           <View
             style={[styles.customerNameView, {paddingTop: 5, marginRight: 10}]}>
             <ProductSansBold
@@ -55,8 +55,8 @@ const OrderDetailsScreen = ({navigation, route}) => {
               {createdat ? moment(updatedat).format('LLL') : 'None'}
             </Averta>
           </View>
-        ) : null}
-
+        ) : null} */}
+     
         <View
           style={[
             styles.customerNameView,
@@ -67,7 +67,11 @@ const OrderDetailsScreen = ({navigation, route}) => {
             ORDERED PRODUCTS
           </ProductSansBold>
           {isset ? (
-            <AvertaBold style={[styles.custName, {alignSelf: 'flex-end',fontWeight:'100'}]}>
+            <AvertaBold
+              style={[
+                styles.custName,
+                {alignSelf: 'flex-end', fontWeight: '100'},
+              ]}>
               SET PACKAGE
             </AvertaBold>
           ) : null}

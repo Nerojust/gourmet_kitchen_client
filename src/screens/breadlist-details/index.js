@@ -19,7 +19,7 @@ import {createSurplus} from '../../store/actions/surplus';
 
 // create a component
 const BreadListDetailsScreen = ({navigation, route}) => {
-  console.log('bread details', route.params.bread);
+  //console.log('bread details', route.params.bread);
   const [ovenCount, setOvenCount] = useState();
   const [pendingCount, setPendingCount] = useState('0');
   const [surplusCount, setSurplusCount] = useState('0');

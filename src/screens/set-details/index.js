@@ -1,5 +1,5 @@
 //import liraries
-import React, {Component} from 'react';
+import React, {Component, useState} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, FlatList} from 'react-native';
 import {BackViewMoreSettings} from '../../components/Header';
 import {KeyboardObserverComponent} from '../../components/KeyboardObserverComponent';
@@ -11,14 +11,23 @@ import {fp} from '../../utils/responsive-screen';
 import {COLOURS} from '../../utils/Colours';
 import moment from 'moment';
 import ProductSansBold from '../../components/Text/ProductSansBold';
-import OrderListItemComponent from '../../components/OrderListItemComponent';
 import SetListItemComponent from '../../components/SetListItemComponent';
+import LoaderShimmerComponent from '../../components/LoaderShimmerComponent';
+import {useSelector, useDispatch} from 'react-redux';
+import {deleteById, deleteSetById} from '../../store/actions/sets';
+import CustomSuccessModal from '../../components/CustomSuccessModal';
+import {DIALOG_TIMEOUT} from '../../utils/Constants';
 
 // create a component
 const SetDetailsScreen = ({navigation, route}) => {
-  console.log('set details', route.params.set);
+  const {deleteSetLoading, hasDeletedSet} = useSelector(x => x.sets);
+  const dispatch = useDispatch();
+  const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false);
+
+  //console.log('set details', route.params.set);
   var setItems = route?.params?.set?.products;
-  var {name, status, createdat, updatedat, isfulfilled} = route?.params?.set;
+  var {name, id, status, createdat, updatedat, isfulfilled} =
+    route?.params?.set;
 
   const renderDetails = () => {
     return (
@@ -68,6 +77,28 @@ const SetDetailsScreen = ({navigation, route}) => {
       </View>
     );
   };
+  const handleDelete = item => {
+    //console.log('item', item);
+
+   dispatch(deleteSetById(id));
+    showSuccessDialog();
+  };
+
+  const showSuccessDialog = () => {
+    setIsSuccessModalVisible(!isSuccessModalVisible);
+
+    setTimeout(() => {
+      setIsSuccessModalVisible(false);
+      navigation.goBack();
+    }, DIALOG_TIMEOUT);
+  };
+  const renderSuccessModal = () => (
+    <CustomSuccessModal
+      isModalVisible={isSuccessModalVisible}
+      dismissModal={showSuccessDialog}
+      message={'Set deleted successfully'}
+    />
+  );
   return (
     <ViewProviderComponent>
       <DismissKeyboard>
@@ -75,14 +106,22 @@ const SetDetailsScreen = ({navigation, route}) => {
           <BackViewMoreSettings
             backText={route.params.set.name + ' Details'}
             onClose={() => navigation.goBack()}
+            shouldDisplayDelete
+            handleClick={handleDelete}
           />
           <FlatList
             data={[]}
             keyboardShouldPersistTaps={'handled'}
-            ListHeaderComponent={renderDetails()}
+            ListHeaderComponent={
+              <>
+                {renderSuccessModal()}
+                {renderDetails()}
+              </>
+            }
             renderItem={null}
             keyExtractor={item => item.id}
           />
+          <LoaderShimmerComponent isLoading={deleteSetLoading} />
         </KeyboardObserverComponent>
       </DismissKeyboard>
     </ViewProviderComponent>
