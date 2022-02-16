@@ -36,23 +36,29 @@ const StoreSalesScreen = ({navigation}) => {
   // }, []);
 
   const renderItems = ({item, index}) => {
-    return <SurplusListItemComponent item={item} handleEditClick={handleChangeSurplusClick} handleNormalClick={handleNormalClick} />;
+    return (
+      <SurplusListItemComponent
+        item={item}
+        handleEditClick={handleChangeSurplusClick}
+        handleNormalClick={handleNormalClick}
+      />
+    );
   };
 
   const handleChangeSurplusClick = item => {
     navigation.navigate('StoreSalesDetails', {
       surplus: item,
-      edit:true
+      edit: true,
     });
   };
   const handleNormalClick = item => {
     navigation.navigate('StoreSalesDetails', {
       surplus: item,
-      edit:false
+      edit: false,
     });
   };
   const onRefresh = () => {
-   // console.log('refreshed');
+    // console.log('refreshed');
     dispatch(getAllSurplus());
   };
   return (
