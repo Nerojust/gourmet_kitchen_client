@@ -14,7 +14,12 @@ const BreadListItemComponent = ({item, onClick}) => {
       style={styles.customerNameView}
       activeOpacity={0.6}
       onPress={() => onClick(item)}>
-      <View style={{flexDirection: 'row', justifyContent: 'center',alignItems:"center"}}>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
         <View style={{flex: 1}}>
           <ProductSans style={styles.productName}>
             {item?.name.trim()}
@@ -24,7 +29,11 @@ const BreadListItemComponent = ({item, onClick}) => {
           </ProductSans>
         </View>
         <View style={{flex: 0.1}}>
-          <ProductSans style={[styles.labelText, {fontWeight: 'bold',fontSize:fp(18), color:COLOURS.black}]}>
+          <ProductSans
+            style={[
+              styles.labelText,
+              {fontWeight: 'bold', fontSize: fp(18), color: COLOURS.black},
+            ]}>
             {item?.sum || '0'}
           </ProductSans>
         </View>

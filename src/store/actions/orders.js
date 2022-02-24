@@ -1,6 +1,8 @@
 import client from '../../utils/Api';
+import clientZupa from '../../utils/ApiZupa';
 import {dateFilterParser} from '../../utils/DateFilter';
 import {clearStorage, handleError} from '../../utils/utils';
+import { createCustomer } from './customers';
 
 export const setOrderStatus = status => {
   return dispatch => {
@@ -186,6 +188,57 @@ export const createOrder = orderPayload => {
   };
 };
 
+export const createZupaOrder = (
+  customerPayload,
+  orderPayload,
+) => {
+  console.log('About to create a zupa order');
+  //console.log("order payload", orderPayload);
+  return (dispatch) => {
+    dispatch({
+      type: 'CREATE_ORDER_PENDING',
+      loading: true,
+      error: null,
+    });
+
+    return dispatch(createCustomer(customerPayload))
+      .then((customerResponse) => {
+       
+        orderPayload.customerId = customerResponse?.id;
+        console.log("updated payload", orderPayload);
+        return clientZupa
+          .post(`/orders`, orderPayload)
+          .then((response) => {
+            //console.log("response", response);
+            if (response.data) {
+              console.log('zupa order created successfully');
+              dispatch({
+                type: 'CREATE_ORDER_SUCCESS',
+                loading: false,
+              });
+              //alert("Order created successfully");
+              return response.data;
+            }
+          })
+          .catch((error) => {
+            console.log('Error creating zupa order ', error);
+            handleError(error, dispatch, 'get orders list');
+            dispatch({
+              type: 'CREATE_ORDER_FAILED',
+              loading: false,
+              error: error.message,
+            });
+          });
+      })
+      .catch((err) => {
+        console.log('Error creating new customer', err);
+
+        handleError(error, ' create order');
+      });
+  };
+};
+
+
 export const getOrder = id => {
   console.log('About to get single ordered product with id', id);
   return dispatch => {
@@ -202,7 +255,7 @@ export const getOrder = id => {
           dispatch({
             type: 'GET_SINGLE_ORDERED_PRODUCTS_SUCCESS',
             loading: false,
-            data: response.data,
+            data: response.data.results[0],
           });
           return response.data;
         }

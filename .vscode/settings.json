@@ -1,0 +1,7 @@
+{
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.fastScrollSensitivity": 6,
+    "editor.foldingImportsByDefault": true,
+    "editor.padding.bottom": 20,
+    "editor.padding.top": 20
+}

@@ -1,14 +1,14 @@
 import axios from 'axios';
 
-const baseURL = "http://localhost:8089/api/"
-//const baseURL = 'https://gourmet-kitchen-api-oq8ef.ondigitalocean.app/api/';
+export const baseURL = 'https://dev.api.zupa.ng'; //new dev link
+//export const baseURL = 'https://api.zupa.ng'; //new prod link
 
 
-let client = axios.create({
+let clientZupa = axios.create({
   baseURL,
 });
 
-client.interceptors.response.use(
+clientZupa.interceptors.response.use(
   function (response) {
     //console.log("rrhhhhhr", response)
     return Promise.resolve(response);
@@ -30,6 +30,5 @@ client.interceptors.response.use(
     }
   },
 );
-export const ZupabaseURL = 'https://dev.api.zupa.ng'; //new dev link
-//export const ZupabaseURL = 'https://api.zupa.ng'; //new prod link
-export default client;
+
+export default clientZupa;

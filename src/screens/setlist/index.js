@@ -1,35 +1,18 @@
 //import liraries
-import React, {Component, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
-  Text,
-  StyleSheet,
   FlatList,
-  TouchableOpacity,
   RefreshControl,
-  Alert,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import AddComponent from '../../components/AddComponent';
 import LoaderShimmerComponent from '../../components/LoaderShimmerComponent';
-import OrderProductComponent from '../../components/OrderProductComponent';
 import ViewProviderComponent from '../../components/ViewProviderComponent';
-import {
-  deleteAllOrders,
-  getAllOrderedProducts,
-  getAllOrderedProductsStats,
-  setOrderStatus,
-} from '../../store/actions/orders';
 import ProductSans from '../../components/Text/ProductSans';
 import {COLOURS} from '../../utils/Colours';
-import {fp} from '../../utils/responsive-screen';
-import {getAllProducts, getAllZupaProducts} from '../../store/actions/products';
-import SliderTabComponent from '../../components/SliderTabComponent';
-import {useIsFocused} from '@react-navigation/native';
-import {HeaderComponent} from '../../components/HeaderComponent';
 import {BackViewMoreSettings} from '../../components/Header';
 import {getAllSets} from '../../store/actions/sets';
-import SetListItemComponent from '../../components/SetItemComponent';
 import SetItemComponent from '../../components/SetItemComponent';
 
 // create a component

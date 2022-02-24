@@ -1,5 +1,5 @@
 //import liraries
-import React, {Component} from 'react';
+import React, {Component, useEffect} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, FlatList} from 'react-native';
 import {BackViewMoreSettings} from '../../components/Header';
 import {KeyboardObserverComponent} from '../../components/KeyboardObserverComponent';
@@ -12,13 +12,25 @@ import {COLOURS} from '../../utils/Colours';
 import moment from 'moment';
 import ProductSansBold from '../../components/Text/ProductSansBold';
 import OrderListItemComponent from '../../components/OrderListItemComponent';
+import {useDispatch, useSelector} from 'react-redux';
+import {getOrder} from '../../store/actions/orders';
+import LoaderShimmerComponent from '../../components/LoaderShimmerComponent';
 
 // create a component
 const OrderDetailsScreen = ({navigation, route}) => {
-  //console.log('order details', route.params.order);
-  var orderItems = route?.params?.order?.products;
-  var {name, status, isset, createdat, updatedat, isfulfilled} =
-    route?.params?.order;
+  const dispatch = useDispatch();
+  //var orderItems = route?.params?.order?.products;
+  const {order, deleteAllOrdersLoading, error, ordersLoading} = useSelector(
+    state => state.orders,
+  );
+  let id = route.params.id;
+  //console.log('order details redux ', order);
+
+  useEffect(() => {
+    if (id) {
+      dispatch(getOrder(route.params.id));
+    }
+  }, [id]);
 
   const renderDetails = () => {
     return (
@@ -29,7 +41,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
           </ProductSansBold>
           <TouchableOpacity onPress={null}>
             <AvertaBold style={styles.custName}>
-              {name ? capitalizeWord(name.trim()) : 'None'}
+              {order?.name ? capitalizeWord(order?.name.trim()) : 'None'}
             </AvertaBold>
           </TouchableOpacity>
         </View>
@@ -41,7 +53,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
             ORDER DATE
           </ProductSansBold>
           <Averta style={styles.address}>
-            {createdat ? moment(createdat).format('LLL') : 'None'}
+            {order?.createdat ? moment(order?.createdat).format('LLL') : 'None'}
           </Averta>
         </View>
         {/* {isfulfilled ? (
@@ -56,7 +68,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
             </Averta>
           </View>
         ) : null} */}
-     
+
         <View
           style={[
             styles.customerNameView,
@@ -66,7 +78,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
             style={[styles.labelText, {paddingBottom: 12, left: 0}]}>
             ORDERED PRODUCTS
           </ProductSansBold>
-          {isset ? (
+          {order?.isset ? (
             <AvertaBold
               style={[
                 styles.custName,
@@ -75,8 +87,8 @@ const OrderDetailsScreen = ({navigation, route}) => {
               SET PACKAGE
             </AvertaBold>
           ) : null}
-          {orderItems.length > 0 &&
-            orderItems.map((item, index) => {
+          {order?.products.length > 0 &&
+            order?.products.map((item, index) => {
               return (
                 <View key={index}>
                   {/* order items list */}
@@ -103,6 +115,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
             renderItem={null}
             keyExtractor={item => item.id}
           />
+          <LoaderShimmerComponent isLoading={ordersLoading} />
         </KeyboardObserverComponent>
       </DismissKeyboard>
     </ViewProviderComponent>

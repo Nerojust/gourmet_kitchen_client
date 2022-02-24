@@ -1,5 +1,5 @@
 //import liraries
-import React, {Component, useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   View,
   Text,
@@ -26,28 +26,27 @@ import {
 import {
   dismissBottomSheetDialog,
   DismissKeyboard,
-  dismissLoader,
   dismissTextInput,
   formatNumberComma,
   showBottomSheet,
-  showLoader,
 } from '../../utils/utils';
 import {BackViewMoreSettings} from '../../components/Header';
 import useKeyboardHeight from 'react-native-use-keyboard-height';
 
-import {getAllProducts, getAllZupaProducts} from '../../store/actions/products';
+import {getAllProducts, syncZupaProducts} from '../../store/actions/products';
 import {BottomSheetProductComponent} from '../../components/BottomSheetComponent';
 import QuantityProductComponent from '../../components/QuantityProductComponent';
 import {ACTIVE_OPACITY, DIALOG_TIMEOUT} from '../../utils/Constants';
 import AvertaBold from '../../components/Text/AvertaBold';
 import Averta from '../../components/Text/Averta';
-import LoaderButtonComponent from '../../components/LoaderButtonComponent';
 import {useDispatch} from 'react-redux';
 import {useSelector} from 'react-redux';
 import {IMAGES} from '../../utils/Images';
 import CustomSuccessModal from '../../components/CustomSuccessModal';
-import {createOrder} from '../../store/actions/orders';
+import {createOrder, createZupaOrder} from '../../store/actions/orders';
 import LoaderShimmerComponent from '../../components/LoaderShimmerComponent';
+import GoogleSearchComponent from '../../components/GoogleSearchComponent';
+import BlinkingTextComponent from '../../components/BlinkingTextComponent';
 import {getAllSets} from '../../store/actions/sets';
 
 // create a component
@@ -58,12 +57,25 @@ const NewOrderScreen = ({navigation}) => {
   const [address, setAddress] = useState('');
   const [isFullNameFieldFocused, setIsFullNameFieldFocused] = useState(false);
   const [isAddressFieldFocused, setAddressFieldFocused] = useState(false);
+  const [
+    isAddressDescriptionFieldFocused,
+    setIsAddressDescriptionFieldFocused,
+  ] = useState(false);
   const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false);
   const productSheetRef = useRef();
   const submitOrderRef = useRef();
-  const phoneNumberRef = useRef();
-  const addressRef = useRef();
-  const fullNameRef = useRef();
+
+  const fullNameRef = useRef(null);
+  const phoneNumberRef = useRef(null);
+  const addressRef = useRef(null);
+  const additionalAddressDescriptionRef = useRef(null);
+  const specialNoteRef = useRef(null);
+  const [specialNote, setSpecialNote] = useState('');
+
+  const [isPhoneNumberFieldFocused, setIsPhoneNumberFieldFocused] =
+    useState(false);
+  const [additionalAddressDescription, setAdditionalAddressDescription] =
+    useState('');
   const [selectedProduct, setSelectedProduct] = useState({});
   const {products, productsLoading} = useSelector(state => state.products);
   var productsData = Object.assign([], products);
@@ -83,7 +95,7 @@ const NewOrderScreen = ({navigation}) => {
 
   useEffect(() => {
     dispatch(getAllSets());
-    dispatch(getAllZupaProducts());
+    dispatch(syncZupaProducts());
     dispatch(getAllProducts('', 0, 0, null));
   }, []);
 
@@ -215,6 +227,17 @@ const NewOrderScreen = ({navigation}) => {
     }
   };
 
+  const handleAddressInputText = text => {
+    //console.log("inside text is", text);
+    //newAddress = text;
+    setAddress(text);
+  };
+  const handleSearchResult = (data, details, input) => {
+    console.log(details?.formatted_address, details?.geometry?.location);
+    setAddress(details?.formatted_address);
+    //newAddress = input;
+  };
+
   const renderInputFields = () => {
     return (
       <>
@@ -248,6 +271,95 @@ const NewOrderScreen = ({navigation}) => {
             setIsFullNameFieldFocused(false);
           }}
           onSubmitEditing={event => {}}
+        />
+
+        <View style={styles.spaceBetweenInputs} />
+        <TextInputComponent
+          placeholder={'Phone Number'}
+          handleTextChange={text =>
+            //setPhoneNumber(addCommaToNumber(text))
+            setPhoneNumber(text)
+          }
+          defaultValue={phoneNumber ? phoneNumber.trim() : ''}
+          returnKeyType={'next'}
+          keyboardType={'number-pad'}
+          secureTextEntry={false}
+          heightfigure={50}
+          length={11}
+          widthFigure={deviceWidth / 1.15}
+          refValue={phoneNumberRef}
+          props={
+            isPhoneNumberFieldFocused
+              ? {
+                  borderColor: COLOURS.blue,
+                }
+              : {borderColor: COLOURS.zupa_gray_bg}
+          }
+          handleTextInputFocus={() => setIsPhoneNumberFieldFocused(true)}
+          handleBlur={() => setIsPhoneNumberFieldFocused(false)}
+          onSubmitEditing={() => {
+            addressRef.current.focus();
+          }}
+        />
+        <View style={styles.spaceBetweenInputs} />
+        <GoogleSearchComponent
+          address={address}
+          addressRef={addressRef}
+          getProps={handleAddressInputText}
+          handleResult={handleSearchResult}
+          //props={{color:COLOURS.red}}
+        />
+
+        <BlinkingTextComponent style={{paddingHorizontal: 43}} />
+
+        <View style={styles.spaceBetweenInputs} />
+        <TextInputComponent
+          placeholder={'Additional Address Description'}
+          handleTextChange={text => setAdditionalAddressDescription(text)}
+          defaultValue={
+            additionalAddressDescription
+              ? additionalAddressDescription.trim()
+              : ''
+          }
+          capitalize={'sentences'}
+          returnKeyType={'next'}
+          keyboardType={'default'}
+          heightfigure={50}
+          widthFigure={deviceWidth / 1.15}
+          secureTextEntry={false}
+          refValue={additionalAddressDescriptionRef}
+          props={
+            isAddressDescriptionFieldFocused
+              ? {
+                  borderColor: COLOURS.blue,
+                }
+              : {borderColor: COLOURS.zupa_gray_bg}
+          }
+          handleTextInputFocus={() => setIsAddressDescriptionFieldFocused(true)}
+          handleBlur={() => setIsAddressDescriptionFieldFocused(false)}
+          onSubmitEditing={() => {
+            specialNoteRef.current.focus();
+          }}
+        />
+        <View style={styles.spaceBetweenInputs} />
+
+        <TextInputComponent
+          placeholder={'Special Note'}
+          handleTextChange={text => setSpecialNote(text)}
+          defaultValue={specialNote ? specialNote.trim() : ''}
+          returnKeyType={'next'}
+          keyboardType={'default'}
+          secureTextEntry={false}
+          widthFigure={deviceWidth / 1.15}
+          heightfigure={95}
+          multiline={true}
+          capitalize={'sentences'}
+          refValue={specialNoteRef}
+          props={{
+            borderWidth: 0,
+            paddingTop: 12,
+            padding: 20,
+          }}
         />
 
         <View style={[styles.actions, {paddingVertical: 13}]}>
@@ -367,14 +479,58 @@ const NewOrderScreen = ({navigation}) => {
         alert('Customer name is required');
         return;
       }
-
+      if (!phoneNumber) {
+        alert('Phone number is required');
+        return;
+      }
+      if (!address) {
+        alert('Address is required');
+        return;
+      }
       if (!selectedProduct) {
         alert('Please select a product');
         return;
       }
+      if (!quantity) {
+        alert('Quantity is required');
+        return;
+      }
 
+        //prepare zupa payload
+        const customerPayload = {
+          name: fullName,
+          phoneNumber: phoneNumber,
+          address,
+          addressDescription: additionalAddressDescription,
+        };
+
+        const orderPayload = {
+          customerId: null,
+          deliveryTypeId: null,
+          deliveryLocation: {
+            address: address,
+            latitude: '6.430118879280349',
+            longitude: '3.4881381695005618',
+          },
+          discountType: 'amount',
+          discountValue: null,
+          order_items: {
+            add: newBasketArray.map((data, i) => {
+              //console.log("map", i, data);
+              return {
+                productId: data?.selectedProduct?.id,
+                quantity: data?.quantity,
+              };
+            }),
+          },
+          specialNote,
+        };
+        
+      //prepare zupa payload
+
+      //prepare kitchen payload
+      let kitchen_payload = {};
       let productArray = [];
-      let orderPayload ={}
       newBasketArray.map((data, i) => {
         //console.log('dddd', data);
         if (data?.selectedProduct?.type != 'custom') {
@@ -385,7 +541,7 @@ const NewOrderScreen = ({navigation}) => {
             size: data?.selectedProduct?.categorySize?.name,
           };
           productArray.push(item);
-           orderPayload = {
+          kitchen_payload = {
             customer: {
               name: fullName,
             },
@@ -397,7 +553,7 @@ const NewOrderScreen = ({navigation}) => {
             type: 'custom',
           };
           productArray.push(item);
-           orderPayload = {
+          kitchen_payload = {
             customer: {
               name: fullName,
             },
@@ -406,21 +562,32 @@ const NewOrderScreen = ({navigation}) => {
           };
         }
       });
-
+      //console.log('customer payload', customerPayload);
       console.log('order payload', orderPayload);
+      console.log('order items', orderPayload.order_items);
+      //console.log('kitchen payload', kitchen_payload);
 
-      dispatch(createOrder(orderPayload))
+      dispatch(createZupaOrder(customerPayload, orderPayload))
         .then(response => {
           //console.log("inside result", response);
           if (response) {
-            showSuccessDialog();
-            resetFields();
+            dispatch(createOrder(kitchen_payload))
+              .then(response => {
+                //console.log("inside result", response);
+                if (response) {
+                  showSuccessDialog();
+                  resetFields();
+                }
+              })
+              .catch(() => {
+                console.log('error creating order');
+              });
           }
         })
         .catch(() => {
           console.log('error creating order');
         });
-   });
+    });
   };
   const renderSuccessModal = () => (
     <CustomSuccessModal
@@ -497,8 +664,10 @@ const NewOrderScreen = ({navigation}) => {
                   : ''}
               </AvertaBold>
             </>
-          ) :  <View style={{flex: 0.5}} />}
-         
+          ) : (
+            <View style={{flex: 0.5}} />
+          )}
+
           <View style={styles.deleteItemBasketView}>
             <DataTable>
               {

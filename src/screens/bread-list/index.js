@@ -21,16 +21,51 @@ const BreadListScreen = ({navigation}) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const {orderedProducts, ordersLoading} = useSelector(x => x.orders);
   const {products, productsLoading} = useSelector(x => x.products);
+  const [newArray, setNewArray] = useState([]);
+  const tempArray = orderedProducts;
   //console.log('products', orderedProducts.length);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       fetchAllData();
-      //Put your Data loading function here instead of my loadData()
     });
-fetchAllData()
+    fetchAllData();
     return unsubscribe;
   }, [navigation]);
+
+  // useEffect(() => {
+  //   var isSameProduct = false;
+  //   var recurringArray = [];
+  //   var tempArrayF = [];
+
+  //   orderedProducts.map((product, index, arr) => {
+  //     if (product.productid == tempProduct.productid) {
+  //       tempArray.push(tempProduct);
+  //     }
+  //   });
+
+  //   console.log('filtered data is ', status);
+
+  //   // tempArrayF.push(performAdditionForSameItem(recurringArray));
+  //   // setNewArray(performAdditionForSameItem(recurringArray));
+  // }, [orderedProducts]);
+
+  // const performAdditionForSameItem = itemArray => {
+  //   console.log('item arrays', itemArray);
+  //   let object = {};
+  //   let finalSum = 0;
+  //   itemArray.map((item, i) => {
+  //     finalSum = finalSum + parseInt(item?.sum);
+  //   });
+  //   (object.sum = finalSum),
+  //     (object.name = itemArray[0].name),
+  //     (object.productid = itemArray[0].productid),
+  //     (object.category = itemArray[0].category),
+  //     (object.productsize = itemArray[0].productsize);
+
+  //   console.log('final Sum is ', finalSum, object);
+  //   return object;
+  // };
 
   const fetchAllData = () => {
     dispatch(getAllOrderedProductsStats());
@@ -48,7 +83,7 @@ fetchAllData()
     fetchAllData();
     setIsRefreshing(false);
   };
-  
+
   const openSettingsMenu = item => {
     // console.log("clicked is ", item);
     if (item == 'manageSets') {

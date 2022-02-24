@@ -14,4 +14,6 @@ export const PAYSTACK_TEST_PUBLIC_KEY =
 // export const PAYSTACK_TEST_PUBLIC_KEY =
 //   "pk_test_8f6586cfe3facb7841330145790f4152d8a96760";
 export const APP_TOKEN =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTY0MjYzNDc0NywiZXhwIjoxNjc0MTkyMzQ3fQ.C1kwqzx1_hXedFiBLNASSQxjnwdtiBIuiKoR3cKqc3c';
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE1LCJpYXQiOjE2NDU2OTI4NzMsImV4cCI6MTY3NzI1MDQ3M30.dVDAidQHNpOsdlui1Xpdhyf-yEHsSw4VHaR0MsuBjq0';
+// export const APP_TOKEN =
+//   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTY0MjYzNDc0NywiZXhwIjoxNjc0MTkyMzQ3fQ.C1kwqzx1_hXedFiBLNASSQxjnwdtiBIuiKoR3cKqc3c';

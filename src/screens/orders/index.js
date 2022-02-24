@@ -1,11 +1,8 @@
 //import liraries
-import React, {Component, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
-  Text,
-  StyleSheet,
   FlatList,
-  TouchableOpacity,
   RefreshControl,
   Alert,
 } from 'react-native';
@@ -17,13 +14,11 @@ import ViewProviderComponent from '../../components/ViewProviderComponent';
 import {
   deleteAllOrders,
   getAllOrderedProducts,
-  getAllOrderedProductsStats,
   setOrderStatus,
 } from '../../store/actions/orders';
 import ProductSans from '../../components/Text/ProductSans';
 import {COLOURS} from '../../utils/Colours';
-import {fp} from '../../utils/responsive-screen';
-import {getAllProducts, getAllZupaProducts} from '../../store/actions/products';
+import {getAllProducts, syncZupaProducts} from '../../store/actions/products';
 import SliderTabComponent from '../../components/SliderTabComponent';
 import {useIsFocused} from '@react-navigation/native';
 import { HeaderComponent } from '../../components/HeaderComponent';
@@ -51,7 +46,7 @@ const OrdersScreen = ({navigation}) => {
   const fetchAllData = () => {
     dispatch(getAllOrderedProducts(statusState));
     dispatch(getAllProducts('', 0, 0, null));
-    dispatch(getAllZupaProducts());
+    //dispatch(syncZupaProducts());
   };
 
   const onRefresh = async () => {
@@ -60,8 +55,9 @@ const OrdersScreen = ({navigation}) => {
   };
 
   const handleClick = item => {
+    //console.log("order item",item)
     navigation.navigate('OrderDetails', {
-      order: item,
+      id: item.id,
     });
   };
 

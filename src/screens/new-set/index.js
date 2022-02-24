@@ -1,5 +1,5 @@
 //import liraries
-import React, {Component, useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   View,
   Text,
@@ -26,27 +26,22 @@ import {
 import {
   dismissBottomSheetDialog,
   DismissKeyboard,
-  dismissLoader,
   dismissTextInput,
   formatNumberComma,
   showBottomSheet,
-  showLoader,
 } from '../../utils/utils';
 import {BackViewMoreSettings} from '../../components/Header';
 import useKeyboardHeight from 'react-native-use-keyboard-height';
 
-import {getAllProducts, getAllZupaProducts} from '../../store/actions/products';
+import {getAllProducts} from '../../store/actions/products';
 import {BottomSheetProductComponent} from '../../components/BottomSheetComponent';
-import QuantityProductComponent from '../../components/QuantityProductComponent';
 import {ACTIVE_OPACITY, DIALOG_TIMEOUT} from '../../utils/Constants';
 import AvertaBold from '../../components/Text/AvertaBold';
 import Averta from '../../components/Text/Averta';
-import LoaderButtonComponent from '../../components/LoaderButtonComponent';
 import {useDispatch} from 'react-redux';
 import {useSelector} from 'react-redux';
 import {IMAGES} from '../../utils/Images';
 import CustomSuccessModal from '../../components/CustomSuccessModal';
-import {createOrder} from '../../store/actions/orders';
 import LoaderShimmerComponent from '../../components/LoaderShimmerComponent';
 import { createSet, getAllSets } from '../../store/actions/sets';
 

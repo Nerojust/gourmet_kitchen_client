@@ -1,9 +1,10 @@
-import client from '../../utils/Api';
+import client, { ZupabaseURL } from '../../utils/Api';
 import client2 from '../../utils/Api';
 import {handleError, LIMIT_FIGURE} from '../../utils/utils';
 import {dateFilterParser} from './../../utils/DateFilter';
 import {APP_TOKEN} from '../../utils/Constants';
 import { getAllOrderedProductsStats } from './orders';
+import clientZupa from '../../utils/ApiZupa';
 
 export const clearProductsArray = () => {
   return dispatch => {
@@ -14,7 +15,7 @@ export const clearProductsArray = () => {
   };
 };
 
-export const getAllZupaProducts = status => {
+export const syncZupaProducts = status => {
   console.log('About to zupa products');
   return dispatch => {
     dispatch({
@@ -80,16 +81,16 @@ export const getAllProducts = (keyword, limit, offset, periodType) => {
       error: null,
     });
 
-    var url = `https://api.zupa.ng/base-products?$offset=${offset}&$limit=${limit}&$order=-createdAt&$include=category%2C%20products%2C%20category.sizes%2Cproducts.categorySize&`;
+    var url = `/base-products?$offset=${offset}&$limit=${limit}&$order=-createdAt&$include=category%2C%20products%2C%20category.sizes%2Cproducts.categorySize&`;
 
-    client.defaults.headers.common['Authorization'] = `Bearer ${APP_TOKEN}`;
+    clientZupa.defaults.headers.common['Authorization'] = `Bearer ${APP_TOKEN}`;
 
-    return client
+    return clientZupa
       .get(url)
       .then(response => {
         if (response.data) {
           console.log(
-            'Products gotten successfully. Size is ',
+            'zupa Products gotten successfully. Size is ',
             response.data.data.length,
           );
           const {data, offset, limit, total} = response.data || [];
