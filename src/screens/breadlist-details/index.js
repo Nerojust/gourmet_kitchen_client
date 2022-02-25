@@ -19,12 +19,12 @@ import {createSurplus} from '../../store/actions/surplus';
 
 // create a component
 const BreadListDetailsScreen = ({navigation, route}) => {
-  //console.log('bread details', route.params.bread);
+  console.log('bread details', route.params.bread);
   const [ovenCount, setOvenCount] = useState();
   const [pendingCount, setPendingCount] = useState('0');
   const [surplusCount, setSurplusCount] = useState('0');
   const [isOvenCountFocused, setIsOvenCountFocused] = useState(false);
-  var {productid, category, productsize, name, sum: count} = route.params.bread;
+  var {productid, category, productsize, name, sum: count,id} = route.params.bread;
   const dispatch = useDispatch();
   const ovenCountRef = useRef();
   const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false);
@@ -172,6 +172,9 @@ const BreadListDetailsScreen = ({navigation, route}) => {
     var payload = {
       count: parseInt(ovenCount),
       productid: productid,
+      productcategory: category,
+      productsize: productsize,
+      id:id
     };
     console.log('payload', payload);
 

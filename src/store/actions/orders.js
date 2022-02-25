@@ -152,7 +152,7 @@ export const updateOrderListProductCount = (payload, status) => {
 };
 
 export const createOrder = orderPayload => {
-  console.log('About to create a new order');
+  console.log('About to create a new kitchen order');
   //console.log("order payload", orderPayload);
   return dispatch => {
     dispatch({
@@ -165,7 +165,7 @@ export const createOrder = orderPayload => {
       .post(`/orders`, orderPayload)
       .then(response => {
         if (response.data?.isSuccessful) {
-          console.log('Order created successfully');
+          console.log('Kitchen Order created successfully');
 
           dispatch({
             type: 'CREATE_ORDER_SUCCESS',
@@ -177,7 +177,7 @@ export const createOrder = orderPayload => {
         }
       })
       .catch(error => {
-        console.log('Error creating order ', error);
+        console.log('Error creating kitchen order ', error);
         handleError(error, dispatch, 'get orders list');
         dispatch({
           type: 'CREATE_ORDER_FAILED',
@@ -192,7 +192,7 @@ export const createZupaOrder = (
   customerPayload,
   orderPayload,
 ) => {
-  console.log('About to create a zupa order');
+  console.log('About to create a ZUPA order');
   //console.log("order payload", orderPayload);
   return (dispatch) => {
     dispatch({
@@ -205,13 +205,13 @@ export const createZupaOrder = (
       .then((customerResponse) => {
        
         orderPayload.customerId = customerResponse?.id;
-        console.log("updated payload", orderPayload);
+        //console.log("updated payload", orderPayload);
         return clientZupa
           .post(`/orders`, orderPayload)
           .then((response) => {
             //console.log("response", response);
             if (response.data) {
-              console.log('zupa order created successfully');
+              console.log('ZUPA order CREATED successfully');
               dispatch({
                 type: 'CREATE_ORDER_SUCCESS',
                 loading: false,
@@ -221,8 +221,8 @@ export const createZupaOrder = (
             }
           })
           .catch((error) => {
-            console.log('Error creating zupa order ', error);
-            handleError(error, dispatch, 'get orders list');
+            console.log('Error creating ZUPA order ', error);
+            //handleError(error, dispatch, 'get orders list');
             dispatch({
               type: 'CREATE_ORDER_FAILED',
               loading: false,
@@ -233,7 +233,7 @@ export const createZupaOrder = (
       .catch((err) => {
         console.log('Error creating new customer', err);
 
-        handleError(error, ' create order');
+        //handleError(error, ' create order');
       });
   };
 };

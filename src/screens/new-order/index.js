@@ -100,21 +100,23 @@ const NewOrderScreen = ({navigation}) => {
   }, []);
 
   useEffect(() => {
-    sets.forEach(async (item, i) => {
-      let newObject = {};
-      item.type = 'custom';
-      // console.log('item', item.name);
+    if (sets.length > 0) {
+      sets.forEach(async (item, i) => {
+        let newObject = {};
+        item.type = 'custom';
+        // console.log('item', item.name);
 
-      newObject.name = item.name;
-      newObject.products = [item];
+        newObject.name = item.name;
+        newObject.products = [item];
 
-      if (newObject) {
-        additionalArray.push(newObject);
-      }
-    });
-    // console.log('new object', additionalArray);
-    setMergedArrayProducts([...additionalArray, ...products]);
-    setFilteredProductsData([...additionalArray, ...products]);
+        if (newObject) {
+          additionalArray.push(newObject);
+        }
+      });
+      // console.log('new object', additionalArray);
+      setMergedArrayProducts([...additionalArray, ...products]);
+      setFilteredProductsData([...additionalArray, ...products]);
+    }
   }, [sets]);
 
   const addDetailsToOrderSummary = () => {
@@ -496,36 +498,36 @@ const NewOrderScreen = ({navigation}) => {
         return;
       }
 
-        //prepare zupa payload
-        const customerPayload = {
-          name: fullName,
-          phoneNumber: phoneNumber,
-          address,
-          addressDescription: additionalAddressDescription,
-        };
+      //prepare zupa payload
+      const customerPayload = {
+        name: fullName,
+        phoneNumber: phoneNumber,
+        address,
+        addressDescription: additionalAddressDescription,
+      };
 
-        const orderPayload = {
-          customerId: null,
-          deliveryTypeId: null,
-          deliveryLocation: {
-            address: address,
-            latitude: '6.430118879280349',
-            longitude: '3.4881381695005618',
-          },
-          discountType: 'amount',
-          discountValue: null,
-          order_items: {
-            add: newBasketArray.map((data, i) => {
-              //console.log("map", i, data);
-              return {
-                productId: data?.selectedProduct?.id,
-                quantity: data?.quantity,
-              };
-            }),
-          },
-          specialNote,
-        };
-        
+      const orderPayload = {
+        customerId: null,
+        deliveryTypeId: null,
+        deliveryLocation: {
+          address: address,
+          latitude: '6.430118879280349',
+          longitude: '3.4881381695005618',
+        },
+        discountType: 'amount',
+        discountValue: null,
+        order_items: {
+          add: newBasketArray.map((data, i) => {
+            //console.log("map", i, data);
+            return {
+              productId: data?.selectedProduct?.id,
+              quantity: data?.quantity,
+            };
+          }),
+        },
+        specialNote,
+      };
+
       //prepare zupa payload
 
       //prepare kitchen payload
@@ -566,27 +568,19 @@ const NewOrderScreen = ({navigation}) => {
       console.log('order payload', orderPayload);
       console.log('order items', orderPayload.order_items);
       //console.log('kitchen payload', kitchen_payload);
-
-      dispatch(createZupaOrder(customerPayload, orderPayload))
+      dispatch(createOrder(kitchen_payload))
         .then(response => {
           //console.log("inside result", response);
           if (response) {
-            dispatch(createOrder(kitchen_payload))
-              .then(response => {
-                //console.log("inside result", response);
-                if (response) {
-                  showSuccessDialog();
-                  resetFields();
-                }
-              })
-              .catch(() => {
-                console.log('error creating order');
-              });
+            showSuccessDialog();
+            resetFields();
           }
         })
         .catch(() => {
           console.log('error creating order');
         });
+      //save to zupa too
+      //dispatch(createZupaOrder(customerPayload, orderPayload));
     });
   };
   const renderSuccessModal = () => (

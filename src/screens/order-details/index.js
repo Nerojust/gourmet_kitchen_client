@@ -1,6 +1,6 @@
 //import liraries
-import React, {Component, useEffect} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, FlatList} from 'react-native';
+import React, {Component, useEffect,useState} from 'react';
+import {View, Text,RefreshControl, StyleSheet, TouchableOpacity, FlatList} from 'react-native';
 import {BackViewMoreSettings} from '../../components/Header';
 import {KeyboardObserverComponent} from '../../components/KeyboardObserverComponent';
 import ViewProviderComponent from '../../components/ViewProviderComponent';
@@ -19,6 +19,7 @@ import LoaderShimmerComponent from '../../components/LoaderShimmerComponent';
 // create a component
 const OrderDetailsScreen = ({navigation, route}) => {
   const dispatch = useDispatch();
+  const [isRefreshing, setIsRefreshing] = useState(false);
   //var orderItems = route?.params?.order?.products;
   const {order, deleteAllOrdersLoading, error, ordersLoading} = useSelector(
     state => state.orders,
@@ -28,9 +29,17 @@ const OrderDetailsScreen = ({navigation, route}) => {
 
   useEffect(() => {
     if (id) {
-      dispatch(getOrder(route.params.id));
+      fetchAllData()
     }
   }, [id]);
+
+  const fetchAllData = () => {
+    dispatch(getOrder(route.params.id));
+  };
+  const onRefresh = async () => {
+    fetchAllData();
+    setIsRefreshing(false);
+  };
 
   const renderDetails = () => {
     return (
@@ -112,6 +121,9 @@ const OrderDetailsScreen = ({navigation, route}) => {
             data={[]}
             keyboardShouldPersistTaps={'handled'}
             ListHeaderComponent={renderDetails()}
+            refreshControl={
+              <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+            }
             renderItem={null}
             keyExtractor={item => item.id}
           />
