@@ -95,7 +95,7 @@ const NewOrderScreen = ({navigation}) => {
 
   useEffect(() => {
     dispatch(getAllSets());
-    dispatch(syncZupaProducts());
+    //dispatch(syncZupaProducts());
     dispatch(getAllProducts('', 0, 0, null));
   }, []);
 
@@ -116,6 +116,8 @@ const NewOrderScreen = ({navigation}) => {
       // console.log('new object', additionalArray);
       setMergedArrayProducts([...additionalArray, ...products]);
       setFilteredProductsData([...additionalArray, ...products]);
+    }else{
+      setMergedArrayProducts(products)
     }
   }, [sets]);
 
@@ -183,7 +185,7 @@ const NewOrderScreen = ({navigation}) => {
         isProductLoading={productsLoading}
         filteredDataSource={filteredProductData}
         dataSource={
-          productInputValue.length > 0
+          productInputValue.length > 0 
             ? filteredProductData
             : mergedArrayProducts
         }
@@ -537,7 +539,7 @@ const NewOrderScreen = ({navigation}) => {
         //console.log('dddd', data);
         if (data?.selectedProduct?.type != 'custom') {
           var item = {
-            id: data?.selectedProduct?.baseProductId,
+            id: data?.selectedProduct?.id,
             quantity: data?.quantity,
             price: data?.selectedProduct?.unitPrice,
             size: data?.selectedProduct?.categorySize?.name,
@@ -567,7 +569,7 @@ const NewOrderScreen = ({navigation}) => {
       //console.log('customer payload', customerPayload);
       console.log('order payload', orderPayload);
       console.log('order items', orderPayload.order_items);
-      //console.log('kitchen payload', kitchen_payload);
+      console.log('kitchen payload', kitchen_payload);
       dispatch(createOrder(kitchen_payload))
         .then(response => {
           //console.log("inside result", response);
@@ -580,7 +582,7 @@ const NewOrderScreen = ({navigation}) => {
           console.log('error creating order');
         });
       //save to zupa too
-      //dispatch(createZupaOrder(customerPayload, orderPayload));
+      dispatch(createZupaOrder(customerPayload, orderPayload));
     });
   };
   const renderSuccessModal = () => (

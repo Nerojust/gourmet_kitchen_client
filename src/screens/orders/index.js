@@ -46,7 +46,7 @@ const OrdersScreen = ({navigation}) => {
   const fetchAllData = () => {
     dispatch(getAllOrderedProducts(statusState));
     dispatch(getAllProducts('', 0, 0, null));
-    dispatch(syncZupaProducts());
+    //dispatch(syncZupaProducts());
   };
 
   const onRefresh = async () => {

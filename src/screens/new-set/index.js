@@ -328,7 +328,7 @@ const NewSetScreen = ({navigation}) => {
       newBasketArray.map((data, i) => {
         //console.log('dddd', data);
         var item = {
-          productid: data?.selectedProduct?.baseProductId,
+          productid: data?.selectedProduct?.id,
           productname: data?.selectedProduct?.name.trim(),
           quantity: 1,
           price: data?.selectedProduct?.unitPrice,
