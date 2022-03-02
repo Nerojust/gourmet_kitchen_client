@@ -1,10 +1,21 @@
 //import liraries
-import React, {Component, useEffect,useState} from 'react';
-import {View, Text,RefreshControl, StyleSheet, TouchableOpacity, FlatList} from 'react-native';
+import React, {Component, useEffect, useState} from 'react';
+import {
+  View,
+  Text,
+  RefreshControl,
+  StyleSheet,
+  TouchableOpacity,
+  FlatList,
+} from 'react-native';
 import {BackViewMoreSettings} from '../../components/Header';
 import {KeyboardObserverComponent} from '../../components/KeyboardObserverComponent';
 import ViewProviderComponent from '../../components/ViewProviderComponent';
-import {capitalizeWord, DismissKeyboard} from '../../utils/utils';
+import {
+  capitalizeWord,
+  DismissKeyboard,
+  sortArrayByDate,
+} from '../../utils/utils';
 import Averta from '../../components/Text/Averta';
 import AvertaBold from '../../components/Text/AvertaBold';
 import {fp} from '../../utils/responsive-screen';
@@ -29,7 +40,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
 
   useEffect(() => {
     if (id) {
-      fetchAllData()
+      fetchAllData();
     }
   }, [id]);
 
@@ -97,7 +108,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
             </AvertaBold>
           ) : null}
           {order?.products.length > 0 &&
-            order?.products.map((item, index) => {
+            sortArrayByDate(order?.products).map((item, index) => {
               return (
                 <View key={index}>
                   {/* order items list */}

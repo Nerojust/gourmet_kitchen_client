@@ -1,6 +1,13 @@
 //import liraries
-import React, {useState, useRef} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, FlatList} from 'react-native';
+import React, {useState, useRef, useEffect} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  FlatList,
+  Alert,
+} from 'react-native';
 import {BackViewMoreSettings} from '../../components/Header';
 import {KeyboardObserverComponent} from '../../components/KeyboardObserverComponent';
 import ViewProviderComponent from '../../components/ViewProviderComponent';
@@ -14,24 +21,55 @@ import {useDispatch, useSelector} from 'react-redux';
 import LoaderShimmerComponent from '../../components/LoaderShimmerComponent';
 import CustomSuccessModal from '../../components/CustomSuccessModal';
 import {DIALOG_TIMEOUT} from '../../utils/Constants';
-import {getAllOrderedProducts, updateOrderListProductCount} from '../../store/actions/orders';
-import {createSurplus} from '../../store/actions/surplus';
+import {
+  getAllOrderedProducts,
+  updateOrderListProductCount,
+} from '../../store/actions/orders';
+import {
+  createSurplus,
+  getAllSurplus,
+  updateSurplusById,
+} from '../../store/actions/surplus';
 
 // create a component
 const BreadListDetailsScreen = ({navigation, route}) => {
-  console.log('bread details', route.params.bread);
+  //console.log('bread details', route.params.bread);
   const [ovenCount, setOvenCount] = useState();
   const [pendingCount, setPendingCount] = useState('0');
   const [surplusCount, setSurplusCount] = useState('0');
   const [isOvenCountFocused, setIsOvenCountFocused] = useState(false);
-  var {productid, category, productsize, name, sum: count,id} = route.params.bread;
+  var {
+    productid,
+    category,
+    productsize,
+    name,
+    sum: count,
+    id,
+  } = route.params.bread;
   const dispatch = useDispatch();
   const ovenCountRef = useRef();
+
   const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false);
+  const [fulfillFromSurplus, setFulfillFromSurplus] = useState(false);
   const {isOrderUpdated, updateOrderLoading, selectedOrderStatus} = useSelector(
     x => x.orders,
   );
-  console.log('state is ', selectedOrderStatus);
+  const [foundSurplus, setFoundSurplus] = useState();
+  // console.log('state is ', selectedOrderStatus);
+  const {surplus, surplusLoading, updateSurplusLoading, createSurplusLoading} =
+    useSelector(x => x.surplus);
+  //console.log('surplus in breadlist ', surplus.length);
+  useEffect(() => {
+    dispatch(getAllSurplus());
+  }, []);
+
+  useEffect(() => {
+    if (surplus) {
+      let fSurplus = surplus.find(item => item.productid == productid);
+      console.log('found surplus is ', fSurplus);
+      setFoundSurplus(fSurplus);
+    }
+  }, []);
 
   const renderDetails = () => {
     return (
@@ -131,6 +169,7 @@ const BreadListDetailsScreen = ({navigation, route}) => {
       setSurplusCount('');
     }
   };
+
   const handleCreateSurplus = () => {
     if (!surplusCount) {
       alert('Surplus count is required');
@@ -160,7 +199,8 @@ const BreadListDetailsScreen = ({navigation, route}) => {
         console.log('updadte error', error);
       });
   };
-  const handleSubmit = () => {
+
+  const handleSubmit = (shouldUseSurplusTofulfill = false) => {
     if (!ovenCount) {
       alert('Oven count is required');
       return;
@@ -169,30 +209,109 @@ const BreadListDetailsScreen = ({navigation, route}) => {
       alert('Oven count must be greater than zero');
       return;
     }
+    //=============If surplus exists===============
+    let remainSurplusCount;
+    let countTofulfill;
+    if (foundSurplus && shouldUseSurplusTofulfill) {
+      if (foundSurplus.count >= parseInt(ovenCount)) {
+        remainSurplusCount = foundSurplus.count - parseInt(ovenCount);
+        console.log('SURPLUS IS GREATER ', remainSurplusCount);
+        countTofulfill = parseInt(ovenCount);
+      } else if (
+        foundSurplus.count < parseInt(ovenCount) &&
+        parseInt(ovenCount) > 0
+      ) {
+        remainSurplusCount = parseInt(ovenCount) - foundSurplus.count;
+        console.log('OVEN COUNT IS GREATER', remainSurplusCount);
+        countTofulfill = foundSurplus.count;
+      }
+    }
+    //==============================================
     var payload = {
       count: parseInt(ovenCount),
       productid: productid,
       productcategory: category,
       productsize: productsize,
-      id:id
+      fulfilledFromSurplus: false,
+      id: id,
     };
-    console.log('payload', payload);
 
-    dispatch(updateOrderListProductCount(payload, selectedOrderStatus))
+    var surplusPayload = {
+      count: countTofulfill,
+      productid: productid,
+      productcategory: category,
+      productsize: productsize,
+      fulfilledFromSurplus: true,
+    };
+    console.log(
+      'payload',
+      shouldUseSurplusTofulfill ? surplusPayload : payload,
+    );
+
+    dispatch(
+      updateOrderListProductCount(
+        foundSurplus && shouldUseSurplusTofulfill ? surplusPayload : payload,
+        selectedOrderStatus,
+      ),
+    )
       .then((result, error) => {
         if (result) {
           if (surplusCount > 0) {
             handleCreateSurplus();
           } else {
+            //if taken from surplus, update the record in db
+            if (foundSurplus && shouldUseSurplusTofulfill) {
+              dispatch(
+                updateSurplusById(foundSurplus?.id, {
+                  count: foundSurplus?.count - countTofulfill,
+                }),
+              );
+            }
             showSuccessDialog();
             resetFields();
-            dispatch(getAllOrderedProducts('incomplete'))
           }
         }
       })
       .catch(error => {
-        console.log('updadte error', error);
+        console.log('update error', error);
       });
+  };
+
+  const displayChooseDialog = () => {
+    let countTofulfill;
+
+    if (foundSurplus.count >= parseInt(ovenCount)) {
+      countTofulfill = parseInt(ovenCount);
+    } else if (
+      foundSurplus.count < parseInt(ovenCount) &&
+      parseInt(ovenCount) > 0
+    ) {
+      countTofulfill = foundSurplus.count;
+    }
+
+    Alert.alert(
+      'Surplus Alert',
+      `You have a surplus of ${foundSurplus.count} \nTo fulfill: ${parseInt(
+        ovenCount,
+      )}`,
+      [
+        {
+          text: `Fulfil using initial ${countTofulfill} from surplus`,
+          onPress: () => handleSubmit(true),
+        },
+        // {
+        //   text: 'Do not fulfill using surplus',
+        //   onPress: () => handleSubmit(),
+        // },
+        {
+          text: 'Cancel',
+          onPress: () => {
+            console.log('cancel Pressed');
+          },
+        },
+      ],
+      {cancelable: true},
+    );
   };
 
   const renderSuccessModal = () => (
@@ -214,11 +333,14 @@ const BreadListDetailsScreen = ({navigation, route}) => {
       navigation.goBack();
     }, DIALOG_TIMEOUT);
   };
+
   const displaySubmitButton = () => {
     return (
       <TouchableOpacity
         activeOpacity={0.6}
-        onPress={handleSubmit}
+        onPress={() =>
+          foundSurplus ? displayChooseDialog() : handleSubmit(false)
+        }
         style={{
           marginTop: 5,
           justifyContent: 'center',

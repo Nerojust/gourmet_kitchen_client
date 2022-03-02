@@ -127,8 +127,8 @@ export const updateOrderListProductCount = (payload, status) => {
               loading: false,
               data: response?.data?.results,
             });
-            dispatch(getAllOrderedProductsStats());
-            dispatch(getAllOrderedProducts(status));
+            //dispatch(getAllOrderedProductsStats());
+            dispatch(getAllOrderedProducts());
             return response?.data?.results;
           } else {
             dispatch({

@@ -582,7 +582,7 @@ const NewOrderScreen = ({navigation}) => {
           console.log('error creating order');
         });
       //save to zupa too
-      dispatch(createZupaOrder(customerPayload, orderPayload));
+     // dispatch(createZupaOrder(customerPayload, orderPayload));
     });
   };
   const renderSuccessModal = () => (

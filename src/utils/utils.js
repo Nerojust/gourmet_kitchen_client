@@ -357,6 +357,21 @@ export const deleteValue = async key => {
     console.log(error);
   }
 };
+export const sortArrayByDate = (array) => {
+  return array.sort((a, b) => {
+    let da = new Date(b.updatedat),
+      db = new Date(a.updatedat);
+    return da - db;
+  });
+};
+
+export const sortArrayByDateDesc = (array) => {
+  return array.sort((a, b) => {
+    let da = new Date(a.updatedat),
+      db = new Date(b.updatedat);
+    return da - db;
+  });
+};
 export const removeItemValue = async key => {
   try {
     await AsyncStorage.removeItem(key);

@@ -27,6 +27,18 @@ const OrderListItemComponent = ({item}) => {
           paddingVertical: 5,
         }}>
         <ProductSans style={styles.labelText}>PRODUCT NAME</ProductSans>
+        {item?.wasfulfilledfromsurplus ? (
+          <Image
+            source={IMAGES.successImage}
+            style={{
+              width: 20,
+              height: 20,
+            }}
+            resizeMode="contain"
+          />
+        ) : (
+          <Image />
+        )}
         {item?.isfulfilled ? (
           <Image
             source={IMAGES.urlGood}

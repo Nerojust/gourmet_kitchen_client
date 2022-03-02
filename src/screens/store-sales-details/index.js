@@ -248,7 +248,7 @@ const StoreSalesDetailsScreen = ({navigation, route}) => {
         }
       })
       .catch(error => {
-        console.log('updadte error', error);
+        console.log('updated error', error);
       });
   };
 
