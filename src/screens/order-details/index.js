@@ -44,7 +44,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
   );
   const keyboardHeight = useKeyboardHeight();
   const [isSpecialFieldEditable, setIsSpecialFieldEditable] = useState(false);
-  const [specialNote, setSpecialNote] = useState(order.specialnote || '');
+  const [specialNote, setSpecialNote] = useState(order?.specialnote || '');
   let id = route.params.id;
   //console.log('order details redux ', order);
 
@@ -55,7 +55,11 @@ const OrderDetailsScreen = ({navigation, route}) => {
   }, [id]);
 
   const fetchAllData = () => {
-    dispatch(getOrder(route.params.id));
+    dispatch(getOrder(route.params.id)).then((result, error) => {
+      if (result) {
+        setSpecialNote(result?.specialnote);
+      }
+    });
   };
   const onRefresh = async () => {
     fetchAllData();
@@ -130,7 +134,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
             })}
         </View>
 
-        <View style={[styles.customerNameView, {top: -20}]}>
+        <View style={[styles.customerNameView, {top: -20, marginBottom: 20}]}>
           <View>
             <View style={{flexDirection: 'row', width: deviceWidth}}>
               <ProductSansBold
@@ -245,7 +249,6 @@ const OrderDetailsScreen = ({navigation, route}) => {
     ).then((result, error) => {
       if (result) {
         handleSpecialChange();
-       
       }
     });
   const displaySubmitButton = () => {

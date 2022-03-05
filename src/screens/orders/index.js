@@ -1,6 +1,6 @@
 //import liraries
 import React, {useEffect, useState} from 'react';
-import {View, FlatList, RefreshControl, Alert} from 'react-native';
+import {View, FlatList, RefreshControl, Alert, Keyboard} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import AddComponent from '../../components/AddComponent';
 import LoaderShimmerComponent from '../../components/LoaderShimmerComponent';
@@ -14,6 +14,7 @@ import {
 import ProductSans from '../../components/Text/ProductSans';
 import {COLOURS} from '../../utils/Colours';
 import {getAllProducts, syncZupaProducts} from '../../store/actions/products';
+import SearchInputComponent from '../../components/SearchInputComponent';
 import SliderTabComponent from '../../components/SliderTabComponent';
 import {useIsFocused} from '@react-navigation/native';
 import {HeaderComponent} from '../../components/HeaderComponent';
@@ -24,11 +25,16 @@ const OrdersScreen = ({navigation}) => {
   const {orders, deleteAllOrdersLoading, error, ordersLoading} = useSelector(
     state => state.orders,
   );
+  var ordersData = Object.assign([], orders);
+  const [filteredOrdersData, setFilteredOrdersData] = useState(ordersData);
+  const [searchInputValue, setSearchInputValue] = useState('');
+  const [isSearchCleared, setIsSearchCleared] = useState(false);
+  const [isSearch, setIsSearch] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [statusState, setStatusState] = useState('');
   const [selectedTab, setSelectedTab] = useState(0);
   const [isTabClicked, setIsTabClicked] = useState(false);
-  const isFocused = useIsFocused();
+  const [isSearchClicked, setIsSearchClicked] = useState(false);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -113,8 +119,58 @@ const OrdersScreen = ({navigation}) => {
       {cancelable: true},
     );
   };
+
   const handleSearch = () => {
-    console.log('search');
+    setIsSearchClicked(!isSearchClicked);
+    handleCancelSearch();
+  };
+
+  const handleOrderNameInputSearchText = text => {
+    if (text) {
+      orders.sort((a, b) => {
+        if (b.name > a.name) return -1;
+        if (b.name < a.name) return 1;
+        return 0;
+      });
+      const newData = products?.filter(item => {
+        const itemData = item?.name
+          ? item?.name.toUpperCase()
+          : ''.toUpperCase();
+        const textData = text.toUpperCase();
+        return itemData.indexOf(textData) > -1;
+      });
+      setFilteredOrdersData(newData);
+      setSearchInputValue(text);
+    } else {
+      setFilteredOrdersData(orders);
+      setSearchInputValue(text);
+    }
+  };
+  const handleSearchChange = text => {
+    if (text) {
+      orders.sort((a, b) => {
+        if (b.name > a.name) return -1;
+        if (b.name < a.name) return 1;
+        return 0;
+      });
+      const newData = orders?.filter(item => {
+        const itemData = item?.customer?.name
+          ? item?.customer?.name.toUpperCase()
+          : ''.toUpperCase();
+        const textData = text.toUpperCase();
+        return itemData.indexOf(textData) > -1;
+      });
+      setFilteredOrdersData(newData);
+      setSearchInputValue(text);
+    } else {
+      setFilteredOrdersData(orders);
+      setSearchInputValue(text);
+    }
+  };
+
+  const handleCancelSearch = () => {
+    setSearchInputValue('');
+    setIsSearchCleared(true);
   };
 
   return (
@@ -126,7 +182,16 @@ const OrdersScreen = ({navigation}) => {
         performSearch={handleSearch}
         shouldDisplayIcon={orders.length > 0}
       />
-
+      {isSearchClicked ? (
+        <SearchInputComponent
+          shouldDisplaySearchView
+          searchPlaceholder={'Search by customer name'}
+          handleSearch={handleOrderNameInputSearchText}
+          searchChange={handleSearchChange}
+          inputValue={searchInputValue}
+          cancelPress={handleCancelSearch}
+        />
+      ) : null}
       <SliderTabComponent
         isTabClicked={isTabClicked}
         name1={'All'}
@@ -139,7 +204,7 @@ const OrdersScreen = ({navigation}) => {
       />
 
       <FlatList
-        data={orders}
+        data={searchInputValue.length > 0 ? filteredOrdersData : orders}
         renderItem={renderItems}
         keyExtractor={item => item.id}
         refreshControl={

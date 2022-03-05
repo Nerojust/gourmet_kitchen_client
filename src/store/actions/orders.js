@@ -300,7 +300,7 @@ export const getOrder = id => {
             loading: false,
             data: response.data.results[0],
           });
-          return response.data;
+          return response.data.results[0];
         }
       })
 
