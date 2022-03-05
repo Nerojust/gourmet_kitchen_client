@@ -116,8 +116,8 @@ const NewOrderScreen = ({navigation}) => {
       // console.log('new object', additionalArray);
       setMergedArrayProducts([...additionalArray, ...products]);
       setFilteredProductsData([...additionalArray, ...products]);
-    }else{
-      setMergedArrayProducts(products)
+    } else {
+      setMergedArrayProducts(products);
     }
   }, [sets]);
 
@@ -185,7 +185,7 @@ const NewOrderScreen = ({navigation}) => {
         isProductLoading={productsLoading}
         filteredDataSource={filteredProductData}
         dataSource={
-          productInputValue.length > 0 
+          productInputValue.length > 0
             ? filteredProductData
             : mergedArrayProducts
         }
@@ -548,18 +548,27 @@ const NewOrderScreen = ({navigation}) => {
           kitchen_payload = {
             customer: {
               name: fullName,
+              phoneNumber: phoneNumber,
+              address,
+              addressDescription: additionalAddressDescription,
+              specialNote,
             },
             products: productArray,
           };
         } else {
           var item = {
             id: data?.selectedProduct?.id,
+            quantity: data?.quantity,
             type: 'custom',
           };
           productArray.push(item);
           kitchen_payload = {
             customer: {
               name: fullName,
+              phoneNumber: phoneNumber,
+              address,
+              addressDescription: additionalAddressDescription,
+              specialNote,
             },
             type: 'custom',
             products: productArray,
@@ -582,7 +591,7 @@ const NewOrderScreen = ({navigation}) => {
           console.log('error creating order');
         });
       //save to zupa too
-     // dispatch(createZupaOrder(customerPayload, orderPayload));
+      //dispatch(createZupaOrder(customerPayload, orderPayload));
     });
   };
   const renderSuccessModal = () => (
@@ -644,14 +653,14 @@ const NewOrderScreen = ({navigation}) => {
           <Averta style={styles.productNameText} numberOfLines={4}>
             {item ? item?.selectedProduct?.name.trim() : ''}
           </Averta>
-          {item?.selectedProduct?.type != 'custom' ? (
-            <>
-              <QuantityProductComponent
-                style={{marginLeft: 15}}
-                item={item}
-                sendValue={value => handleqty(value, item)}
-              />
+          <>
+            <QuantityProductComponent
+              style={{marginLeft: 15}}
+              item={item}
+              sendValue={value => handleqty(value, item)}
+            />
 
+            {item?.selectedProduct?.type != 'custom' ? (
               <AvertaBold style={styles.unitPriceText}>
                 {item
                   ? formatNumberComma(
@@ -659,10 +668,10 @@ const NewOrderScreen = ({navigation}) => {
                     )
                   : ''}
               </AvertaBold>
-            </>
-          ) : (
-            <View style={{flex: 0.5}} />
-          )}
+            ) : (
+              <View style={{flex: 0.5}} />
+            )}
+          </>
 
           <View style={styles.deleteItemBasketView}>
             <DataTable>

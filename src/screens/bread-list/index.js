@@ -5,7 +5,7 @@ import {COLOURS} from '../../utils/Colours';
 import {BackViewMoreSettings} from '../../components/Header';
 import {KeyboardObserverComponent} from '../../components/KeyboardObserverComponent';
 import ViewProviderComponent from '../../components/ViewProviderComponent';
-import {DismissKeyboard} from '../../utils/utils';
+import {DismissKeyboard, sortArrayByDate, sortArrayByName, sortArrayData} from '../../utils/utils';
 import OrderListItemComponent from '../../components/OrderListItemComponent';
 import {useDispatch, useSelector} from 'react-redux';
 import LoaderShimmerComponent from '../../components/LoaderShimmerComponent';
@@ -103,7 +103,7 @@ const BreadListScreen = ({navigation}) => {
           />
 
           <FlatList
-            data={orderedProducts}
+            data={sortArrayData(orderedProducts,"name")}
             keyboardShouldPersistTaps={'handled'}
             renderItem={renderDetails}
             refreshControl={

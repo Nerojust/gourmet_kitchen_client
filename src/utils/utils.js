@@ -120,7 +120,7 @@ export const CustomStatusBar = ({
 export const displayDialog = (message, method) => {
   Alert.alert(
     'Alert',
-    "Do you want to update this surplus count for this item?",
+    'Do you want to update this surplus count for this item?',
     [
       {
         text: 'No',
@@ -293,36 +293,32 @@ export function getColourCode(stringDate) {
 export function getReadableDateAndTime(stringDate) {
   var currDate = new Date();
   var diffMs = currDate.getTime() - new Date(stringDate).getTime();
-//console.log("diffms",diffMs)
+  //console.log("diffms",diffMs)
   var sec = diffMs / 1000;
   if (sec < 0) return 'now';
 
-  if (sec < 60){
-
+  if (sec < 60) {
     return parseInt(sec) + ' second' + (parseInt(sec) > 1 ? 's' : '') + '';
   }
 
   var min = sec / 60;
-  if (min < 60){
-//console.log("minutes",min)
+  if (min < 60) {
+    //console.log("minutes",min)
     return parseInt(min) + ' minute' + (parseInt(min) > 1 ? 's' : '') + '';
   }
 
   var h = min / 60;
-  if (h < 24){
-
+  if (h < 24) {
     return parseInt(h) + ' hour' + (parseInt(h) > 1 ? 's' : '') + '';
   }
 
   var d = h / 24;
-  if (d < 30){
-
+  if (d < 30) {
     return parseInt(d) + ' day' + (parseInt(d) > 1 ? 's' : '') + '';
   }
 
   var m = d / 30;
-  if (m < 12){
-
+  if (m < 12) {
     return parseInt(m) + ' month' + (parseInt(m) > 1 ? 's' : '') + '';
   }
 
@@ -357,7 +353,15 @@ export const deleteValue = async key => {
     console.log(error);
   }
 };
-export const sortArrayByDate = (array) => {
+export const sortArrayData = (array, value) => {
+  const sorter1 = (a, b) =>
+    a.last_nom.toLowerCase().trim() > b.last_nom.toLowerCase().trim() ? 1 : -1;
+  const sorter2 = sortBy => (a, b) =>
+    a[sortBy].toLowerCase().trim() > b[sortBy].toLowerCase().trim() ? 1 : -1;
+
+  return array.sort(sorter2(value));
+};
+export const sortArrayByDate = array => {
   return array.sort((a, b) => {
     let da = new Date(b.updatedat),
       db = new Date(a.updatedat);
@@ -365,7 +369,7 @@ export const sortArrayByDate = (array) => {
   });
 };
 
-export const sortArrayByDateDesc = (array) => {
+export const sortArrayByDateDesc = array => {
   return array.sort((a, b) => {
     let da = new Date(a.updatedat),
       db = new Date(b.updatedat);

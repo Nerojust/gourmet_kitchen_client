@@ -139,6 +139,27 @@ export default (state = initialState, action) => {
         error: action.error,
       };
 
+    case 'UPDATE_ORDER_SPECIAL_NOTE_PENDING':
+      return {
+        ...state,
+        updateOrderLoading: action.loading,
+      };
+    case 'UPDATE_ORDER_SPECIAL_NOTE_SUCCESS':
+      return {
+        ...state,
+        isOrderUpdated: true,
+        updateOrderLoading: action.loading,
+      };
+    case 'UPDATE_ORDER_SPECIAL_NOTE_FAILED':
+      return {
+        ...state,
+        isOrderUpdated: false,
+        updateOrderLoading: action.loading,
+        error: action.error,
+      };
+
+
+
     case 'UPDATE_OVEN_COUNT_PENDING':
       return {
         ...state,

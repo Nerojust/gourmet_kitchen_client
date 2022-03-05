@@ -236,6 +236,7 @@ const StoreSalesDetailsScreen = ({navigation, route}) => {
       productName: productname,
       productId: productid,
     };
+    
     console.log('surplus payload', payload);
 
     dispatch(updateSurplusById(id, payload))
@@ -284,6 +285,7 @@ const StoreSalesDetailsScreen = ({navigation, route}) => {
         console.log('updadte error', error);
       });
   };
+
   const handleValidation = () => {
     if (inputSurplusCount) {
       Alert.alert(
@@ -307,6 +309,7 @@ const StoreSalesDetailsScreen = ({navigation, route}) => {
       alert('Enter the new surplus count');
     }
   };
+
   const displaySubmitButton = () => {
     return (
       <TouchableOpacity
@@ -337,6 +340,7 @@ const StoreSalesDetailsScreen = ({navigation, route}) => {
       navigation.goBack();
     }, DIALOG_TIMEOUT);
   };
+
   const renderSuccessModal = () => (
     <CustomSuccessModal
       isModalVisible={isSuccessModalVisible}
@@ -344,6 +348,7 @@ const StoreSalesDetailsScreen = ({navigation, route}) => {
       message={'Surplus Updated Successfully'}
     />
   );
+  
   const resetFields = () => {
     setSurplusCount('');
   };

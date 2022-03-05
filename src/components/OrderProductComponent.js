@@ -19,12 +19,12 @@ import ProductSansBold from './Text/ProductSansBold';
 
 // create a component
 const OrderProductComponent = ({item, handleClick}) => {
- //console.log('item', item?.products[0]?.isfulfilled);
+  //console.log('item', item?.products[0]?.isfulfilled);
   var currDate = new Date();
   var diffMs = currDate.getTime() - new Date(item?.createdat).getTime();
   var sec = diffMs / 1000;
   var min = sec / 60;
-//console.log("min",min)
+  //console.log("min",min)
   let fulfilledQCount = 0;
   let quantityQCount = 0;
   let colourResult = getColourCode(item?.createdat);
@@ -46,7 +46,9 @@ const OrderProductComponent = ({item, handleClick}) => {
       <View>
         {item.isset ? (
           <View style={{alignItems: 'flex-end', paddingVertical: 5}}>
-            <ProductSansBold style={[styles.itemsText,{fontWeight:'100'}]}>Set</ProductSansBold>
+            <ProductSansBold style={[styles.itemsText, {fontWeight: '100'}]}>
+              {item?.setname ? item?.setname : 'Set'}
+            </ProductSansBold>
           </View>
         ) : null}
         <View
@@ -54,7 +56,9 @@ const OrderProductComponent = ({item, handleClick}) => {
             flexDirection: 'row',
             justifyContent: 'space-between',
           }}>
-          <ProductSans style={styles.nameText}>{item?.name.trim()}</ProductSans>
+          <ProductSans style={styles.nameText}>
+            {item?.customer ? item?.customer?.name.trim() : 'None'}
+          </ProductSans>
 
           {item?.isfulfilled ? (
             <Image
@@ -81,9 +85,7 @@ const OrderProductComponent = ({item, handleClick}) => {
             </Text>
             {min > 30 ? (
               <ColourComponent
-                colourType={
-                  !isAllFulfilled? colourResult : null
-                }
+                colourType={!isAllFulfilled ? colourResult : null}
               />
             ) : (
               <>

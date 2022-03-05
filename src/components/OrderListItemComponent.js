@@ -49,7 +49,13 @@ const OrderListItemComponent = ({item}) => {
             resizeMode="contain"
           />
         ) : (
-          <Image />
+          <ProductSans
+            style={[
+              styles.productName,
+              {color: COLOURS.red, fontSize: fp(13)},
+            ]}>
+            Pending
+          </ProductSans>
         )}
       </View>
       <ProductSans style={styles.productName}>{name.trim()}</ProductSans>
@@ -81,7 +87,7 @@ const OrderListItemComponent = ({item}) => {
       {item?.isfulfilled ? (
         <View style={{marginTop: 10}}>
           <ProductSans style={styles.labelText}>UPDATED AT</ProductSans>
-          <ProductSans style={[styles.priceName,{ fontWeight: 'normal',}]}>
+          <ProductSans style={[styles.priceName, {fontWeight: 'normal'}]}>
             {item.updatedat ? moment(item.updatedat).format('LT') : 'None'}
           </ProductSans>
         </View>

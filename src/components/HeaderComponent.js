@@ -15,7 +15,8 @@ export const HeaderComponent = ({
   name,
   isDashboard,
   performDelete,
-  shouldDisplayMoreIcon,
+  performSearch,
+  shouldDisplayIcon,
   handleMoreClick,
 }) => {
   return (
@@ -37,14 +38,24 @@ export const HeaderComponent = ({
         <ProductSansBold style={[styles.titleHeaderText]}>
           {name}
         </ProductSansBold>
-        <TouchableOpacity onPress={performDelete}>
-          <Image
-            source={require('../assets/images/delete.png')}
-            style={styles.deleteImage}
-            resizeMode={'contain'}
-          />
-        </TouchableOpacity>
-
+        {shouldDisplayIcon ? (
+          <>
+            <TouchableOpacity onPress={performSearch}>
+              <Image
+                source={require('../assets/images/search.png')}
+                style={styles.deleteImage}
+                resizeMode={'contain'}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={performDelete}>
+              <Image
+                source={require('../assets/images/delete.png')}
+                style={styles.deleteImage}
+                resizeMode={'contain'}
+              />
+            </TouchableOpacity>
+          </>
+        ) : null}
         {/* <View
           style={{
             flexDirection: 'row',

@@ -2,7 +2,7 @@ import client from '../../utils/Api';
 import clientZupa from '../../utils/ApiZupa';
 import {dateFilterParser} from '../../utils/DateFilter';
 import {clearStorage, handleError} from '../../utils/utils';
-import { createCustomer } from './customers';
+import {createCustomer} from './customers';
 
 export const setOrderStatus = status => {
   return dispatch => {
@@ -151,6 +151,54 @@ export const updateOrderListProductCount = (payload, status) => {
   };
 };
 
+export const updateOrderSpecialNoteById = (id, payload) => {
+  console.log('About to update order with id', id);
+  return dispatch => {
+    dispatch({
+      type: 'UPDATE_ORDER_SPECIAL_NOTE_PENDING',
+      loading: true,
+      error: null,
+    });
+    var url = `/orders/updateOrderNote/${id}`;
+    //console.log("geturl", getUrl);
+    return client
+      .patch(url, payload)
+      .then(response => {
+        if (response?.data) {
+          if (response?.data?.isSuccessful) {
+            console.log(
+              'Order special note updated successfully',
+              response?.data?.recordCount,
+            );
+            dispatch({
+              type: 'UPDATE_ORDER_SPECIAL_NOTE_SUCCESS',
+              loading: false,
+              data: response?.data?.results,
+            });
+
+            dispatch(getOrder(id));
+            return response?.data?.results;
+          } else {
+            dispatch({
+              type: 'UPDATE_ORDER_SPECIAL_NOTE_FAILED',
+              loading: false,
+              error: response?.data?.message,
+            });
+          }
+        }
+      })
+      .catch(error => {
+        console.log('Updating order failed', error);
+        handleError(error, dispatch, 'updating order');
+        dispatch({
+          type: 'UPDATE_ORDER_SPECIAL_NOTE_FAILED',
+          loading: false,
+          error: error.message,
+        });
+      });
+  };
+};
+
 export const createOrder = orderPayload => {
   console.log('About to create a new kitchen order');
   //console.log("order payload", orderPayload);
@@ -188,13 +236,10 @@ export const createOrder = orderPayload => {
   };
 };
 
-export const createZupaOrder = (
-  customerPayload,
-  orderPayload,
-) => {
+export const createZupaOrder = (customerPayload, orderPayload) => {
   console.log('About to create a ZUPA order');
   //console.log("order payload", orderPayload);
-  return (dispatch) => {
+  return dispatch => {
     dispatch({
       type: 'CREATE_ORDER_PENDING',
       loading: true,
@@ -202,13 +247,12 @@ export const createZupaOrder = (
     });
 
     return dispatch(createCustomer(customerPayload))
-      .then((customerResponse) => {
-       
+      .then(customerResponse => {
         orderPayload.customerId = customerResponse?.id;
         //console.log("updated payload", orderPayload);
         return clientZupa
           .post(`/orders`, orderPayload)
-          .then((response) => {
+          .then(response => {
             //console.log("response", response);
             if (response.data) {
               console.log('ZUPA order CREATED successfully');
@@ -220,7 +264,7 @@ export const createZupaOrder = (
               return response.data;
             }
           })
-          .catch((error) => {
+          .catch(error => {
             console.log('Error creating ZUPA order ', error);
             //handleError(error, dispatch, 'get orders list');
             dispatch({
@@ -230,14 +274,13 @@ export const createZupaOrder = (
             });
           });
       })
-      .catch((err) => {
+      .catch(err => {
         console.log('Error creating new customer', err);
 
         //handleError(error, ' create order');
       });
   };
 };
-
 
 export const getOrder = id => {
   console.log('About to get single ordered product with id', id);
@@ -274,7 +317,7 @@ export const getOrder = id => {
 };
 export const deleteAllOrders = id => {
   console.log('About to delete all orders');
-  
+
   return dispatch => {
     dispatch({
       type: 'DELETE_ORDERS_PENDING',
@@ -287,13 +330,13 @@ export const deleteAllOrders = id => {
       .then(response => {
         if (response.data) {
           console.log('Deleted all orders successfully');
-          dispatch(getAllOrderedProducts(""))
+          dispatch(getAllOrderedProducts(''));
           dispatch({
             type: 'DELETE_ORDERS_SUCCESS',
             loading: false,
             data: response.data,
           });
-          
+
           return response.data;
         }
       })

@@ -1,11 +1,6 @@
 //import liraries
 import React, {useEffect, useState} from 'react';
-import {
-  View,
-  FlatList,
-  RefreshControl,
-  Alert,
-} from 'react-native';
+import {View, FlatList, RefreshControl, Alert} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import AddComponent from '../../components/AddComponent';
 import LoaderShimmerComponent from '../../components/LoaderShimmerComponent';
@@ -21,7 +16,7 @@ import {COLOURS} from '../../utils/Colours';
 import {getAllProducts, syncZupaProducts} from '../../store/actions/products';
 import SliderTabComponent from '../../components/SliderTabComponent';
 import {useIsFocused} from '@react-navigation/native';
-import { HeaderComponent } from '../../components/HeaderComponent';
+import {HeaderComponent} from '../../components/HeaderComponent';
 
 // create a component
 const OrdersScreen = ({navigation}) => {
@@ -118,6 +113,9 @@ const OrdersScreen = ({navigation}) => {
       {cancelable: true},
     );
   };
+  const handleSearch = () => {
+    console.log('search');
+  };
 
   return (
     <ViewProviderComponent>
@@ -125,7 +123,8 @@ const OrdersScreen = ({navigation}) => {
         name="Orders"
         isDashboard
         performDelete={handleDeleteOrders}
-        shouldDisplayMoreIcon
+        performSearch={handleSearch}
+        shouldDisplayIcon={orders.length > 0}
       />
 
       <SliderTabComponent
