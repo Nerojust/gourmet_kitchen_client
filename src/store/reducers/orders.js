@@ -4,10 +4,12 @@ const initialState = {
   orderedProductsStats: [],
   orderedProducts: [],
   order: {},
+  countItem:{},
   selectedOrderStatus: '',
   ordersLoading: false,
   deleteAllOrdersLoading: false,
   createOrderLoading: false,
+  updateSurplusOrderLoading: false,
   updateOrderLoading: false,
   isOrderUpdated: false,
   error: '',
@@ -139,6 +141,24 @@ export default (state = initialState, action) => {
         error: action.error,
       };
 
+      case 'GET_SINGLE_PRODUCT_STAT_PENDING':
+        return {
+          ...state,
+          ordersLoading: action.loading,
+        };
+      case 'GET_SINGLE_PRODUCT_STAT_SUCCESS':
+        return {
+          ...state,
+          countItem: action.data,
+          ordersLoading: action.loading,
+        };
+      case 'GET_SINGLE_PRODUCT_STAT_FAILED':
+        return {
+          ...state,
+          ordersLoading: action.loading,
+          error: action.error,
+        };
+
     case 'UPDATE_ORDER_SPECIAL_NOTE_PENDING':
       return {
         ...state,
@@ -155,6 +175,25 @@ export default (state = initialState, action) => {
         ...state,
         isOrderUpdated: false,
         updateOrderLoading: action.loading,
+        error: action.error,
+      };
+  
+      case 'UPDATE_SURPLUS_STATUS_ORDER_ITEM_PENDING':
+      return {
+        ...state,
+        updateSurplusOrderLoading: action.loading,
+      };
+    case 'UPDATE_SURPLUS_STATUS_ORDER_ITEM_SUCCESS':
+      return {
+        ...state,
+        isOrderUpdated: true,
+        updateSurplusOrderLoading: action.loading,
+      };
+    case 'UPDATE_SURPLUS_STATUS_ORDER_ITEM_FAILED':
+      return {
+        ...state,
+        isOrderUpdated: false,
+        updateSurplusOrderLoading: action.loading,
         error: action.error,
       };
 

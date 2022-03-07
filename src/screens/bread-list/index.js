@@ -5,11 +5,17 @@ import {COLOURS} from '../../utils/Colours';
 import {BackViewMoreSettings} from '../../components/Header';
 import {KeyboardObserverComponent} from '../../components/KeyboardObserverComponent';
 import ViewProviderComponent from '../../components/ViewProviderComponent';
-import {DismissKeyboard, sortArrayByDate, sortArrayByName, sortArrayData} from '../../utils/utils';
+import {
+  DismissKeyboard,
+  sortArrayByDate,
+  sortArrayByName,
+  sortArrayData,
+} from '../../utils/utils';
 import OrderListItemComponent from '../../components/OrderListItemComponent';
 import {useDispatch, useSelector} from 'react-redux';
 import LoaderShimmerComponent from '../../components/LoaderShimmerComponent';
 import BreadListItemComponent from '../../components/BreadListItemComponent';
+import SearchInputComponent from '../../components/SearchInputComponent';
 import ProductSans from '../../components/Text/ProductSans';
 import {fp} from '../../utils/responsive-screen';
 import {getAllOrderedProductsStats} from '../../store/actions/orders';
@@ -20,9 +26,14 @@ const BreadListScreen = ({navigation}) => {
   const dispatch = useDispatch();
   const [isRefreshing, setIsRefreshing] = useState(false);
   const {orderedProducts, ordersLoading} = useSelector(x => x.orders);
-  const {products, productsLoading} = useSelector(x => x.products);
-  const [newArray, setNewArray] = useState([]);
-  const tempArray = orderedProducts;
+  console.log('pending bread list', orderedProducts.length);
+  var orderProductsData = Object.assign([], orderedProducts);
+  const [filteredOrdersData, setFilteredOrdersData] =
+    useState(orderProductsData);
+  const [searchInputValue, setSearchInputValue] = useState('');
+  const [isSearchCleared, setIsSearchCleared] = useState(false);
+  const [isSearchClicked, setIsSearchClicked] = useState(false);
+
   //console.log('products', orderedProducts.length);
 
   useEffect(() => {
@@ -32,40 +43,6 @@ const BreadListScreen = ({navigation}) => {
     fetchAllData();
     return unsubscribe;
   }, [navigation]);
-
-  // useEffect(() => {
-  //   var isSameProduct = false;
-  //   var recurringArray = [];
-  //   var tempArrayF = [];
-
-  //   orderedProducts.map((product, index, arr) => {
-  //     if (product.productid == tempProduct.productid) {
-  //       tempArray.push(tempProduct);
-  //     }
-  //   });
-
-  //   console.log('filtered data is ', status);
-
-  //   // tempArrayF.push(performAdditionForSameItem(recurringArray));
-  //   // setNewArray(performAdditionForSameItem(recurringArray));
-  // }, [orderedProducts]);
-
-  // const performAdditionForSameItem = itemArray => {
-  //   console.log('item arrays', itemArray);
-  //   let object = {};
-  //   let finalSum = 0;
-  //   itemArray.map((item, i) => {
-  //     finalSum = finalSum + parseInt(item?.sum);
-  //   });
-  //   (object.sum = finalSum),
-  //     (object.name = itemArray[0].name),
-  //     (object.productid = itemArray[0].productid),
-  //     (object.category = itemArray[0].category),
-  //     (object.productsize = itemArray[0].productsize);
-
-  //   console.log('final Sum is ', finalSum, object);
-  //   return object;
-  // };
 
   const fetchAllData = () => {
     dispatch(getAllOrderedProductsStats());
@@ -90,7 +67,37 @@ const BreadListScreen = ({navigation}) => {
       navigation.navigate('SetList');
     }
   };
+  const handleSearch = () => {
+    setIsSearchClicked(!isSearchClicked);
+    handleCancelSearch();
+  };
+  const handleSearchChange = text => {
+    if (text) {
+      sortArrayByDate(orderedProducts, 'name').sort((a, b) => {
+        console.log('dddd', a);
+        if (b.name > a.name) return -1;
+        if (b.name < a.name) return 1;
+        return 0;
+      });
+      const newData = sortArrayByDate(orderedProducts, 'name')?.filter(item => {
+        const itemData = item?.name
+          ? item?.name.toUpperCase()
+          : ''.toUpperCase();
+        const textData = text.toUpperCase();
+        return itemData.indexOf(textData) > -1;
+      });
+      setFilteredOrdersData(newData);
+      setSearchInputValue(text);
+    } else {
+      setFilteredOrdersData(orderedProducts);
+      setSearchInputValue(text);
+    }
+  };
 
+  const handleCancelSearch = () => {
+    setSearchInputValue('');
+    setIsSearchCleared(true);
+  };
   return (
     <ViewProviderComponent>
       <DismissKeyboard>
@@ -98,12 +105,27 @@ const BreadListScreen = ({navigation}) => {
           <BackViewMoreSettings
             backText="Pending Bread List"
             onClose={() => navigation.goBack()}
-            shouldDisplayAdd
+            shouldDisplaySettingIcon
+            performSearch={handleSearch}
+            shouldDisplayIcon={orderedProducts.length > 0}
             handleClick={openSettingsMenu}
           />
-
+          {isSearchClicked ? (
+            <SearchInputComponent
+              shouldDisplaySearchView
+              searchPlaceholder={'Search by bread name'}
+              searchChange={handleSearchChange}
+              inputValue={searchInputValue}
+              cancelPress={handleCancelSearch}
+            />
+          ) : null}
           <FlatList
-            data={sortArrayData(orderedProducts,"name")}
+            // data={sortArrayData(orderedProducts, 'name')}
+            data={
+              searchInputValue.length > 0
+                ? filteredOrdersData
+                : sortArrayByDate(orderedProducts, 'name')
+            }
             keyboardShouldPersistTaps={'handled'}
             renderItem={renderDetails}
             refreshControl={

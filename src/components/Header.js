@@ -13,7 +13,13 @@ import {
   TouchableOpacity,
   Platform,
 } from 'react-native';
-import {hp, wp, fp,deviceHeight, deviceWidth} from '../utils/responsive-screen';
+import {
+  hp,
+  wp,
+  fp,
+  deviceHeight,
+  deviceWidth,
+} from '../utils/responsive-screen';
 import {getStatusBarHeight} from 'react-native-iphone-x-helper';
 import ProductSansBold from './Text/ProductSansBold';
 import {COLOURS} from '../utils/Colours';
@@ -25,9 +31,11 @@ import DeleteSelector from './DeleteSelector';
 export const BackViewMoreSettings = ({
   onClose,
   backText,
-  shouldDisplayAdd = false,
+  shouldDisplaySettingIcon = false,
   shouldDisplayDelete = false,
   handleClick,
+  performSearch,
+  shouldDisplayIcon,
 }) => {
   return (
     <View style={[styles.exitView]}>
@@ -46,7 +54,17 @@ export const BackViewMoreSettings = ({
         numberOfLines={1}>
         {backText}
       </ProductSansBold>
-
+      {shouldDisplayIcon ? (
+        <>
+          <TouchableOpacity onPress={performSearch}>
+            <Image
+              source={require('../assets/images/search.png')}
+              style={styles.searchImage}
+              resizeMode={'contain'}
+            />
+          </TouchableOpacity>
+        </>
+      ) : null}
       <View
         style={{
           flexDirection: 'row',
@@ -54,18 +72,13 @@ export const BackViewMoreSettings = ({
           justifyContent: 'space-between',
           alignItems: 'center',
         }}>
-          
-        {shouldDisplayAdd ? (
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={handleClick}>
+        {shouldDisplaySettingIcon ? (
+          <TouchableOpacity activeOpacity={0.7} onPress={handleClick}>
             {renderSettingsMore(handleClick)}
           </TouchableOpacity>
         ) : null}
         {shouldDisplayDelete ? (
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={handleClick}>
+          <TouchableOpacity activeOpacity={0.7} onPress={handleClick}>
             {renderDelete(handleClick)}
           </TouchableOpacity>
         ) : null}
@@ -74,18 +87,10 @@ export const BackViewMoreSettings = ({
   );
 };
 export const renderSettingsMore = handleMoreClick => {
-  return (
-    <SettingsSelector
-      onPressIcon={handleMoreClick}
-    />
-  );
+  return <SettingsSelector onPressIcon={handleMoreClick} />;
 };
 export const renderDelete = handleClick => {
-  return (
-    <DeleteSelector
-      onPressIcon={handleClick}
-    />
-  );
+  return <DeleteSelector onPressIcon={handleClick} />;
 };
 
 const styles = StyleSheet.create({
@@ -93,6 +98,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: COLOURS.textInputColor,
     flex: 0.9,
+  },
+  searchImage: {
+    width: wp(19),
+    height: wp(19),
+    marginRight: 20,
   },
   exitView: {
     flexDirection: 'row',
@@ -103,5 +113,4 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0.4,
     borderBottomColor: COLOURS.lightGray,
   },
-  
 });

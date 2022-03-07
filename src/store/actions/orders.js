@@ -58,6 +58,51 @@ export const getAllOrderedProductsStats = status => {
       });
   };
 };
+
+export const getAllOrderedProductsStatsById = id => {
+  console.log('About to get stats with id', id);
+  return dispatch => {
+    dispatch({
+      type: 'GET_SINGLE_PRODUCT_STAT_PENDING',
+      loading: true,
+      error: null,
+    });
+    var url = `/orders/count/${id}`;
+    //console.log("geturl", getUrl);
+    return client
+      .get(url)
+      .then(response => {
+        if (response?.data) {
+          if (response?.data?.isSuccessful) {
+            console.log('Gotten stat successfully', response?.data?.results.length);
+            dispatch({
+              type: 'GET_SINGLE_PRODUCT_STAT_SUCCESS',
+              loading: false,
+              data: response?.data?.results[0],
+            });
+
+            //dispatch(getOrder(id));
+            return response?.data?.results[0];
+          } else {
+            dispatch({
+              type: 'GET_SINGLE_PRODUCT_STAT_FAILED',
+              loading: false,
+              error: response?.data?.message,
+            });
+          }
+        }
+      })
+      .catch(error => {
+        console.log('getting stat failed', error);
+        handleError(error, dispatch, 'getting stat');
+        dispatch({
+          type: 'GET_SINGLE_PRODUCT_STAT_FAILED',
+          loading: false,
+          error: error.message,
+        });
+      });
+  };
+};
 export const getAllOrderedProducts = status => {
   console.log('About to get all orders');
   return dispatch => {
@@ -103,8 +148,9 @@ export const getAllOrderedProducts = status => {
       });
   };
 };
-export const updateOrderListProductCount = (payload, status) => {
-  console.log('About to update oven count with status', status);
+
+export const updateOrderListProductCount = payload => {
+  console.log('About to update breadlist count', payload);
   return dispatch => {
     dispatch({
       type: 'UPDATE_OVEN_COUNT_PENDING',
@@ -151,6 +197,52 @@ export const updateOrderListProductCount = (payload, status) => {
   };
 };
 
+export const updateSurplusStatusForOrderItemById = (id, payload) => {
+  console.log('About to update order status with id', id);
+  return dispatch => {
+    dispatch({
+      type: 'UPDATE_SURPLUS_STATUS_ORDER_ITEM_PENDING',
+      loading: true,
+      error: null,
+    });
+    var url = `/orders/updateSurplusStatusForOrderItem/${id}`;
+    //console.log("geturl", getUrl);
+    return client
+      .patch(url, payload)
+      .then(response => {
+        if (response?.data) {
+          if (response?.data?.isSuccessful) {
+            console.log(
+              'Order SurplusStatusForOrderItem updated successfully',
+              response?.data?.recordCount,
+            );
+            dispatch({
+              type: 'UPDATE_SURPLUS_STATUS_ORDER_ITEM_SUCCESS',
+              loading: false,
+              data: response?.data?.results,
+            });
+
+            return response?.data?.results;
+          } else {
+            dispatch({
+              type: 'UPDATE_SURPLUS_STATUS_ORDER_ITEM_FAILED',
+              loading: false,
+              error: response?.data?.message,
+            });
+          }
+        }
+      })
+      .catch(error => {
+        console.log('Updating SurplusStatusForOrderItem failed', error);
+        handleError(error, dispatch, 'updating order');
+        dispatch({
+          type: 'UPDATE_SURPLUS_STATUS_ORDER_ITEM_FAILED',
+          loading: false,
+          error: error.message,
+        });
+      });
+  };
+};
 export const updateOrderSpecialNoteById = (id, payload) => {
   console.log('About to update order with id', id);
   return dispatch => {

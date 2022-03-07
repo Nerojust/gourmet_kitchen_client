@@ -27,7 +27,7 @@ const OrderListItemComponent = ({item}) => {
           paddingVertical: 5,
         }}>
         <ProductSans style={styles.labelText}>PRODUCT NAME</ProductSans>
-        {item?.wasfulfilledfromsurplus ? (
+        {item?.isfulfilled && item?.wasfulfilledfromsurplus ? (
           <Image
             source={IMAGES.successImage}
             style={{
@@ -84,23 +84,74 @@ const OrderListItemComponent = ({item}) => {
           <ProductSans style={styles.quantityName}>{quantity}</ProductSans>
         </View>
       </View>
+
       {item?.isfulfilled ? (
-        <View style={{marginTop: 10}}>
-          <ProductSans style={styles.labelText}>UPDATED AT</ProductSans>
-          <ProductSans style={[styles.priceName, {fontWeight: 'normal'}]}>
-            {item.updatedat ? moment(item.updatedat).format('LT') : 'None'}
-          </ProductSans>
-        </View>
+        <>
+          <View style={{marginTop: 0}}>
+            <ProductSans style={styles.labelText}>
+              FULFILLMENT HISTORY
+            </ProductSans>
+            <View
+              style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  alignItems: 'center',
+                }}>
+                <ProductSans style={styles.labelText}>SURPLUS:</ProductSans>
+                <ProductSans
+                  style={[
+                    styles.priceName,
+                    {fontWeight: 'normal', marginLeft: 5},
+                  ]}>
+                  {item?.surplusquantity}
+                </ProductSans>
+              </View>
+              <View
+                style={{flexDirection: 'row', alignItems: 'center', flex: 0.8}}>
+                <ProductSans style={styles.labelText}>NORMAL:</ProductSans>
+                <ProductSans
+                  style={[
+                    styles.priceName,
+                    {fontWeight: 'normal', marginLeft: 5},
+                  ]}>
+                  {item?.quantity - item?.surplusquantity}
+                </ProductSans>
+              </View>
+            </View>
+          </View>
+          {item?.wasfulfilledfromsurplus && item?.surplusquantity > 0 ? (
+            <View style={{marginTop: 10}}>
+              <ProductSans style={styles.labelText}>
+                SURPLUS UPDATED AT
+              </ProductSans>
+              <ProductSans style={[styles.priceName, {fontWeight: 'normal'}]}>
+                {item?.surplusupdatedat
+                  ? moment(item?.surplusupdatedat).format('LT')
+                  : 'None'}
+              </ProductSans>
+            </View>
+          ) : null}
+          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+            <View style={{marginTop: 10}}>
+              <ProductSans style={styles.labelText}>
+                WHOLE ITEM UPDATED AT
+              </ProductSans>
+              <ProductSans style={[styles.priceName, {fontWeight: 'normal'}]}>
+                {item.updatedat ? moment(item.updatedat).format('LT') : 'None'}
+              </ProductSans>
+            </View>
+          </View>
+        </>
       ) : null}
 
-      {item?.ispartiallyfulfilled ? (
-        <View style={{marginTop: 10}}>
-          <ProductSans style={styles.labelText}>QUANTITY BAKED</ProductSans>
-          <ProductSans style={styles.priceName}>
-            {item?.fulfilledquantity} of {item?.quantity}
-          </ProductSans>
-        </View>
-      ) : null}
+      <View style={{marginTop: 10}}>
+        <ProductSans style={styles.labelText}>QUANTITY BAKED</ProductSans>
+        <ProductSans style={styles.priceName}>
+          {item?.fulfilledquantity} of {item?.quantity}
+        </ProductSans>
+      </View>
     </View>
   );
 };

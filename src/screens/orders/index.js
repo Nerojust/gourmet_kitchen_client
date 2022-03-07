@@ -186,7 +186,6 @@ const OrdersScreen = ({navigation}) => {
         <SearchInputComponent
           shouldDisplaySearchView
           searchPlaceholder={'Search by customer name'}
-          handleSearch={handleOrderNameInputSearchText}
           searchChange={handleSearchChange}
           inputValue={searchInputValue}
           cancelPress={handleCancelSearch}
