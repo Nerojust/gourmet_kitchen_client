@@ -74,7 +74,10 @@ export const getAllOrderedProductsStatsById = id => {
       .then(response => {
         if (response?.data) {
           if (response?.data?.isSuccessful) {
-            console.log('Gotten stat successfully', response?.data?.results.length);
+            console.log(
+              'Gotten stat successfully',
+              response?.data?.results.length,
+            );
             dispatch({
               type: 'GET_SINGLE_PRODUCT_STAT_SUCCESS',
               loading: false,
@@ -291,7 +294,7 @@ export const updateOrderSpecialNoteById = (id, payload) => {
   };
 };
 
-export const createOrder = orderPayload => {
+export const createOrder = (kitchenPayload, customerPayload, orderPayload) => {
   console.log('About to create a new kitchen order');
   //console.log("order payload", orderPayload);
   return dispatch => {
@@ -302,7 +305,7 @@ export const createOrder = orderPayload => {
     });
 
     return client
-      .post(`/orders`, orderPayload)
+      .post(`/orders`, kitchenPayload)
       .then(response => {
         if (response.data?.isSuccessful) {
           console.log('Kitchen Order created successfully');
@@ -311,8 +314,16 @@ export const createOrder = orderPayload => {
             type: 'CREATE_ORDER_SUCCESS',
             loading: false,
           });
+
+          //save to zupa too
+          dispatch(createZupaOrder(customerPayload, orderPayload)).then(
+            result => {
+              if (result) {
+                dispatch(getAllOrderedProducts(''));
+              }
+            },
+          );
           //alert('Order created successfully');
-          dispatch(getAllOrderedProducts(''));
           return response.data?.results;
         }
       })

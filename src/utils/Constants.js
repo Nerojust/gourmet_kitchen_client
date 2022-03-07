@@ -15,5 +15,10 @@ export const PAYSTACK_TEST_PUBLIC_KEY =
 //   "pk_test_8f6586cfe3facb7841330145790f4152d8a96760";
 // export const APP_TOKEN =
 //   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE1LCJpYXQiOjE2NDU2OTI4NzMsImV4cCI6MTY3NzI1MDQ3M30.dVDAidQHNpOsdlui1Xpdhyf-yEHsSw4VHaR0MsuBjq0';
+
+//prod token
+// export const APP_TOKEN =
+//   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTY0MjE5NTg3MiwiZXhwIjoxNjczNzUzNDcyfQ.cmE8pEXhTDzsEibTB_rzdxpvNR3dZmXRCKbdpQJ479g';
+//test token
 export const APP_TOKEN =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTY0MjE5NTg3MiwiZXhwIjoxNjczNzUzNDcyfQ.cmE8pEXhTDzsEibTB_rzdxpvNR3dZmXRCKbdpQJ479g';
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTY0NjY0OTE0MywiZXhwIjoxNjc4MjA2NzQzfQ.CkSmL3ocI5-0_mb0NElW6TkwXp5adLf1K7wH043tIN4';

@@ -125,27 +125,6 @@ const OrdersScreen = ({navigation}) => {
     handleCancelSearch();
   };
 
-  const handleOrderNameInputSearchText = text => {
-    if (text) {
-      orders.sort((a, b) => {
-        if (b.name > a.name) return -1;
-        if (b.name < a.name) return 1;
-        return 0;
-      });
-      const newData = products?.filter(item => {
-        const itemData = item?.name
-          ? item?.name.toUpperCase()
-          : ''.toUpperCase();
-        const textData = text.toUpperCase();
-        return itemData.indexOf(textData) > -1;
-      });
-      setFilteredOrdersData(newData);
-      setSearchInputValue(text);
-    } else {
-      setFilteredOrdersData(orders);
-      setSearchInputValue(text);
-    }
-  };
   const handleSearchChange = text => {
     if (text) {
       orders.sort((a, b) => {

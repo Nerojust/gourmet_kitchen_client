@@ -46,6 +46,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
   const [isSpecialFieldEditable, setIsSpecialFieldEditable] = useState(false);
   const [specialNote, setSpecialNote] = useState(order?.specialnote || '');
   let id = route.params.id;
+  const [hasDataLoaded, setHasDataLoaded] = useState(false);
   //console.log('order details redux ', order);
 
   useEffect(() => {
@@ -58,6 +59,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
     dispatch(getOrder(route.params.id)).then((result, error) => {
       if (result) {
         setSpecialNote(result?.specialnote);
+        setHasDataLoaded(true);
       }
     });
   };
@@ -284,7 +286,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
           <FlatList
             data={[]}
             keyboardShouldPersistTaps={'handled'}
-            ListHeaderComponent={renderDetails()}
+            ListHeaderComponent={hasDataLoaded ? renderDetails() : null}
             refreshControl={
               <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
             }
