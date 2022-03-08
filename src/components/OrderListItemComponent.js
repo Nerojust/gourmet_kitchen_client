@@ -59,12 +59,12 @@ const OrderListItemComponent = ({item}) => {
         )}
       </View>
       <ProductSans style={styles.productName}>{name.trim()}</ProductSans>
-
+      <View style={styles.line} />
       <View
         style={{
           flexDirection: 'row',
           justifyContent: 'space-between',
-          paddingVertical: 10,
+          // paddingVertical: 10,
         }}>
         <View>
           <ProductSans style={styles.labelText}>SIZE</ProductSans>
@@ -84,9 +84,9 @@ const OrderListItemComponent = ({item}) => {
           <ProductSans style={styles.quantityName}>{quantity}</ProductSans>
         </View>
       </View>
-
       {item?.isfulfilled ? (
         <>
+        <View style={styles.line} />
           <View style={{marginTop: 0}}>
             <ProductSans style={styles.labelText}>
               FULFILLMENT HISTORY
@@ -133,8 +133,9 @@ const OrderListItemComponent = ({item}) => {
               </ProductSans>
             </View>
           ) : null}
+    <View style={styles.line} />
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-            <View style={{marginTop: 10}}>
+            <View>
               <ProductSans style={styles.labelText}>
                 WHOLE ITEM UPDATED AT
               </ProductSans>
@@ -145,8 +146,8 @@ const OrderListItemComponent = ({item}) => {
           </View>
         </>
       ) : null}
-
-      <View style={{marginTop: 10}}>
+      <View style={styles.line} />
+      <View>
         <ProductSans style={styles.labelText}>QUANTITY BAKED</ProductSans>
         <ProductSans style={styles.priceName}>
           {item?.fulfilledquantity} of {item?.quantity}
@@ -167,6 +168,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     //flex: 1,
   },
+  line: {width: '100%', height: 1, backgroundColor: COLOURS.lightGray1,marginVertical:5},
   productName: {
     fontSize: fp(15),
     color: COLOURS.textInputColor,
