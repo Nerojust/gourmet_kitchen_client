@@ -147,11 +147,12 @@ const OrderDetailsScreen = ({navigation, route}) => {
               </ProductSansBold>
             </TouchableOpacity>
 
-            {order?.specialnote.length > 0 ? (
+            {order?.specialnote && order?.specialnote.length > 0 ? (
               order?.specialnote.map((item, i) => {
                 return (
                   <>
                     <ProductSansBold
+                      key={i}
                       style={[
                         styles.labelText,
                         {left: 0, paddingTop: 0, flex: 2, paddingBottom: 0},
@@ -164,7 +165,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
                   </>
                 );
               })
-            ) : (
+            ) : !isAddNewNote ? (
               <Averta
                 style={[
                   styles.address,
@@ -172,11 +173,11 @@ const OrderDetailsScreen = ({navigation, route}) => {
                 ]}>
                 No special note found
               </Averta>
-            )}
+            ) : null}
             {isAddNewNote ? (
               <View style={{marginTop: 10}}>
                 <TextInputComponent
-                  placeholder={'Special Note'}
+                  placeholder={'Add a special note'}
                   handleTextChange={text => setSpecialNote(text)}
                   defaultValue={specialNote ? specialNote.trim() : ''}
                   returnKeyType={'next'}
