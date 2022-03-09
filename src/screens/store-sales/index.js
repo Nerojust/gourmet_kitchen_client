@@ -5,7 +5,7 @@ import {COLOURS} from '../../utils/Colours';
 import {BackViewMoreSettings} from '../../components/Header';
 import {KeyboardObserverComponent} from '../../components/KeyboardObserverComponent';
 import ViewProviderComponent from '../../components/ViewProviderComponent';
-import {DismissKeyboard, sortArrayByDate} from '../../utils/utils';
+import {DismissKeyboard, sortArrayByDate, sortArrayByDateDesc} from '../../utils/utils';
 import AddComponent from '../../components/AddComponent';
 import LoaderShimmerComponent from '../../components/LoaderShimmerComponent';
 import ProductSans from '../../components/Text/ProductSans';
@@ -116,7 +116,7 @@ const StoreSalesScreen = ({navigation}) => {
             data={
               searchInputValue.length > 0
                 ? filteredSurplusData
-                : sortArrayByDate(surplus, 'productname')
+                : sortArrayByDateDesc(surplus, 'productname')
             }
             renderItem={renderItems}
             keyExtractor={item => item.id}

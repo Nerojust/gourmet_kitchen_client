@@ -86,7 +86,7 @@ const OrderListItemComponent = ({item}) => {
       </View>
       {item?.isfulfilled ? (
         <>
-        <View style={styles.line} />
+          <View style={styles.line} />
           <View style={{marginTop: 0}}>
             <ProductSans style={styles.labelText}>
               FULFILLMENT HISTORY
@@ -133,7 +133,7 @@ const OrderListItemComponent = ({item}) => {
               </ProductSans>
             </View>
           ) : null}
-    <View style={styles.line} />
+          <View style={styles.line} />
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
             <View>
               <ProductSans style={styles.labelText}>
@@ -168,7 +168,12 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     //flex: 1,
   },
-  line: {width: '100%', height: 1, backgroundColor: COLOURS.lightGray1,marginVertical:5},
+  line: {
+    width: '100%',
+    height: 1,
+    backgroundColor: COLOURS.lightGray1,
+    marginVertical: 5,
+  },
   productName: {
     fontSize: fp(15),
     color: COLOURS.textInputColor,

@@ -90,6 +90,40 @@ export const createNote = notePayload => {
   };
 };
 
+export const updateNoteById = (id, payload) => {
+  console.log('About to update single note with id', id);
+  return dispatch => {
+    dispatch({
+      type: 'UPDATE_NOTES_PENDING',
+      loading: true,
+      error: null,
+    });
+    return client
+      .patch(`/notes/${id}`, payload)
+      .then(response => {
+        if (response.data) {
+          console.log('Single note updated successfully');
+          dispatch({
+            type: 'UPDATE_NOTES_SUCCESS',
+            loading: false,
+            data: response.data,
+          });
+          return response.data;
+        }
+      })
+
+      .catch(error => {
+        console.log('Error updating single note', error);
+        handleError(error, dispatch, 'updating note');
+        dispatch({
+          type: 'UPDATE_NOTES_FAILED',
+          loading: false,
+          error: error.message,
+        });
+      });
+  };
+};
+
 export const getNoteById = id => {
   console.log('About to get single note with id', id);
   return dispatch => {
@@ -102,7 +136,7 @@ export const getNoteById = id => {
       .get(`/notes/${id}`)
       .then(response => {
         if (response.data) {
-          console.log('Single set gotten successfully');
+          console.log('Single note gotten successfully');
           dispatch({
             type: 'GET_SINGLE_NOTE_SUCCESS',
             loading: false,

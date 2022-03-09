@@ -5,6 +5,7 @@ import {
   Text,
   RefreshControl,
   StyleSheet,
+  Image,
   TouchableOpacity,
   FlatList,
   Platform,
@@ -33,7 +34,9 @@ import {
 import LoaderShimmerComponent from '../../components/LoaderShimmerComponent';
 import TextInputComponent from '../../components/TextInputComponent';
 import useKeyboardHeight from 'react-native-use-keyboard-height';
-import {createNote} from '../../store/actions/notes';
+import {createNote, updateNoteById} from '../../store/actions/notes';
+import {IMAGES} from '../../utils/Images';
+import ProductSans from '../../components/Text/ProductSans';
 
 // create a component
 const OrderDetailsScreen = ({navigation, route}) => {
@@ -42,7 +45,9 @@ const OrderDetailsScreen = ({navigation, route}) => {
   const {order, updateOrderLoading, error, ordersLoading} = useSelector(
     state => state.orders,
   );
-  const {notes, createNoteLoading} = useSelector(state => state.notes);
+  const {notes, createNoteLoading, updateNoteLoading} = useSelector(
+    state => state.notes,
+  );
   const keyboardHeight = useKeyboardHeight();
   const [isAddNewNote, setIsAddNewNote] = useState(false);
   const [isInputVisible, setIsInputVisible] = useState(false);
@@ -52,7 +57,9 @@ const OrderDetailsScreen = ({navigation, route}) => {
   const [specialNoteArray, setSpecialNoteArray] = useState(
     order?.specialnote || [],
   );
+  const [selectedSpecialNote, setSelectedSpecialNote] = useState({});
   const [hasAddedNewNote, setHasAddedNewNote] = useState(false);
+  const [isEditNoteMode, setIsEditNoteMode] = useState(false);
   //console.log('order details redux ', order);
 
   useEffect(() => {
@@ -141,6 +148,8 @@ const OrderDetailsScreen = ({navigation, route}) => {
                   {
                     paddingTop: 0,
                     color: COLOURS.purple,
+                    fontWeight: '800',
+                    fontSize: fp(14),
                   },
                 ]}>
                 {!isAddNewNote ? 'Add Note' : 'Cancel'}
@@ -151,17 +160,50 @@ const OrderDetailsScreen = ({navigation, route}) => {
               order?.specialnote.map((item, i) => {
                 return (
                   <>
-                    <ProductSansBold
-                      key={i}
-                      style={[
-                        styles.labelText,
-                        {left: 0, paddingTop: 0, flex: 2, paddingBottom: 0},
-                      ]}>
-                      SPECIAL NOTE {i + 1}
-                    </ProductSansBold>
-                    <Averta style={[styles.address, {paddingVertical: 10}]}>
+                    <View style={styles.line} />
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                      }}>
+                      <ProductSansBold
+                        key={i}
+                        style={[
+                          styles.labelText,
+                          {left: 0, paddingTop: 0, flex: 2, paddingBottom: 0},
+                        ]}>
+                        SPECIAL NOTE {i + 1}
+                      </ProductSansBold>
+
+                      <TouchableOpacity
+                        style={{marginRight: 20}}
+                        onPress={() => handleEditNote(item, i)}>
+                        <Image
+                          source={IMAGES.editImage}
+                          style={{
+                            width: 22,
+                            height: 22,
+                            tintColor: COLOURS.labelTextColor,
+                          }}
+                          resizeMode="contain"
+                        />
+                      </TouchableOpacity>
+                    </View>
+                    <Averta style={[styles.address]}>
                       {item ? item?.note : 'None'}
                     </Averta>
+                    <ProductSans
+                      style={{
+                        fontWeight: 'normal',
+                        fontSize: fp(1),
+                        color: COLOURS.labelTextColor,
+                        paddingBottom: 10,
+                      }}>
+                      updated at{' '}
+                      {item?.updatedat
+                        ? moment(item?.updatedat).format('LT')
+                        : 'None'}
+                    </ProductSans>
                   </>
                 );
               })
@@ -174,7 +216,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
                 No special note found
               </Averta>
             ) : null}
-            {isAddNewNote ? (
+            {isAddNewNote || isEditNoteMode ? (
               <View style={{marginTop: 10}}>
                 <TextInputComponent
                   placeholder={'Add a special note'}
@@ -186,12 +228,12 @@ const OrderDetailsScreen = ({navigation, route}) => {
                   widthFigure={deviceWidth / 1.15}
                   heightfigure={95}
                   multiline={true}
-                  //editable={isSpecialFieldEditable}
                   capitalize={'sentences'}
                   props={{
                     borderWidth: 0,
-                    paddingTop: 12,
-                    padding: 20,
+                    paddingTop: 15,
+                    paddingBottom: 15,
+                    paddingRight: 12,
                   }}
                 />
                 {displaySubmitButton()}
@@ -202,7 +244,13 @@ const OrderDetailsScreen = ({navigation, route}) => {
       </View>
     );
   };
+  const handleEditNote = (item, index) => {
+    console.log('edited is ', item, 'index is ', index);
+    setSpecialNote(item?.note);
+    setSelectedSpecialNote(item);
 
+    setIsEditNoteMode(!isEditNoteMode);
+  };
   const handleAddNote = () => {
     setSpecialNote('');
     setIsAddNewNote(!isAddNewNote);
@@ -210,8 +258,10 @@ const OrderDetailsScreen = ({navigation, route}) => {
   const handleCancelNote = () => {
     setSpecialNote('');
     setIsAddNewNote(false);
+    setSelectedSpecialNote({});
+    setIsEditNoteMode(false);
   };
-  const updateSpecialNote = () =>
+  const createSpecialNote = () =>
     dispatch(createNote({note: specialNote, orderid: id})).then(
       (result, error) => {
         if (result) {
@@ -220,10 +270,21 @@ const OrderDetailsScreen = ({navigation, route}) => {
         }
       },
     );
+
+  const updateSpecialNote = () =>
+    dispatch(
+      updateNoteById(selectedSpecialNote?.id, {note: specialNote, orderid: id}),
+    ).then((result, error) => {
+      if (result) {
+        setHasAddedNewNote(!hasAddedNewNote);
+        handleCancelNote();
+      }
+    });
+
   const displaySubmitButton = () => {
     return (
       <TouchableOpacity
-        onPress={updateSpecialNote}
+        onPress={isEditNoteMode ? updateSpecialNote : createSpecialNote}
         activeOpacity={0.6}
         style={{
           marginTop: 5,
@@ -261,6 +322,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
             keyExtractor={item => item.id}
           />
           <LoaderShimmerComponent isLoading={updateOrderLoading} />
+          <LoaderShimmerComponent isLoading={updateNoteLoading} />
           <LoaderShimmerComponent isLoading={ordersLoading} />
           <LoaderShimmerComponent isLoading={createNoteLoading} />
         </KeyboardObserverComponent>
@@ -279,6 +341,12 @@ const styles = StyleSheet.create({
   customerNameView: {
     //width: deviceWidth - 50,
     marginTop: 5,
+  },
+  line: {
+    width: '100%',
+    height: 0.5,
+    backgroundColor: COLOURS.lightGray,
+    marginVertical: 5,
   },
   labelText: {
     fontSize: fp(13),
