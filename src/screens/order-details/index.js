@@ -33,32 +33,38 @@ import {
 import LoaderShimmerComponent from '../../components/LoaderShimmerComponent';
 import TextInputComponent from '../../components/TextInputComponent';
 import useKeyboardHeight from 'react-native-use-keyboard-height';
+import {createNote} from '../../store/actions/notes';
 
 // create a component
 const OrderDetailsScreen = ({navigation, route}) => {
   const dispatch = useDispatch();
   const [isRefreshing, setIsRefreshing] = useState(false);
-  //var orderItems = route?.params?.order?.products;
   const {order, updateOrderLoading, error, ordersLoading} = useSelector(
     state => state.orders,
   );
+  const {notes, createNoteLoading} = useSelector(state => state.notes);
   const keyboardHeight = useKeyboardHeight();
-  const [isSpecialFieldEditable, setIsSpecialFieldEditable] = useState(false);
-  const [specialNote, setSpecialNote] = useState(order?.specialnote || '');
+  const [isAddNewNote, setIsAddNewNote] = useState(false);
+  const [isInputVisible, setIsInputVisible] = useState(false);
+  const [specialNote, setSpecialNote] = useState('');
   let id = route.params.id;
   const [hasDataLoaded, setHasDataLoaded] = useState(false);
+  const [specialNoteArray, setSpecialNoteArray] = useState(
+    order?.specialnote || [],
+  );
+  const [hasAddedNewNote, setHasAddedNewNote] = useState(false);
   //console.log('order details redux ', order);
 
   useEffect(() => {
     if (id) {
       fetchAllData();
     }
-  }, [id]);
+  }, [id, hasAddedNewNote]);
 
   const fetchAllData = () => {
-    dispatch(getOrder(route.params.id)).then((result, error) => {
+    dispatch(getOrder(route?.params?.id)).then((result, error) => {
       if (result) {
-        setSpecialNote(result?.specialnote);
+        // setSpecialNoteArray(result?.specialnote);
         setHasDataLoaded(true);
       }
     });
@@ -94,18 +100,6 @@ const OrderDetailsScreen = ({navigation, route}) => {
             {order?.createdat ? moment(order?.createdat).format('LLL') : 'None'}
           </Averta>
         </View>
-        {/* {isfulfilled ? (
-          <View
-            style={[styles.customerNameView, {paddingTop: 5, marginRight: 10}]}>
-            <ProductSansBold
-              style={[styles.labelText, {paddingBottom: 12, left: 0}]}>
-              FULFILLED DATE
-            </ProductSansBold>
-            <Averta style={styles.address}>
-              {createdat ? moment(updatedat).format('LLL') : 'None'}
-            </Averta>
-          </View>
-        ) : null} */}
 
         <View
           style={[
@@ -138,78 +132,49 @@ const OrderDetailsScreen = ({navigation, route}) => {
 
         <View style={[styles.customerNameView, {top: -20, marginBottom: 20}]}>
           <View>
-            <View style={{flexDirection: 'row', width: deviceWidth}}>
+            <TouchableOpacity
+              style={{alignItems: 'flex-end', marginRight: 20}}
+              onPress={!isAddNewNote ? handleAddNote : handleCancelNote}>
               <ProductSansBold
-                style={[styles.labelText, {left: 0, paddingTop: 0, flex: 2}]}>
-                SPECIAL NOTE
+                style={[
+                  styles.labelText,
+                  {
+                    paddingTop: 0,
+                    color: COLOURS.purple,
+                  },
+                ]}>
+                {!isAddNewNote ? 'Add Note' : 'Cancel'}
               </ProductSansBold>
+            </TouchableOpacity>
 
-              {specialNote && specialNote != 'none' ? (
-                !isSpecialFieldEditable ? (
-                  <TouchableOpacity
-                    style={{flex: 1}}
-                    onPress={handleSpecialChange}>
+            {order?.specialnote.length > 0 ? (
+              order?.specialnote.map((item, i) => {
+                return (
+                  <>
                     <ProductSansBold
                       style={[
                         styles.labelText,
-                        {
-                          paddingTop: 0,
-                          color: COLOURS.purple,
-                        },
+                        {left: 0, paddingTop: 0, flex: 2, paddingBottom: 0},
                       ]}>
-                      Edit Note
+                      SPECIAL NOTE {i + 1}
                     </ProductSansBold>
-                  </TouchableOpacity>
-                ) : (
-                  <TouchableOpacity
-                    style={{flex: 1}}
-                    onPress={handleSpecialChange}>
-                    <ProductSansBold
-                      style={[
-                        styles.labelText,
-                        {
-                          paddingTop: 0,
-                          color: COLOURS.purple,
-                        },
-                      ]}>
-                      Cancel
-                    </ProductSansBold>
-                  </TouchableOpacity>
-                )
-              ) : !isSpecialFieldEditable ? (
-                <TouchableOpacity
-                  style={{flex: 1}}
-                  onPress={handleSpecialChange}>
-                  <ProductSansBold
-                    style={[
-                      styles.labelText,
-                      {
-                        paddingTop: 0,
-                        color: COLOURS.purple,
-                      },
-                    ]}>
-                    Add Note
-                  </ProductSansBold>
-                </TouchableOpacity>
-              ) : (
-                <TouchableOpacity
-                  style={{flex: 1}}
-                  onPress={handleSpecialChange}>
-                  <ProductSansBold
-                    style={[
-                      styles.labelText,
-                      {
-                        paddingTop: 0,
-                        color: COLOURS.purple,
-                      },
-                    ]}>
-                    Cancel
-                  </ProductSansBold>
-                </TouchableOpacity>
-              )}
-            </View>
-            {isSpecialFieldEditable ? (
-              <>
+                    <Averta style={[styles.address, {paddingVertical: 10}]}>
+                      {item ? item?.note : 'None'}
+                    </Averta>
+                  </>
+                );
+              })
+            ) : (
+              <Averta
+                style={[
+                  styles.address,
+                  {paddingVertical: 10, color: COLOURS.gray},
+                ]}>
+                No special note found
+              </Averta>
+            )}
+            {isAddNewNote ? (
+              <View style={{marginTop: 10}}>
                 <TextInputComponent
                   placeholder={'Special Note'}
                   handleTextChange={text => setSpecialNote(text)}
@@ -220,7 +185,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
                   widthFigure={deviceWidth / 1.15}
                   heightfigure={95}
                   multiline={true}
-                  editable={isSpecialFieldEditable}
+                  //editable={isSpecialFieldEditable}
                   capitalize={'sentences'}
                   props={{
                     borderWidth: 0,
@@ -228,31 +193,32 @@ const OrderDetailsScreen = ({navigation, route}) => {
                     padding: 20,
                   }}
                 />
-
                 {displaySubmitButton()}
-              </>
-            ) : (
-              <Averta style={styles.address}>
-                {specialNote ? specialNote : 'None'}
-              </Averta>
-            )}
+              </View>
+            ) : null}
           </View>
         </View>
       </View>
     );
   };
 
-  const handleSpecialChange = () => {
-    setIsSpecialFieldEditable(!isSpecialFieldEditable);
+  const handleAddNote = () => {
+    setSpecialNote('');
+    setIsAddNewNote(!isAddNewNote);
+  };
+  const handleCancelNote = () => {
+    setSpecialNote('');
+    setIsAddNewNote(false);
   };
   const updateSpecialNote = () =>
-    dispatch(
-      updateOrderSpecialNoteById(order?.id, {specialNote: specialNote}),
-    ).then((result, error) => {
-      if (result) {
-        handleSpecialChange();
-      }
-    });
+    dispatch(createNote({note: specialNote, orderid: id})).then(
+      (result, error) => {
+        if (result) {
+          setHasAddedNewNote(!hasAddedNewNote);
+          handleCancelNote();
+        }
+      },
+    );
   const displaySubmitButton = () => {
     return (
       <TouchableOpacity
@@ -295,6 +261,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
           />
           <LoaderShimmerComponent isLoading={updateOrderLoading} />
           <LoaderShimmerComponent isLoading={ordersLoading} />
+          <LoaderShimmerComponent isLoading={createNoteLoading} />
         </KeyboardObserverComponent>
       </DismissKeyboard>
     </ViewProviderComponent>
