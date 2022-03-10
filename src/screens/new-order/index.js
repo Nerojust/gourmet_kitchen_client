@@ -100,7 +100,7 @@ const NewOrderScreen = ({navigation}) => {
   }, []);
 
   useEffect(() => {
-    if (sets.length > 0) {
+    if (sets && sets.length > 0) {
       sets.forEach(async (item, i) => {
         let newObject = {};
         item.type = 'custom';
@@ -579,8 +579,8 @@ const NewOrderScreen = ({navigation}) => {
       console.log('order payload', orderPayload);
       console.log('order items', orderPayload.order_items);
       console.log('kitchen payload', kitchen_payload);
-      
-      dispatch(createOrder(kitchen_payload,customerPayload, orderPayload))
+
+      dispatch(createOrder(kitchen_payload, customerPayload, orderPayload))
         .then(response => {
           //console.log("inside result", response);
           if (response) {
@@ -591,7 +591,6 @@ const NewOrderScreen = ({navigation}) => {
         .catch(() => {
           console.log('error creating order');
         });
-      
     });
   };
   const renderSuccessModal = () => (

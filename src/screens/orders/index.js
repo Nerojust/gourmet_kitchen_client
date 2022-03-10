@@ -29,7 +29,6 @@ const OrdersScreen = ({navigation}) => {
   const [filteredOrdersData, setFilteredOrdersData] = useState(ordersData);
   const [searchInputValue, setSearchInputValue] = useState('');
   const [isSearchCleared, setIsSearchCleared] = useState(false);
-  const [isSearch, setIsSearch] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [statusState, setStatusState] = useState('');
   const [selectedTab, setSelectedTab] = useState(0);

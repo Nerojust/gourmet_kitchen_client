@@ -159,7 +159,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
             {order?.specialnote && order?.specialnote.length > 0 ? (
               order?.specialnote.map((item, i) => {
                 return (
-                  <>
+                  <View key={i}>
                     <View style={styles.line} />
                     <View
                       style={{
@@ -192,27 +192,18 @@ const OrderDetailsScreen = ({navigation, route}) => {
                     <Averta style={[styles.address]}>
                       {item ? item?.note : 'None'}
                     </Averta>
-                    <ProductSans
-                      style={{
-                        fontWeight: 'normal',
-                        fontSize: fp(1),
-                        color: COLOURS.labelTextColor,
-                        paddingBottom: 10,
-                      }}>
-                      updated at{' '}
+
+                    <ProductSans style={styles.noteTimetext}>
+                      Updated at{' '}
                       {item?.updatedat
                         ? moment(item?.updatedat).format('LT')
                         : 'None'}
                     </ProductSans>
-                  </>
+                  </View>
                 );
               })
             ) : !isAddNewNote ? (
-              <Averta
-                style={[
-                  styles.address,
-                  {paddingVertical: 10, color: COLOURS.gray},
-                ]}>
+              <Averta style={{paddingVertical: 10, color: COLOURS.gray}}>
                 No special note found
               </Averta>
             ) : null}
@@ -229,12 +220,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
                   heightfigure={95}
                   multiline={true}
                   capitalize={'sentences'}
-                  props={{
-                    borderWidth: 0,
-                    paddingTop: 15,
-                    paddingBottom: 15,
-                    paddingRight: 12,
-                  }}
+                  props={styles.inputTextProps}
                 />
                 {displaySubmitButton()}
               </View>
@@ -245,7 +231,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
     );
   };
   const handleEditNote = (item, index) => {
-    console.log('edited is ', item, 'index is ', index);
+    //console.log('edited is ', item, 'index is ', index);
     setSpecialNote(item?.note);
     setSelectedSpecialNote(item);
 
@@ -261,7 +247,11 @@ const OrderDetailsScreen = ({navigation, route}) => {
     setSelectedSpecialNote({});
     setIsEditNoteMode(false);
   };
-  const createSpecialNote = () =>
+  const createSpecialNote = () => {
+    if (!specialNote || specialNote.length < 1) {
+      alert('Please input a note');
+      return;
+    }
     dispatch(createNote({note: specialNote, orderid: id})).then(
       (result, error) => {
         if (result) {
@@ -270,16 +260,25 @@ const OrderDetailsScreen = ({navigation, route}) => {
         }
       },
     );
+  };
 
-  const updateSpecialNote = () =>
+  const updateSpecialNote = () => {
+    if (!specialNote || specialNote.length < 1) {
+      alert('Please input a note to update');
+      return;
+    }
     dispatch(
-      updateNoteById(selectedSpecialNote?.id, {note: specialNote, orderid: id}),
+      updateNoteById(selectedSpecialNote?.id, {
+        note: specialNote,
+        orderid: id,
+      }),
     ).then((result, error) => {
       if (result) {
         setHasAddedNewNote(!hasAddedNewNote);
         handleCancelNote();
       }
     });
+  };
 
   const displaySubmitButton = () => {
     return (
@@ -341,6 +340,18 @@ const styles = StyleSheet.create({
   customerNameView: {
     //width: deviceWidth - 50,
     marginTop: 5,
+  },
+  inputTextProps: {
+    borderWidth: 0,
+    paddingTop: 15,
+    paddingBottom: 15,
+    paddingRight: 12,
+  },
+  noteTimetext: {
+    fontWeight: 'normal',
+    fontSize: fp(11),
+    color: COLOURS.labelTextColor,
+    paddingBottom: 10,
   },
   line: {
     width: '100%',

@@ -72,16 +72,17 @@ const OrderListItemComponent = ({item}) => {
             {item?.productsize || 'None'}
           </ProductSans>
         </View>
+       
         <View>
-          <ProductSans style={styles.labelText}>PRICE</ProductSans>
+          <ProductSans style={styles.labelText}>QUANTITY</ProductSans>
+          <ProductSans style={styles.quantityName}>{quantity}</ProductSans>
+        </View>
+        <View>
+          <ProductSans style={styles.labelText}>TOTAL</ProductSans>
           <ProductSans style={styles.priceName}>
             {NAIRA}
             {formatNumberComma(price)}
           </ProductSans>
-        </View>
-        <View>
-          <ProductSans style={styles.labelText}>QUANTITY</ProductSans>
-          <ProductSans style={styles.quantityName}>{quantity}</ProductSans>
         </View>
       </View>
       {item?.isfulfilled ? (

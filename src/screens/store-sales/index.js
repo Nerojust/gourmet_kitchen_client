@@ -5,7 +5,11 @@ import {COLOURS} from '../../utils/Colours';
 import {BackViewMoreSettings} from '../../components/Header';
 import {KeyboardObserverComponent} from '../../components/KeyboardObserverComponent';
 import ViewProviderComponent from '../../components/ViewProviderComponent';
-import {DismissKeyboard, sortArrayByDate, sortArrayByDateDesc} from '../../utils/utils';
+import {
+  DismissKeyboard,
+  sortArrayByDate,
+  sortArrayByDateDesc,
+} from '../../utils/utils';
 import AddComponent from '../../components/AddComponent';
 import LoaderShimmerComponent from '../../components/LoaderShimmerComponent';
 import ProductSans from '../../components/Text/ProductSans';
@@ -68,7 +72,7 @@ const StoreSalesScreen = ({navigation}) => {
   const handleSearchChange = text => {
     if (text) {
       sortArrayByDate(surplus, 'productname').sort((a, b) => {
-        console.log('dddd', a);
+       // console.log('dddd', a);
         if (b.productname > a.productname) return -1;
         if (b.productname < a.productname) return 1;
         return 0;
@@ -100,7 +104,7 @@ const StoreSalesScreen = ({navigation}) => {
           <BackViewMoreSettings
             backText="Store Sales"
             onClose={() => navigation.goBack()}
-            shouldDisplayIcon={surplus.length > 0}
+            shouldDisplayIcon={surplus && surplus.length > 0}
             performSearch={handleSearch}
           />
           {isSearchClicked ? (
@@ -116,7 +120,7 @@ const StoreSalesScreen = ({navigation}) => {
             data={
               searchInputValue.length > 0
                 ? filteredSurplusData
-                : sortArrayByDateDesc(surplus, 'productname')
+                : surplus && sortArrayByDate(surplus, 'productname')
             }
             renderItem={renderItems}
             keyExtractor={item => item.id}

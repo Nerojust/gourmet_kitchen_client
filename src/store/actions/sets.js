@@ -76,7 +76,6 @@ export const createSet = orderPayload => {
           });
           //alert('set created successfully');
           dispatch(getAllSets());
-          dispatch(getAllSets());
           return response.data?.results;
         } else {
           dispatch({

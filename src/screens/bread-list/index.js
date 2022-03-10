@@ -34,7 +34,7 @@ const BreadListScreen = ({navigation}) => {
   const [isSearchCleared, setIsSearchCleared] = useState(false);
   const [isSearchClicked, setIsSearchClicked] = useState(false);
 
-  //console.log('products', orderedProducts.length);
+  //console.log('products', orderedProducts);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -74,7 +74,7 @@ const BreadListScreen = ({navigation}) => {
   const handleSearchChange = text => {
     if (text) {
       sortArrayByDate(orderedProducts, 'name').sort((a, b) => {
-        console.log('dddd', a);
+       // console.log('dddd', a);
         if (b.name > a.name) return -1;
         if (b.name < a.name) return 1;
         return 0;
