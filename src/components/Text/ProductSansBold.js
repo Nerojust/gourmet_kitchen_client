@@ -14,7 +14,7 @@ export default ProductSansBold;
 
 const styles = StyleSheet.create({
   defaultStyles: {
-    fontFamily: "ProductSans-Bold",
+    //fontFamily: "ProductSans-Bold",
     //color: COLOURS.white,
     fontSize: fp(14)
   }
