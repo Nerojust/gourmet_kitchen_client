@@ -13,7 +13,7 @@ export default ProductSans;
 
 const styles = StyleSheet.create({
   defaultStyles: {
-    //fontFamily: "ProductSans-Regular",
+    fontFamily: "ProductSans-Regular",
     // color: '#fff',
     fontSize: fp(14)
   }

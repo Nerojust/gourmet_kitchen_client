@@ -95,7 +95,6 @@ const NewOrderScreen = ({navigation}) => {
 
   useEffect(() => {
     dispatch(getAllSets());
-    //dispatch(syncZupaProducts());
     dispatch(getAllProducts('', 0, 0, null));
   }, []);
 

@@ -46,7 +46,7 @@ const OrderProductComponent = ({item, handleClick}) => {
       <View>
         {item.isset ? (
           <View style={{alignItems: 'flex-end', paddingVertical: 5}}>
-            <ProductSansBold style={[styles.itemsText, {fontWeight: '100'}]}>
+            <ProductSansBold style={[styles.itemsText, {fontWeight: '300'}]}>
               {item?.setname ? item?.setname : 'Set'}
             </ProductSansBold>
           </View>
@@ -140,7 +140,7 @@ const OrderProductComponent = ({item, handleClick}) => {
 // define your styles
 const styles = StyleSheet.create({
   item: {
-    backgroundColor: COLOURS.white,
+    backgroundColor: COLOURS.lightGray4,
     padding: 10,
     marginVertical: 5,
     marginHorizontal: 16,

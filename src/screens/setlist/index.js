@@ -1,10 +1,6 @@
 //import liraries
 import React, {useEffect, useState} from 'react';
-import {
-  View,
-  FlatList,
-  RefreshControl,
-} from 'react-native';
+import {View, FlatList, RefreshControl, Platform} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import AddComponent from '../../components/AddComponent';
 import LoaderShimmerComponent from '../../components/LoaderShimmerComponent';
@@ -18,12 +14,12 @@ import SetItemComponent from '../../components/SetItemComponent';
 // create a component
 const SetListScreen = ({navigation}) => {
   const dispatch = useDispatch();
- 
+
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [statusState, setStatusState] = useState('');
   const [selectedTab, setSelectedTab] = useState(0);
   const [isTabClicked, setIsTabClicked] = useState(false);
-  const {createSetsLoading, sets,setsLoading} = useSelector(x => x.sets);
+  const {createSetsLoading, sets, setsLoading} = useSelector(x => x.sets);
 
   useEffect(() => {
     fetchAllData();
@@ -74,7 +70,8 @@ const SetListScreen = ({navigation}) => {
                   justifyContent: 'center',
                   alignItems: 'center',
                   flex: 1,
-                  top: 300,
+                  top: Platform.OS == 'ios' ? 300 : 0,
+                  marginTop: Platform.OS == 'android' ? 300 : 0,
                 }}>
                 <ProductSans
                   style={{fontSize: 16, color: COLOURS.textInputColor}}>

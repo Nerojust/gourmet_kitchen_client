@@ -1,6 +1,13 @@
 //import liraries
 import React, {useEffect, useState} from 'react';
-import {View, FlatList, RefreshControl, Alert, Keyboard} from 'react-native';
+import {
+  View,
+  FlatList,
+  RefreshControl,
+  Alert,
+  Keyboard,
+  Platform,
+} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import AddComponent from '../../components/AddComponent';
 import LoaderShimmerComponent from '../../components/LoaderShimmerComponent';
@@ -183,7 +190,7 @@ const OrdersScreen = ({navigation}) => {
       <FlatList
         data={searchInputValue.length > 0 ? filteredOrdersData : orders}
         renderItem={renderItems}
-        keyExtractor={item => item.id}
+        keyExtractor={item => item?.id}
         refreshControl={
           <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
         }
@@ -195,7 +202,8 @@ const OrdersScreen = ({navigation}) => {
                   justifyContent: 'center',
                   alignItems: 'center',
                   flex: 1,
-                  top: 300,
+                  top: Platform.OS == 'ios' ? 300 : 0,
+                  marginTop: Platform.OS == 'android' ? 300 : 0,
                 }}>
                 <ProductSans
                   style={{fontSize: 16, color: COLOURS.textInputColor}}>

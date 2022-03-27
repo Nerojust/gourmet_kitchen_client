@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   customerNameView: {
-    backgroundColor: COLOURS.white,
+    backgroundColor: COLOURS.lightGray4,
     padding: 10,
     marginVertical: 5,
     marginHorizontal: 16,

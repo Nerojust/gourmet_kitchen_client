@@ -89,7 +89,7 @@ export const toggleDrawer = navigation => {
 };
 
 export const CustomStatusBar = ({
-  backgroundColor = Platform.OS == 'ios' ? COLOURS.white : COLOURS.blue,
+  backgroundColor = Platform.OS == 'ios' ? COLOURS.white : COLOURS.white,
   barStyle = 'dark-content',
   children,
 }) => {

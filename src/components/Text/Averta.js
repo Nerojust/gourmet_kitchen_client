@@ -13,7 +13,7 @@ export default Averta;
 
 const styles = StyleSheet.create({
   defaultStyles: {
-    //fontFamily: "Averta-Regular",
+    fontFamily: "Averta-Regular",
     //color: '#fff',
     fontSize: fp(14)
   }

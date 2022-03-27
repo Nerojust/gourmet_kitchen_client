@@ -56,7 +56,7 @@ const BreadListDetailsScreen = ({navigation, route}) => {
     countItem,
   } = useSelector(x => x.orders);
   //console.log('count item', countItem);
-  var {order_product_id: id} = route.params.bread;
+  var {productid: id} = route.params.bread;
   //console.log('route.params.brea item', route.params.bread);
   const [foundSurplus, setFoundSurplus] = useState();
   const [category, setCategory] = useState('');

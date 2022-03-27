@@ -118,15 +118,17 @@ const OrderDetailsScreen = ({navigation, route}) => {
             ORDERED PRODUCTS
           </ProductSansBold>
           {order?.isset ? (
-            <AvertaBold
+            <ProductSansBold
               style={[
                 styles.custName,
-                {alignSelf: 'flex-end', fontWeight: '100'},
+                {alignSelf: 'flex-end', fontWeight: '300'},
               ]}>
               {order?.setname}
-            </AvertaBold>
+            </ProductSansBold>
           ) : null}
-          {order?.products.length > 0 &&
+          {order &&
+            order?.products &&
+            order?.products.length > 0 &&
             sortArrayByDate(order?.products).map((item, index) => {
               return (
                 <View key={index}>
@@ -156,8 +158,8 @@ const OrderDetailsScreen = ({navigation, route}) => {
               </ProductSansBold>
             </TouchableOpacity>
 
-            {order?.specialnote && order?.specialnote.length > 0 ? (
-              order?.specialnote.map((item, i) => {
+            {order?.specialnote && order?.specialnote != 'none' ? (
+              order?.specialnote?.map((item, i) => {
                 return (
                   <View key={i}>
                     <View style={styles.line} />

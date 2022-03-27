@@ -1,6 +1,13 @@
 //import liraries
 import React, {Component, useState, useEffect} from 'react';
-import {View, Text, StyleSheet, FlatList, RefreshControl} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  RefreshControl,
+  Platform,
+} from 'react-native';
 import {COLOURS} from '../../utils/Colours';
 import {BackViewMoreSettings} from '../../components/Header';
 import {KeyboardObserverComponent} from '../../components/KeyboardObserverComponent';
@@ -72,7 +79,7 @@ const StoreSalesScreen = ({navigation}) => {
   const handleSearchChange = text => {
     if (text) {
       sortArrayByDate(surplus, 'productname').sort((a, b) => {
-       // console.log('dddd', a);
+        // console.log('dddd', a);
         if (b.productname > a.productname) return -1;
         if (b.productname < a.productname) return 1;
         return 0;
@@ -135,7 +142,8 @@ const StoreSalesScreen = ({navigation}) => {
                       justifyContent: 'center',
                       alignItems: 'center',
                       flex: 1,
-                      top: 300,
+                      top: Platform.OS == 'ios' ? 300 : 0,
+                      marginTop: Platform.OS == 'android' ? 300 : 0,
                     }}>
                     <ProductSans
                       style={{fontSize: 16, color: COLOURS.textInputColor}}>

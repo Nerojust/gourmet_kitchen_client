@@ -2,7 +2,7 @@
 import React, {Component} from 'react';
 import {View, Text, StyleSheet, TextInput, Platform} from 'react-native';
 import {COLOURS} from '../utils/Colours';
-import { fp } from '../utils/responsive-screen';
+import {fp} from '../utils/responsive-screen';
 
 // create a component
 const TextInputComponent = ({
@@ -59,7 +59,8 @@ const TextInputComponent = ({
 // define your styles
 const styles = StyleSheet.create({
   textInput: {
-    backgroundColor: COLOURS.lightGray5,
+    backgroundColor:
+      Platform.OS == 'ios' ? COLOURS.lightGray5 : COLOURS.lightGray2,
     paddingLeft: 16,
     color: COLOURS.black,
     borderWidth: 0.7,

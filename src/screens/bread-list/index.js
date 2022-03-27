@@ -1,6 +1,13 @@
 //import liraries
 import React, {Component, useState, useEffect} from 'react';
-import {View, Text, StyleSheet, FlatList, RefreshControl} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  RefreshControl,
+  Platform,
+} from 'react-native';
 import {COLOURS} from '../../utils/Colours';
 import {BackViewMoreSettings} from '../../components/Header';
 import {KeyboardObserverComponent} from '../../components/KeyboardObserverComponent';
@@ -26,7 +33,7 @@ const BreadListScreen = ({navigation}) => {
   const dispatch = useDispatch();
   const [isRefreshing, setIsRefreshing] = useState(false);
   const {orderedProducts, ordersLoading} = useSelector(x => x.orders);
-  console.log('pending bread list', orderedProducts.length);
+  // console.log('pending bread list', orderedProducts.length);
   var orderProductsData = Object.assign([], orderedProducts);
   const [filteredOrdersData, setFilteredOrdersData] =
     useState(orderProductsData);
@@ -48,6 +55,7 @@ const BreadListScreen = ({navigation}) => {
     dispatch(getAllOrderedProductsStats());
   };
   const handleClick = item => {
+    console.log("item",item)
     navigation.navigate('BreadListDetails', {
       bread: item,
     });
@@ -74,7 +82,7 @@ const BreadListScreen = ({navigation}) => {
   const handleSearchChange = text => {
     if (text) {
       sortArrayByDate(orderedProducts, 'name').sort((a, b) => {
-       // console.log('dddd', a);
+        // console.log('dddd', a);
         if (b.name > a.name) return -1;
         if (b.name < a.name) return 1;
         return 0;
@@ -140,7 +148,8 @@ const BreadListScreen = ({navigation}) => {
                       justifyContent: 'center',
                       alignItems: 'center',
                       flex: 1,
-                      top: 300,
+                      top: Platform.OS == 'ios' ? 300 : 0,
+                      marginTop: Platform.OS == 'android' ? 300 : 0,
                     }}>
                     <ProductSans
                       style={{fontSize: 16, color: COLOURS.textInputColor}}>

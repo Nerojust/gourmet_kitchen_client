@@ -35,7 +35,7 @@ const BreadListItemComponent = ({item, onClick}) => {
               {
                 fontWeight: 'bold',
                 fontSize: fp(18),
-                color: COLOURS.labelTextColor,
+                color: COLOURS.lightGray,
               },
             ]}>
             {item?.count || '0'}
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   customerNameView: {
-    backgroundColor: COLOURS.white,
+    backgroundColor: COLOURS.lightGray4,
     padding: 10,
     marginVertical: 5,
     paddingHorizontal: 20,
