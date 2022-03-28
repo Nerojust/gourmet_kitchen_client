@@ -1,6 +1,12 @@
 import axios from 'axios';
 
-//const baseURL = "http://localhost:8089/api/"
+let localBase;
+if (Platform.OS == 'android') {
+  localBase = '10.0.2.2';
+} else {
+  localBase = 'localhost';
+}
+//const baseURL = `http://${localBase}:8089/api/`;
 const baseURL = 'https://gourmet-kitchen-api-oq8ef.ondigitalocean.app/api/';
 
 let client = axios.create({
