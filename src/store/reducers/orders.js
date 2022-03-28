@@ -159,6 +159,25 @@ export default (state = initialState, action) => {
           error: action.error,
         };
 
+    case 'UPDATE_COMPLETE_ORDER_PENDING':
+      return {
+        ...state,
+        updateOrderLoading: action.loading,
+      };
+    case 'UPDATE_COMPLETE_ORDER_SUCCESS':
+      return {
+        ...state,
+        isOrderUpdated: true,
+        updateOrderLoading: action.loading,
+      };
+    case 'UPDATE_COMPLETE_ORDER_FAILED':
+      return {
+        ...state,
+        isOrderUpdated: false,
+        updateOrderLoading: action.loading,
+        error: action.error,
+      };
+  
     case 'UPDATE_ORDER_SPECIAL_NOTE_PENDING':
       return {
         ...state,

@@ -69,6 +69,7 @@ const BreadListDetailsScreen = ({navigation, route}) => {
     useSelector(x => x.surplus);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [shouldDismissPage, setShouldDismissPage] = useState(true);
+  const [orderProductIdFromPayload, setOrderProductIdFromPayload] = useState();
   //console.log('surplus in breadlist ', surplus.length);
 
   useEffect(() => {
@@ -80,9 +81,11 @@ const BreadListDetailsScreen = ({navigation, route}) => {
   const fetchAllData = () => {
     dispatch(getAllOrderedProductsStatsById(id)).then(result => {
       if (result) {
+        console.log('full bread count profile', result);
         setCategory(result?.category);
         setProductsize(result?.productsize);
         setProductid(result?.productid);
+        setOrderProductIdFromPayload(result?.order_product_id);
         setName(result?.name);
         setCount(parseInt(result?.sum));
         setHasDateLoaded(true);
@@ -358,7 +361,7 @@ const BreadListDetailsScreen = ({navigation, route}) => {
               );
               //update the order product
               dispatch(
-                updateSurplusStatusForOrderItemById(id, {
+                updateSurplusStatusForOrderItemById(orderProductIdFromPayload, {
                   surplusCountFulfilled: countTofulfill,
                   wasFulfilledFromSurplus: shouldUseSurplusTofulfill,
                 }),
@@ -392,6 +395,7 @@ const BreadListDetailsScreen = ({navigation, route}) => {
       .catch(error => {
         console.log('update error', error);
       });
+
   };
 
   const displayChooseDialog = () => {

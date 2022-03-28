@@ -84,7 +84,6 @@ export const getAllOrderedProductsStatsById = id => {
               data: response?.data?.results[0],
             });
 
-            //dispatch(getOrder(id));
             return response?.data?.results[0];
           } else {
             dispatch({
@@ -124,6 +123,14 @@ export const getAllOrderedProducts = status => {
             'Orders gotten successfully',
             response?.data?.recordCount,
           );
+          //check status if it failed to patch from BE
+          if (!status || status.length == 0) {
+            //patch it
+            handleCompleteOrdersStatus(response?.data?.results,dispatch);
+            //refresh list
+            getAllOrderedProducts();
+          }
+
           if (response?.data?.isSuccessful) {
             dispatch({
               type: 'GET_ALL_ORDERED_PRODUCTS_SUCCESS',
@@ -150,6 +157,42 @@ export const getAllOrderedProducts = status => {
         });
       });
   };
+};
+const handleCompleteOrdersStatus = (orders,dispatch) => {
+  if (orders && orders.length > 0) {
+    // console.log('here ');
+    orders?.map(fullOrderItem => {
+     // console.log('fulfilled status', fullOrderItem?.isfulfilled);
+      let count = 0;
+      if (fullOrderItem.isfulfilled == false) {
+        //console.log('inside ');
+        fullOrderItem?.products &&
+          fullOrderItem?.products.map(async oneItem => {
+            if (
+              oneItem.isfulfilled &&
+              oneItem.quantity == oneItem.fulfilledquantity
+            ) {
+              count++;
+            }
+            if (count == fullOrderItem?.products.length) {
+              console.log(
+                'this order has its products all fulfilled, complete it ' +
+                  fullOrderItem?.id,
+              );
+              let payload = {
+                status: 'completed',
+                isfulfilled: true,
+              };
+              dispatch(
+                updateCompleteStatusForOrder(fullOrderItem?.id, payload),
+              );
+              count = 0;
+            }
+            console.log('count', count);
+          });
+      }
+    });
+  }
 };
 
 export const updateOrderListProductCount = payload => {
@@ -240,6 +283,53 @@ export const updateSurplusStatusForOrderItemById = (id, payload) => {
         handleError(error, dispatch, 'updating order');
         dispatch({
           type: 'UPDATE_SURPLUS_STATUS_ORDER_ITEM_FAILED',
+          loading: false,
+          error: error.message,
+        });
+      });
+  };
+};
+export const updateCompleteStatusForOrder = (id, payload) => {
+  console.log('About to updateCompleteStatusForOrder with id', id);
+  return dispatch => {
+    dispatch({
+      type: 'UPDATE_COMPLETE_ORDER_PENDING',
+      loading: true,
+      error: null,
+    });
+    var url = `/orders/updateCompleteStatusForOrder/${id}`;
+    //console.log("geturl", getUrl);
+    return client
+      .patch(url, payload)
+      .then(response => {
+        if (response?.data) {
+          if (response?.data?.isSuccessful) {
+            console.log(
+              'updateCompleteStatusForOrder updated successfully',
+              response?.data?.recordCount,
+            );
+            dispatch({
+              type: 'UPDATE_COMPLETE_ORDER_SUCCESS',
+              loading: false,
+              data: response?.data?.results,
+            });
+
+            dispatch(getAllOrderedProducts());
+            return response?.data?.results;
+          } else {
+            dispatch({
+              type: 'UPDATE_COMPLETE_ORDER_FAILED',
+              loading: false,
+              error: response?.data?.message,
+            });
+          }
+        }
+      })
+      .catch(error => {
+        console.log('updateCompleteStatusForOrder failed', error);
+        handleError(error, dispatch, 'updating order');
+        dispatch({
+          type: 'UPDATE_COMPLETE_ORDER_FAILED',
           loading: false,
           error: error.message,
         });

@@ -17,6 +17,7 @@ import {
   deleteAllOrders,
   getAllOrderedProducts,
   setOrderStatus,
+  updateCompleteStatusForOrder,
 } from '../../store/actions/orders';
 import ProductSans from '../../components/Text/ProductSans';
 import {COLOURS} from '../../utils/Colours';
@@ -29,9 +30,13 @@ import {HeaderComponent} from '../../components/HeaderComponent';
 // create a component
 const OrdersScreen = ({navigation}) => {
   const dispatch = useDispatch();
-  const {orders, deleteAllOrdersLoading, error, ordersLoading} = useSelector(
-    state => state.orders,
-  );
+  const {
+    orders,
+    deleteAllOrdersLoading,
+    error,
+    ordersLoading,
+    updateOrderLoading,
+  } = useSelector(state => state.orders);
   var ordersData = Object.assign([], orders);
   const [filteredOrdersData, setFilteredOrdersData] = useState(ordersData);
   const [searchInputValue, setSearchInputValue] = useState('');
@@ -46,6 +51,7 @@ const OrdersScreen = ({navigation}) => {
     const unsubscribe = navigation.addListener('focus', () => {
       fetchAllData(statusState);
     });
+
     dispatch(getAllOrderedProducts(statusState));
     return unsubscribe;
   }, [navigation, statusState, selectedTab]);
@@ -53,7 +59,6 @@ const OrdersScreen = ({navigation}) => {
   const fetchAllData = () => {
     dispatch(getAllOrderedProducts(statusState));
     dispatch(getAllProducts('', 0, 0, null));
-    //dispatch(syncZupaProducts());
   };
 
   const onRefresh = async () => {
