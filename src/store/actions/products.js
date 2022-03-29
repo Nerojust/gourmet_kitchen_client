@@ -1,9 +1,9 @@
-import client, { ZupabaseURL } from '../../utils/Api';
+import client, {ZupabaseURL} from '../../utils/Api';
 import client2 from '../../utils/Api';
 import {handleError, LIMIT_FIGURE} from '../../utils/utils';
 import {dateFilterParser} from './../../utils/DateFilter';
 import {APP_TOKEN} from '../../utils/Constants';
-import { getAllOrderedProductsStats } from './orders';
+import {getAllOrderedProductsStats} from './orders';
 import clientZupa from '../../utils/ApiZupa';
 
 export const clearProductsArray = () => {
@@ -40,7 +40,7 @@ export const syncZupaProducts = status => {
               data: response?.data?.results,
               message: response.data?.message,
             });
-           
+
             //alert(response?.data?.message);
             return response?.data?.results;
           } else {
@@ -64,9 +64,8 @@ export const syncZupaProducts = status => {
   };
 };
 
-export const getAllProducts = (keyword, limit, offset, periodType) => {
+export const getAllProducts = (keyword, limit, offset) => {
   console.log('About to get all products');
-  // const { startDate, endDate } = dateFilterParser(periodType);
   if (keyword.split(' ').length > 1) {
     var kk = keyword.split(' ');
     //console.log("kk", kk);
@@ -83,6 +82,7 @@ export const getAllProducts = (keyword, limit, offset, periodType) => {
 
     var url = `/base-products?$offset=${offset}&$limit=${limit}&$order=-createdAt&$include=category%2C%20products%2C%20category.sizes%2Cproducts.categorySize&`;
 
+    //add token to zupa client header
     clientZupa.defaults.headers.common['Authorization'] = `Bearer ${APP_TOKEN}`;
 
     return clientZupa

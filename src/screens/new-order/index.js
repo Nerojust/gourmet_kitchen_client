@@ -95,7 +95,7 @@ const NewOrderScreen = ({navigation}) => {
 
   useEffect(() => {
     dispatch(getAllSets());
-    dispatch(getAllProducts('', 0, 0, null));
+    dispatch(getAllProducts('', 0, 0));
   }, []);
 
   useEffect(() => {
@@ -174,7 +174,7 @@ const NewOrderScreen = ({navigation}) => {
   };
 
   const handleRefreshIncaseOfNetworkFailure = () => {
-    dispatch(getAllProducts('', 0, 0, null));
+    dispatch(getAllProducts('', 0, 0));
   };
   const renderProductBottomSheet = () => {
     return (
@@ -693,8 +693,6 @@ const NewOrderScreen = ({navigation}) => {
   const handleLoadProductsBottomSheet = () => {
     dismissTextInput(fullNameRef);
     showBottomSheet(productSheetRef);
-
-    //dispatch(getAllProducts('', 0, 0, null));
   };
 
   return (

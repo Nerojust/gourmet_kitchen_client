@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-export const baseURL = 'https://dev.api.zupa.ng'; //new dev link
-//export const baseURL = 'https://api.zupa.ng'; //new prod link
+//export const baseURL = 'https://dev.api.zupa.ng'; //new dev link
+export const baseURL = 'https://api.zupa.ng'; //new prod link
 
 
 let clientZupa = axios.create({
