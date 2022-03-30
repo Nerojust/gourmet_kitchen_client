@@ -371,7 +371,7 @@ const BreadListDetailsScreen = ({navigation, route}) => {
                   dispatch(getAllOrderedProductsStatsById(id)).then(
                     newResult => {
                       if (newResult) {
-                        console.log('count sum is ', newResult?.sum);
+                        //console.log('count sum is ', newResult?.sum);
                         if (parseInt(newResult?.sum) > 0) {
                           console.log('insidee ----------');
                           showSuccessDialog(false);

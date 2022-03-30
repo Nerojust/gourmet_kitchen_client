@@ -188,7 +188,7 @@ const handleCompleteOrdersStatus = (orders,dispatch) => {
               );
               count = 0;
             }
-            console.log('count', count);
+           //'count', count);
           });
       }
     });

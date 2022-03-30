@@ -56,7 +56,7 @@ const OrderProductComponent = ({item, handleClick}) => {
             <ProductSansBold
               style={[
                 styles.itemsText,
-                {fontWeight: '400', color: COLOURS.green2},
+                {fontWeight: '600', color: COLOURS.green2},
               ]}>
               ONLINE
             </ProductSansBold>
