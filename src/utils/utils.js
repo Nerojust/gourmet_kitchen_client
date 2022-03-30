@@ -353,6 +353,9 @@ export const deleteValue = async key => {
     console.log(error);
   }
 };
+export function removeDuplicatesFromArray(arr) {
+  return Array.from(new Set(arr));
+}
 export const sortArrayData = (array, value) => {
   const sorter1 = (a, b) =>
     a.last_nom.toLowerCase().trim() > b.last_nom.toLowerCase().trim() ? 1 : -1;

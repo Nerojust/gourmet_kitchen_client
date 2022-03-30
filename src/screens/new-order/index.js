@@ -1,5 +1,5 @@
 //import liraries
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef, useCallback} from 'react';
 import {
   View,
   Text,
@@ -28,13 +28,17 @@ import {
   DismissKeyboard,
   dismissTextInput,
   formatNumberComma,
+  removeDuplicatesFromArray,
   showBottomSheet,
 } from '../../utils/utils';
 import {BackViewMoreSettings} from '../../components/Header';
 import useKeyboardHeight from 'react-native-use-keyboard-height';
 
 import {getAllProducts, syncZupaProducts} from '../../store/actions/products';
-import {BottomSheetProductComponent} from '../../components/BottomSheetComponent';
+import {
+  BottomSheetDeliveryTypesComponent,
+  BottomSheetProductComponent,
+} from '../../components/BottomSheetComponent';
 import QuantityProductComponent from '../../components/QuantityProductComponent';
 import {ACTIVE_OPACITY, DIALOG_TIMEOUT} from '../../utils/Constants';
 import AvertaBold from '../../components/Text/AvertaBold';
@@ -48,6 +52,10 @@ import LoaderShimmerComponent from '../../components/LoaderShimmerComponent';
 import GoogleSearchComponent from '../../components/GoogleSearchComponent';
 import BlinkingTextComponent from '../../components/BlinkingTextComponent';
 import {getAllSets} from '../../store/actions/sets';
+import {
+  getAllDeliveryTypes,
+  getDeliveryStates,
+} from '../../store/actions/delivery-types';
 
 // create a component
 const NewOrderScreen = ({navigation}) => {
@@ -67,6 +75,7 @@ const NewOrderScreen = ({navigation}) => {
 
   const fullNameRef = useRef(null);
   const phoneNumberRef = useRef(null);
+  const deliverySheetRef = useRef();
   const addressRef = useRef(null);
   const additionalAddressDescriptionRef = useRef(null);
   const specialNoteRef = useRef(null);
@@ -77,6 +86,8 @@ const NewOrderScreen = ({navigation}) => {
   const [additionalAddressDescription, setAdditionalAddressDescription] =
     useState('');
   const [selectedProduct, setSelectedProduct] = useState({});
+  const [selectedDelivery, setSelectedDelivery] = useState({});
+
   const {products, productsLoading} = useSelector(state => state.products);
   var productsData = Object.assign([], products);
   //console.log("pdts",productsData)
@@ -84,6 +95,7 @@ const NewOrderScreen = ({navigation}) => {
   const keyboardHeight = useKeyboardHeight();
   const [filteredProductData, setFilteredProductsData] = useState(productsData);
   const [productInputValue, setProductInputValue] = useState('');
+  const [deliveryInputValue, setDeliveryInputValue] = useState('');
   const [isProductSelected, setIsProductSelected] = useState(false);
   var basketArray = [];
   const [newBasketArray, setNewBasketArray] = useState(basketArray);
@@ -91,13 +103,25 @@ const NewOrderScreen = ({navigation}) => {
   const {sets} = useSelector(x => x.sets);
   const [mergedArrayProducts, setMergedArrayProducts] = useState(products);
   //console.log("sets",sets)
+  const [mainDeliveryArray, setmainDeliveryArray] = useState([]);
+  const [isDeliveryModalVisible, setIsDeliveryModalVisible] = useState(false);
+  const {deliveryTypes, deliveryTypesLoading, deliveryStates} = useSelector(
+    state => state.deliveryTypes,
+  );
   let additionalArray = [];
-
+  var finalDeliveryArray = [];
   useEffect(() => {
     dispatch(getAllSets());
     dispatch(getAllProducts('', 0, 0));
   }, []);
 
+  useEffect(() => {
+    dispatch(getAllDeliveryTypes('')).then(result => {
+      if (result.data) {
+        //console.log('delivery==', result.data);
+      }
+    });
+  }, []);
   useEffect(() => {
     if (sets && sets.length > 0) {
       sets.forEach(async (item, i) => {
@@ -119,6 +143,42 @@ const NewOrderScreen = ({navigation}) => {
       setMergedArrayProducts(products);
     }
   }, [sets]);
+
+  useEffect(() => {
+    deliveryTypes.map(type => {
+      if (type?.type && type?.type == 'custom' && type?.isActive) {
+        //console.log('type data', type.type);
+        finalDeliveryArray.push(type);
+      }
+      if (type?.type && type?.type == 'default' && type?.isActive) {
+        //console.log('type data', type.type);
+        finalDeliveryArray.push(type);
+      }
+      //console.log("deliii", type.isActive);
+      deliveryStates?.map(state => {
+        if (type?.state != null) {
+          if (
+            type?.state.toLowerCase() ===
+            state?.name.toLowerCase().split(' ')[0]
+          ) {
+            if (state?.isActive) {
+              finalDeliveryArray.push(type);
+            }
+          }
+        }
+      });
+    });
+    setmainDeliveryArray(removeDuplicatesFromArray(finalDeliveryArray));
+    //console.log("array is ", finalDeliveryArray.length);
+  }, [deliveryTypes, deliveryStates]);
+
+  var deliveryTypesData = Object.assign([], mainDeliveryArray);
+  const [filteredDeliveryTypesData, setFilteredDeliveryTypesData] =
+    useState(deliveryTypesData);
+
+  useEffect(() => {
+    dispatch(getDeliveryStates(''));
+  }, []);
 
   const addDetailsToOrderSummary = () => {
     if (selectedProduct?.name != null) {
@@ -165,38 +225,89 @@ const NewOrderScreen = ({navigation}) => {
     setIsProductSelected(false);
   };
 
-  const handleSingleItemPress = async item => {
+  const handleSingleItemPress = async (item, isProduct, isDelivery) => {
     console.log('clicked item is ', item);
-    setSelectedProduct(item);
-    setIsProductSelected(true);
-    setProductInputValue('');
-    dismissBottomSheetDialog(productSheetRef);
+    if (isProduct) {
+      setSelectedProduct(item);
+      setIsProductSelected(true);
+      setProductInputValue('');
+      dismissBottomSheetDialog(productSheetRef);
+    }
+    if (isDelivery) {
+      setSelectedDelivery(item);
+      setDeliveryInputValue('');
+      dismissBottomSheetDialog(deliverySheetRef);
+    }
   };
 
-  const handleRefreshIncaseOfNetworkFailure = () => {
-    dispatch(getAllProducts('', 0, 0));
+  const handleRefreshIncaseOfNetworkFailure = (isProduct, isDelivery) => {
+    if (isProduct) {
+      dispatch(getAllProducts('', 0, 0));
+    }
+    if (isDelivery) {
+      dispatch(getAllDeliveryTypes(''));
+    }
   };
-  const renderProductBottomSheet = () => {
+  const handleCloseActionDelivery = () => {
+    setDeliveryInputValue('');
+    dismissBottomSheetDialog(deliverySheetRef);
+  };
+
+  const renderBottomSheets = () => {
     return (
-      <BottomSheetProductComponent
-        sheetRef={productSheetRef}
-        handleRefresh={handleRefreshIncaseOfNetworkFailure}
-        isProductLoading={productsLoading}
-        filteredDataSource={filteredProductData}
-        dataSource={
-          productInputValue.length > 0
-            ? filteredProductData
-            : mergedArrayProducts
-        }
-        closeAction={handleCloseActionProduct}
-        handleSingleItemPress={handleSingleItemPress}
-        //addProductPress={addProductPress}
-        inputValue={productInputValue}
-        handleSearchInputSubmit={handleProductSubmitSearchext}
-        handleInputSearchText={handleProductInputSearchText}
-        // handleAddProduct={createNewProduct}
-      />
+      <>
+        <BottomSheetProductComponent
+          sheetRef={productSheetRef}
+          handleRefresh={handleRefreshIncaseOfNetworkFailure}
+          isProductLoading={productsLoading}
+          filteredDataSource={filteredProductData}
+          dataSource={
+            productInputValue.length > 0
+              ? filteredProductData
+              : mergedArrayProducts
+          }
+          closeAction={handleCloseActionProduct}
+          handleSingleItemPress={handleSingleItemPress}
+          //addProductPress={addProductPress}
+          inputValue={productInputValue}
+          handleSearchInputSubmit={handleProductSubmitSearchext}
+          handleInputSearchText={handleProductInputSearchText}
+          // handleAddProduct={createNewProduct}
+        />
+
+        {/* delivery bottom sheet */}
+        <BottomSheetDeliveryTypesComponent
+          sheetRef={deliverySheetRef}
+          closeAction={handleCloseActionDelivery}
+          //dataSource={filteredDeliveryTypesData}
+          dataSource={
+            deliveryInputValue.length > 0
+              ? filteredDeliveryTypesData
+              : mainDeliveryArray
+          }
+          isDeliveryLoading={deliveryTypesLoading}
+          handleRefresh={handleRefreshIncaseOfNetworkFailure}
+          handleSingleItemPress={handleSingleItemPress}
+          inputValue={deliveryInputValue}
+          handleInputSearchText={handleDeliverySearchText}
+          //handleAddDelivery={handleAddDelivery}
+        />
+      </>
     );
+  };
+
+  const handleLoadDeliveryBottomSheet = () => {
+    dismissTextInput(fullNameRef);
+    dismissTextInput(phoneNumberRef);
+    dismissTextInput(specialNoteRef);
+    dismissTextInput(additionalAddressDescriptionRef);
+    showBottomSheet(deliverySheetRef);
+
+    // dispatch(getAllDeliveryTypes());
+  };
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const toggleDeliveryModal = () => {
+    setIsDeliveryModalVisible(!isDeliveryModalVisible);
   };
   const handleCloseActionProduct = () => {
     setProductInputValue('');
@@ -227,6 +338,27 @@ const NewOrderScreen = ({navigation}) => {
     } else {
       setFilteredProductsData(mergedArrayProducts);
       setProductInputValue(text);
+    }
+  };
+
+  /**
+   *
+   * @param {text to search for delivery} text
+   */
+  const handleDeliverySearchText = text => {
+    if (text) {
+      const newData = mainDeliveryArray?.filter(item => {
+        const itemData = item?.name
+          ? item?.name.toUpperCase()
+          : ''.toUpperCase();
+        const textData = text.toUpperCase();
+        return itemData.indexOf(textData) > -1;
+      });
+      setFilteredDeliveryTypesData(newData);
+      setDeliveryInputValue(text);
+    } else {
+      setFilteredDeliveryTypesData(mainDeliveryArray);
+      setDeliveryInputValue(text);
     }
   };
 
@@ -404,26 +536,84 @@ const NewOrderScreen = ({navigation}) => {
         <View style={[styles.spaceBetweenInputs, {marginTop: 0}]} />
 
         {newBasketArray.length > 0 ? (
-          <View style={{flexDirection: 'row'}}>
-            <DataTable>
-              <DataTable.Header>
-                <View style={styles.basketView}>
-                  <ProductSansBold style={styles.basketCountView}>
-                    {newBasketArray && newBasketArray.length > 1
-                      ? newBasketArray.length + ' ITEMS'
-                      : newBasketArray.length + ' ITEM'}
-                  </ProductSansBold>
-                </View>
-              </DataTable.Header>
+          <>
+            <View style={{flexDirection: 'row'}}>
+              <DataTable>
+                <DataTable.Header>
+                  <View style={styles.basketView}>
+                    <ProductSansBold style={styles.basketCountView}>
+                      {newBasketArray && newBasketArray.length > 1
+                        ? newBasketArray.length + ' ITEMS'
+                        : newBasketArray.length + ' ITEM'}
+                    </ProductSansBold>
+                  </View>
+                </DataTable.Header>
 
-              <FlatList
-                data={newBasketArray}
-                keyExtractor={item => item?.selectedProduct?.id}
-                renderItem={renderBasket}
-                //extraData={isProductSelected}
-              />
-            </DataTable>
-          </View>
+                <FlatList
+                  data={newBasketArray}
+                  keyExtractor={item => item?.selectedProduct?.id}
+                  renderItem={renderBasket}
+                  //extraData={isProductSelected}
+                />
+              </DataTable>
+            </View>
+
+            {/* line divider */}
+            <View style={styles.dividerLine} />
+
+            {/* delivery view section */}
+            {/* <View style={{flexDirection: 'row'}}> */}
+            <TouchableOpacity
+              style={styles.deliverySheetview}
+              activeOpacity={1}
+              onPress={handleLoadDeliveryBottomSheet}>
+              <TouchableOpacity
+                onPress={handleLoadDeliveryBottomSheet}
+                style={[
+                  styles.productView,
+                  {
+                    width: deviceWidth / 2.7,
+                    flex: 0.71,
+                  },
+                ]}
+                activeOpacity={ACTIVE_OPACITY}>
+                <Averta
+                  style={[styles.productText, {flex: 1}]}
+                  numberOfLines={1}>
+                  {selectedDelivery?.name
+                    ? selectedDelivery?.name
+                    : 'Select delivery'}
+                </Averta>
+                <FontAwesome
+                  name="angle-down"
+                  size={hp(20)}
+                  color={COLOURS.gray}
+                  style={{marginRight: 15, flex: 0.1}}
+                />
+              </TouchableOpacity>
+
+              <View
+                style={{
+                  flex: 0.69,
+                  //right: -20,
+                }}>
+                <AvertaBold style={styles.deliveryPrice}>
+                  {selectedDelivery?.price
+                    ? formatNumberComma(selectedDelivery?.price)
+                    : null}
+                </AvertaBold>
+              </View>
+            </TouchableOpacity>
+
+            <View style={styles.grandTotalview}>
+              <AvertaBold style={styles.grandTotalText}>Grand Total</AvertaBold>
+
+              <AvertaBold style={styles.calculatedAmountText}>
+                {calculateAmount()}
+              </AvertaBold>
+            </View>
+            {/* </View> */}
+          </>
         ) : (
           <>
             <ProductSansBold
@@ -447,6 +637,31 @@ const NewOrderScreen = ({navigation}) => {
       </>
     );
   };
+  const calculateAmount = useCallback(() => {
+    var amount = 0;
+
+    for (let i = 0; i < newBasketArray.length; i++) {
+      const item = newBasketArray[i];
+      amount = amount + item?.selectedProduct?.unitPrice * item?.quantity;
+    } //console.log("Total order amount is ", amount);
+
+    var result = 0;
+
+    // if (selectedCoupon && selectedCoupon?.discountType == 'amount') {
+    //   result = amount - selectedCoupon?.value; //console.log("coupon amount discount result", result);
+    // } else if (selectedCoupon && selectedCoupon?.discountType == 'percent') {
+    //   var percentResult = calculatePercentage(amount, selectedCoupon?.value);
+    //   result = amount - percentResult; // console.log("Percentage coupon result", result);
+    // } else {
+    //   result = amount;
+    // }
+
+    if (selectedDelivery && selectedDelivery?.price) {
+      result = amount + selectedDelivery?.price;
+    }
+
+    return formatNumberComma(result);
+  });
 
   const displaySubmitButton = () => {
     return (
@@ -499,6 +714,11 @@ const NewOrderScreen = ({navigation}) => {
         return;
       }
 
+      if (!selectedDelivery.id) {
+        alert('Please select a delivery type');
+        //setIsDeliveryModalVisible(true)
+        return;
+      }
       //prepare zupa payload
       const customerPayload = {
         name: fullName,
@@ -509,7 +729,7 @@ const NewOrderScreen = ({navigation}) => {
 
       const orderPayload = {
         customerId: null,
-        deliveryTypeId: null,
+        deliveryTypeId: selectedDelivery?.id,
         deliveryLocation: {
           address: address,
           latitude: '6.430118879280349',
@@ -552,6 +772,12 @@ const NewOrderScreen = ({navigation}) => {
               addressDescription: additionalAddressDescription,
               specialNote,
             },
+            delivery: {
+              deliveryTypeId: selectedDelivery?.id,
+              price: selectedDelivery?.price,
+              state: selectedDelivery?.state,
+              name:selectedDelivery?.name
+            },
             products: productArray,
           };
         } else {
@@ -570,6 +796,12 @@ const NewOrderScreen = ({navigation}) => {
               specialNote,
             },
             type: 'custom',
+            delivery: {
+              deliveryTypeId: selectedDelivery?.id,
+              price: selectedDelivery?.price,
+              state: selectedDelivery?.state,
+              name:selectedDelivery?.name
+            },
             products: productArray,
           };
         }
@@ -602,7 +834,12 @@ const NewOrderScreen = ({navigation}) => {
   );
   const resetFields = () => {
     setFullName('');
+    setSpecialNote('');
+    setPhoneNumber('');
+    setAdditionalAddressDescription('');
+    setNewBasketArray([]);
     setSelectedProduct({});
+    setSelectedDelivery({});
   };
 
   const showSuccessDialog = () => {
@@ -626,17 +863,23 @@ const NewOrderScreen = ({navigation}) => {
 
   const deleteFromOrderBasket = order => {
     if (order.selectedProduct.type == 'custom') {
-      setNewBasketArray(
-        newBasketArray.filter(
-          item => item?.selectedProduct?.id !== order?.selectedProduct?.id,
-        ),
+      let array = newBasketArray.filter(
+        item => item?.selectedProduct?.id !== order?.selectedProduct?.id,
       );
+      setNewBasketArray(array);
+      //clear the already selected delivery type if basket is equal to zero
+      if (array.length == 0) {
+        setSelectedDelivery({});
+      }
     } else {
-      setNewBasketArray(
-        newBasketArray.filter(
-          item => item?.selectedProduct?.name !== order?.selectedProduct?.name,
-        ),
+      let array = newBasketArray.filter(
+        item => item?.selectedProduct?.name !== order?.selectedProduct?.name,
       );
+      setNewBasketArray(array);
+
+      if (array.length == 0) {
+        setSelectedDelivery({});
+      }
     }
   };
   const renderBasket = ({item, index}) => {
@@ -704,7 +947,7 @@ const NewOrderScreen = ({navigation}) => {
             onClose={() => navigation.goBack()}
           />
           {renderSuccessModal()}
-          {renderProductBottomSheet()}
+          {renderBottomSheets()}
           <FlatList
             data={[]}
             keyboardShouldPersistTaps={'handled'}
@@ -754,6 +997,14 @@ const styles = StyleSheet.create({
     color: COLOURS.labelTextColor,
     left: 13,
   },
+  deliverySheetview: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    alignContent: 'center',
+  },
   spaceBetweenInputs: {marginTop: 16},
   productView: {
     flexDirection: 'row',
@@ -794,11 +1045,35 @@ const styles = StyleSheet.create({
     color: COLOURS.textInputColor,
     right: deviceWidth * 0.108,
   },
+  deliveryPrice: {
+    fontWeight: 'bold',
+    //width: deviceWidth / 4,
+    alignSelf: 'center',
+    //flex: 0.3,
+    fontSize: 14,
+    color: COLOURS.textInputColor,
+  },
+  grandTotalview: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 23,
+    borderTopWidth: 0.4,
+    borderTopColor: COLOURS.lightGray,
+    borderBottomWidth: 0.4,
+    borderBottomColor: COLOURS.lightGray,
+    paddingVertical: 20,
+  },
   basketContainer: {
     flexDirection: 'row',
     height: deviceHeight * 0.11,
     width: deviceWidth,
     backgroundColor: COLOURS.white,
+  },
+  grandTotalText: {
+    color: COLOURS.textInputColor,
+    alignSelf: 'center',
+    fontSize: 14,
+    fontWeight: 'bold',
   },
   unitPriceText: {
     fontWeight: 'bold',

@@ -78,7 +78,7 @@ const OrderListItemComponent = ({item}) => {
           <ProductSans style={styles.quantityName}>{quantity}</ProductSans>
         </View>
         <View>
-          <ProductSans style={styles.labelText}>TOTAL</ProductSans>
+          <ProductSans style={styles.labelText}>UNIT PRICE</ProductSans>
           <ProductSans style={styles.priceName}>
             {NAIRA}
             {formatNumberComma(price)}

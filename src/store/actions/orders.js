@@ -406,13 +406,13 @@ export const createOrder = (kitchenPayload, customerPayload, orderPayload) => {
           });
 
           //save to zupa too
-          dispatch(createZupaOrder(customerPayload, orderPayload)).then(
-            result => {
-              if (result) {
-                dispatch(getAllOrderedProducts(''));
-              }
-            },
-          );
+          // dispatch(createZupaOrder(customerPayload, orderPayload)).then(
+          //   result => {
+          //     if (result) {
+          //       dispatch(getAllOrderedProducts(''));
+          //     }
+          //   },
+          // );
           //alert('Order created successfully');
           return response.data?.results;
         }

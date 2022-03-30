@@ -6,6 +6,7 @@ import surplus from './surplus';
 import sets from './sets'
 import customers from './customers'
 import notes from './notes'
+import deliveryTypes from './delivery-types'
 
 export default combineReducers({
   orders,
@@ -13,5 +14,6 @@ export default combineReducers({
   surplus,
   sets,
   customers,
-  notes
+  notes,
+  deliveryTypes
 });

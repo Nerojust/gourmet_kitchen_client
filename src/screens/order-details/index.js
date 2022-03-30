@@ -1,5 +1,5 @@
 //import liraries
-import React, {Component, useEffect, useState} from 'react';
+import React, {Component, useEffect, useState, useCallback} from 'react';
 import {
   View,
   Text,
@@ -16,6 +16,7 @@ import ViewProviderComponent from '../../components/ViewProviderComponent';
 import {
   capitalizeWord,
   DismissKeyboard,
+  formatNumberComma,
   sortArrayByDate,
 } from '../../utils/utils';
 import Averta from '../../components/Text/Averta';
@@ -37,6 +38,7 @@ import useKeyboardHeight from 'react-native-use-keyboard-height';
 import {createNote, updateNoteById} from '../../store/actions/notes';
 import {IMAGES} from '../../utils/Images';
 import ProductSans from '../../components/Text/ProductSans';
+import {NAIRA_} from '../../utils/Constants';
 
 // create a component
 const OrderDetailsScreen = ({navigation, route}) => {
@@ -137,6 +139,26 @@ const OrderDetailsScreen = ({navigation, route}) => {
                 </View>
               );
             })}
+
+          <View style={styles.grandTotalview}>
+            <AvertaBold
+              style={[styles.grandTotalText, {color: COLOURS.labelTextColor,fontWeight:'500'}]}>
+              {'Delivery to:\n' + order?.delivery[0]?.locationname}
+            </AvertaBold>
+
+            <AvertaBold style={styles.calculatedAmountText}>
+              {order?.delivery[0]?.price
+                ? NAIRA_ + formatNumberComma(order?.delivery[0]?.price)
+                : null}
+            </AvertaBold>
+          </View>
+          <View style={styles.grandTotalview}>
+            <AvertaBold style={styles.grandTotalText}>Grand Total</AvertaBold>
+
+            <AvertaBold style={styles.calculatedAmountText}>
+              {NAIRA_ + calculateAmount()}
+            </AvertaBold>
+          </View>
         </View>
 
         <View style={[styles.customerNameView, {top: -20, marginBottom: 20}]}>
@@ -232,6 +254,22 @@ const OrderDetailsScreen = ({navigation, route}) => {
       </View>
     );
   };
+  const calculateAmount = useCallback(() => {
+    var amount = 0;
+
+    for (let i = 0; i < order.products.length; i++) {
+      const item = order.products[i];
+      amount = amount + item?.price * item?.quantity;
+    } //console.log("Total order amount is ", amount);
+
+    var result = 0;
+
+    if (order.delivery && order?.delivery[0]?.price) {
+      result = amount + order?.delivery[0]?.price;
+    }
+
+    return formatNumberComma(result);
+  });
   const handleEditNote = (item, index) => {
     //console.log('edited is ', item, 'index is ', index);
     setSpecialNote(item?.note);
@@ -342,6 +380,38 @@ const styles = StyleSheet.create({
   customerNameView: {
     //width: deviceWidth - 50,
     marginTop: 5,
+  },
+  calculatedAmountText: {
+    fontWeight: 'bold',
+    alignSelf: 'center',
+    fontSize: 14,
+    color: COLOURS.textInputColor,
+    right: deviceWidth * 0.09,
+  },
+  deliveryPrice: {
+    fontWeight: 'bold',
+    //width: deviceWidth / 4,
+    alignSelf: 'center',
+    //flex: 0.3,
+    fontSize: 14,
+    color: COLOURS.textInputColor,
+  },
+  grandTotalview: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingLeft: 13,
+    borderTopWidth: 0.4,
+    borderTopColor: COLOURS.lightGray,
+    borderBottomWidth: 0.4,
+    borderBottomColor: COLOURS.lightGray,
+    paddingVertical: 20,
+  },
+  grandTotalText: {
+    color: COLOURS.textInputColor,
+    alignSelf: 'center',
+    fontSize: 14,
+
+    fontWeight: 'bold',
   },
   inputTextProps: {
     borderWidth: 0,
