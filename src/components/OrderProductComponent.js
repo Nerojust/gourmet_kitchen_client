@@ -51,17 +51,19 @@ const OrderProductComponent = ({item, handleClick}) => {
             </ProductSansBold>
           </View>
         ) : null}
-        {item?.onlineorderid && item?.onlineorderid.length > 0 ? (
+
+        {item?.isonlineorder && item?.onlineorderid.length > 0 ? (
           <View style={{alignItems: 'flex-end', paddingVertical: 5}}>
             <ProductSansBold
               style={[
                 styles.itemsText,
-                {fontWeight: '600', color: COLOURS.green2},
+                {fontWeight: '600', color: COLOURS.green2, fontSize: fp(12)},
               ]}>
-              ONLINE
+              ONLINE ORDER
             </ProductSansBold>
           </View>
         ) : null}
+
         <View
           style={{
             flexDirection: 'row',

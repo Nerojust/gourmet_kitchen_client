@@ -1,9 +1,6 @@
-import client, {ZupabaseURL} from '../../utils/Api';
-import client2 from '../../utils/Api';
-import {handleError, LIMIT_FIGURE} from '../../utils/utils';
-import {dateFilterParser} from './../../utils/DateFilter';
+import client from '../../utils/Api';
+import {handleError} from '../../utils/utils';
 import {APP_TOKEN} from '../../utils/Constants';
-import {getAllOrderedProductsStats} from './orders';
 import clientZupa from '../../utils/ApiZupa';
 
 export const clearProductsArray = () => {

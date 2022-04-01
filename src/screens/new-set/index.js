@@ -34,7 +34,10 @@ import {BackViewMoreSettings} from '../../components/Header';
 import useKeyboardHeight from 'react-native-use-keyboard-height';
 
 import {getAllProducts} from '../../store/actions/products';
-import {BottomSheetProductComponent} from '../../components/BottomSheetComponent';
+import {
+  BottomSheetProductComponent,
+  BottomSheetZupaAssociateProductComponent,
+} from '../../components/BottomSheetComponent';
 import {ACTIVE_OPACITY, DIALOG_TIMEOUT} from '../../utils/Constants';
 import AvertaBold from '../../components/Text/AvertaBold';
 import Averta from '../../components/Text/Averta';
@@ -43,7 +46,7 @@ import {useSelector} from 'react-redux';
 import {IMAGES} from '../../utils/Images';
 import CustomSuccessModal from '../../components/CustomSuccessModal';
 import LoaderShimmerComponent from '../../components/LoaderShimmerComponent';
-import { createSet, getAllSets } from '../../store/actions/sets';
+import {createSet, getAllSets} from '../../store/actions/sets';
 
 // create a component
 const NewSetScreen = ({navigation}) => {
@@ -57,6 +60,7 @@ const NewSetScreen = ({navigation}) => {
   const productSheetRef = useRef();
   const submitOrderRef = useRef();
   const phoneNumberRef = useRef();
+  const zupaProductAssociateSheetRef = useRef();
   const addressRef = useRef();
   const setNameRef = useRef();
   const [selectedProduct, setSelectedProduct] = useState({});
@@ -67,6 +71,8 @@ const NewSetScreen = ({navigation}) => {
   const [filteredProductData, setFilteredProductsData] = useState(productsData);
   const [productInputValue, setProductInputValue] = useState('');
   const [isProductSelected, setIsProductSelected] = useState(false);
+  const [selectedZupaProduct, setSelectedZupaProduct] = useState({});
+  const [zupaProductInputValue, setZupaProductInputValue] = useState('');
   var basketArray = [];
   const [newBasketArray, setNewBasketArray] = useState(basketArray);
   const {createSetsLoading} = useSelector(x => x.sets);
@@ -89,9 +95,7 @@ const NewSetScreen = ({navigation}) => {
         //"orderid", order;
         if (selectedProduct?.id === order?.selectedProduct?.id) {
           isProductExisting = true;
-          alert(
-            'You already have this in your cart',
-          );
+          alert('You already have this in your cart');
           setIsProductSelected(false);
           return;
         }
@@ -111,12 +115,25 @@ const NewSetScreen = ({navigation}) => {
     setIsProductSelected(false);
   };
 
-  const handleSingleItemPress = async item => {
-    console.log('clicked item is ', item);
-    setSelectedProduct(item);
-    setIsProductSelected(true);
-    setProductInputValue('');
-    dismissBottomSheetDialog(productSheetRef);
+  const handleSingleItemPress = async (
+    item,
+    isProduct,
+    isZupaAssociatedProduct,
+  ) => {
+    if (isProduct) {
+      console.log('normal clicked item is ', item);
+      setSelectedProduct(item);
+      setIsProductSelected(true);
+      setProductInputValue('');
+      dismissBottomSheetDialog(productSheetRef);
+    }
+
+    if (isZupaAssociatedProduct) {
+      console.log('zupa product clicked item is ', item);
+      setSelectedZupaProduct(item);
+      setZupaProductInputValue('');
+      dismissBottomSheetDialog(zupaProductAssociateSheetRef);
+    }
   };
 
   const handleRefreshIncaseOfNetworkFailure = () => {
@@ -125,30 +142,50 @@ const NewSetScreen = ({navigation}) => {
 
   const renderProductBottomSheet = () => {
     return (
-      <BottomSheetProductComponent
-        sheetRef={productSheetRef}
-        handleRefresh={handleRefreshIncaseOfNetworkFailure}
-        isProductLoading={productsLoading}
-        filteredDataSource={filteredProductData}
-        dataSource={
-          productInputValue.length > 0 ? filteredProductData : products
-        }
-        closeAction={handleCloseActionProduct}
-        handleSingleItemPress={handleSingleItemPress}
-        //addProductPress={addProductPress}
-        inputValue={productInputValue}
-        handleSearchInputSubmit={handleProductSubmitSearchext}
-        handleInputSearchText={handleProductInputSearchText}
-        // handleAddProduct={createNewProduct}
-      />
+      <>
+        <BottomSheetProductComponent
+          sheetRef={productSheetRef}
+          handleRefresh={handleRefreshIncaseOfNetworkFailure}
+          isProductLoading={productsLoading}
+          filteredDataSource={filteredProductData}
+          dataSource={
+            productInputValue.length > 0 ? filteredProductData : products
+          }
+          closeAction={handleCloseActionProduct}
+          handleSingleItemPress={handleSingleItemPress}
+          //addProductPress={addProductPress}
+          inputValue={productInputValue}
+          handleSearchInputSubmit={handleProductSubmitSearchext}
+          handleInputSearchText={handleProductInputSearchText}
+          // handleAddProduct={createNewProduct}
+        />
+
+        <BottomSheetZupaAssociateProductComponent
+          sheetRef={zupaProductAssociateSheetRef}
+          handleRefresh={handleRefreshIncaseOfNetworkFailure}
+          isProductLoading={productsLoading}
+          filteredDataSource={filteredProductData}
+          dataSource={
+            zupaProductInputValue.length > 0 ? filteredProductData : products
+          }
+          closeAction={handleCloseActionProduct}
+          handleSingleItemPress={handleSingleItemPress}
+          //addProductPress={addProductPress}
+          inputValue={zupaProductInputValue}
+          handleSearchInputSubmit={handleProductSubmitSearchext}
+          handleInputSearchText={handleZupaAssociatedProductInputSearchText}
+          // handleAddProduct={createNewProduct}
+        />
+      </>
     );
   };
 
   const handleCloseActionProduct = () => {
     setProductInputValue('');
     dismissBottomSheetDialog(productSheetRef);
+    dismissBottomSheetDialog(zupaProductAssociateSheetRef);
   };
-  
+
   const handleProductSubmitSearchext = text => {
     console.log('submit text', productInputValue);
     //dispatch(ProductActions.searchAllBaseProducts(text, 400, 0));
@@ -173,6 +210,22 @@ const NewSetScreen = ({navigation}) => {
     } else {
       setFilteredProductsData(products);
       setProductInputValue(text);
+    }
+  };
+  const handleZupaAssociatedProductInputSearchText = text => {
+    if (text) {
+      const newData = products?.filter(item => {
+        const itemData = item?.name
+          ? item?.name.toUpperCase()
+          : ''.toUpperCase();
+        const textData = text.toUpperCase();
+        return itemData.indexOf(textData) > -1;
+      });
+      setFilteredProductsData(newData);
+      setZupaProductInputValue(text);
+    } else {
+      setFilteredProductsData(products);
+      setZupaProductInputValue(text);
     }
   };
 
@@ -245,26 +298,63 @@ const NewSetScreen = ({navigation}) => {
         {/* order summary section */}
 
         {newBasketArray.length > 0 ? (
-          <View style={{flexDirection: 'row'}}>
-            <DataTable>
-              <DataTable.Header>
-                <View style={styles.basketView}>
-                  <ProductSansBold style={styles.basketCountView}>
-                    {newBasketArray && newBasketArray.length > 1
-                      ? newBasketArray.length + ' ITEMS'
-                      : newBasketArray.length + ' ITEM'}
-                  </ProductSansBold>
-                </View>
-              </DataTable.Header>
+          <>
+            <View style={{flexDirection: 'row'}}>
+              <DataTable>
+                <DataTable.Header>
+                  <View style={styles.basketView}>
+                    <ProductSansBold style={styles.basketCountView}>
+                      {newBasketArray && newBasketArray.length > 1
+                        ? newBasketArray.length + ' ITEMS'
+                        : newBasketArray.length + ' ITEM'}
+                    </ProductSansBold>
+                  </View>
+                </DataTable.Header>
 
-              <FlatList
-                data={newBasketArray}
-                keyExtractor={item => item?.selectedProduct?.id}
-                renderItem={renderBasket}
-                //extraData={isProductSelected}
-              />
-            </DataTable>
-          </View>
+                <FlatList
+                  data={newBasketArray}
+                  keyExtractor={item => item?.selectedProduct?.id}
+                  renderItem={renderBasket}
+                  //extraData={isProductSelected}
+                />
+              </DataTable>
+            </View>
+
+            {/* zupa associated product section */}
+            <>
+              <View
+                style={[styles.actions, {paddingBottom: 10, marginTop: 10}]}>
+                <ProductSansBold style={styles.actiontext}>
+                  SELECT THE ZUPA PRODUCT ASSOCIATION TO THIS SET
+                </ProductSansBold>
+              </View>
+
+              <TouchableOpacity
+                onPress={handleLoadAssociatedZupaProductsBottomSheet}
+                style={[
+                  styles.productView,
+                  {marginHorizontal: deviceWidth * 0.065},
+                ]}
+                activeOpacity={ACTIVE_OPACITY}>
+                <AvertaBold
+                  style={[styles.productText, {flex: 1}]}
+                  numberOfLines={2}>
+                  {selectedZupaProduct && selectedZupaProduct?.categorySize
+                    ? selectedZupaProduct?.name.trim() +
+                      ' (' +
+                      selectedZupaProduct?.categorySize?.name.trim() +
+                      ')'
+                    : 'Select a zupa product to map to this set'}
+                </AvertaBold>
+                <FontAwesome
+                  name="angle-down"
+                  size={hp(20)}
+                  color={COLOURS.gray}
+                  style={{marginRight: 10, flex: 0.1}}
+                />
+              </TouchableOpacity>
+            </>
+          </>
         ) : (
           <>
             <ProductSansBold
@@ -288,7 +378,10 @@ const NewSetScreen = ({navigation}) => {
       </>
     );
   };
-
+  const handleLoadAssociatedZupaProductsBottomSheet = () => {
+    //dismissTextInput(fullNameRef);
+    showBottomSheet(zupaProductAssociateSheetRef);
+  };
   const displaySubmitButton = () => {
     return (
       <TouchableOpacity
@@ -324,6 +417,11 @@ const NewSetScreen = ({navigation}) => {
         return;
       }
 
+      if (!selectedZupaProduct) {
+        alert('Zupa product association is required');
+        return;
+      }
+
       var productArray = [];
       newBasketArray.map((data, i) => {
         //console.log('dddd', data);
@@ -340,6 +438,9 @@ const NewSetScreen = ({navigation}) => {
       const orderPayload = {
         name: setName,
         products: productArray,
+        zupaSetAssociatedId:selectedZupaProduct?.id,
+        zupaSetName:selectedZupaProduct?.name,
+        zupaSetCategorySize:selectedZupaProduct.categorySize.name
       };
 
       console.log('order payload', orderPayload);
@@ -391,11 +492,14 @@ const NewSetScreen = ({navigation}) => {
   };
 
   const deleteFromOrderBasket = order => {
-    setNewBasketArray(
-      newBasketArray.filter(
-        item => item?.selectedProduct?.id !== order?.selectedProduct?.id,
-      ),
+    let array = newBasketArray.filter(
+      item => item?.selectedProduct?.id !== order?.selectedProduct?.id,
     );
+    setNewBasketArray(array);
+    //clear the already selected delivery type if basket is equal to zero
+    if (array.length == 0) {
+      setSelectedZupaProduct({});
+    }
   };
   const renderBasket = ({item, index}) => {
     //console.log("render Item is ", item, index);

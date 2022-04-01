@@ -50,8 +50,11 @@ export default class DeleteSelector extends PureComponent {
           </TouchableOpacity>
         }>
         <>
-          <MenuItem onPress={() => this.onPressItem('deleteSet')}>
-            <AvertaBold style={styles.text}>Delete Set</AvertaBold>
+          <MenuItem onPress={() => this.onPressItem('edit')}>
+            <AvertaBold style={styles.text}>Edit</AvertaBold>
+          </MenuItem>
+          <MenuItem onPress={() => this.onPressItem('delete')}>
+            <AvertaBold style={styles.text}>Delete</AvertaBold>
           </MenuItem>
           <MenuDivider />
         </>

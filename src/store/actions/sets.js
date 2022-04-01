@@ -147,7 +147,7 @@ export const deleteSetById = id => {
         if (response.data) {
           if (response?.data?.isSuccessful) {
             console.log('Deleted single set successfully', id, response.data);
-            alert('Deleted single set successfully');
+            //alert('Deleted single set successfully');
             dispatch(getAllSets(''));
             dispatch({
               type: 'DELETE_SINGLE_SET_SUCCESS',

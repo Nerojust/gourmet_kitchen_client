@@ -63,6 +63,66 @@ export function BottomSheetProductComponent({
     </RBSheet>
   );
 }
+export function BottomSheetZupaAssociateProductComponent({
+  sheetRef,
+  dataSource,
+  filteredDataSource,
+  handleSingleItemPress,
+  addProductPress,
+  inputValue,
+  handleInputSearchText,
+  closeAction,
+  isProductLoading,
+  handleSearchInputSubmit,
+  handleRefresh,
+  handleAddProduct,
+}) {
+  return (
+    <RBSheet
+      ref={sheetRef}
+      animationType={'slide'}
+      closeDuration={0}
+      openDuration={0}
+      closeOnDragDown={true}
+      closeOnPressMask={true}
+      closeOnPressBack={true}
+      keyboardAvoidingViewEnabled={true}
+      //height={deviceHeight / 1.04}
+      height={Platform.OS == 'ios' ? deviceHeight / 1.04 : deviceHeight / 1.055}
+      customStyles={{
+        wrapper: {
+          backgroundColor: COLOURS.transparentColour,
+        },
+        draggableIcon: {
+          width: 0,
+          top: 5,
+        },
+        container: {
+          borderTopLeftRadius: 20,
+          borderTopRightRadius: 20,
+          borderColor: COLOURS.lightGray,
+          borderWidth: 0.4,
+          backgroundColor: COLOURS.white,
+        },
+      }}>
+      <ProductListComponent
+        dataSource={dataSource}
+        filteredDataSource={filteredDataSource}
+        closeAction={closeAction}
+        handleRefresh={handleRefresh}
+        handleAddProduct={handleAddProduct}
+        isProductLoading={isProductLoading}
+        handleSearchInputSubmit={handleSearchInputSubmit}
+        handleSingleItemPress={item =>
+          handleSingleItemPress(item, false, true)
+        }
+        addProductPress={() => addProductPress()}
+        inputValue={inputValue}
+        handleInputSearchText={handleInputSearchText}
+      />
+    </RBSheet>
+  );
+}
 
 export function BottomSheetDeliveryTypesComponent({
   sheetRef,
@@ -106,9 +166,11 @@ export function BottomSheetDeliveryTypesComponent({
       <DeliveryListComponent
         dataSource={dataSource}
         closeAction={closeAction}
-        handleRefresh={() => handleRefresh(false, true)}
+        handleRefresh={() => handleRefresh(false, true, false)}
         isDeliveryLoading={isDeliveryLoading}
-        handleSingleItemPress={item => handleSingleItemPress(item, false, true)}
+        handleSingleItemPress={item =>
+          handleSingleItemPress(item, false, true, false)
+        }
         InputValue={inputValue}
         handleInputSearchText={handleInputSearchText}
         handleAddDelivery={handleAddDelivery}

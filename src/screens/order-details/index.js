@@ -142,20 +142,29 @@ const OrderDetailsScreen = ({navigation, route}) => {
 
           <View style={styles.grandTotalview}>
             <AvertaBold
-              style={[styles.grandTotalText, {color: COLOURS.labelTextColor,fontWeight:'500'}]}>
-              {'Delivery to:\n' + order?.delivery[0]?.locationname}
+              style={[
+                styles.grandTotalText,
+                {color: COLOURS.labelTextColor, fontWeight: '500', flex: 1.06},
+              ]}>
+              {order?.delivery.length > 0
+                ? 'Delivery to:\n' + order?.delivery[0]?.locationname
+                : 'Delivery Type: Walk-In'}
             </AvertaBold>
 
-            <AvertaBold style={styles.calculatedAmountText}>
+            <AvertaBold
+              style={[styles.calculatedAmountText, {right: 0, flex: 0.38}]}>
               {order?.delivery[0]?.price
                 ? NAIRA_ + formatNumberComma(order?.delivery[0]?.price)
                 : null}
             </AvertaBold>
           </View>
-          <View style={styles.grandTotalview}>
-            <AvertaBold style={styles.grandTotalText}>Grand Total</AvertaBold>
+          <View style={[styles.grandTotalview]}>
+            <AvertaBold style={[styles.grandTotalText, {flex: 2}]}>
+              Grand Total
+            </AvertaBold>
 
-            <AvertaBold style={styles.calculatedAmountText}>
+            <AvertaBold
+              style={[styles.calculatedAmountText, {flex: 0.72, right: 0}]}>
               {NAIRA_ + calculateAmount()}
             </AvertaBold>
           </View>
@@ -254,6 +263,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
       </View>
     );
   };
+
   const calculateAmount = useCallback(() => {
     var amount = 0;
 
@@ -266,10 +276,13 @@ const OrderDetailsScreen = ({navigation, route}) => {
 
     if (order.delivery && order?.delivery[0]?.price) {
       result = amount + order?.delivery[0]?.price;
+    } else {
+      result = amount;
     }
 
     return formatNumberComma(result);
   });
+
   const handleEditNote = (item, index) => {
     //console.log('edited is ', item, 'index is ', index);
     setSpecialNote(item?.note);
@@ -342,13 +355,18 @@ const OrderDetailsScreen = ({navigation, route}) => {
       </TouchableOpacity>
     );
   };
+  const handleClickEvent = item => {
+    console.log('item clicked is ', item);
+  };
   return (
     <ViewProviderComponent>
       <DismissKeyboard>
         <KeyboardObserverComponent>
           <BackViewMoreSettings
             backText="Order Details"
+            shouldDisplayDelete
             onClose={() => navigation.goBack()}
+            handleClick={handleClickEvent}
           />
           <FlatList
             data={[]}
@@ -386,7 +404,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     fontSize: 14,
     color: COLOURS.textInputColor,
-    right: deviceWidth * 0.09,
+    //right: deviceWidth * 0.09,
   },
   deliveryPrice: {
     fontWeight: 'bold',

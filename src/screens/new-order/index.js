@@ -30,6 +30,7 @@ import {
   formatNumberComma,
   removeDuplicatesFromArray,
   showBottomSheet,
+  validateNumber,
 } from '../../utils/utils';
 import {BackViewMoreSettings} from '../../components/Header';
 import useKeyboardHeight from 'react-native-use-keyboard-height';
@@ -38,9 +39,10 @@ import {getAllProducts, syncZupaProducts} from '../../store/actions/products';
 import {
   BottomSheetDeliveryTypesComponent,
   BottomSheetProductComponent,
+  BottomSheetZupaAssociateProductComponent,
 } from '../../components/BottomSheetComponent';
 import QuantityProductComponent from '../../components/QuantityProductComponent';
-import {ACTIVE_OPACITY, DIALOG_TIMEOUT} from '../../utils/Constants';
+import {ACTIVE_OPACITY, DIALOG_TIMEOUT, NAIRA} from '../../utils/Constants';
 import AvertaBold from '../../components/Text/AvertaBold';
 import Averta from '../../components/Text/Averta';
 import {useDispatch} from 'react-redux';
@@ -70,7 +72,9 @@ const NewOrderScreen = ({navigation}) => {
     setIsAddressDescriptionFieldFocused,
   ] = useState(false);
   const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false);
+  const [selectedZupaProduct, setSelectedZupaProduct] = useState({});
   const productSheetRef = useRef();
+  const zupaProductAssociateSheetRef = useRef();
   const submitOrderRef = useRef();
 
   const fullNameRef = useRef(null);
@@ -96,6 +100,7 @@ const NewOrderScreen = ({navigation}) => {
   const [filteredProductData, setFilteredProductsData] = useState(productsData);
   const [productInputValue, setProductInputValue] = useState('');
   const [deliveryInputValue, setDeliveryInputValue] = useState('');
+  const [zupaProductInputValue, setZupaProductInputValue] = useState('');
   const [isProductSelected, setIsProductSelected] = useState(false);
   var basketArray = [];
   const [newBasketArray, setNewBasketArray] = useState(basketArray);
@@ -110,6 +115,7 @@ const NewOrderScreen = ({navigation}) => {
   );
   let additionalArray = [];
   var finalDeliveryArray = [];
+
   useEffect(() => {
     dispatch(getAllSets());
     dispatch(getAllProducts('', 0, 0));
@@ -122,6 +128,7 @@ const NewOrderScreen = ({navigation}) => {
       }
     });
   }, []);
+
   useEffect(() => {
     if (sets && sets.length > 0) {
       sets.forEach(async (item, i) => {
@@ -313,6 +320,7 @@ const NewOrderScreen = ({navigation}) => {
     setProductInputValue('');
     setFilteredProductsData([]);
     dismissBottomSheetDialog(productSheetRef);
+    dismissBottomSheetDialog(zupaProductAssociateSheetRef);
   };
   const handleProductSubmitSearchext = text => {
     console.log('submit text', productInputValue);
@@ -496,32 +504,39 @@ const NewOrderScreen = ({navigation}) => {
             padding: 20,
           }}
         />
+        {/* product section */}
+        <>
+          <View style={[styles.actions, {paddingVertical: 13}]}>
+            <ProductSansBold style={styles.actiontext}>
+              SELECT PRODUCTS
+            </ProductSansBold>
+          </View>
 
-        <View style={[styles.actions, {paddingVertical: 13}]}>
-          <ProductSansBold style={styles.actiontext}>
-            SELECT PRODUCTS
-          </ProductSansBold>
-        </View>
-
-        <TouchableOpacity
-          onPress={handleLoadProductsBottomSheet}
-          style={[styles.productView, {marginHorizontal: deviceWidth * 0.065}]}
-          activeOpacity={ACTIVE_OPACITY}>
-          <AvertaBold style={[styles.productText, {flex: 1}]} numberOfLines={2}>
-            {selectedProduct && selectedProduct?.categorySize
-              ? selectedProduct?.name.trim() +
-                ' (' +
-                selectedProduct?.categorySize?.name.trim() +
-                ')'
-              : 'Select a product'}
-          </AvertaBold>
-          <FontAwesome
-            name="angle-down"
-            size={hp(20)}
-            color={COLOURS.gray}
-            style={{marginRight: 10, flex: 0.1}}
-          />
-        </TouchableOpacity>
+          <TouchableOpacity
+            onPress={handleLoadProductsBottomSheet}
+            style={[
+              styles.productView,
+              {marginHorizontal: deviceWidth * 0.065},
+            ]}
+            activeOpacity={ACTIVE_OPACITY}>
+            <AvertaBold
+              style={[styles.productText, {flex: 1}]}
+              numberOfLines={2}>
+              {selectedProduct && selectedProduct?.categorySize
+                ? selectedProduct?.name.trim() +
+                  ' (' +
+                  selectedProduct?.categorySize?.name.trim() +
+                  ')'
+                : 'Select a product'}
+            </AvertaBold>
+            <FontAwesome
+              name="angle-down"
+              size={hp(20)}
+              color={COLOURS.gray}
+              style={{marginRight: 10, flex: 0.1}}
+            />
+          </TouchableOpacity>
+        </>
 
         <View style={[styles.spaceBetweenInputs, {marginTop: 10}]} />
 
@@ -562,9 +577,8 @@ const NewOrderScreen = ({navigation}) => {
             <View style={styles.dividerLine} />
 
             {/* delivery view section */}
-            {/* <View style={{flexDirection: 'row'}}> */}
             <TouchableOpacity
-              style={styles.deliverySheetview}
+              style={[styles.deliverySheetview]}
               activeOpacity={1}
               onPress={handleLoadDeliveryBottomSheet}>
               <TouchableOpacity
@@ -573,7 +587,8 @@ const NewOrderScreen = ({navigation}) => {
                   styles.productView,
                   {
                     width: deviceWidth / 2.7,
-                    flex: 0.71,
+                    flex: 0.7,
+                    marginLeft: 5,
                   },
                 ]}
                 activeOpacity={ACTIVE_OPACITY}>
@@ -594,8 +609,7 @@ const NewOrderScreen = ({navigation}) => {
 
               <View
                 style={{
-                  flex: 0.69,
-                  //right: -20,
+                  flex: 0.7,
                 }}>
                 <AvertaBold style={styles.deliveryPrice}>
                   {selectedDelivery?.price
@@ -605,14 +619,18 @@ const NewOrderScreen = ({navigation}) => {
               </View>
             </TouchableOpacity>
 
-            <View style={styles.grandTotalview}>
-              <AvertaBold style={styles.grandTotalText}>Grand Total</AvertaBold>
+            {newBasketArray[0]?.selectedProduct?.type != 'custom' ? (
+              <View style={[styles.grandTotalview]}>
+                <AvertaBold style={[styles.grandTotalText, {flex: 2}]}>
+                  Grand Total
+                </AvertaBold>
 
-              <AvertaBold style={styles.calculatedAmountText}>
-                {calculateAmount()}
-              </AvertaBold>
-            </View>
-            {/* </View> */}
+                <AvertaBold
+                  style={[styles.calculatedAmountText, {flex: 0.9, right: 0}]}>
+                  {NAIRA + calculateAmount()}
+                </AvertaBold>
+              </View>
+            ) : null}
           </>
         ) : (
           <>
@@ -637,6 +655,7 @@ const NewOrderScreen = ({navigation}) => {
       </>
     );
   };
+
   const calculateAmount = useCallback(() => {
     var amount = 0;
 
@@ -647,17 +666,10 @@ const NewOrderScreen = ({navigation}) => {
 
     var result = 0;
 
-    // if (selectedCoupon && selectedCoupon?.discountType == 'amount') {
-    //   result = amount - selectedCoupon?.value; //console.log("coupon amount discount result", result);
-    // } else if (selectedCoupon && selectedCoupon?.discountType == 'percent') {
-    //   var percentResult = calculatePercentage(amount, selectedCoupon?.value);
-    //   result = amount - percentResult; // console.log("Percentage coupon result", result);
-    // } else {
-    //   result = amount;
-    // }
-
     if (selectedDelivery && selectedDelivery?.price) {
       result = amount + selectedDelivery?.price;
+    } else {
+      result = amount;
     }
 
     return formatNumberComma(result);
@@ -701,6 +713,10 @@ const NewOrderScreen = ({navigation}) => {
         alert('Phone number is required');
         return;
       }
+      if (!validateNumber(phoneNumber)) {
+        alert('Enter a valid phone number');
+        return;
+      }
       if (!address) {
         alert('Address is required');
         return;
@@ -711,6 +727,10 @@ const NewOrderScreen = ({navigation}) => {
       }
       if (!quantity) {
         alert('Quantity is required');
+        return;
+      }
+      if (newBasketArray.length == 0) {
+        alert('Please select a product');
         return;
       }
 
@@ -741,7 +761,10 @@ const NewOrderScreen = ({navigation}) => {
           add: newBasketArray.map((data, i) => {
             //console.log("map", i, data);
             return {
-              productId: data?.selectedProduct?.id,
+              productId:
+                data?.selectedProduct?.type != 'custom'
+                  ? data?.selectedProduct?.id
+                  : data?.selectedProduct?.zupasetid,
               quantity: data?.quantity,
             };
           }),
@@ -776,7 +799,7 @@ const NewOrderScreen = ({navigation}) => {
               deliveryTypeId: selectedDelivery?.id,
               price: selectedDelivery?.price,
               state: selectedDelivery?.state,
-              name:selectedDelivery?.name
+              name: selectedDelivery?.name,
             },
             products: productArray,
           };
@@ -785,6 +808,7 @@ const NewOrderScreen = ({navigation}) => {
             id: data?.selectedProduct?.id,
             quantity: data?.quantity,
             type: 'custom',
+            zupasetid: data?.selectedProduct.zupasetid,
           };
           productArray.push(item);
           kitchen_payload = {
@@ -800,7 +824,7 @@ const NewOrderScreen = ({navigation}) => {
               deliveryTypeId: selectedDelivery?.id,
               price: selectedDelivery?.price,
               state: selectedDelivery?.state,
-              name:selectedDelivery?.name
+              name: selectedDelivery?.name,
             },
             products: productArray,
           };
@@ -936,6 +960,10 @@ const NewOrderScreen = ({navigation}) => {
   const handleLoadProductsBottomSheet = () => {
     dismissTextInput(fullNameRef);
     showBottomSheet(productSheetRef);
+  };
+  const handleLoadAssociatedZupaProductsBottomSheet = () => {
+    //dismissTextInput(fullNameRef);
+    showBottomSheet(zupaProductAssociateSheetRef);
   };
 
   return (

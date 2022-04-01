@@ -33,9 +33,9 @@ const BreadListItemComponent = ({item, onClick}) => {
             style={[
               styles.labelText,
               {
-                fontWeight: 'bold',
-                fontSize: fp(18),
-                color: COLOURS.lightGray,
+                //fontWeight: 'bold',
+                fontSize: fp(15),
+                color: COLOURS.gray4,
               },
             ]}>
             {item?.count || '0'}
@@ -45,7 +45,7 @@ const BreadListItemComponent = ({item, onClick}) => {
           <ProductSans
             style={[
               styles.labelText,
-              {fontWeight: 'bold', fontSize: fp(18), color: COLOURS.black},
+              {fontWeight: 'bold', fontSize: fp(19), color: COLOURS.textInputColor},
             ]}>
             {item?.sum || '0'}
           </ProductSans>

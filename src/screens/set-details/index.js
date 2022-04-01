@@ -1,6 +1,13 @@
 //import liraries
 import React, {Component, useState} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, FlatList} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  FlatList,
+  Alert,
+} from 'react-native';
 import {BackViewMoreSettings} from '../../components/Header';
 import {KeyboardObserverComponent} from '../../components/KeyboardObserverComponent';
 import ViewProviderComponent from '../../components/ViewProviderComponent';
@@ -24,10 +31,17 @@ const SetDetailsScreen = ({navigation, route}) => {
   const dispatch = useDispatch();
   const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false);
 
-  //console.log('set details', route.params.set);
+  console.log('set details', route.params.set);
   var setItems = route?.params?.set?.products;
-  var {name, id, status, createdat, updatedat, isfulfilled} =
-    route?.params?.set;
+  var {
+    name,
+    id,
+    status,
+    createdat,
+    zupasetname,
+    zupasetcategorysize,
+    isfulfilled,
+  } = route?.params?.set;
 
   const renderDetails = () => {
     return (
@@ -74,16 +88,56 @@ const SetDetailsScreen = ({navigation, route}) => {
               );
             })}
         </View>
+
+        <View
+          style={[
+            styles.customerNameView,
+            {marginRight: 10, top: -10, marginBottom: 30},
+          ]}>
+          <ProductSansBold
+            style={[styles.labelText, {paddingBottom: 8, left: 0}]}>
+            ZUPA ASSOCIATED SET NAME
+          </ProductSansBold>
+          <Averta style={[styles.address, {color: COLOURS.textInputColor}]}>
+            {zupasetname ? zupasetname.trim() : 'None'}
+          </Averta>
+          <Averta style={[styles.address, {color: COLOURS.gray}]}>
+            Size: {zupasetcategorysize ? zupasetcategorysize.trim() : 'None'}
+          </Averta>
+        </View>
       </View>
     );
   };
   const handleDelete = item => {
-    //console.log('item', item);
-
-   dispatch(deleteSetById(id));
-    showSuccessDialog();
+    console.log('item', item);
+    if (item == 'delete') {
+      handleDeleteSet();
+    }
   };
+  const handleDeleteSet = () => {
+    console.log('delete clicked');
 
+    Alert.alert(
+      'Alert',
+      'Do you want to delete this set?',
+      [
+        {
+          text: 'No',
+          onPress: () => {
+            console.log('cancel Pressed');
+          },
+        },
+        {
+          text: 'Yes',
+          onPress: () => {
+            dispatch(deleteSetById(id));
+            showSuccessDialog();
+          },
+        },
+      ],
+      {cancelable: true},
+    );
+  };
   const showSuccessDialog = () => {
     setIsSuccessModalVisible(!isSuccessModalVisible);
 
