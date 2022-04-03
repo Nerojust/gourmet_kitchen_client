@@ -45,8 +45,7 @@ import QuantityProductComponent from '../../components/QuantityProductComponent'
 import {ACTIVE_OPACITY, DIALOG_TIMEOUT, NAIRA} from '../../utils/Constants';
 import AvertaBold from '../../components/Text/AvertaBold';
 import Averta from '../../components/Text/Averta';
-import {useDispatch} from 'react-redux';
-import {useSelector} from 'react-redux';
+import {useDispatch,useSelector} from 'react-redux';
 import {IMAGES} from '../../utils/Images';
 import CustomSuccessModal from '../../components/CustomSuccessModal';
 import {createOrder, createZupaOrder} from '../../store/actions/orders';
@@ -58,6 +57,7 @@ import {
   getAllDeliveryTypes,
   getDeliveryStates,
 } from '../../store/actions/delivery-types';
+import ProductSans from '../../components/Text/ProductSans';
 
 // create a component
 const NewOrderScreen = ({navigation}) => {
@@ -72,7 +72,7 @@ const NewOrderScreen = ({navigation}) => {
     setIsAddressDescriptionFieldFocused,
   ] = useState(false);
   const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false);
-  const [selectedZupaProduct, setSelectedZupaProduct] = useState({});
+
   const productSheetRef = useRef();
   const zupaProductAssociateSheetRef = useRef();
   const submitOrderRef = useRef();
@@ -581,6 +581,7 @@ const NewOrderScreen = ({navigation}) => {
               style={[styles.deliverySheetview]}
               activeOpacity={1}
               onPress={handleLoadDeliveryBottomSheet}>
+              
               <TouchableOpacity
                 onPress={handleLoadDeliveryBottomSheet}
                 style={[
@@ -592,13 +593,13 @@ const NewOrderScreen = ({navigation}) => {
                   },
                 ]}
                 activeOpacity={ACTIVE_OPACITY}>
-                <Averta
+                <ProductSans
                   style={[styles.productText, {flex: 1}]}
                   numberOfLines={1}>
                   {selectedDelivery?.name
                     ? selectedDelivery?.name
                     : 'Select delivery'}
-                </Averta>
+                </ProductSans>
                 <FontAwesome
                   name="angle-down"
                   size={hp(20)}
@@ -607,16 +608,13 @@ const NewOrderScreen = ({navigation}) => {
                 />
               </TouchableOpacity>
 
-              <View
-                style={{
-                  flex: 0.7,
-                }}>
+        
                 <AvertaBold style={styles.deliveryPrice}>
                   {selectedDelivery?.price
                     ? formatNumberComma(selectedDelivery?.price)
                     : null}
                 </AvertaBold>
-              </View>
+         
             </TouchableOpacity>
 
             {newBasketArray[0]?.selectedProduct?.type != 'custom' ? (
@@ -691,7 +689,7 @@ const NewOrderScreen = ({navigation}) => {
           marginHorizontal: 20,
           alignItems: 'center',
         }}>
-        <Text style={{color: COLOURS.white, fontSize: 14, fontWeight: '700'}}>
+        <Text style={{color: COLOURS.white, fontSize: 14,fontWeight: '700'}}>
           Submit
         </Text>
         {/* <LoaderButtonComponent
@@ -961,10 +959,6 @@ const NewOrderScreen = ({navigation}) => {
     dismissTextInput(fullNameRef);
     showBottomSheet(productSheetRef);
   };
-  const handleLoadAssociatedZupaProductsBottomSheet = () => {
-    //dismissTextInput(fullNameRef);
-    showBottomSheet(zupaProductAssociateSheetRef);
-  };
 
   return (
     <ViewProviderComponent>
@@ -982,7 +976,6 @@ const NewOrderScreen = ({navigation}) => {
             showsVerticalScrollIndicator={false}
             ListHeaderComponent={renderInputFields()}
             renderItem={null}
-            //keyExtractor={item => Date.now()}
           />
           <LoaderShimmerComponent isLoading={createOrderLoading} />
         </KeyboardObserverComponent>

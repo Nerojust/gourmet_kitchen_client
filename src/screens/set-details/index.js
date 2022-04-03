@@ -170,6 +170,7 @@ const SetDetailsScreen = ({navigation, route}) => {
               <>
                 {renderSuccessModal()}
                 {renderDetails()}
+                
               </>
             }
             renderItem={null}
