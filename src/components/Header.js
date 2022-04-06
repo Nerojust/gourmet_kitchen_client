@@ -33,8 +33,10 @@ export const BackViewMoreSettings = ({
   backText,
   shouldDisplaySettingIcon = false,
   shouldDisplayDelete = false,
+  displayDelete = false,
   handleClick,
   performSearch,
+  performDelete,
   shouldDisplayIcon,
 }) => {
   return (
@@ -82,6 +84,15 @@ export const BackViewMoreSettings = ({
             {renderDelete(handleClick)}
           </TouchableOpacity>
         ) : null}
+        {displayDelete ? (
+          <TouchableOpacity onPress={performDelete}>
+            <Image
+              source={require('../assets/images/delete.png')}
+              style={styles.deleteImage}
+              resizeMode={'contain'}
+            />
+          </TouchableOpacity>
+        ) : null}
       </View>
     </View>
   );
@@ -103,6 +114,11 @@ const styles = StyleSheet.create({
     width: wp(19),
     height: wp(19),
     marginRight: 20,
+  },
+  deleteImage: {
+    width: wp(19),
+    height: wp(19),
+    marginLeft: 0,
   },
   exitView: {
     flexDirection: 'row',

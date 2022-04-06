@@ -312,7 +312,6 @@ const NewOrderScreen = ({navigation}) => {
 
     // dispatch(getAllDeliveryTypes());
   };
-  const [isModalVisible, setIsModalVisible] = useState(false);
   const toggleDeliveryModal = () => {
     setIsDeliveryModalVisible(!isDeliveryModalVisible);
   };
@@ -587,8 +586,8 @@ const NewOrderScreen = ({navigation}) => {
                 style={[
                   styles.productView,
                   {
-                    width: deviceWidth / 2.7,
-                    flex: 0.7,
+                    //width: deviceWidth / 2.7,
+                    flex: 1,
                     marginLeft: 5,
                   },
                 ]}
@@ -609,7 +608,7 @@ const NewOrderScreen = ({navigation}) => {
               </TouchableOpacity>
 
         
-                <AvertaBold style={styles.deliveryPrice}>
+                <AvertaBold style={[styles.deliveryPrice,{flex:1,left:65}]}>
                   {selectedDelivery?.price
                     ? formatNumberComma(selectedDelivery?.price)
                     : null}
@@ -1020,7 +1019,7 @@ const styles = StyleSheet.create({
   },
   deliverySheetview: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    //justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: 12,
     paddingHorizontal: 20,

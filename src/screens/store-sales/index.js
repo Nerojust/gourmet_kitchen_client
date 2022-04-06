@@ -7,6 +7,7 @@ import {
   FlatList,
   RefreshControl,
   Platform,
+  Alert,
 } from 'react-native';
 import {COLOURS} from '../../utils/Colours';
 import {BackViewMoreSettings} from '../../components/Header';
@@ -103,7 +104,27 @@ const StoreSalesScreen = ({navigation}) => {
     setSearchInputValue('');
     setIsSearchCleared(true);
   };
+  const handleDeleteOrders = () => {
+    console.log('delete clicked');
 
+    Alert.alert(
+      'Alert',
+      'Do you want to delete all surplus records?',
+      [
+        {
+          text: 'No',
+          onPress: () => {
+            console.log('cancel Pressed');
+          },
+        },
+        {
+          text: 'Yes',
+          //onPress: () => dispatch(deleteAllOrders()),
+        },
+      ],
+      {cancelable: true},
+    );
+  };
   return (
     <ViewProviderComponent>
       <DismissKeyboard>
@@ -113,6 +134,8 @@ const StoreSalesScreen = ({navigation}) => {
             onClose={() => navigation.goBack()}
             shouldDisplayIcon={surplus && surplus.length > 0}
             performSearch={handleSearch}
+            displayDelete={false}
+            performDelete={handleDeleteOrders}
           />
           {isSearchClicked ? (
             <SearchInputComponent
@@ -156,7 +179,7 @@ const StoreSalesScreen = ({navigation}) => {
           />
 
           <LoaderShimmerComponent isLoading={surplusLoading} />
-          <AddComponent goto={()=>navigation.navigate("AddStoreSale")}/>
+          <AddComponent goto={() => navigation.navigate('AddStoreSale')} />
         </KeyboardObserverComponent>
       </DismissKeyboard>
     </ViewProviderComponent>

@@ -25,6 +25,7 @@ import {updateOrderListProductCount} from '../../store/actions/orders';
 import {
   createSurplus,
   deductSurplusCount,
+  deleteSurplusById,
   updateSurplusById,
 } from '../../store/actions/surplus';
 
@@ -49,7 +50,7 @@ const StoreSalesDetailsScreen = ({navigation, route}) => {
   const surplusRef = useRef();
   const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false);
   const [remainingCount, setRemainingCount] = useState('0');
-  const {updateSurplusLoading, isSurplusUpdated, deductSurplusLoading} =
+  const {updateSurplusLoading, deleteSurplusLoading, deductSurplusLoading} =
     useSelector(x => x.surplus);
   const [inputSurplusCount, setinputSurplusCount] = useState();
   const [inputSurplusCountDeduct, setInputSurplusCountDeduct] = useState();
@@ -236,7 +237,7 @@ const StoreSalesDetailsScreen = ({navigation, route}) => {
       productName: productname,
       productId: productid,
     };
-    
+
     console.log('surplus payload', payload);
 
     dispatch(updateSurplusById(id, payload))
@@ -348,18 +349,49 @@ const StoreSalesDetailsScreen = ({navigation, route}) => {
       message={'Surplus Updated Successfully'}
     />
   );
-  
+
   const resetFields = () => {
     setSurplusCount('');
   };
+  const handleDeleteSurplus = () => {
+    console.log('delete surplus clicked');
 
+    Alert.alert(
+      'Alert',
+      'Do you want to delete this surplus?',
+      [
+        {
+          text: 'No',
+          onPress: () => {
+            console.log('cancel Pressed');
+          },
+        },
+        {
+          text: 'Yes',
+          onPress: () =>
+            dispatch(deleteSurplusById(route.params.surplus.id)).then(
+              result => {
+                if (result) {
+                  showSuccessDialog();
+                }
+              },
+            ),
+        },
+      ],
+      {cancelable: true},
+    );
+  };
   return (
     <ViewProviderComponent>
       <DismissKeyboard>
         <KeyboardObserverComponent>
           <BackViewMoreSettings
-            backText={route.params.surplus.productname || 'Store Sales Details'}
+            backText={
+              route?.params?.surplus?.productname || 'Store Sales Details'
+            }
             onClose={() => navigation.goBack()}
+            displayDelete
+            performDelete={handleDeleteSurplus}
           />
           <FlatList
             data={[]}
@@ -376,6 +408,7 @@ const StoreSalesDetailsScreen = ({navigation, route}) => {
           />
           <LoaderShimmerComponent isLoading={deductSurplusLoading} />
           <LoaderShimmerComponent isLoading={updateSurplusLoading} />
+          <LoaderShimmerComponent isLoading={deleteSurplusLoading} />
         </KeyboardObserverComponent>
       </DismissKeyboard>
     </ViewProviderComponent>

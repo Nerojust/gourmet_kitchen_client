@@ -58,15 +58,18 @@ import {
   getDeliveryStates,
 } from '../../store/actions/delivery-types';
 import ProductSans from '../../components/Text/ProductSans';
+import {createSurplus} from '../../store/actions/surplus';
 
 // create a component
 const NewStoreSalesScreen = ({navigation}) => {
   const dispatch = useDispatch();
   const [fullName, setFullName] = useState('');
+  const [surplusCount, setSurplusCount] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [address, setAddress] = useState('');
   const [isFullNameFieldFocused, setIsFullNameFieldFocused] = useState(false);
   const [isAddressFieldFocused, setAddressFieldFocused] = useState(false);
+  const [isSurplusCountFocused, setIsSurplusCountFocused] = useState(false);
   const [
     isAddressDescriptionFieldFocused,
     setIsAddressDescriptionFieldFocused,
@@ -77,6 +80,7 @@ const NewStoreSalesScreen = ({navigation}) => {
   const zupaProductAssociateSheetRef = useRef();
 
   const fullNameRef = useRef(null);
+  const surplusCountRef = useRef();
   const deliverySheetRef = useRef();
   const [specialNote, setSpecialNote] = useState('');
 
@@ -88,6 +92,7 @@ const NewStoreSalesScreen = ({navigation}) => {
   const [selectedDelivery, setSelectedDelivery] = useState({});
 
   const {products, productsLoading} = useSelector(state => state.products);
+  const {createSurplusLoading} = useSelector(state => state.surplus);
   var productsData = Object.assign([], products);
   //console.log("pdts",productsData)
   const [quantity, setQuantity] = useState(1);
@@ -112,7 +117,6 @@ const NewStoreSalesScreen = ({navigation}) => {
   var finalDeliveryArray = [];
 
   useEffect(() => {
-   
     dispatch(getAllProducts('', 0, 0));
   }, []);
 
@@ -135,7 +139,6 @@ const NewStoreSalesScreen = ({navigation}) => {
     if (isProduct) {
       dispatch(getAllProducts('', 0, 0));
     }
-  
   };
 
   const renderBottomSheets = () => {
@@ -165,7 +168,6 @@ const NewStoreSalesScreen = ({navigation}) => {
     setProductInputValue('');
     setFilteredProductsData([]);
     dismissBottomSheetDialog(productSheetRef);
-    dismissBottomSheetDialog(zupaProductAssociateSheetRef);
   };
   const handleProductSubmitSearchext = () => {
     console.log('submit text', productInputValue);
@@ -236,29 +238,29 @@ const NewStoreSalesScreen = ({navigation}) => {
         </View>
         <TextInputComponent
           placeholder={'Enter surplus count'}
-          handleTextChange={text => setFullName(text)}
-          defaultValue={fullName}
+          handleTextChange={text => setSurplusCount(text)}
+          defaultValue={surplusCount}
           returnKeyType={'next'}
           keyboardType={'default'}
           secureTextEntry={false}
-          refValue={fullNameRef}
           capitalize={'sentences'}
+          refValue={surplusCountRef}
           heightfigure={50}
           widthFigure={deviceWidth / 1.15}
-          //refValue={fullNameRef}
           props={
-            isFullNameFieldFocused
+            isSurplusCountFocused
               ? {borderColor: COLOURS.blue}
               : {borderColor: COLOURS.zupa_gray_bg}
           }
           handleTextInputFocus={() => {
-            setIsFullNameFieldFocused(true);
+            setIsSurplusCountFocused(true);
           }}
           handleBlur={() => {
-            setIsFullNameFieldFocused(false);
+            setIsSurplusCountFocused(false);
           }}
           onSubmitEditing={() => {}}
         />
+        <View style={{paddingVertical: 13}} />
         {displaySubmitButton()}
       </>
     );
@@ -277,7 +279,7 @@ const NewStoreSalesScreen = ({navigation}) => {
           backgroundColor: COLOURS.blue,
           height: 50,
           borderRadius: 10,
-          marginHorizontal: 20,
+          marginHorizontal: 25,
           alignItems: 'center',
         }}>
         <Text style={{color: COLOURS.white, fontSize: 14, fontWeight: '700'}}>
@@ -294,146 +296,34 @@ const NewStoreSalesScreen = ({navigation}) => {
 
   const handleAddProduct = async () => {
     requestAnimationFrame(() => {
-      if (!fullName) {
-        alert('Customer name is required');
-        return;
-      }
-      if (!phoneNumber) {
-        alert('Phone number is required');
-        return;
-      }
-      if (!validateNumber(phoneNumber)) {
-        alert('Enter a valid phone number');
-        return;
-      }
-      if (!address) {
-        alert('Address is required');
-        return;
-      }
       if (!selectedProduct) {
         alert('Please select a product');
         return;
       }
-      if (!quantity) {
-        alert('Quantity is required');
-        return;
-      }
-      if (newBasketArray.length == 0) {
-        alert('Please select a product');
+
+      if (!surplusCount) {
+        alert('Surplus count is required');
         return;
       }
 
-      if (!selectedDelivery.id) {
-        alert('Please select a delivery type');
-        //setIsDeliveryModalVisible(true)
-        return;
-      }
-      //prepare zupa payload
-      const customerPayload = {
-        name: fullName,
-        phoneNumber: phoneNumber,
-        address,
-        addressDescription: additionalAddressDescription,
+      var payload = {
+        count: parseInt(surplusCount),
+        productId: selectedProduct.id,
+        productName: selectedProduct.name,
+        //productCategory: selectedProduct.categorySize.name,
+        productSize: selectedProduct.categorySize.name,
       };
+      console.log('surplus payload', payload);
 
-      const orderPayload = {
-        customerId: null,
-        deliveryTypeId: selectedDelivery?.id,
-        deliveryLocation: {
-          address: address,
-          latitude: '6.430118879280349',
-          longitude: '3.4881381695005618',
-        },
-        discountType: 'amount',
-        discountValue: null,
-        order_items: {
-          add: newBasketArray.map((data) => {
-            //console.log("map", i, data);
-            return {
-              productId:
-                data?.selectedProduct?.type != 'custom'
-                  ? data?.selectedProduct?.id
-                  : data?.selectedProduct?.zupasetid,
-              quantity: data?.quantity,
-            };
-          }),
-        },
-        specialNote,
-      };
-
-      //prepare zupa payload
-
-      //prepare kitchen payload
-      let kitchen_payload = {};
-      let productArray = [];
-      newBasketArray.map((data) => {
-        //console.log('dddd', data);
-        if (data?.selectedProduct?.type != 'custom') {
-          var item = {
-            id: data?.selectedProduct?.id,
-            quantity: data?.quantity,
-            price: data?.selectedProduct?.unitPrice,
-            size: data?.selectedProduct?.categorySize?.name,
-          };
-          productArray.push(item);
-          kitchen_payload = {
-            customer: {
-              name: fullName,
-              phoneNumber: phoneNumber,
-              address,
-              addressDescription: additionalAddressDescription,
-              specialNote,
-            },
-            delivery: {
-              deliveryTypeId: selectedDelivery?.id,
-              price: selectedDelivery?.price,
-              state: selectedDelivery?.state,
-              name: selectedDelivery?.name,
-            },
-            products: productArray,
-          };
-        } else {
-          var item = {
-            id: data?.selectedProduct?.id,
-            quantity: data?.quantity,
-            type: 'custom',
-            zupasetid: data?.selectedProduct.zupasetid,
-          };
-          productArray.push(item);
-          kitchen_payload = {
-            customer: {
-              name: fullName,
-              phoneNumber: phoneNumber,
-              address,
-              addressDescription: additionalAddressDescription,
-              specialNote,
-            },
-            type: 'custom',
-            delivery: {
-              deliveryTypeId: selectedDelivery?.id,
-              price: selectedDelivery?.price,
-              state: selectedDelivery?.state,
-              name: selectedDelivery?.name,
-            },
-            products: productArray,
-          };
-        }
-      });
-      //console.log('customer payload', customerPayload);
-      console.log('order payload', orderPayload);
-      console.log('order items', orderPayload.order_items);
-      console.log('kitchen payload', kitchen_payload);
-
-      dispatch(createOrder(kitchen_payload, customerPayload, orderPayload))
-        .then(response => {
-          //console.log("inside result", response);
-          if (response) {
-            showSuccessDialog();
+      dispatch(createSurplus(payload))
+        .then((result, error) => {
+          if (result) {
+            showSuccessDialog(true);
             resetFields();
           }
         })
-        .catch(() => {
-          console.log('error creating order');
+        .catch(error => {
+          console.log('updadte error', error);
         });
     });
   };
@@ -441,7 +331,7 @@ const NewStoreSalesScreen = ({navigation}) => {
     <CustomSuccessModal
       isModalVisible={isSuccessModalVisible}
       dismissModal={showSuccessDialog}
-      message={'Order created successfully'}
+      message={'Surplus created successfully'}
       //onPressButton={() => navigation.goBack()}
     />
   );
@@ -464,7 +354,7 @@ const NewStoreSalesScreen = ({navigation}) => {
   };
 
   const handleLoadProductsBottomSheet = () => {
-    dismissTextInput(fullNameRef);
+    dismissTextInput(surplusCountRef);
     showBottomSheet(productSheetRef);
   };
 
@@ -485,7 +375,7 @@ const NewStoreSalesScreen = ({navigation}) => {
             ListHeaderComponent={renderInputFields()}
             renderItem={null}
           />
-          <LoaderShimmerComponent isLoading={createOrderLoading} />
+          <LoaderShimmerComponent isLoading={createSurplusLoading} />
         </KeyboardObserverComponent>
       </DismissKeyboard>
     </ViewProviderComponent>

@@ -6,7 +6,7 @@ import {
   FlatList,
   SafeAreaView,
   Text,
-  Keyboard
+  Keyboard,
 } from 'react-native';
 
 import ProductSans from './Text/ProductSans';
@@ -15,10 +15,10 @@ import ProductSansBold from './Text/ProductSansBold';
 import LoaderShimmerComponent from './LoaderShimmerComponent';
 import EmptyComponent from './EmptyComponent';
 import AddComponent from './AddComponent';
-import { NAIRA_ } from '../utils/Constants';
-import { deviceWidth ,deviceHeight} from '../utils/responsive-screen';
-import { COLOURS } from '../utils/Colours';
-import { IMAGES } from '../utils/Images';
+import {NAIRA_} from '../utils/Constants';
+import {deviceWidth, deviceHeight} from '../utils/responsive-screen';
+import {COLOURS} from '../utils/Colours';
+import {IMAGES} from '../utils/Images';
 
 const DeliveryListComponent = ({
   dataSource,
@@ -28,9 +28,9 @@ const DeliveryListComponent = ({
   closeAction,
   handleRefresh,
   isDeliveryLoading,
-  handleAddDelivery
+  handleAddDelivery,
 }) => {
-  const renderItem = ({ item }) => {
+  const renderItem = ({item}) => {
     //console.log("item", item);
     return (
       <>
@@ -38,8 +38,7 @@ const DeliveryListComponent = ({
           <>
             <TouchableOpacity
               style={styles.itemView}
-              onPress={() => handleSingleItemPress(item)}
-            >
+              onPress={() => handleSingleItemPress(item)}>
               <Text style={styles.itemText}>{item?.name}</Text>
               <Text style={styles.itemPriceText}>
                 {NAIRA_}
@@ -52,7 +51,7 @@ const DeliveryListComponent = ({
               style={{
                 width: deviceWidth,
                 backgroundColor: COLOURS.lightGray,
-                height: 0.5
+                height: 0.5,
               }}
             />
           </>
@@ -67,22 +66,19 @@ const DeliveryListComponent = ({
         backgroundColor: COLOURS.white,
         borderTopLeftRadius: 10,
         borderTopRightRadius: 10,
-        flex: 1
-      }}
-    >
+        flex: 1,
+      }}>
       {isDeliveryLoading ? null : (
         <>
           <TouchableOpacity
             activeOpacity={0.7}
-            style={{ alignSelf: 'flex-start', left: 28, marginBottom: 15 }}
-            onPress={closeAction}
-          >
+            style={{alignSelf: 'flex-start', left: 28, marginBottom: 15}}
+            onPress={closeAction}>
             <ProductSans
               style={{
                 color: COLOURS.zupaBlue,
-                fontSize: 13
-              }}
-            >
+                fontSize: 13,
+              }}>
               Close
             </ProductSans>
           </TouchableOpacity>
@@ -96,46 +92,43 @@ const DeliveryListComponent = ({
             secureTextEntry={false}
             props={{
               width: deviceWidth * 0.88,
-              borderWidth: 0
+              borderWidth: 0,
             }}
             heightfigure={50}
+            onSubmitEditing={() => Keyboard.dismiss()}
           />
 
-          <View style={{ paddingBottom: 20 }} />
+          <View style={{paddingBottom: 20}} />
 
           {dataSource && dataSource.length > 0 ? (
             <>
               <FlatList
                 data={dataSource}
-                keyExtractor={(item) => item.id}
+                keyExtractor={item => item.id}
                 initialNumToRender={10}
                 renderItem={renderItem}
                 keyboardShouldPersistTaps={'handled'}
               />
               {/* <AddComponent goto={handleAddDelivery} style={{ bottom: 70 }} /> */}
-              <View style={{ paddingBottom: 10 }} />
+              <View style={{paddingBottom: 10}} />
             </>
           ) : (
             <TouchableOpacity
               style={styles.noResultView}
               activeOpacity={1}
-              onPress={() => Keyboard.dismiss()}
-            >
+              onPress={() => Keyboard.dismiss()}>
               <EmptyComponent
                 title={'No delivery types found'}
                 image={IMAGES.noCategories}
-                style={{ top: -160 }}
-              >
+                style={{top: -160}}>
                 <TouchableOpacity
                   activeOpacity={0.7}
-                  onPress={() => handleRefresh(false, false, true)}
-                >
+                  onPress={() => handleRefresh(false, false, true)}>
                   <ProductSansBold
                     style={[
                       styles.noResultText,
-                      { color: COLOURS.blue, marginTop: 20 }
-                    ]}
-                  >
+                      {color: COLOURS.blue, marginTop: 20},
+                    ]}>
                     Click to refresh
                   </ProductSansBold>
                 </TouchableOpacity>
@@ -164,32 +157,32 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     backgroundColor: COLOURS.white,
     marginBottom: 5,
-    paddingHorizontal: 30
+    paddingHorizontal: 30,
   },
   itemPriceText: {
     fontWeight: 'bold',
     width: deviceWidth,
     fontSize: 13,
     marginTop: 10,
-    color: COLOURS.black
+    color: COLOURS.black,
   },
   itemText: {
     color: COLOURS.text_color,
     width: '100%',
-    fontSize: 14
+    fontSize: 14,
   },
   noResultView: {
     alignSelf: 'center',
     height: deviceHeight - 260,
     width: deviceWidth,
     //justifyContent: "center",
-    alignItems: 'center'
+    alignItems: 'center',
   },
   noResultText: {
     fontSize: 14,
     fontWeight: 'bold',
     color: COLOURS.gray,
     justifyContent: 'center',
-    alignItems: 'center'
-  }
+    alignItems: 'center',
+  },
 });

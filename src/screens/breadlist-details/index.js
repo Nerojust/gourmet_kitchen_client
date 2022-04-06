@@ -57,7 +57,7 @@ const BreadListDetailsScreen = ({navigation, route}) => {
   } = useSelector(x => x.orders);
   //console.log('count item', countItem);
   var {productid: id} = route.params.bread;
-  //console.log('route.params.brea item', route.params.bread);
+  console.log('route.params.brea item', route.params.bread);
   const [foundSurplus, setFoundSurplus] = useState();
   const [category, setCategory] = useState('');
   const [productsize, setProductsize] = useState('');
@@ -361,7 +361,7 @@ const BreadListDetailsScreen = ({navigation, route}) => {
               );
               //update the order product
               dispatch(
-                updateSurplusStatusForOrderItemById(orderProductIdFromPayload, {
+                updateSurplusStatusForOrderItemById(id, {
                   surplusCountFulfilled: countTofulfill,
                   wasFulfilledFromSurplus: shouldUseSurplusTofulfill,
                 }),
