@@ -158,6 +158,10 @@ const OrderDetailsScreen = ({navigation, route}) => {
     }
   }, [id, hasAddedNewNote]);
 
+  useEffect(() => {
+    dispatch(getAllDeliveryTypes(''));
+  }, []);
+
   const fetchAllData = () => {
     dispatch(getOrder(route?.params?.id)).then((result, error) => {
       if (result) {
@@ -229,6 +233,26 @@ const OrderDetailsScreen = ({navigation, route}) => {
                 </AvertaBold>
               </TouchableOpacity>
             </View>
+            <View style={styles.customerNameView}>
+              <ProductSansBold style={[styles.labelText, {left: 0}]}>
+                CUSTOMER ADDRESS
+              </ProductSansBold>
+              <TouchableOpacity onPress={null}>
+                <Averta style={styles.address}>
+                  {address ? capitalizeWord(address.trim()) : 'None'}
+                </Averta>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.customerNameView}>
+              <ProductSansBold style={[styles.labelText, {left: 0}]}>
+                CUSTOMER PHONE NUMBER
+              </ProductSansBold>
+              <TouchableOpacity onPress={null}>
+                <Averta style={styles.address}>
+                  {phoneNumber ? capitalizeWord(phoneNumber.trim()) : 'None'}
+                </Averta>
+              </TouchableOpacity>
+            </View>
 
             <View
               style={[
@@ -264,8 +288,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
                   {order?.setname}
                 </ProductSansBold>
               ) : null}
-              {order &&
-                order?.products &&
+              {order?.products &&
                 order?.products.length > 0 &&
                 sortArrayByDate(order?.products).map((item, index) => {
                   return (
@@ -287,14 +310,14 @@ const OrderDetailsScreen = ({navigation, route}) => {
                     },
                   ]}>
                   {order?.delivery.length > 0
-                    ? 'Delivery to:\n' + selectedDeliveryType?.locationname
+                    ? 'Delivery to:\n' + order.delivery[0]?.locationname
                     : 'Delivery Type: Walk-In'}
                 </AvertaBold>
 
                 <AvertaBold
                   style={[styles.calculatedAmountText, {right: 0, flex: 0.38}]}>
-                  {selectedDeliveryType?.price
-                    ? NAIRA_ + formatNumberComma(selectedDeliveryType?.price)
+                  {order.delivery[0]?.price
+                    ? NAIRA_ + formatNumberComma(order.delivery[0]?.price)
                     : null}
                 </AvertaBold>
               </View>
@@ -584,6 +607,43 @@ const OrderDetailsScreen = ({navigation, route}) => {
       </>
     );
   };
+
+  const addDetailsToOrderSummary = () => {
+    if (selectedProduct) {
+      const {productid} = selectedProduct || [];
+      //console.log("selected id", this.state.selectedProduct.id);
+      let isProductExisting = false;
+      if (productid) {
+        orderItems?.map((order, i) => {
+          //("orderid", order.product.id);
+          if (productid === order?.productid) {
+            isProductExisting = true;
+            alert(
+              'You already have this in your cart, please update the quantity',
+            );
+            setIsProductSelected(false);
+            return;
+          }
+        });
+      }
+
+      if (!isProductExisting) {
+        const results = orderItems.concat({
+          productId: productid,
+          product: selectedProduct,
+          quantity: 1,
+        });
+        setOrderItems(results);
+        console.log('res', results);
+      }
+      setSelectedProduct(undefined);
+    } else {
+      setIsProductSelected(false);
+      alert('Please select a product');
+    }
+    setSelectedProduct({});
+    setIsProductSelected(false);
+  };
   const handleLoadProductsBottomSheet = () => {
     dismissTextInput(fullNameRef);
     showBottomSheet(productSheetRef);
@@ -741,58 +801,47 @@ const OrderDetailsScreen = ({navigation, route}) => {
           </DataTable>
 
           {/* bottom views */}
-          {!isEditMode ? (
-            <>
-              <View style={styles.deliveryView}>
-                <ProductSans style={styles.deleiveryNameView}>
-                  {data?.delivery_type ? data?.delivery_type?.name.trim() : ''}
-                </ProductSans>
-                <ProductSans style={styles.deliveryAmountView}>
-                  {NAIRA_}
-                  {data?.delivery_type
-                    ? formatNumberComma(data?.delivery[0]?.price)
-                    : 0}
-                </ProductSans>
-              </View>
-              <View style={styles.totalView}>
-                <ProductSansBold style={styles.totalNameText}>
-                  Grand Total
-                </ProductSansBold>
-
-                <ProductSansBold style={[styles.totalAmountText, {right: 6}]}>
-                  {NAIRA_}
-                  {formatNumberComma(grandTotalAmount)}
-                </ProductSansBold>
-              </View>
-            </>
-          ) : (
+          {isEditMode ? (
             <>
               {renderBottomSheets()}
 
               {/* select delivery type view */}
               <TouchableOpacity
-                style={[styles.deliverySheetview]}
+                style={[
+                  styles.deliverySheetview,
+                  {justifyContent: 'space-between'},
+                ]}
                 activeOpacity={1}
                 onPress={handleLoadDeliveryBottomSheet}>
-                
                 <TouchableOpacity
                   onPress={handleLoadDeliveryBottomSheet}
                   style={[
                     styles.productView,
                     {
                       width: deviceWidth / 2.7,
-                      flex: 0.7,
-                      marginLeft: 5,
+                      flex: 0.6,
                     },
                   ]}
                   activeOpacity={ACTIVE_OPACITY}>
-                  <ProductSans
-                    style={[styles.productText, {flex: 1}]}
-                    numberOfLines={1}>
-                    {selectedDeliveryType?.locationname
-                      ? selectedDeliveryType?.locationname
-                      : 'Select a delivery type'}
-                  </ProductSans>
+                  {isEditMode ? (
+                    <ProductSans
+                      style={[styles.productText, {flex: 1}]}
+                      numberOfLines={1}>
+                      {selectedDeliveryType?.name ||
+                      selectedDeliveryType?.locationname
+                        ? selectedDeliveryType?.name ||
+                          selectedDeliveryType?.locationname
+                        : 'Select a delivery type'}
+                    </ProductSans>
+                  ) : (
+                    <ProductSans
+                      style={[styles.productText, {flex: 1}]}
+                      numberOfLines={1}>
+                      {selectedDeliveryType?.locationname
+                        ? selectedDeliveryType?.locationname
+                        : 'Select a delivery type'}
+                    </ProductSans>
+                  )}
                   <FontAwesome
                     name="angle-down"
                     size={hp(20)}
@@ -801,7 +850,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
                   />
                 </TouchableOpacity>
 
-                <AvertaBold style={styles.deliveryPrice}>
+                <AvertaBold style={[styles.deliveryPrice, {flex: 0.281}]}>
                   {selectedDeliveryType?.price
                     ? formatNumberComma(selectedDeliveryType?.price)
                     : 0}
@@ -810,7 +859,8 @@ const OrderDetailsScreen = ({navigation, route}) => {
 
               {/* grand total view */}
               <View style={[styles.grandTotalview]}>
-                <AvertaBold style={[styles.grandTotalText, {flex: 2}]}>
+                <AvertaBold
+                  style={[styles.grandTotalText, {flex: 2, left: 15}]}>
                   Grand Total
                 </AvertaBold>
                 <AvertaBold
@@ -819,7 +869,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
                 </AvertaBold>
               </View>
             </>
-          )}
+          ) : null}
         </View>
       );
     }
@@ -837,7 +887,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
       dismissBottomSheetDialog(productSheetRef);
     }
     if (isDelivery) {
-      setSelectedDelivery(item);
+      setSelectedDeliveryType(item);
       setDeliveryInputValue('');
       dismissBottomSheetDialog(deliverySheetRef);
     }
@@ -892,20 +942,24 @@ const OrderDetailsScreen = ({navigation, route}) => {
 
     setIsEditNoteMode(!isEditNoteMode);
   };
+  
   const handleAddNote = () => {
     setSpecialNote('');
     setIsAddNewNote(!isAddNewNote);
   };
+
   const handleCancelNote = () => {
     setSpecialNote('');
     setIsAddNewNote(false);
     setSelectedSpecialNote({});
     setIsEditNoteMode(false);
   };
+
   const handleProductSubmitSearchext = text => {
     console.log('submit text', productInputValue);
     //dispatch(ProductActions.searchAllBaseProducts(text, 400, 0));
   };
+
   const createSpecialNote = () => {
     if (!specialNote || specialNote.length < 1) {
       alert('Please input a note');
@@ -941,14 +995,97 @@ const OrderDetailsScreen = ({navigation, route}) => {
 
   const handleEditOrder = () => {
     console.log('submit order clicked');
-    setIsEditClicked(!isEditClicked);
-    setCustomerName(customerName);
+    setIsEditMode(!isEditMode);
+    setFullName(fullName);
     setPhoneNumber(phoneNumber);
     setAddress(address);
-    setAddressDescription(addressDescription);
+    setAdditionalAddressDescription(additionalAddressDescription);
     setSpecialNote(specialNote);
   };
 
+  const sendPatchRequest = async () => {
+    requestAnimationFrame(async () => {
+      if (!fullName) {
+        alert('Customer name is required');
+        return;
+      }
+      if (!phoneNumber) {
+        alert('Phone number is required');
+        return;
+      }
+      if (phoneNumber.length < 11) {
+        alert('Phone number must be 11 digits');
+        return;
+      }
+      // if(!newAddress){
+      //   alert("Address is required")
+      //   return
+      // }
+      if (orderItems.length == 0) {
+        alert('Please select at least one product');
+        return;
+      }
+      const orderId = data?.id;
+      const {id} = data?.customer;
+      var customerId = id;
+
+      const customerPayload = {
+        name: customerName,
+        phoneNumber: phoneNumber,
+        address: address,
+        addressdescription: additionalAddressDescription,
+      };
+      //console.log("customer payload is", customerPayload);
+      const orderPayload = {
+        specialNote,
+        order_items: {
+          set: orderItems?.map(({productid, quantity}, i) => {
+            return {
+              productid,
+              quantity,
+              orderId,
+            };
+          }),
+        },
+      };
+      if (selectedDeliveryType) {
+        orderPayload['deliveryTypeId'] = selectedDeliveryType?.id;
+      }
+
+      if (orderItems.length > 0) {
+        showLoader(loadingButtonRef);
+
+        dispatch(
+          patchOrder(
+            orderId,
+            customerId,
+            customerPayload,
+            orderPayload,
+            false,
+            periodType,
+          ),
+        ).then(result => {
+          if (result) {
+            // console.log("outside received", result)
+            showSuccessDialog();
+            setData(result);
+            set_Data(result);
+            setOrderItems(orderItems);
+            setIsLoading(false);
+            setIsEditClicked(false);
+
+            dispatch(
+              OrderActions.getAllOrders('', periodType, LIMIT_FIGURE, 0),
+            );
+            dispatch(OrderActions.getAllDashboardOrders('', periodType, 5, 0));
+            dispatch(UserActions.getDashboardStats(periodType));
+            dispatch(UserActions.getTopItemsAnalytics(periodType));
+          }
+        });
+        dismissLoader(loadingButtonRef);
+      }
+    });
+  };
   const displaySubmitButton = () => {
     return (
       <>
@@ -1001,9 +1138,9 @@ const OrderDetailsScreen = ({navigation, route}) => {
 
   const handleClickEvent = item => {
     console.log('item clicked is ', item);
-    if (item == 'edit') {
-      setIsEditMode(!isEditMode);
-    }
+    // if (item == 'edit') {
+    //   setIsEditMode(!isEditMode);
+    // }
   };
 
   return (

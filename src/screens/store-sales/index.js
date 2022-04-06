@@ -156,6 +156,7 @@ const StoreSalesScreen = ({navigation}) => {
           />
 
           <LoaderShimmerComponent isLoading={surplusLoading} />
+          <AddComponent goto={()=>navigation.navigate("AddStoreSale")}/>
         </KeyboardObserverComponent>
       </DismissKeyboard>
     </ViewProviderComponent>

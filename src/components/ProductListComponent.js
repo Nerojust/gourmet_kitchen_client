@@ -79,10 +79,8 @@ const ProductListComponent = ({
                   : null}
               </Averta>
             </View>
-            {!item?.categorySize? (
-              <ProductSans style={styles.itemPriceText}>
-                Custom
-              </ProductSans>
+            {!item?.categorySize ? (
+              <ProductSans style={styles.itemPriceText}>Custom</ProductSans>
             ) : (
               <ProductSans style={styles.itemPriceText}>
                 {NAIRA_ + formatNumberComma(item?.unitPrice)}
@@ -140,7 +138,10 @@ const ProductListComponent = ({
               borderWidth: 0,
             }}
             heightfigure={50}
-            onSubmitEditing={() => handleSearchInputSubmit()}
+            onSubmitEditing={() => {
+              Keyboard.dismiss();
+              handleSearchInputSubmit();
+            }}
           />
           <View style={{paddingBottom: 20}} />
           {dataSource && dataSource.length > 0 ? (
