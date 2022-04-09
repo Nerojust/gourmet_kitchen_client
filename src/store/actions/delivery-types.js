@@ -39,7 +39,7 @@ export const getAllDeliveryTypes = (keyword) => {
       })
       .catch((error) => {
         console.log('Failed getting delivery types');
-        handleError(error, dispatch, '');
+        //handleError(error, dispatch, 'get delivery types');
         dispatch({
           type: 'FETCH_ALL_DELIVERY_TYPES_FAILED',
           loading: false,

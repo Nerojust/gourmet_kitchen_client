@@ -1,7 +1,9 @@
+import {
+  Alert,
+} from 'react-native';
 import client from '../../utils/Api';
 import clientZupa from '../../utils/ApiZupa';
-import {dateFilterParser} from '../../utils/DateFilter';
-import {clearStorage, handleError} from '../../utils/utils';
+import {handleError} from '../../utils/utils';
 import {createCustomer} from './customers';
 
 export const setOrderStatus = status => {
@@ -81,10 +83,10 @@ export const getAllOrderedProductsStatsById = id => {
             dispatch({
               type: 'GET_SINGLE_PRODUCT_STAT_SUCCESS',
               loading: false,
-              data: response?.data?.results[0],
+              data: response?.data?.results,
             });
 
-            return response?.data?.results[0];
+            return response?.data?.results;
           } else {
             dispatch({
               type: 'GET_SINGLE_PRODUCT_STAT_FAILED',
@@ -126,7 +128,7 @@ export const getAllOrderedProducts = status => {
           //check status if it failed to patch from BE
           if (!status || status.length == 0) {
             //patch it
-            handleCompleteOrdersStatus(response?.data?.results,dispatch);
+            handleCompleteOrdersStatus(response?.data?.results, dispatch);
             //refresh list
             getAllOrderedProducts();
           }
@@ -158,11 +160,11 @@ export const getAllOrderedProducts = status => {
       });
   };
 };
-const handleCompleteOrdersStatus = (orders,dispatch) => {
+const handleCompleteOrdersStatus = (orders, dispatch) => {
   if (orders && orders.length > 0) {
     // console.log('here ');
     orders?.map(fullOrderItem => {
-     // console.log('fulfilled status', fullOrderItem?.isfulfilled);
+      // console.log('fulfilled status', fullOrderItem?.isfulfilled);
       let count = 0;
       if (fullOrderItem.isfulfilled == false) {
         //console.log('inside ');
@@ -188,7 +190,7 @@ const handleCompleteOrdersStatus = (orders,dispatch) => {
               );
               count = 0;
             }
-           //'count', count);
+            //'count', count);
           });
       }
     });
@@ -219,7 +221,7 @@ export const updateOrderListProductCount = payload => {
               loading: false,
               data: response?.data?.results,
             });
-            //dispatch(getAllOrderedProductsStats());
+            dispatch(getAllOrderedProductsStats());
             dispatch(getAllOrderedProducts());
             return response?.data?.results;
           } else {
@@ -244,7 +246,7 @@ export const updateOrderListProductCount = payload => {
 };
 
 export const updateSurplusStatusForOrderItemById = (id, payload) => {
-  console.log('About to update order status with id', id);
+  console.log('About to update surplus status with id', id,payload);
   return dispatch => {
     dispatch({
       type: 'UPDATE_SURPLUS_STATUS_ORDER_ITEM_PENDING',
@@ -252,7 +254,7 @@ export const updateSurplusStatusForOrderItemById = (id, payload) => {
       error: null,
     });
     var url = `/orders/updateSurplusStatusForOrderItem/${id}`;
-    //console.log("geturl", getUrl);
+    console.log("update surplus url", url);
     return client
       .patch(url, payload)
       .then(response => {
@@ -400,16 +402,64 @@ export const createOrder = (kitchenPayload, customerPayload, orderPayload) => {
         if (response.data?.isSuccessful) {
           console.log('Kitchen Order created successfully');
 
-          dispatch({
-            type: 'CREATE_ORDER_SUCCESS',
-            loading: false,
-          });
-
           //save to zupa too
           dispatch(createZupaOrder(customerPayload, orderPayload)).then(
-            result => {
-              if (result) {
+            (result, error) => {
+              if (!error) {
+                //console.log('zupa result save', error, result);
                 dispatch(getAllOrderedProducts(''));
+                dispatch({
+                  type: 'CREATE_ORDER_SUCCESS',
+                  loading: false,
+                });
+              } else {
+                //there was an error, process it
+                dispatch({
+                  type: 'CREATE_ORDER_FAILED',
+                  loading: false,
+                  error: error.message,
+                });
+
+                console.log('Error ooops ', error);
+                Alert.alert(
+                  'Alert',
+                  'Oops!, we could not create the order on Zupa',
+                  [
+                    {
+                      text: 'Never mind',
+                      onPress: () => {
+                        console.log('cancel Pressed');
+                        dispatch({
+                          type: 'CREATE_ORDER_SUCCESS',
+                          loading: false,
+                        });
+                      },
+                    },
+                    {
+                      text: 'Try Again',
+                      onPress: () => {
+                        dispatch(
+                          createZupaOrder(customerPayload, orderPayload),
+                        ).then((result, error) => {
+                          if (!error) {
+                            console.log('ZUPA ORDER CREATED ON SECOND TRY');
+                            dispatch({
+                              type: 'CREATE_ORDER_SUCCESS',
+                              loading: false,
+                            });
+                          } else {
+                            dispatch({
+                              type: 'CREATE_ORDER_FAILED',
+                              loading: false,
+                              error: error.message,
+                            });
+                          }
+                        });
+                      },
+                    },
+                  ],
+                  {cancelable: true},
+                );
               }
             },
           );
@@ -447,24 +497,25 @@ export const createZupaOrder = (customerPayload, orderPayload) => {
           .post(`/orders`, orderPayload)
           .then(response => {
             //console.log("response", response);
-            if (response.data) {
-              console.log('ZUPA order CREATED successfully');
+            if (response?.data) {
+              console.log('=========ZUPA ORDER CREATED successfully==========');
               dispatch({
                 type: 'CREATE_ORDER_SUCCESS',
                 loading: false,
               });
               //alert("Order created successfully");
-              return response.data;
+              return response?.data;
             }
           })
           .catch(error => {
-            console.log('Error creating ZUPA order ', error);
+            console.log('========Error creating ZUPA order=======', error);
             //handleError(error, dispatch, 'get orders list');
             dispatch({
               type: 'CREATE_ORDER_FAILED',
               loading: false,
               error: error.message,
             });
+            return error;
           });
       })
       .catch(err => {

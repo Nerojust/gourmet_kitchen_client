@@ -279,6 +279,20 @@ const OrderDetailsScreen = ({navigation, route}) => {
                 style={[styles.labelText, {paddingBottom: 12, left: 0}]}>
                 ORDERED PRODUCTS
               </ProductSansBold>
+              {order?.isonlineorder ? (
+                <ProductSansBold
+                  style={[
+                    styles.custName,
+                    {
+                      alignSelf: 'flex-end',
+                      fontWeight: '500',
+                      color: COLOURS.green2,
+                      fontSize: fp(12),
+                    },
+                  ]}>
+                  ONLINE ORDER
+                </ProductSansBold>
+              ) : null}
               {order?.isset ? (
                 <ProductSansBold
                   style={[
@@ -942,7 +956,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
 
     setIsEditNoteMode(!isEditNoteMode);
   };
-  
+
   const handleAddNote = () => {
     setSpecialNote('');
     setIsAddNewNote(!isAddNewNote);

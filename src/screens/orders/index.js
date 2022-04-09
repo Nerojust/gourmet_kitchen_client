@@ -48,13 +48,17 @@ const OrdersScreen = ({navigation}) => {
   const [isSearchClicked, setIsSearchClicked] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      fetchAllData(statusState);
-    });
-
     dispatch(getAllOrderedProducts(statusState));
-    return unsubscribe;
   }, [navigation, statusState, selectedTab]);
+
+  // useEffect(() => {
+  //   const unsubscribe = navigation.addListener('focus', () => {
+  //     fetchAllData(statusState);
+  //   });
+
+  //   dispatch(getAllOrderedProducts(statusState));
+  //   return unsubscribe;
+  // }, [navigation, statusState, selectedTab]);
 
   const fetchAllData = () => {
     dispatch(getAllOrderedProducts(statusState));
@@ -162,7 +166,9 @@ const OrdersScreen = ({navigation}) => {
     setSearchInputValue('');
     setIsSearchCleared(true);
   };
-
+const refreshData = ()=>[
+  fetchAllData()
+]
   return (
     <ViewProviderComponent>
       <HeaderComponent
@@ -171,6 +177,7 @@ const OrdersScreen = ({navigation}) => {
         performDelete={handleDeleteOrders}
         performSearch={handleSearch}
         shouldDisplayIcon={orders.length > 0}
+        performRefresh={refreshData}
       />
       {isSearchClicked ? (
         <SearchInputComponent
@@ -191,7 +198,14 @@ const OrdersScreen = ({navigation}) => {
         onPress2={handleIncompleteOrders}
         onPress3={handleCompleteOrders}
       />
-
+      <View style={{justifyContent: 'center', alignItems: 'flex-end', paddingRight:20}}>
+        <ProductSans style={{fontSize: 12, color: COLOURS.labelTextColor}}>
+         Total count:
+          {searchInputValue.length > 0
+            ? filteredOrdersData.length
+            : orders.length}
+        </ProductSans>
+      </View>
       <FlatList
         data={searchInputValue.length > 0 ? filteredOrdersData : orders}
         renderItem={renderItems}

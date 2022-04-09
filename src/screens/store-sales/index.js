@@ -146,6 +146,19 @@ const StoreSalesScreen = ({navigation}) => {
               cancelPress={handleCancelSearch}
             />
           ) : null}
+          <View
+            style={{
+              justifyContent: 'center',
+              alignItems: 'flex-end',
+              paddingRight: 20,
+            }}>
+            <ProductSans style={{fontSize: 12, color: COLOURS.labelTextColor}}>
+              Total count:
+              {searchInputValue.length > 0
+                ? filteredSurplusData.length
+                : surplus && sortArrayByDate(surplus, 'productname').length}
+            </ProductSans>
+          </View>
           <FlatList
             data={
               searchInputValue.length > 0

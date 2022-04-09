@@ -38,6 +38,7 @@ export const BackViewMoreSettings = ({
   performSearch,
   performDelete,
   shouldDisplayIcon,
+  performRefresh
 }) => {
   return (
     <View style={[styles.exitView]}>
@@ -56,6 +57,17 @@ export const BackViewMoreSettings = ({
         numberOfLines={1}>
         {backText}
       </ProductSansBold>
+      {shouldDisplayIcon ? (
+          <>
+            <TouchableOpacity onPress={performRefresh}>
+              <Image
+                source={require('../assets/images/refresh.png')}
+                style={styles.refreshImage}
+                resizeMode={'contain'}
+              />
+            </TouchableOpacity>
+          </>
+        ) : null}
       {shouldDisplayIcon ? (
         <>
           <TouchableOpacity onPress={performSearch}>
@@ -119,6 +131,11 @@ const styles = StyleSheet.create({
     width: wp(19),
     height: wp(19),
     marginLeft: 0,
+  },
+  refreshImage: {
+    width: wp(21),
+    height: wp(21),
+    left:-25
   },
   exitView: {
     flexDirection: 'row',

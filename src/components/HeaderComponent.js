@@ -18,6 +18,7 @@ export const HeaderComponent = ({
   performSearch,
   shouldDisplayIcon,
   handleMoreClick,
+  performRefresh,
 }) => {
   return (
     <View
@@ -38,6 +39,17 @@ export const HeaderComponent = ({
         <ProductSansBold style={[styles.titleHeaderText]}>
           {name}
         </ProductSansBold>
+        {shouldDisplayIcon ? (
+          <>
+            <TouchableOpacity onPress={performRefresh}>
+              <Image
+                source={require('../assets/images/refresh.png')}
+                style={styles.refreshImage}
+                resizeMode={'contain'}
+              />
+            </TouchableOpacity>
+          </>
+        ) : null}
         {shouldDisplayIcon ? (
           <>
             <TouchableOpacity onPress={performSearch}>
@@ -119,10 +131,15 @@ const styles = StyleSheet.create({
     height: wp(30),
     marginLeft: 20,
   },
+  refreshImage: {
+    width: wp(21),
+    height: wp(21),
+   // marginRight: 0,
+  },
   deleteImage: {
-    width: wp(19),
-    height: wp(19),
-    marginLeft: 20,
+    width: wp(15),
+    height: wp(15),
+    marginLeft: 24,
   },
   titleHeaderText: {
     fontSize: fp(20),

@@ -44,7 +44,7 @@ const BreadListDetailsScreen = ({navigation, route}) => {
   const [hasDateLoaded, setHasDateLoaded] = useState(false);
   const dispatch = useDispatch();
   const ovenCountRef = useRef();
-
+  const [isLoading, setIsLoading] = useState(false);
   const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false);
   const [fulfillFromSurplus, setFulfillFromSurplus] = useState(false);
   const {
@@ -56,12 +56,12 @@ const BreadListDetailsScreen = ({navigation, route}) => {
     countItem,
   } = useSelector(x => x.orders);
   //console.log('count item', countItem);
-  var {productid: id} = route.params.bread;
-  console.log('route.params.brea item', route.params.bread);
+  var {productid} = route.params.bread;
+  //console.log('route.params.brea item', route.params.bread);
   const [foundSurplus, setFoundSurplus] = useState();
   const [category, setCategory] = useState('');
   const [productsize, setProductsize] = useState('');
-  const [productid, setProductid] = useState('');
+  // const [productid, setProductid] = useState('');
   const [name, setName] = useState('');
   const [count, setCount] = useState(0);
   // console.log('state is ', selectedOrderStatus);
@@ -73,31 +73,47 @@ const BreadListDetailsScreen = ({navigation, route}) => {
   //console.log('surplus in breadlist ', surplus.length);
 
   useEffect(() => {
-    if (id) {
+    if (productid) {
       fetchAllData();
     }
-  }, [id, shouldDismissPage]);
+  }, [productid, shouldDismissPage]);
 
   const fetchAllData = () => {
-    dispatch(getAllOrderedProductsStatsById(id)).then(result => {
-      if (result) {
-        console.log('full bread count profile', result);
-        setCategory(result?.category);
-        setProductsize(result?.productsize);
-        setProductid(result?.productid);
-        setOrderProductIdFromPayload(result?.order_product_id);
-        setName(result?.name);
-        setCount(parseInt(result?.sum));
-        setHasDateLoaded(true);
+    dispatch(getAllSurplus()).then(resultData => {
+      if (resultData) {
+        dispatch(getAllOrderedProductsStatsById(productid)).then(result => {
+          if (result) {
+            //console.log('full bread count profile', result);
+            //pick the first object data because they are all the same values except sum
+            setCategory(result[0]?.category);
+            setProductsize(result[0]?.productsize);
+            //setProductid(result[0]?.productid);
+            setOrderProductIdFromPayload(result[0]?.id);
+            setName(result[0]?.name);
+            //calculate all the sum together
+            setCount(addAllCounts(result));
+            setHasDateLoaded(true);
+          }
+        });
       }
     });
-    dispatch(getAllSurplus());
   };
   const onRefresh = async () => {
     setHasDateLoaded(false);
     fetchAllData();
     setIsRefreshing(false);
   };
+
+  function addAllCounts(data) {
+    let countData = 0;
+    data.map((oneItem, i) => {
+      if (oneItem.sum) {
+        countData = countData + parseInt(oneItem.sum);
+      }
+    });
+    console.log('total sum for this item is ', countData);
+    return countData;
+  }
 
   useEffect(() => {
     if (surplus) {
@@ -302,18 +318,15 @@ const BreadListDetailsScreen = ({navigation, route}) => {
     let remainSurplusCount;
     let countTofulfill;
     if (foundSurplus && shouldUseSurplusTofulfill) {
-      if (foundSurplus?.count >= parseInt(countItem?.sum)) {
-        remainSurplusCount = foundSurplus?.count - parseInt(countItem?.sum);
+      if (foundSurplus?.count >= count) {
+        remainSurplusCount = foundSurplus?.count - count;
         console.log(
           'SURPLUS IS GREATER THAN REQUIRED COUNT',
           remainSurplusCount,
         );
-        countTofulfill = parseInt(countItem?.sum);
-      } else if (
-        foundSurplus.count < parseInt(countItem?.sum) &&
-        parseInt(countItem?.sum) > 0
-      ) {
-        remainSurplusCount = parseInt(countItem?.sum) - foundSurplus?.count;
+        countTofulfill = count;
+      } else if (foundSurplus.count < count && count > 0) {
+        remainSurplusCount = count - foundSurplus?.count;
         console.log(
           'REQUIRED COUNT IS GREATER THAN SURPLUS',
           remainSurplusCount,
@@ -325,22 +338,21 @@ const BreadListDetailsScreen = ({navigation, route}) => {
     var payload = {
       count: parseInt(ovenCount),
       productid: productid,
-      productsize: productsize,
-      // productcategory: category,
-      // fulfilledFromSurplus: false,
-      // id: id,
+      surplusCount,
     };
 
     var surplusPayload = {
       count: countTofulfill,
       productid: productid,
-      productsize: productsize,
-      //productcategory: category,
+      surplusCount,
+      wasFulfilledFromSurplus: shouldUseSurplusTofulfill,
+      orderProductIdFromPayload,
     };
     console.log(
       'payload',
       shouldUseSurplusTofulfill ? surplusPayload : payload,
     );
+    setIsLoading(true);
     //fulfill the item in breadlist
     dispatch(
       updateOrderListProductCount(
@@ -349,53 +361,53 @@ const BreadListDetailsScreen = ({navigation, route}) => {
     )
       .then((result, error) => {
         if (result) {
-          if (surplusCount > 0) {
-            handleCreateSurplus();
-          } else {
-            //if taken from surplus, update the surplus record in db to new count value
-            if (foundSurplus && shouldUseSurplusTofulfill) {
-              dispatch(
-                updateSurplusById(foundSurplus?.id, {
-                  count: foundSurplus?.count - countTofulfill,
-                }),
-              );
-              //update the order product
-              dispatch(
-                updateSurplusStatusForOrderItemById(id, {
-                  surplusCountFulfilled: countTofulfill,
-                  wasFulfilledFromSurplus: shouldUseSurplusTofulfill,
-                }),
-              ).then(result => {
-                //console.log('ressss', result);
-                if (result) {
-                  dispatch(getAllOrderedProductsStatsById(id)).then(
-                    newResult => {
-                      if (newResult) {
-                        //console.log('count sum is ', newResult?.sum);
-                        if (parseInt(newResult?.sum) > 0) {
-                          console.log('insidee ----------');
-                          showSuccessDialog(false);
-                          setShouldDismissPage(false);
-                        }
-                      } else {
-                        showSuccessDialog(true);
-                      }
-                    },
-                  );
-                }
-              });
-            } else {
-              showSuccessDialog(true);
-            }
+          if (foundSurplus && shouldUseSurplusTofulfill) {
+            console.log(
+              'subtracting from found surplus',
+              foundSurplus?.count - countTofulfill,
+            );
+            dispatch(
+              updateSurplusById(foundSurplus?.id, {
+                count: foundSurplus?.count - countTofulfill,
+              }),
+            );
 
-            resetFields();
+            console.log(
+              'Before updating order status, surplus count is ',
+              countTofulfill,
+            );
+
+            //get this page data again
+            dispatch(getAllOrderedProductsStatsById(productid)).then(
+              newResult => {
+                //console.log('new result data is ', newResult);
+
+                if (newResult.length > 0) {
+                  setIsLoading(false);
+                  showSuccessDialog(false);
+                  setShouldDismissPage(false);
+                } else {
+                  showSuccessDialog(true);
+                  setShouldDismissPage(true);
+                  setIsLoading(false);
+                }
+              },
+            );
+          } else {
+            showSuccessDialog(true);
+            setIsLoading(false);
           }
+          //}
+          if (isLoading) {
+            setIsLoading(false);
+          }
+          resetFields();
         }
       })
       .catch(error => {
         console.log('update error', error);
+        setIsLoading(false);
       });
-
   };
 
   const displayChooseDialog = () => {
@@ -507,9 +519,11 @@ const BreadListDetailsScreen = ({navigation, route}) => {
             renderItem={null}
             keyExtractor={item => item.id}
           />
-          <LoaderShimmerComponent isLoading={ordersLoading} />
-          <LoaderShimmerComponent isLoading={updateOrderLoading} />
-          <LoaderShimmerComponent isLoading={updateSurplusOrderLoading} />
+          <LoaderShimmerComponent isLoading={isLoading} />
+          <LoaderShimmerComponent isLoading={surplusLoading} />
+          {/* <LoaderShimmerComponent isLoading={ordersLoading} /> */}
+          {/* <LoaderShimmerComponent isLoading={updateOrderLoading} />
+          <LoaderShimmerComponent isLoading={updateSurplusOrderLoading} /> */}
         </KeyboardObserverComponent>
       </DismissKeyboard>
     </ViewProviderComponent>

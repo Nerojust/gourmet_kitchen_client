@@ -43,19 +43,22 @@ const BreadListScreen = ({navigation}) => {
 
   //console.log('products', orderedProducts);
 
+  // useEffect(() => {
+  //   const unsubscribe = navigation.addListener('focus', () => {
+  //     fetchAllData();
+  //   });
+  //   fetchAllData();
+  //   return unsubscribe;
+  // }, [navigation]);
   useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      fetchAllData();
-    });
     fetchAllData();
-    return unsubscribe;
-  }, [navigation]);
+  }, []);
 
   const fetchAllData = () => {
     dispatch(getAllOrderedProductsStats());
   };
   const handleClick = item => {
-    console.log("item",item)
+    console.log('item', item);
     navigation.navigate('BreadListDetails', {
       bread: item,
     });
@@ -117,6 +120,7 @@ const BreadListScreen = ({navigation}) => {
             performSearch={handleSearch}
             shouldDisplayIcon={orderedProducts.length > 0}
             handleClick={openSettingsMenu}
+            performRefresh={() => fetchAllData()}
           />
           {isSearchClicked ? (
             <SearchInputComponent
@@ -127,6 +131,19 @@ const BreadListScreen = ({navigation}) => {
               cancelPress={handleCancelSearch}
             />
           ) : null}
+          <View
+            style={{
+              justifyContent: 'center',
+              alignItems: 'flex-end',
+              paddingRight: 20,
+            }}>
+            <ProductSans style={{fontSize: 12, color: COLOURS.labelTextColor}}>
+              Total count:
+              {searchInputValue.length > 0
+                ? filteredOrdersData.length
+                : sortArrayByDate(orderedProducts, 'name').length}
+            </ProductSans>
+          </View>
           <FlatList
             // data={sortArrayData(orderedProducts, 'name')}
             data={

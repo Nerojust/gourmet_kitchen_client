@@ -45,7 +45,7 @@ import QuantityProductComponent from '../../components/QuantityProductComponent'
 import {ACTIVE_OPACITY, DIALOG_TIMEOUT, NAIRA} from '../../utils/Constants';
 import AvertaBold from '../../components/Text/AvertaBold';
 import Averta from '../../components/Text/Averta';
-import {useDispatch,useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {IMAGES} from '../../utils/Images';
 import CustomSuccessModal from '../../components/CustomSuccessModal';
 import {createOrder, createZupaOrder} from '../../store/actions/orders';
@@ -110,6 +110,7 @@ const NewOrderScreen = ({navigation}) => {
   //console.log("sets",sets)
   const [mainDeliveryArray, setmainDeliveryArray] = useState([]);
   const [isDeliveryModalVisible, setIsDeliveryModalVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const {deliveryTypes, deliveryTypesLoading, deliveryStates} = useSelector(
     state => state.deliveryTypes,
   );
@@ -580,7 +581,6 @@ const NewOrderScreen = ({navigation}) => {
               style={[styles.deliverySheetview]}
               activeOpacity={1}
               onPress={handleLoadDeliveryBottomSheet}>
-              
               <TouchableOpacity
                 onPress={handleLoadDeliveryBottomSheet}
                 style={[
@@ -607,13 +607,11 @@ const NewOrderScreen = ({navigation}) => {
                 />
               </TouchableOpacity>
 
-        
-                <AvertaBold style={[styles.deliveryPrice,{flex:1,left:65}]}>
-                  {selectedDelivery?.price
-                    ? formatNumberComma(selectedDelivery?.price)
-                    : null}
-                </AvertaBold>
-         
+              <AvertaBold style={[styles.deliveryPrice, {flex: 1, left: 65}]}>
+                {selectedDelivery?.price
+                  ? formatNumberComma(selectedDelivery?.price)
+                  : null}
+              </AvertaBold>
             </TouchableOpacity>
 
             {newBasketArray[0]?.selectedProduct?.type != 'custom' ? (
@@ -688,7 +686,7 @@ const NewOrderScreen = ({navigation}) => {
           marginHorizontal: 20,
           alignItems: 'center',
         }}>
-        <Text style={{color: COLOURS.white, fontSize: 14,fontWeight: '700'}}>
+        <Text style={{color: COLOURS.white, fontSize: 14, fontWeight: '700'}}>
           Submit
         </Text>
         {/* <LoaderButtonComponent
@@ -752,8 +750,8 @@ const NewOrderScreen = ({navigation}) => {
           latitude: '6.430118879280349',
           longitude: '3.4881381695005618',
         },
-        discountType: 'amount',
-        discountValue: null,
+        // discountType: 'amount',
+        // discountValue: null,
         order_items: {
           add: newBasketArray.map((data, i) => {
             //console.log("map", i, data);
@@ -831,11 +829,12 @@ const NewOrderScreen = ({navigation}) => {
       console.log('order payload', orderPayload);
       console.log('order items', orderPayload.order_items);
       console.log('kitchen payload', kitchen_payload);
-
+      setIsLoading(true);
       dispatch(createOrder(kitchen_payload, customerPayload, orderPayload))
         .then(response => {
           //console.log("inside result", response);
           if (response) {
+            setIsLoading(false);
             showSuccessDialog();
             resetFields();
           }
@@ -976,7 +975,7 @@ const NewOrderScreen = ({navigation}) => {
             ListHeaderComponent={renderInputFields()}
             renderItem={null}
           />
-          <LoaderShimmerComponent isLoading={createOrderLoading} />
+          <LoaderShimmerComponent isLoading={isLoading} />
         </KeyboardObserverComponent>
       </DismissKeyboard>
     </ViewProviderComponent>
