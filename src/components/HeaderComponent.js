@@ -132,8 +132,8 @@ const styles = StyleSheet.create({
     marginLeft: 20,
   },
   refreshImage: {
-    width: wp(21),
-    height: wp(21),
+    width: wp(18),
+    height: wp(18),
    // marginRight: 0,
   },
   deleteImage: {

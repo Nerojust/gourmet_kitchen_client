@@ -3,6 +3,7 @@ import {
 } from 'react-native';
 import client from '../../utils/Api';
 import clientZupa from '../../utils/ApiZupa';
+import { LOGIN_TOKEN } from '../../utils/Constants';
 import {handleError} from '../../utils/utils';
 import {createCustomer} from './customers';
 
@@ -117,6 +118,7 @@ export const getAllOrderedProducts = status => {
     });
     var getUrl = `/orders?status=${status}`;
     console.log('geturl', getUrl);
+    //client.defaults.headers.common['Authorization'] = `Bearer ${LOGIN_TOKEN}`;
     return client
       .get(getUrl)
       .then(response => {

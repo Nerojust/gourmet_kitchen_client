@@ -23,3 +23,5 @@ export const APP_TOKEN =
 //test token
 // export const APP_TOKEN =
 //   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTY0NjY0OTE0MywiZXhwIjoxNjc4MjA2NzQzfQ.CkSmL3ocI5-0_mb0NElW6TkwXp5adLf1K7wH043tIN4';
+export const LOGIN_TOKEN =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im5lcm9qdXN0QGdtYWlsLmNvbSIsInBhc3N3b3JkIjoiMTIzNDU2IiwiaWF0IjoxNjQ5NzExNjUyLCJleHAiOjE2NTgzNTE2NTJ9.Q2ep4A2kBfBfZ5WFLk4fT0X0B-CY1-8id_bSBbj-7w0';

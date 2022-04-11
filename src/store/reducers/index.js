@@ -3,10 +3,11 @@ import {combineReducers} from 'redux';
 import orders from './orders';
 import products from './products';
 import surplus from './surplus';
-import sets from './sets'
-import customers from './customers'
-import notes from './notes'
-import deliveryTypes from './delivery-types'
+import sets from './sets';
+import customers from './customers';
+import notes from './notes';
+import deliveryTypes from './delivery-types';
+import users from './users';
 
 export default combineReducers({
   orders,
@@ -15,5 +16,6 @@ export default combineReducers({
   sets,
   customers,
   notes,
-  deliveryTypes
+  deliveryTypes,
+  users,
 });
