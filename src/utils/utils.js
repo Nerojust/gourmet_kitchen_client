@@ -43,6 +43,16 @@ export function findEarliestDate(dates) {
   }
   return earliestDate;
 }
+export const emailValidator = value => {
+  var re =
+    /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(String(value).toLowerCase());
+};
+export const isAlphaNumeric = value => {
+  var re = /^([a-zA-Z ]*)$/;
+  return re.test(value);
+};
+
 export const showLoader = ref => {
   ref.current.showLoading(true);
 };
@@ -196,7 +206,7 @@ export const validateNumber = number => {
     //Alert.alert('Invalid number character/s');
     return false;
   }
- // console.log(num.test(number));
+  // console.log(num.test(number));
   return true;
 };
 

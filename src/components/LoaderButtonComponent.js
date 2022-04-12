@@ -16,6 +16,7 @@ const LoaderButtonComponent = ({buttonRef, title, method}) => {
         width={deviceWidth / 1.15}
         height={50}
         title={title}
+        onPress={null}
         //titleFontFamily={'Averta-Bold'}
         titleFontSize={fp(15)}
         titleColor={COLOURS.white}

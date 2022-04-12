@@ -26,6 +26,7 @@ import SearchInputComponent from '../../components/SearchInputComponent';
 import SliderTabComponent from '../../components/SliderTabComponent';
 import {useIsFocused} from '@react-navigation/native';
 import {HeaderComponent} from '../../components/HeaderComponent';
+import AsyncStorage from '@react-native-community/async-storage';
 
 // create a component
 const OrdersScreen = ({navigation}) => {
@@ -46,6 +47,23 @@ const OrdersScreen = ({navigation}) => {
   const [selectedTab, setSelectedTab] = useState(0);
   const [isTabClicked, setIsTabClicked] = useState(false);
   const [isSearchClicked, setIsSearchClicked] = useState(false);
+
+  const {loginError,accessToken} = useSelector(x => x.users);
+  //console.log("token is redux",accessToken)
+
+  useEffect(() => {
+    getAllKeys = async () => {
+      let keys = [];
+      try {
+        keys = await AsyncStorage.getAllKeys();
+      } catch (e) {
+        // read key error
+      }
+
+      console.log('All storage keys', keys);
+    };
+    getAllKeys();
+  }, []);
 
   useEffect(() => {
     dispatch(getAllOrderedProducts(statusState));

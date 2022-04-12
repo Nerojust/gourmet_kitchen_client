@@ -1,125 +1,68 @@
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {
   View,
   StyleSheet,
-  TextInput,
-  StatusBar,
   TouchableOpacity,
-  ImageBackground,
-  ScrollView,
-  TouchableWithoutFeedback,
-  SafeAreaView,
-  KeyboardAvoidingView,
   Platform,
   Keyboard,
-  FlatList
+  Text,
+  FlatList,
 } from 'react-native';
-import {
-  wp,
-  hp,
-  deviceWidth,
-  deviceHeight,
-  fp
-} from '../../shared/utils/responsive-screen';
-import { useDispatch, useSelector } from 'react-redux';
-import * as UserActions from '../../shared/store/redux/actions/users';
-import Loader from '../../components/Loader';
-import { emailValidator } from '../../shared/utils/validation';
+
+import {useDispatch, useSelector} from 'react-redux';
+
+import TextInputComponent from '../../components/TextInputComponent';
+import LoaderButtonComponent from '../../components/LoaderButtonComponent';
+import ProductSansBold from '../../components/Text/ProductSansBold';
+import ProductSans from '../../components/Text/ProductSans';
+import {BackViewMoreSettings} from '../../components/Header';
+import {KeyboardObserverComponent} from '../../components/KeyboardObserverComponent';
+import ViewProviderComponent from '../../components/ViewProviderComponent';
+import useKeyboardHeight from 'react-native-use-keyboard-height';
+import {login} from '../../store/actions/users';
 import {
   DismissKeyboard,
   dismissLoader,
-  showLoader
-} from '../../shared/utils/utitlity';
-import { COLOURS } from '../../shared/Themes/Colors';
-import { IMAGES } from '../../shared/Themes/Images';
-import TextInputComponent from '../../components/TextInputComponent';
-import AnimateLoadingButton from 'react-native-animate-loading-button';
-import LoaderButtonComponent from '../../components/LoaderButtonComponent';
-import ProductSansBold from '../../components/Text/ProductSansBold';
-import ImageBgComponent from '../../components/ImageBgComponent';
-import ProductSans from '../../components/Text/ProductSans';
+  emailValidator,
+  showLoader,
+} from '../../utils/utils';
+import {ACTIVE_OPACITY} from '../../utils/Constants';
 import {
-  clearDashboardOrdersToPrint,
-  clearOrdersArray,
-  clearOrdersStatusArray,
-  clearPrinterConnectionState
-} from '../../shared/store/redux/actions/orders';
-import { clearProductsArray } from '../../shared/store/redux/actions/products';
-import { clearCategoriesArray } from '../../shared/store/redux/actions/categories';
-import { clearCustomersArray } from '../../shared/store/redux/actions/customers';
-import { clearDeliveryTypesArray } from '../../shared/store/redux/actions/delivery-types';
-import { clearCouponArray } from '../../shared/store/redux/actions/coupons';
-import { BackViewMoreSettings } from '../../components/Header';
-import { KeyboardObserverComponent } from '../../components/KeyboardObserverComponent';
-import ViewProviderComponent from '../../components/ViewProviderComponent';
-import { ACTIVE_OPACITY } from '../../shared/utils/Constants';
-import useKeyboardHeight from 'react-native-use-keyboard-height';
+  deviceHeight,
+  deviceWidth,
+  fp,
+  hp,
+  wp,
+} from '../../utils/responsive-screen';
+import {COLOURS} from '../../utils/Colours';
+import LoaderShimmerComponent from '../../components/LoaderShimmerComponent';
+import AsyncStorage from '@react-native-community/async-storage';
 
-const Login = ({ navigation }) => {
+const LoginScreen = ({navigation}) => {
   const dispatch = useDispatch();
   const keyboardHeight = useKeyboardHeight();
   const [isEmailFocused, setIsEmailFocused] = useState(false);
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
-  const { loginError } = useSelector((x) => x.users);
+  const [isLoading, setIsLoading] = useState(false);
+  const {loginError, accessToken} = useSelector(x => x.users);
+  console.log('token is ', accessToken);
+
   //console.log("error from login", error);
 
   // const [email, setEmail] = useState('zupa@intelia.io');
   // const [password, setPassword] = useState('Pass#Secret');
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  // const [email, setEmail] = useState('');
+  // const [password, setPassword] = useState('');
 
-  // const [email, setEmail] = useState('nerojust4@gmail.com');
-  // const [password, setPassword] = useState('123456');
+  const [email, setEmail] = useState('nerojust@gmail.com');
+  const [password, setPassword] = useState('123456');
 
   // const [email, setEmail] = useState('Udoka@hoppr.ai')
   // const [password, setPassword] = useState('pass1881');
 
-  // const [email, setEmail] = useState('billytest@test.com');
-  // const [password, setPassword] = useState('123456');
-
-  // const [email, setEmail] = useState("samuel@test.com");
-  // const [password, setPassword] = useState("123456");
-
-  // const [email, setEmail] = useState("fortune@test.com");
-  // const [password, setPassword] = useState("123456");
-
-  // const [email, setEmail] = useState("blessing@test.com");
-  // const [password, setPassword] = useState("123456");
-
-  // const [email, setEmail] = useState("boist@test.com");
-  // const [password, setPassword] = useState("123456");
-
-  // const [email, setEmail] = useState("magicmike@test.com");
-  // const [password, setPassword] = useState("123456");
-
-  // const [email, setEmail] = useState("bolatest@email.com");
-  // const [password, setPassword] = useState("123456");
-
-  // const [email, setEmail] = useState("nerojust3@gmail.com");
-  // const [password, setPassword] = useState("1234567");
-
-  //const [email, setEmail] = useState('testemail@test12.com');
-  //const [password, setPassword] = useState('123456');
-
-  // const [email, setEmail] = useState("user@example.com")
-  // const [password, setPassword] = useState("password")
-
   const passwordRef = useRef(null);
   var loadingButtonRef = useRef();
-
-  useEffect(() => {
-    dispatch(UserActions.clearStatsArray());
-    dispatch(clearOrdersArray());
-    dispatch(clearProductsArray());
-    dispatch(clearCategoriesArray());
-    dispatch(clearCustomersArray());
-    dispatch(clearOrdersStatusArray());
-    dispatch(clearCouponArray());
-    dispatch(clearDeliveryTypesArray());
-    dispatch(clearDashboardOrdersToPrint());
-    dispatch(clearPrinterConnectionState());
-  }, []);
 
   const onSubmit = async () => {
     requestAnimationFrame(() => {
@@ -139,53 +82,69 @@ const Login = ({ navigation }) => {
       }
 
       handleClose();
-      showLoader(loadingButtonRef);
+      setIsLoading(true);
 
       var payload = {
         email: email.toLowerCase(),
-        password
+        password,
       };
 
-      dispatch(UserActions.login(payload)).then((result) => {
+      dispatch(login(payload)).then(result => {
         //console.log("result", result)
         if (result && result?.jwt) {
           //console.log("result login", result);
-          dismissLoader(loadingButtonRef);
+          // dismissLoader(loadingButtonRef);
+          setIsLoading(false);
         }
-        dismissLoader(loadingButtonRef);
       });
 
       if (loginError) {
         console.log('login error', loginError);
         //alert(loginError);
-        dismissLoader(loadingButtonRef);
+        // dismissLoader(loadingButtonRef);
+        setIsLoading(false);
         return;
       }
-      dismissLoader(loadingButtonRef);
+      setIsLoading(false);
     });
   };
 
-  const handleEmail = (text) => {
+  const handleEmail = text => {
     setEmail(text);
   };
 
-  const handlePassword = (text) => {
+  const handlePassword = text => {
     setPassword(text);
   };
 
-  const renderButton = () => {
+  const displaySubmitButton = () => {
     return (
-      <>
-        <LoaderButtonComponent
-          buttonRef={loadingButtonRef}
-          title={'Sign In'}
-          method={onSubmit}
-        />
+      <TouchableOpacity
+        onPress={onSubmit}
+        style={{
+          marginTop: 5,
 
-        <View style={{ marginBottom: 20 }} />
-      </>
+          justifyContent: 'center',
+          marginBottom:
+            keyboardHeight > 0 ? (Platform.OS == 'ios' ? 270 : 100) : 20,
+          backgroundColor: COLOURS.blue,
+          height: 50,
+          borderRadius: 10,
+          marginHorizontal: 20,
+          alignItems: 'center',
+        }}>
+        <Text style={{color: COLOURS.white, fontSize: 14, fontWeight: '700'}}>
+          Submit
+        </Text>
+        {/* <LoaderButtonComponent
+          buttonRef={submitOrderRef}
+          title={'Submit Order'}
+          method={handleAddProduct}
+        /> */}
+      </TouchableOpacity>
     );
   };
+
   const renderInputFields = () => {
     return (
       <>
@@ -200,15 +159,15 @@ const Login = ({ navigation }) => {
           keyboardType={'email-address'}
           props={
             isEmailFocused
-              ? { borderColor: COLOURS.blue, color: COLOURS.textInputColor }
-              : { borderColor: COLOURS.zupa_gray_bg }
+              ? {borderColor: COLOURS.blue, color: COLOURS.textInputColor}
+              : {borderColor: COLOURS.zupa_gray_bg}
           }
           handleTextInputFocus={() => setIsEmailFocused(true)}
           handleBlur={() => setIsEmailFocused(false)}
           onSubmitEditing={() => passwordRef.current.focus()}
         />
 
-        <View style={{ marginVertical: 10 }} />
+        <View style={{marginVertical: 10}} />
 
         <TextInputComponent
           defaultValue={password.trim()}
@@ -223,14 +182,14 @@ const Login = ({ navigation }) => {
           secureTextEntry
           props={
             isPasswordFocused
-              ? { borderColor: COLOURS.blue, color: COLOURS.textInputColor }
-              : { borderColor: COLOURS.zupa_gray_bg }
+              ? {borderColor: COLOURS.blue, color: COLOURS.textInputColor}
+              : {borderColor: COLOURS.zupa_gray_bg}
           }
           handleTextInputFocus={() => setIsPasswordFocused(true)}
           handleBlur={() => setIsPasswordFocused(false)}
           onSubmitEditing={onSubmit}
         />
-        <View style={{ marginVertical: 10 }} />
+        <View style={{marginVertical: 10}} />
       </>
     );
   };
@@ -246,21 +205,18 @@ const Login = ({ navigation }) => {
                 ? Platform.OS == 'ios'
                   ? keyboardHeight - hp(150)
                   : 0
-                : 0
-          }
-        ]}
-      >
+                : 0,
+          },
+        ]}>
         <TouchableOpacity
           activeOpacity={ACTIVE_OPACITY}
-          onPress={() => navigation.navigate('SignUp')}
-        >
+          onPress={() => navigation.navigate('SignUp')}>
           <ProductSans style={[styles.signupView]}>Sign up instead</ProductSans>
         </TouchableOpacity>
 
         <TouchableOpacity
           activeOpacity={ACTIVE_OPACITY}
-          onPress={() => navigation.navigate('PasswordReset')}
-        >
+          onPress={() => navigation.navigate('PasswordReset')}>
           <ProductSans style={styles.forgotPasswordView}>
             Forgot Password?
           </ProductSans>
@@ -275,7 +231,7 @@ const Login = ({ navigation }) => {
     <ViewProviderComponent>
       <BackViewMoreSettings
         backText=""
-        style={{ width: deviceWidth, borderBottomWidth: 0 }}
+        style={{width: deviceWidth, borderBottomWidth: 0}}
         onClose={() => navigation.goBack()}
       />
       <FlatList
@@ -288,10 +244,9 @@ const Login = ({ navigation }) => {
               <View
                 style={{
                   justifyContent: 'center',
-                  height: fp(deviceHeight - wp(125))
-                }}
-              >
-                <View style={{ marginLeft: 25 }}>
+                  height: fp(deviceHeight - wp(125)),
+                }}>
+                <View style={{marginLeft: 25}}>
                   <ProductSansBold style={styles.welcomeTextView}>
                     Sign In
                   </ProductSansBold>
@@ -302,37 +257,38 @@ const Login = ({ navigation }) => {
                 </View>
                 {renderInputFields()}
 
-                {renderButton()}
+                {displaySubmitButton()}
                 {renderBottomRow()}
+                <LoaderShimmerComponent isLoading={isLoading} />
               </View>
             </KeyboardObserverComponent>
           </DismissKeyboard>
         }
         renderItem={null}
-        keyExtractor={(item) => item?.id}
+        keyExtractor={item => item?.id}
       />
     </ViewProviderComponent>
   );
 };
 
-export default Login;
+export default LoginScreen;
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: COLOURS.zupa_gray_bg,
-    flex: 1
+    flex: 1,
     //alignItems: 'center',
   },
 
   welcomeTextView: {
     fontSize: fp(30),
-    color: COLOURS.text_color
+    color: COLOURS.text_color,
   },
   signInTextView: {
     fontSize: fp(14),
     color: COLOURS.textInputColor,
     marginTop: 15,
-    marginBottom: 30
+    marginBottom: 30,
   },
 
   button: {
@@ -343,12 +299,12 @@ const styles = StyleSheet.create({
     right: -5,
     alignItems: 'center',
     borderRadius: 10,
-    backgroundColor: COLOURS.blue
+    backgroundColor: COLOURS.blue,
   },
 
   buttonText: {
     color: COLOURS.white,
-    fontSize: fp(16)
+    fontSize: fp(16),
   },
 
   signUpPasswordRowView: {
@@ -356,15 +312,15 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginHorizontal: 25,
-    marginTop: 10
+    marginTop: 10,
   },
   signupView: {
     fontSize: fp(14),
-    color: COLOURS.blue
+    color: COLOURS.blue,
   },
 
   forgotPasswordView: {
     fontSize: fp(14),
-    color: COLOURS.labelTextColor
-  }
+    color: COLOURS.labelTextColor,
+  },
 });
