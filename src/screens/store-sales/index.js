@@ -134,6 +134,7 @@ const StoreSalesScreen = ({navigation}) => {
             onClose={() => navigation.goBack()}
             shouldDisplayIcon={surplus && surplus.length > 0}
             performSearch={handleSearch}
+            shouldDisplayBackArrow={true}
             displayDelete={false}
             performDelete={handleDeleteOrders}
           />

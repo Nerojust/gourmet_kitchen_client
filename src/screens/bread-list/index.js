@@ -117,6 +117,7 @@ const BreadListScreen = ({navigation}) => {
             backText="Pending Bread List"
             onClose={() => navigation.goBack()}
             shouldDisplaySettingIcon
+            shouldDisplayBackArrow={true}
             performSearch={handleSearch}
             shouldDisplayIcon={orderedProducts.length > 0}
             handleClick={openSettingsMenu}

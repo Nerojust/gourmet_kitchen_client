@@ -134,7 +134,7 @@ const LoginScreen = ({navigation}) => {
           alignItems: 'center',
         }}>
         <Text style={{color: COLOURS.white, fontSize: 14, fontWeight: '700'}}>
-          Submit
+          Sign In
         </Text>
         {/* <LoaderButtonComponent
           buttonRef={submitOrderRef}
@@ -214,13 +214,13 @@ const LoginScreen = ({navigation}) => {
           <ProductSans style={[styles.signupView]}>Sign up instead</ProductSans>
         </TouchableOpacity>
 
-        <TouchableOpacity
+        {/* <TouchableOpacity
           activeOpacity={ACTIVE_OPACITY}
           onPress={() => navigation.navigate('PasswordReset')}>
           <ProductSans style={styles.forgotPasswordView}>
             Forgot Password?
           </ProductSans>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     );
   };
@@ -232,6 +232,7 @@ const LoginScreen = ({navigation}) => {
       <BackViewMoreSettings
         backText=""
         style={{width: deviceWidth, borderBottomWidth: 0}}
+        shouldDisplayBackArrow={false}
         onClose={() => navigation.goBack()}
       />
       <FlatList

@@ -559,6 +559,7 @@ const NewSetScreen = ({navigation}) => {
         <KeyboardObserverComponent>
           <BackViewMoreSettings
             backText="Create Set"
+            shouldDisplayBackArrow={true}
             onClose={() => navigation.goBack()}
           />
           {renderSuccessModal()}

@@ -3,7 +3,7 @@ import {
   View,
   StyleSheet,
   TouchableOpacity,
-  Keyboard,
+  Keyboard,Text,
   FlatList,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
@@ -94,6 +94,35 @@ const SignUpScreen = ({navigation}) => {
       dismissLoader(loadingButtonRef);
     });
   };
+
+  const displaySubmitButton = () => {
+    return (
+      <TouchableOpacity
+        onPress={onSubmit}
+        style={{
+          marginTop: 5,
+
+          justifyContent: 'center',
+          marginBottom:
+            keyboardHeight > 0 ? (Platform.OS == 'ios' ? 270 : 100) : 20,
+          backgroundColor: COLOURS.blue,
+          height: 50,
+          borderRadius: 10,
+          marginHorizontal: 20,
+          alignItems: 'center',
+        }}>
+        <Text style={{color: COLOURS.white, fontSize: 14, fontWeight: '700'}}>
+          Sign Up
+        </Text>
+        {/* <LoaderButtonComponent
+          buttonRef={submitOrderRef}
+          title={'Submit Order'}
+          method={handleAddProduct}
+        /> */}
+      </TouchableOpacity>
+    );
+  };
+
   const resetFields = () => {
     setFirstName('');
     setLastName('');
@@ -113,7 +142,7 @@ const SignUpScreen = ({navigation}) => {
       <CustomSuccessModal
         isModalVisible={isSuccessModalVisible}
         dismissModal={showSuccessDialog}
-        message={'Registration successful'}
+        message={'Registration successful, please login with your new credentials'}
         // onPressButton={showSuccessDialog}
       />
     );
@@ -255,6 +284,7 @@ const SignUpScreen = ({navigation}) => {
           handleBlur={() => setIsPasswordFocused(false)}
           onSubmitEditing={onSubmit}
         />
+         <View style={{marginVertical: 10}} />
       </>
     );
   };
@@ -269,6 +299,7 @@ const SignUpScreen = ({navigation}) => {
       <BackViewMoreSettings
         backText=""
         style={{width: deviceWidth, borderBottomWidth: 0}}
+        shouldDisplayBackArrow={true}
         onClose={() => navigation.goBack()}
       />
       <FlatList
@@ -279,13 +310,13 @@ const SignUpScreen = ({navigation}) => {
           <DismissKeyboard handleClose={handleClose}>
             <KeyboardObserverComponent>
               <>
-                <View style={{marginLeft: fp(30)}}>
+                <View style={{marginLeft: fp(30),marginBottom:20}}>
                   <ProductSansBold style={styles.welcomeTextView}>
                     Sign Up
                   </ProductSansBold>
                 </View>
                 {renderInputFields()}
-                {renderButton()}
+                {displaySubmitButton()}
                 {renderSignInView()}
                 {renderSuccessModal()}
 

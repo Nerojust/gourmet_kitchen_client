@@ -364,6 +364,7 @@ const NewStoreSalesScreen = ({navigation}) => {
         <KeyboardObserverComponent>
           <BackViewMoreSettings
             backText="New Surplus"
+            shouldDisplayBackArrow={true}
             onClose={() => navigation.goBack()}
           />
           {renderSuccessModal()}

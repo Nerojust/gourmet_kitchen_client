@@ -496,6 +496,7 @@ const BreadListDetailsScreen = ({navigation, route}) => {
       <DismissKeyboard>
         <KeyboardObserverComponent>
           <BackViewMoreSettings
+           shouldDisplayBackArrow={true}
             backText={route?.params?.bread?.name || 'Bread List Details'}
             onClose={() => navigation.goBack()}
           />

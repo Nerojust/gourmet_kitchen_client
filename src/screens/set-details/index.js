@@ -161,6 +161,7 @@ const SetDetailsScreen = ({navigation, route}) => {
             backText={route.params.set.name + ' Details'}
             onClose={() => navigation.goBack()}
             shouldDisplayDelete
+            shouldDisplayBackArrow={true}
             handleClick={handleDelete}
           />
           <FlatList

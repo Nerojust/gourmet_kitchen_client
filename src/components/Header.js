@@ -38,36 +38,38 @@ export const BackViewMoreSettings = ({
   performSearch,
   performDelete,
   shouldDisplayIcon,
-  performRefresh
+  shouldDisplayBackArrow,
+  performRefresh,
 }) => {
   return (
     <View style={[styles.exitView]}>
-      <TouchableOpacity
-        onPress={() => onClose()}
-        style={{flex: 0.2, paddingLeft: 15}}>
-        <Image
-          source={require('../assets/images/arrowleft1.png')}
-          resizeMode={'contain'}
-          style={{width: 25, height: 18}}
-        />
-      </TouchableOpacity>
-
+      {shouldDisplayBackArrow ? (
+        <TouchableOpacity
+          onPress={() => onClose()}
+          style={{flex: 0.2, paddingLeft: 15}}>
+          <Image
+            source={require('../assets/images/arrowleft1.png')}
+            resizeMode={'contain'}
+            style={{width: 25, height: 18}}
+          />
+        </TouchableOpacity>
+      ) : null}
       <ProductSansBold
         style={{fontSize: fp(19), flex: 1.3, color: COLOURS.gray2}}
         numberOfLines={1}>
         {backText}
       </ProductSansBold>
       {shouldDisplayIcon ? (
-          <>
-            <TouchableOpacity onPress={performRefresh}>
-              <Image
-                source={require('../assets/images/refresh.png')}
-                style={styles.refreshImage}
-                resizeMode={'contain'}
-              />
-            </TouchableOpacity>
-          </>
-        ) : null}
+        <>
+          <TouchableOpacity onPress={performRefresh}>
+            <Image
+              source={require('../assets/images/refresh.png')}
+              style={styles.refreshImage}
+              resizeMode={'contain'}
+            />
+          </TouchableOpacity>
+        </>
+      ) : null}
       {shouldDisplayIcon ? (
         <>
           <TouchableOpacity onPress={performSearch}>
@@ -114,24 +116,22 @@ export const BackViewWithLogout = ({
   backText,
   shouldDisplayLogoutIcon,
   handleLogout,
-  style
+  style,
 }) => {
   return (
     <View style={[styles.exitView]}>
       <TouchableOpacity
         onPress={() => onClose()}
-        style={{ flex: 0.2, paddingLeft: 15 }}
-      >
+        style={{flex: 0.2, paddingLeft: 15}}>
         <Image
           source={require('../assets/images/arrowleft1.png')}
           resizeMode={'contain'}
-          style={{ width: 25, height: 18 }}
+          style={{width: 25, height: 18}}
         />
       </TouchableOpacity>
       <ProductSansBold
-        style={{ fontSize: 19, flex: 1.3, color: COLOURS.gray2 }}
-        numberOfLines={1}
-      >
+        style={{fontSize: 19, flex: 1.3, color: COLOURS.gray2}}
+        numberOfLines={1}>
         {backText}
       </ProductSansBold>
 
@@ -140,19 +140,17 @@ export const BackViewWithLogout = ({
           flexDirection: 'row',
           flex: 0.2,
           justifyContent: 'space-between',
-          alignItems: 'center'
-        }}
-      >
+          alignItems: 'center',
+        }}>
         {shouldDisplayLogoutIcon ? (
           <TouchableOpacity
             activeOpacity={0.4}
             style={style}
-            onPress={handleLogout}
-          >
+            onPress={handleLogout}>
             <Image
               source={require('../assets/images/logout.png')}
               resizeMode={'contain'}
-              style={{ width: 25, height: 25 }}
+              style={{width: 25, height: 25}}
             />
           </TouchableOpacity>
         ) : null}
@@ -184,9 +182,9 @@ const styles = StyleSheet.create({
     marginLeft: 0,
   },
   refreshImage: {
-    width: wp(21),
-    height: wp(21),
-    left:-25
+    width: wp(19),
+    height: wp(19),
+    left: -25,
   },
   exitView: {
     flexDirection: 'row',

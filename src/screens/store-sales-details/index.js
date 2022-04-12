@@ -390,6 +390,7 @@ const StoreSalesDetailsScreen = ({navigation, route}) => {
               route?.params?.surplus?.productname || 'Store Sales Details'
             }
             onClose={() => navigation.goBack()}
+            shouldDisplayBackArrow={true}
             displayDelete
             performDelete={handleDeleteSurplus}
           />

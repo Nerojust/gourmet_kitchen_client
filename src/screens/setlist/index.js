@@ -52,6 +52,7 @@ const SetListScreen = ({navigation}) => {
     <ViewProviderComponent>
       <BackViewMoreSettings
         backText="Custom Set List"
+        shouldDisplayBackArrow={true}
         onClose={() => navigation.goBack()}
       />
 

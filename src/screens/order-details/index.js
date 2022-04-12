@@ -1163,6 +1163,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
         <KeyboardObserverComponent>
           <BackViewMoreSettings
             backText="Order Details"
+            shouldDisplayBackArrow={true}
             shouldDisplayDelete
             onClose={() =>
               isEditMode ? setIsEditMode(false) : navigation.goBack()

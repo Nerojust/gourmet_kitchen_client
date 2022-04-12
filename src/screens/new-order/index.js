@@ -964,6 +964,7 @@ const NewOrderScreen = ({navigation}) => {
         <KeyboardObserverComponent>
           <BackViewMoreSettings
             backText="New Order"
+            shouldDisplayBackArrow={true}
             onClose={() => navigation.goBack()}
           />
           {renderSuccessModal()}
