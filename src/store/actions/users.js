@@ -13,13 +13,18 @@ export const login = payload => {
     return client
       .post(`/login`, payload)
       .then(async response => {
+        //console.log('ddddddddd', response.data);
         if (response?.data?.isSuccessful) {
-          console.log('Login successful');
+          //console.log('Login successful');
 
           const accessToken = response.data.results.token;
           const user = response.data.results.user;
 
-          console.log('token', accessToken);
+          console.log(
+            'Login successful for ',
+            response.data.results?.user?.firstname,
+            response.data.results?.user?.lastname + '\n' + accessToken,
+          );
 
           client.defaults.headers.common[
             'Authorization'
@@ -32,7 +37,15 @@ export const login = payload => {
             accessToken: accessToken,
             error: null,
           });
-          return response.data;
+          
+          return response.data.results;
+        } else {
+          alert(response.data.message);
+          dispatch({
+            type: 'LOGIN_FAILED',
+            loading: false,
+            error: response.data.message,
+          });
         }
       })
       .catch(error => {

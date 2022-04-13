@@ -37,7 +37,7 @@ import AnalyticsItemComponent from '../../components/AnalyticsItemComponent';
 const AnalyticsScreen = ({navigation}) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const {analytics, analyticsLoading} = useSelector(state => state.orders);
-  console.log('analytics redux', analytics);
+  //console.log('analytics redux', analytics);
   const [isSearchClicked, setIsSearchClicked] = useState(false);
   var analyticsData = Object.assign([], analytics);
   const [filteredAnalyticsData, setFilteredAnalyticsData] =
@@ -80,7 +80,9 @@ const AnalyticsScreen = ({navigation}) => {
     fetchAllData();
     setIsRefreshing(false);
   };
-  const handleClick = item => [console.log('clicked', item)];
+  const handleClick = item => {
+    //console.log('clicked', item);
+  };
 
   const renderItems = ({item, index}) => {
     return <AnalyticsItemComponent item={item} handleClick={handleClick} />;
@@ -116,7 +118,7 @@ const AnalyticsScreen = ({navigation}) => {
               searchInputValue.length > 0 ? filteredAnalyticsData : analytics
             }
             renderItem={renderItems}
-            keyExtractor={item => item?.id}
+            keyExtractor={item => item?.createdbyuserid}
             refreshControl={
               <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
             }

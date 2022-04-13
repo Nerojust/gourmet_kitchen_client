@@ -34,7 +34,7 @@ const AnalyticsItemComponent = ({item, handleClick}) => {
         }}>
         <View style={{flex: 1.2}}>
           <ProductSans style={styles.productName}>
-            {item?.lastname.trim() +" "+item?.firstname.trim()}
+            {item?.lastname.trim() + ' ' + item?.firstname.trim()}
           </ProductSans>
           <ProductSans style={styles.labelText}>
             {item?.email.trim()}
@@ -48,12 +48,15 @@ const AnalyticsItemComponent = ({item, handleClick}) => {
           <ProductSans
             style={[
               styles.labelText,
-              {fontWeight: 'bold', fontSize: fp(19), color: COLOURS.textInputColor},
+              {
+                fontWeight: 'bold',
+                fontSize: fp(19),
+                color: COLOURS.textInputColor,
+              },
             ]}>
             {item?.count || '0'}
           </ProductSans>
         </View>
-        
       </View>
     </TouchableOpacity>
   );

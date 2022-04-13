@@ -94,7 +94,7 @@ const NewOrderScreen = ({navigation}) => {
 
   const {products, productsLoading} = useSelector(state => state.products);
   var productsData = Object.assign([], products);
-  //console.log("pdts",productsData)
+  //console.log('pdts', products.length);
   const [quantity, setQuantity] = useState(1);
   const keyboardHeight = useKeyboardHeight();
   const [filteredProductData, setFilteredProductsData] = useState(productsData);
@@ -119,19 +119,19 @@ const NewOrderScreen = ({navigation}) => {
 
   useEffect(() => {
     dispatch(getAllSets());
-    dispatch(getAllProducts('', 0, 0));
   }, []);
 
   useEffect(() => {
-    dispatch(getAllDeliveryTypes('')).then(result => {
+    dispatch(getAllProducts('')).then(result => {
       if (result.data) {
+        dispatch(getAllDeliveryTypes('', 0, 0));
         //console.log('delivery==', result.data);
       }
     });
   }, []);
 
   useEffect(() => {
-    if (sets && sets.length > 0) {
+    if (products && sets && sets.length > 0) {
       sets.forEach(async (item, i) => {
         let newObject = {};
         item.type = 'custom';

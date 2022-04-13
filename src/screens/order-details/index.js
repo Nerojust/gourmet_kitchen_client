@@ -150,7 +150,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
   const [selectedDeliveryType, setSelectedDeliveryType] = useState();
 
   const [data, setData] = useState();
-  console.log('order details redux ', data);
+  //console.log('order details redux ', data);
 
   useEffect(() => {
     if (id) {
@@ -270,6 +270,22 @@ const OrderDetailsScreen = ({navigation, route}) => {
               </Averta>
             </View>
 
+            <View style={styles.customerNameView}>
+              <ProductSansBold style={[styles.labelText, {left: 0}]}>
+               ORDER CREATED BY
+              </ProductSansBold>
+              <TouchableOpacity onPress={null}>
+                <Averta style={styles.address}>
+                  {order?.createdby
+                    ? capitalizeWord(
+                        order?.createdby?.lastname +
+                          ' ' +
+                          order?.createdby?.firstname,
+                      )
+                    : 'None'}
+                </Averta>
+              </TouchableOpacity>
+            </View>
             <View
               style={[
                 styles.customerNameView,

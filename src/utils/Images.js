@@ -35,6 +35,7 @@ export const IMAGES = {
   moreStoreOptionsImage: require('../assets/images/morestoreoptions.png'),
   editImage: require('../assets/images/edit.png'),
   addImage:require("../assets/images/add.png"),
+  analyticsImage:require("../assets/images/analytics.png"),
 
 cancel : require('../assets/images/cancel.png')
 };

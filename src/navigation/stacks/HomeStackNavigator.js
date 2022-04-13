@@ -102,9 +102,7 @@ export const HomeStackNavigator = () => {
                   onPress={() => navigation.navigate('AnalyticsStack')}>
                   <Image
                     source={
-                      focused
-                        ? IMAGES.activeDashboard
-                        : IMAGES.inActiveDashboard
+                      focused ? IMAGES.analyticsImage : IMAGES.analyticsImage
                     }
                     resizeMode={'contain'}
                     style={[styles.productImage]}

@@ -25,6 +25,7 @@ import {deviceWidth, deviceHeight} from '../utils/responsive-screen';
 import {COLOURS} from '../utils/Colours';
 import {ACTIVE_OPACITY} from '../utils/Constants';
 import {IMAGES} from '../utils/Images';
+import RefreshComponent from './RefreshComponent';
 
 const ProductListComponent = ({
   dataSource,
@@ -153,7 +154,7 @@ const ProductListComponent = ({
                 initialNumToRender={10}
                 keyboardShouldPersistTaps={'handled'}
               />
-              <AddComponent goto={handleAddProduct} style={{bottom: 70}} />
+              <RefreshComponent goto={handleRefresh} style={{bottom: 70}} />
               <View style={{paddingBottom: 10}} />
             </>
           ) : (

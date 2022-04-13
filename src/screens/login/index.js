@@ -44,22 +44,22 @@ const LoginScreen = ({navigation}) => {
   const [isEmailFocused, setIsEmailFocused] = useState(false);
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const {loginError, accessToken} = useSelector(x => x.users);
-  console.log('token is ', accessToken);
+  const {loginError, loading, accessToken} = useSelector(x => x.users);
+  //console.log('token is ', accessToken);
 
   //console.log("error from login", error);
 
   // const [email, setEmail] = useState('zupa@intelia.io');
   // const [password, setPassword] = useState('Pass#Secret');
 
-  // const [email, setEmail] = useState('');
-  // const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-  const [email, setEmail] = useState('nerojust@gmail.com');
-  const [password, setPassword] = useState('123456');
+  // const [email, setEmail] = useState('nerojust4@gmail.com');
+  // const [password, setPassword] = useState('123456');
 
-  // const [email, setEmail] = useState('Udoka@hoppr.ai')
-  // const [password, setPassword] = useState('pass1881');
+  // const [email, setEmail] = useState('fredBakim@gmail.com');
+  // const [password, setPassword] = useState('123456');
 
   const passwordRef = useRef(null);
   var loadingButtonRef = useRef();
@@ -82,30 +82,13 @@ const LoginScreen = ({navigation}) => {
       }
 
       handleClose();
-      setIsLoading(true);
 
       var payload = {
-        email: email.toLowerCase(),
+        email: email,
         password,
       };
 
-      dispatch(login(payload)).then(result => {
-        //console.log("result", result)
-        if (result && result?.jwt) {
-          //console.log("result login", result);
-          // dismissLoader(loadingButtonRef);
-          setIsLoading(false);
-        }
-      });
-
-      if (loginError) {
-        console.log('login error', loginError);
-        //alert(loginError);
-        // dismissLoader(loadingButtonRef);
-        setIsLoading(false);
-        return;
-      }
-      setIsLoading(false);
+      dispatch(login(payload))
     });
   };
 
@@ -260,7 +243,7 @@ const LoginScreen = ({navigation}) => {
 
                 {displaySubmitButton()}
                 {renderBottomRow()}
-                <LoaderShimmerComponent isLoading={isLoading} />
+                <LoaderShimmerComponent isLoading={loading} />
               </View>
             </KeyboardObserverComponent>
           </DismissKeyboard>
