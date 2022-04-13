@@ -150,7 +150,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
   const [selectedDeliveryType, setSelectedDeliveryType] = useState();
 
   const [data, setData] = useState();
-  //console.log('order details redux ', data);
+  console.log('order details redux ', data);
 
   useEffect(() => {
     if (id) {

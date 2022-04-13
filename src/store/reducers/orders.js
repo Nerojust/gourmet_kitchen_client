@@ -1,6 +1,7 @@
 const initialState = {
   phoneArray: [],
   orders: [],
+  analytics:[],
   orderedProductsStats: [],
   orderedProducts: [],
   order: {},
@@ -8,6 +9,7 @@ const initialState = {
   selectedOrderStatus: '',
   ordersLoading: false,
   deleteAllOrdersLoading: false,
+  analyticsLoading :false,
   createOrderLoading: false,
   updateSurplusOrderLoading: false,
   updateOrderLoading: false,
@@ -87,7 +89,26 @@ export default (state = initialState, action) => {
         error: action.error,
       };
 
-    case 'GET_ALL_ORDERED_PRODUCTS_PENDING':
+    case 'GET_ANALYTICS_PENDING':
+      return {
+        ...state,
+        analyticsLoading: action.loading,
+      };
+    case 'GET_ANALYTICS_SUCCESS':
+      return {
+        ...state,
+        analytics: action.data,
+        analyticsLoading: action.loading,
+      };
+    case 'GET_ANALYTICS_FAILED':
+      return {
+        ...state,
+        analyticsLoading: action.loading,
+        error: action.error,
+      };
+   
+   
+      case 'GET_ALL_ORDERED_PRODUCTS_PENDING':
       return {
         ...state,
         ordersLoading: action.loading,

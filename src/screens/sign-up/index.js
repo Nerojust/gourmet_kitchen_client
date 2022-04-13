@@ -3,7 +3,8 @@ import {
   View,
   StyleSheet,
   TouchableOpacity,
-  Keyboard,Text,
+  Keyboard,
+  Text,
   FlatList,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
@@ -14,6 +15,7 @@ import {
   dismissLoader,
   emailValidator,
   showLoader,
+  validateNumber,
 } from '../../utils/utils';
 import useKeyboardHeight from 'react-native-use-keyboard-height';
 import TextInputComponent from '../../components/TextInputComponent';
@@ -27,24 +29,33 @@ import {register} from '../../store/actions/users';
 import {ACTIVE_OPACITY, DIALOG_TIMEOUT} from '../../utils/Constants';
 import {deviceWidth, hp, wp, fp} from '../../utils/responsive-screen';
 import {COLOURS} from '../../utils/Colours';
+import RadioButtonComponent from '../../components/RadioButtonComponent';
+import LoaderShimmerComponent from '../../components/LoaderShimmerComponent';
 
 const SignUpScreen = ({navigation}) => {
   const [email, setEmail] = useState('');
   const keyboardHeight = useKeyboardHeight();
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [isYesClicked, setIsYesClicked] = useState(false);
+  const [radioButtonState, setRadioButtonState] = useState('');
   const [lastName, setLastName] = useState('');
   const [isEmailFocused, setIsEmailFocused] = useState(false);
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
   const [isFirstNameFocused, setIsFirstNameFocused] = useState(false);
   const [isLastNameFocused, setIsLastNameFocused] = useState(false);
+  const [isPhoneNumberFieldFocused, setIsPhoneNumberFieldFocused] =
+    useState(false);
   const emailRef = useRef();
   const firstNameRef = useRef();
+  const phoneNumberRef = useRef(null);
   const lastnameRef = useRef();
   const passwordRef = useRef();
   const loadingButtonRef = useRef();
-  const {storeUrlStatus} = useSelector(x => x.users);
+  const {loading, registerError} = useSelector(x => x.users);
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(false);
 
   const onSubmit = async () => {
     requestAnimationFrame(() => {
@@ -59,6 +70,17 @@ const SignUpScreen = ({navigation}) => {
       }
       if (lastName.length < 2) {
         return alert('Last name is too short');
+      }
+      if (!phoneNumber) {
+        alert('Phone number is required');
+        return;
+      }
+      if (!validateNumber(phoneNumber)) {
+        alert('Enter a valid phone number');
+        return;
+      }
+      if (radioButtonState != 'Male' && radioButtonState != 'Female') {
+        return alert('Gender is required');
       }
       if (!email.toLowerCase().trim()) {
         return alert('Please enter in your email');
@@ -78,21 +100,26 @@ const SignUpScreen = ({navigation}) => {
         password,
         firstName: firstName,
         lastName: lastName,
-        gender: 1,
+        phoneNumber: phoneNumber,
+        genderId: radioButtonState == 'Male' ? 1 : 2,
       };
 
-      showLoader(loadingButtonRef);
+      setIsLoading(true);
       console.log('payload', payload);
       dispatch(register(payload)).then(result => {
         //console.log("result", result)
-        if (result && result?.isNew && result?.user) {
-          dismissLoader(loadingButtonRef);
+        if (result) {
+          setIsLoading(false);
           resetFields();
           showSuccessDialog();
         }
       });
-      dismissLoader(loadingButtonRef);
+      setIsLoading(false);
     });
+    //display error if available
+    if (registerError) {
+      return alert(registerError);
+    }
   };
 
   const displaySubmitButton = () => {
@@ -127,13 +154,15 @@ const SignUpScreen = ({navigation}) => {
     setFirstName('');
     setLastName('');
     setEmail('');
+    setPhoneNumber("")
     setPassword('');
   };
   const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false);
   const showSuccessDialog = () => {
     setIsSuccessModalVisible(!isSuccessModalVisible);
     setTimeout(() => {
-      setIsSuccessModalVisible(false);
+      navigation.goBack()
+      //setIsSuccessModalVisible(false);
     }, DIALOG_TIMEOUT);
   };
 
@@ -142,7 +171,9 @@ const SignUpScreen = ({navigation}) => {
       <CustomSuccessModal
         isModalVisible={isSuccessModalVisible}
         dismissModal={showSuccessDialog}
-        message={'Registration successful, please login with your new credentials'}
+        message={
+          'Registration successful, please login with your new credentials'
+        }
         // onPressButton={showSuccessDialog}
       />
     );
@@ -181,11 +212,12 @@ const SignUpScreen = ({navigation}) => {
       <TouchableOpacity
         style={{
           alignSelf: 'center',
-          marginTop: 20,
-          marginBottom:
+          marginTop: 25,
+          marginBottom: 25,
+          bottom:
             keyboardHeight > 0
               ? Platform.OS == 'ios'
-                ? keyboardHeight - hp(60)
+                ? keyboardHeight - hp(50)
                 : 0
               : 0,
         }}
@@ -198,6 +230,16 @@ const SignUpScreen = ({navigation}) => {
         </ProductSans>
       </TouchableOpacity>
     );
+  };
+
+  const handleRadioButtons = state => {
+    //console.log("state is ", state);
+    if (state == 'Male') {
+      setIsYesClicked(true);
+    } else {
+      setIsYesClicked(false);
+    }
+    setRadioButtonState(state);
   };
   const renderInputFields = () => {
     return (
@@ -244,6 +286,45 @@ const SignUpScreen = ({navigation}) => {
         />
 
         <View style={{marginVertical: 10}} />
+        <View style={{marginLeft: wp(30), paddingBottom: 6}}>
+          <RadioButtonComponent
+            button1Name={'Male'}
+            button2Name={'Female'}
+            onClicked={handleRadioButtons}
+            radioButtonState={radioButtonState}
+          />
+        </View>
+
+        <View style={{marginVertical: 10}} />
+        <TextInputComponent
+          placeholder={'Phone Number'}
+          handleTextChange={text =>
+            //setPhoneNumber(addCommaToNumber(text))
+            setPhoneNumber(text)
+          }
+          defaultValue={phoneNumber ? phoneNumber.trim() : ''}
+          returnKeyType={'next'}
+          keyboardType={'number-pad'}
+          secureTextEntry={false}
+          heightfigure={50}
+          length={11}
+          widthFigure={deviceWidth / 1.15}
+          refValue={phoneNumberRef}
+          props={
+            isPhoneNumberFieldFocused
+              ? {
+                  borderColor: COLOURS.blue,
+                }
+              : {borderColor: COLOURS.zupa_gray_bg}
+          }
+          handleTextInputFocus={() => setIsPhoneNumberFieldFocused(true)}
+          handleBlur={() => setIsPhoneNumberFieldFocused(false)}
+          onSubmitEditing={() => {
+            emailRef.current.focus();
+          }}
+        />
+
+        <View style={{marginVertical: 10}} />
 
         <TextInputComponent
           defaultValue={email}
@@ -284,7 +365,7 @@ const SignUpScreen = ({navigation}) => {
           handleBlur={() => setIsPasswordFocused(false)}
           onSubmitEditing={onSubmit}
         />
-         <View style={{marginVertical: 10}} />
+        <View style={{marginVertical: 10}} />
       </>
     );
   };
@@ -310,7 +391,7 @@ const SignUpScreen = ({navigation}) => {
           <DismissKeyboard handleClose={handleClose}>
             <KeyboardObserverComponent>
               <>
-                <View style={{marginLeft: fp(30),marginBottom:20}}>
+                <View style={{marginLeft: fp(30), marginVertical: 20}}>
                   <ProductSansBold style={styles.welcomeTextView}>
                     Sign Up
                   </ProductSansBold>
@@ -328,6 +409,7 @@ const SignUpScreen = ({navigation}) => {
         renderItem={null}
         keyExtractor={item => item?.id}
       />
+      <LoaderShimmerComponent isLoading={loading} />
     </ViewProviderComponent>
   );
 };

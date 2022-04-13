@@ -29,20 +29,31 @@ import {getAllSurplus} from '../../store/actions/surplus';
 import SurplusListItemComponent from '../../components/SurplusListItemComponent';
 import SearchInputComponent from '../../components/SearchInputComponent';
 import {logoutUser} from '../../store/actions/users';
-import { wp } from '../../utils/responsive-screen';
+import {wp} from '../../utils/responsive-screen';
+import {getAllAnalytics} from '../../store/actions/orders';
+import AnalyticsItemComponent from '../../components/AnalyticsItemComponent';
 
 // create a component
 const AnalyticsScreen = ({navigation}) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const {surplus, surplusLoading, updateSurplusLoading, createSurplusLoading} =
-    useSelector(x => x.surplus);
+  const {analytics, analyticsLoading} = useSelector(state => state.orders);
+  console.log('analytics redux', analytics);
   const [isSearchClicked, setIsSearchClicked] = useState(false);
-  var surplusData = Object.assign([], surplus);
-  const [filteredSurplusData, setFilteredSurplusData] = useState(surplusData);
+  var analyticsData = Object.assign([], analytics);
+  const [filteredAnalyticsData, setFilteredAnalyticsData] =
+    useState(analyticsData);
   const [searchInputValue, setSearchInputValue] = useState('');
   //console.log('redux surplus', surplus);
   const dispatch = useDispatch();
   const [isSearchCleared, setIsSearchCleared] = useState(false);
+
+  useEffect(() => {
+    fetchAllData();
+  }, []);
+
+  const fetchAllData = () => {
+    dispatch(getAllAnalytics());
+  };
 
   const showDialog = () => {
     Alert.alert(
@@ -65,7 +76,15 @@ const AnalyticsScreen = ({navigation}) => {
       {cancelable: false},
     );
   };
+  const onRefresh = async () => {
+    fetchAllData();
+    setIsRefreshing(false);
+  };
+  const handleClick = item => [console.log('clicked', item)];
 
+  const renderItems = ({item, index}) => {
+    return <AnalyticsItemComponent item={item} handleClick={handleClick} />;
+  };
   return (
     <ViewProviderComponent>
       <DismissKeyboard>
@@ -76,8 +95,52 @@ const AnalyticsScreen = ({navigation}) => {
             navigation={navigation}
             style={{right: wp(20)}}
             handleLogout={showDialog}
-            onClose={() => navigation.navigate('OrdersStack')}
+            onClose={() => navigation.goBack()}
           />
+
+          <View
+            style={{
+              justifyContent: 'center',
+              alignItems: 'flex-end',
+              paddingRight: 20,
+            }}>
+            <ProductSans style={{fontSize: 12, color: COLOURS.labelTextColor}}>
+              Total count:
+              {searchInputValue.length > 0
+                ? filteredAnalyticsData.length
+                : analytics.length}
+            </ProductSans>
+          </View>
+          <FlatList
+            data={
+              searchInputValue.length > 0 ? filteredAnalyticsData : analytics
+            }
+            renderItem={renderItems}
+            keyExtractor={item => item?.id}
+            refreshControl={
+              <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+            }
+            ListEmptyComponent={
+              <View>
+                {!analyticsLoading ? (
+                  <View
+                    style={{
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      flex: 1,
+                      top: Platform.OS == 'ios' ? 300 : 0,
+                      marginTop: Platform.OS == 'android' ? 300 : 0,
+                    }}>
+                    <ProductSans
+                      style={{fontSize: 16, color: COLOURS.textInputColor}}>
+                      No record found
+                    </ProductSans>
+                  </View>
+                ) : null}
+              </View>
+            }
+          />
+          <LoaderShimmerComponent isLoading={analyticsLoading} />
         </KeyboardObserverComponent>
       </DismissKeyboard>
     </ViewProviderComponent>

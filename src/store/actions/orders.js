@@ -16,6 +16,51 @@ export const setOrderStatus = status => {
   };
 };
 
+export const getAllAnalytics = status => {
+  console.log('About to get all analytics data');
+  return dispatch => {
+    dispatch({
+      type: 'GET_ANALYTICS_PENDING',
+      loading: true,
+      error: null,
+    });
+    var getUrl = `/orders/analytics`;
+    //console.log("geturl", getUrl);
+    return client
+      .get(getUrl)
+      .then(response => {
+        if (response?.data) {
+          console.log(
+            'Analytics gotten successfully',
+            response?.data?.recordCount,
+          );
+          if (response?.data?.isSuccessful) {
+            dispatch({
+              type: 'GET_ANALYTICS_SUCCESS',
+              loading: false,
+              data: response?.data?.results,
+            });
+            return response?.data?.results;
+          } else {
+            dispatch({
+              type: 'GET_ANALYTICS_FAILED',
+              loading: false,
+              error: response?.data?.message,
+            });
+          }
+        }
+      })
+      .catch(error => {
+        console.log('Getting analytics failed', error);
+        handleError(error, dispatch, 'get analytics list');
+        dispatch({
+          type: 'GET_ANALYTICS_FAILED',
+          loading: false,
+          error: error.message,
+        });
+      });
+  };
+};
 export const getAllOrderedProductsStats = status => {
   console.log('About to get all orders stats');
   return dispatch => {
