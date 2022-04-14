@@ -37,7 +37,7 @@ export const login = payload => {
             accessToken: accessToken,
             error: null,
           });
-          
+
           return response.data.results;
         } else {
           alert(response.data.message);
@@ -76,10 +76,10 @@ export const register = payload => {
         if (response?.data?.isSuccessful) {
           console.log(
             'New user registration successful',
-            response.data.results,
+            response?.data?.results,
           );
-          const accessToken = response.data.results.token;
-          const profile = response.data.user;
+          const accessToken = response?.data?.results?.token;
+          const profile = response?.data?.results?.user;
 
           // storeValue('userData', response.data);
           client.defaults.headers.common[
@@ -90,10 +90,17 @@ export const register = payload => {
             type: 'REGISTER_SUCCESS',
             loading: false,
             accessToken: accessToken,
-            user: response.data,
+            user: profile,
           });
 
           return response.data;
+        } else {
+          alert(response.data.message);
+          dispatch({
+            type: 'REGISTER_FAILED',
+            loading: false,
+            error: response.data.message,
+          });
         }
       })
 
@@ -309,7 +316,7 @@ export const getAllAdminUsers = keyword => {
   };
 };
 
-export const getAllUsers = keyword => {
+export const getAllUsers = () => {
   console.log('About to get all users');
   return dispatch => {
     dispatch({
@@ -318,30 +325,32 @@ export const getAllUsers = keyword => {
       error: null,
     });
     return client
-      .get(
-        `/users?$order=-id&&$include=roles&$q=${keyword}&$searchFields=firstName%2C%20lastName%2C%20email`,
-      )
+      .get(`/users`)
       .then(response => {
-        console.log('All users gotten successfully');
-        dispatch({
-          type: 'FETCH_ALL_USERS_SUCCESS',
-          loading: false,
-          users: response.data.data,
-        });
+        if (response.data.isSuccessful) {
+          console.log('All users gotten successfully');
+          dispatch({
+            type: 'FETCH_ALL_USERS_SUCCESS',
+            loading: false,
+            users: response.data.results,
+          });
+          return response.data.results
+        } else {
+          alert(response.data.message);
+          dispatch({
+            type: 'FETCH_ALL_USERS_FAILED',
+            loading: false,
+            error: response.data.message,
+          });
+        }
       })
       .catch(error => {
         console.log('All users retrieval failed =>', error);
-        if (error == 'Error: Network Error') {
-          alert('Network error please try again');
-        }
+      
         dispatch({
           type: 'FETCH_ALL_USERS_FAILED',
           loading: false,
-          error:
-            error.response &&
-            error.response &&
-            error.response.data &&
-            error.response.data.message,
+          error: error.message,
         });
       });
   };

@@ -8,6 +8,7 @@ import customers from './customers';
 import notes from './notes';
 import deliveryTypes from './delivery-types';
 import users from './users';
+import roles from './roles';
 
 export default combineReducers({
   orders,
@@ -18,4 +19,5 @@ export default combineReducers({
   notes,
   deliveryTypes,
   users,
+  roles,
 });

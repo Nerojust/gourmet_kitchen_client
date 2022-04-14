@@ -67,6 +67,7 @@ export const getAllSurplus = () => {
             });
             return response?.data?.results;
           } else {
+            alert(response?.data?.message)
             dispatch({
               type: 'GET_ALL_SURPLUS_FAILED',
               loading: false,

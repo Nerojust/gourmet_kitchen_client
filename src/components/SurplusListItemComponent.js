@@ -35,6 +35,7 @@ const SurplusListItemComponent = ({
             style={{
               width: 25,
               height: 25,
+              tintColor: COLOURS.gray4,
             }}
             resizeMode="contain"
           />
@@ -65,12 +66,15 @@ const SurplusListItemComponent = ({
           </ProductSans>
         </View>
       </View>
-        <View style={{marginTop:0}}>
-          <ProductSans style={styles.labelText}>ENTERED OVEN AT {item.createdat ? moment(item.createdat).format('LT') : 'None'}</ProductSans>
-          {/* <ProductSans style={[styles.priceName,{ fontWeight: 'normal',}]}>
+      <View style={{marginTop: 0}}>
+        <ProductSans style={[styles.labelText, {fontSize: fp(14)}]}>
+          ENTERED OVEN AT{' '}
+          {item.createdat ? moment(item.createdat).format('LLL') : 'None'}
+        </ProductSans>
+        {/* <ProductSans style={[styles.priceName,{ fontWeight: 'normal',}]}>
             {item.createdat ? moment(item.createdat).format('LT') : 'None'}
           </ProductSans> */}
-        </View>
+      </View>
     </TouchableOpacity>
   );
 };

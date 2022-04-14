@@ -58,6 +58,8 @@ import {
   getDeliveryStates,
 } from '../../store/actions/delivery-types';
 import ProductSans from '../../components/Text/ProductSans';
+import {getAllUsers} from '../../store/actions/users';
+import {sin} from 'react-native/Libraries/Animated/Easing';
 
 // create a component
 const NewOrderScreen = ({navigation}) => {
@@ -92,6 +94,9 @@ const NewOrderScreen = ({navigation}) => {
   const [selectedProduct, setSelectedProduct] = useState({});
   const [selectedDelivery, setSelectedDelivery] = useState({});
 
+  const {user, usersLoading, users} = useSelector(state => state.users);
+  //console.log('users', users.length);
+  //console.log('user', user);
   const {products, productsLoading} = useSelector(state => state.products);
   var productsData = Object.assign([], products);
   //console.log('pdts', products.length);
@@ -114,12 +119,29 @@ const NewOrderScreen = ({navigation}) => {
   const {deliveryTypes, deliveryTypesLoading, deliveryStates} = useSelector(
     state => state.deliveryTypes,
   );
+  const [newUsersArray, setNewUsersArray] = useState();
   let additionalArray = [];
   var finalDeliveryArray = [];
+  let newArray = [];
 
   useEffect(() => {
     dispatch(getAllSets());
-  }, []);
+    dispatch(getAllUsers()).then(result => {
+      //make sure current user object is first in the array
+      if (result.length > 0 && user) {
+        newArray.push(user);
+
+        result
+          .filter((item, i) => item.id !== user.id)
+          .map((single, i) => {
+            newArray.push(single);
+          });
+        setNewUsersArray(newArray);
+
+        //console.log("array", newArray)
+      }
+    });
+  }, [user]);
 
   useEffect(() => {
     dispatch(getAllProducts('')).then(result => {
@@ -150,7 +172,7 @@ const NewOrderScreen = ({navigation}) => {
     } else {
       setMergedArrayProducts(products);
     }
-  }, [sets]);
+  }, [sets, products]);
 
   useEffect(() => {
     deliveryTypes.map(type => {
@@ -734,6 +756,12 @@ const NewOrderScreen = ({navigation}) => {
         //setIsDeliveryModalVisible(true)
         return;
       }
+      if (user?.roleid && !clickedUserObject) {
+        alert('Select a user to assign to this order');
+        return;
+      }
+
+
       //prepare zupa payload
       const customerPayload = {
         name: fullName,
@@ -796,6 +824,7 @@ const NewOrderScreen = ({navigation}) => {
               state: selectedDelivery?.state,
               name: selectedDelivery?.name,
             },
+            createdById:clickedUserObject?.id,
             products: productArray,
           };
         } else {
@@ -803,7 +832,7 @@ const NewOrderScreen = ({navigation}) => {
             id: data?.selectedProduct?.id,
             quantity: data?.quantity,
             type: 'custom',
-            zupasetid: data?.selectedProduct.zupasetid,
+            zupasetid: data?.selectedProduct?.zupasetid,
           };
           productArray.push(item);
           kitchen_payload = {
@@ -821,6 +850,7 @@ const NewOrderScreen = ({navigation}) => {
               state: selectedDelivery?.state,
               name: selectedDelivery?.name,
             },
+            createdById:clickedUserObject?.id,
             products: productArray,
           };
         }
@@ -953,9 +983,73 @@ const NewOrderScreen = ({navigation}) => {
       </View>
     );
   };
+
   const handleLoadProductsBottomSheet = () => {
     dismissTextInput(fullNameRef);
     showBottomSheet(productSheetRef);
+  };
+  const [clickedUserObject, setClickedUserObject] = useState();
+
+  const handleClick = clicked => {
+    console.log('clicked user is ', clicked);
+    setClickedUserObject(clicked);
+  };
+
+  const renderSliderNames = ({item}) => {
+    //console.log("item",item)
+    return (
+      <TouchableOpacity
+        onPress={() => handleClick(item)}
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'center',
+          paddingHorizontal: 10,
+          borderRadius: 10,
+          borderWidth: 0.4,
+          backgroundColor:
+            clickedUserObject?.firstname == item?.firstname ? COLOURS.blue : null,
+          paddingVertical: 10,
+          marginHorizontal: 2,
+          alignItems: 'center',
+        }}>
+        <ProductSansBold
+          style={[
+            styles.actiontext,
+            {
+              left: 0,
+              marginTop: 0,
+              color:
+                clickedUserObject?.firstname == item?.firstname
+                  ? COLOURS.white
+                  : COLOURS.labelTextColor,
+            },
+          ]}>
+          {item?.firstname}
+        </ProductSansBold>
+      </TouchableOpacity>
+    );
+  };
+
+  const displayNameListView = () => {
+    return (
+      <View>
+        <View style={[styles.actions, {paddingVertical: 13}]}>
+          <ProductSansBold style={styles.actiontext}>
+            WHO IS CREATING THIS ORDER?
+          </ProductSansBold>
+        </View>
+
+        <View style={{paddingHorizontal: 30}}>
+          <FlatList
+            data={newUsersArray}
+            horizontal
+            keyboardShouldPersistTaps={'handled'}
+            showsHorizontalScrollIndicator={false}
+            renderItem={renderSliderNames}
+          />
+        </View>
+      </View>
+    );
   };
 
   return (
@@ -973,7 +1067,12 @@ const NewOrderScreen = ({navigation}) => {
             data={[]}
             keyboardShouldPersistTaps={'handled'}
             showsVerticalScrollIndicator={false}
-            ListHeaderComponent={renderInputFields()}
+            ListHeaderComponent={
+              <>
+                {user?.roleid == 3 ? displayNameListView() : null}
+                {renderInputFields()}
+              </>
+            }
             renderItem={null}
           />
           <LoaderShimmerComponent isLoading={isLoading} />

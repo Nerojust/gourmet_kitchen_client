@@ -4,6 +4,7 @@ import clientZupa from '../../utils/ApiZupa';
 import {LOGIN_TOKEN} from '../../utils/Constants';
 import {handleError} from '../../utils/utils';
 import {createCustomer} from './customers';
+import {logoutUser} from './users';
 
 export const setOrderStatus = status => {
   return dispatch => {
@@ -40,6 +41,7 @@ export const getAllAnalytics = status => {
             });
             return response?.data?.results;
           } else {
+            alert(response?.data?.message);
             dispatch({
               type: 'GET_ANALYTICS_FAILED',
               loading: false,
@@ -85,6 +87,7 @@ export const getAllOrderedProductsStats = status => {
             });
             return response?.data?.results;
           } else {
+            alert(response?.data?.message);
             dispatch({
               type: 'GET_ALL_PRODUCTS_STATS_FAILED',
               loading: false,
@@ -95,7 +98,7 @@ export const getAllOrderedProductsStats = status => {
       })
       .catch(error => {
         console.log('Getting orders stats failed', error);
-        handleError(error, dispatch, 'get orders list');
+        // handleError(error, dispatch, 'get orders list');
         dispatch({
           type: 'GET_ALL_PRODUCTS_STATS_FAILED',
           loading: false,
@@ -186,6 +189,8 @@ export const getAllOrderedProducts = status => {
             });
             return response?.data?.results;
           } else {
+            alert(response?.data?.message);
+
             dispatch({
               type: 'GET_ALL_ORDERED_PRODUCTS_FAILED',
               loading: false,
@@ -466,7 +471,6 @@ export const createOrder = (kitchenPayload, customerPayload, orderPayload) => {
                 });
 
                 console.log('zupz Error ooops ', error);
-               
               }
             },
           );
@@ -485,7 +489,7 @@ export const createOrder = (kitchenPayload, customerPayload, orderPayload) => {
       });
   };
 };
-const displayRetryDialog=()=>{
+const displayRetryDialog = () => {
   Alert.alert(
     'Alert',
     'Oops!, we could not create the order on Zupa',
@@ -503,29 +507,29 @@ const displayRetryDialog=()=>{
       {
         text: 'Try Again',
         onPress: () => {
-          dispatch(
-            createZupaOrder(customerPayload, orderPayload),
-          ).then((result, error) => {
-            if (!error) {
-              console.log('ZUPA ORDER CREATED ON SECOND TRY');
-              dispatch({
-                type: 'CREATE_ORDER_SUCCESS',
-                loading: false,
-              });
-            } else {
-              dispatch({
-                type: 'CREATE_ORDER_FAILED',
-                loading: false,
-                error: error.message,
-              });
-            }
-          });
+          dispatch(createZupaOrder(customerPayload, orderPayload)).then(
+            (result, error) => {
+              if (!error) {
+                console.log('ZUPA ORDER CREATED ON SECOND TRY');
+                dispatch({
+                  type: 'CREATE_ORDER_SUCCESS',
+                  loading: false,
+                });
+              } else {
+                dispatch({
+                  type: 'CREATE_ORDER_FAILED',
+                  loading: false,
+                  error: error.message,
+                });
+              }
+            },
+          );
         },
       },
     ],
     {cancelable: true},
   );
-}
+};
 export const createZupaOrder = (customerPayload, orderPayload) => {
   console.log('About to create a ZUPA order');
   //console.log("order payload", orderPayload);
