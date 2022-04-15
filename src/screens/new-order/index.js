@@ -13,7 +13,7 @@ import TextInputComponent from '../../components/TextInputComponent';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import ViewProviderComponent from '../../components/ViewProviderComponent';
 import ProductSansBold from '../../components/Text/ProductSansBold';
-
+import DatePicker from 'react-native-date-picker';
 import {COLOURS} from '../../utils/Colours';
 import {DataTable} from 'react-native-paper';
 import {
@@ -123,6 +123,9 @@ const NewOrderScreen = ({navigation}) => {
   let additionalArray = [];
   var finalDeliveryArray = [];
   let newArray = [];
+
+  const [selectedOrderDate, setSelectedOrderDate] = useState();
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     dispatch(getAllSets());
@@ -761,7 +764,6 @@ const NewOrderScreen = ({navigation}) => {
         return;
       }
 
-
       //prepare zupa payload
       const customerPayload = {
         name: fullName,
@@ -824,7 +826,8 @@ const NewOrderScreen = ({navigation}) => {
               state: selectedDelivery?.state,
               name: selectedDelivery?.name,
             },
-            createdById:clickedUserObject?.id,
+            createdById: clickedUserObject?.id,
+            modifiedOrderDate:selectedOrderDate,
             products: productArray,
           };
         } else {
@@ -850,7 +853,8 @@ const NewOrderScreen = ({navigation}) => {
               state: selectedDelivery?.state,
               name: selectedDelivery?.name,
             },
-            createdById:clickedUserObject?.id,
+            createdById: clickedUserObject?.id,
+            modifiedOrderDate:selectedOrderDate,
             products: productArray,
           };
         }
@@ -1007,7 +1011,9 @@ const NewOrderScreen = ({navigation}) => {
           borderRadius: 10,
           borderWidth: 0.4,
           backgroundColor:
-            clickedUserObject?.firstname == item?.firstname ? COLOURS.blue : null,
+            clickedUserObject?.firstname == item?.firstname
+              ? COLOURS.blue
+              : null,
           paddingVertical: 10,
           marginHorizontal: 2,
           alignItems: 'center',
@@ -1052,6 +1058,32 @@ const NewOrderScreen = ({navigation}) => {
     );
   };
 
+  const renderDatePicker = () => {
+    return (
+      <DatePicker
+        modal
+        mode={'date'}
+        open={open}
+        date={selectedOrderDate||new Date()}
+        minimumDate={new Date()}
+        onConfirm={date => {
+          console.log('date result', date);
+          setOpen(false);
+          setSelectedOrderDate(date);
+        }}
+        onCancel={() => {
+          setOpen(false);
+          setSelectedOrderDate("");
+        }}
+      />
+    );
+  };
+
+  const toggleDateModal = () => {
+    //console.log('opened');
+    setOpen(!open);
+  };
+
   return (
     <ViewProviderComponent>
       <DismissKeyboard>
@@ -1059,8 +1091,12 @@ const NewOrderScreen = ({navigation}) => {
           <BackViewMoreSettings
             backText="New Order"
             shouldDisplayBackArrow={true}
+            displayCalendar
+            dateText={selectedOrderDate}
+            toggleDateModal={toggleDateModal}
             onClose={() => navigation.goBack()}
           />
+          {renderDatePicker()}
           {renderSuccessModal()}
           {renderBottomSheets()}
           <FlatList

@@ -8,6 +8,8 @@ import {
 } from 'react-native';
 import {COLOURS} from '../utils/Colours';
 import {deviceHeight, deviceWidth, fp, wp} from '../utils/responsive-screen';
+import DeleteSelector from './DeleteSelector';
+import OrdersSelector from './OrdersSelector';
 import SettingsSelector from './SettingsSelector';
 import ProductSansBold from './Text/ProductSansBold';
 
@@ -19,6 +21,10 @@ export const HeaderComponent = ({
   shouldDisplayIcon,
   handleMoreClick,
   performRefresh,
+  displayCalendar,
+  toggleDateModal,
+  handleSettingsClick,
+  shouldDisplaySettingIcon,
 }) => {
   return (
     <View
@@ -39,7 +45,7 @@ export const HeaderComponent = ({
         <ProductSansBold style={[styles.titleHeaderText]}>
           {name}
         </ProductSansBold>
-        {shouldDisplayIcon ? (
+        {/* {shouldDisplayIcon ? (
           <>
             <TouchableOpacity onPress={performRefresh}>
               <Image
@@ -49,7 +55,7 @@ export const HeaderComponent = ({
               />
             </TouchableOpacity>
           </>
-        ) : null}
+        ) : null} */}
         {shouldDisplayIcon ? (
           <>
             <TouchableOpacity onPress={performSearch}>
@@ -59,34 +65,40 @@ export const HeaderComponent = ({
                 resizeMode={'contain'}
               />
             </TouchableOpacity>
-            <TouchableOpacity onPress={performDelete}>
+            {/* <TouchableOpacity onPress={performDelete}>
               <Image
                 source={require('../assets/images/delete.png')}
                 style={styles.deleteImage}
                 resizeMode={'contain'}
               />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </>
         ) : null}
-        {/* <View
-          style={{
-            flexDirection: 'row',
-            flex: 0.2,
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}>
-        
-                <SettingsSelector
-                  onPressIcon={handleMoreClick}
-                />
-              
-         
-        </View> */}
+        {displayCalendar ? (
+          <TouchableOpacity onPress={toggleDateModal}>
+            <Image
+              source={require('../assets/images/calendar.png')}
+              style={[styles.deleteImage, {tintColor: COLOURS.gray4}]}
+              resizeMode={'contain'}
+            />
+          </TouchableOpacity>
+        ) : null}
+
+        {shouldDisplaySettingIcon ? (
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={handleSettingsClick}
+            style={{left: wp(20)}}>
+            {renderDelete(handleSettingsClick)}
+          </TouchableOpacity>
+        ) : null}
       </>
     </View>
   );
 };
-
+export const renderDelete = handleSettingsClick => {
+  return <OrdersSelector onPressIcon={handleSettingsClick} />;
+};
 const styles = StyleSheet.create({
   iconImage: {width: 21, height: 21},
   transpClickableBg: {
@@ -134,11 +146,11 @@ const styles = StyleSheet.create({
   refreshImage: {
     width: wp(18),
     height: wp(18),
-   // marginRight: 0,
+    // marginRight: 0,
   },
   deleteImage: {
-    width: wp(15),
-    height: wp(15),
+    width: wp(19),
+    height: wp(19),
     marginLeft: 24,
   },
   titleHeaderText: {

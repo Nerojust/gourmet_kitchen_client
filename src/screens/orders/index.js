@@ -13,6 +13,7 @@ import AddComponent from '../../components/AddComponent';
 import LoaderShimmerComponent from '../../components/LoaderShimmerComponent';
 import OrderProductComponent from '../../components/OrderProductComponent';
 import ViewProviderComponent from '../../components/ViewProviderComponent';
+import DatePicker from 'react-native-date-picker';
 import {
   deleteAllOrders,
   getAllOrderedProducts,
@@ -47,8 +48,10 @@ const OrdersScreen = ({navigation}) => {
   const [selectedTab, setSelectedTab] = useState(0);
   const [isTabClicked, setIsTabClicked] = useState(false);
   const [isSearchClicked, setIsSearchClicked] = useState(false);
+  const [selectedOrderDate, setSelectedOrderDate] = useState();
+  const [open, setOpen] = useState(false);
 
-  const {loginError,accessToken} = useSelector(x => x.users);
+  const {loginError, accessToken} = useSelector(x => x.users);
   //console.log("token is redux",accessToken)
 
   useEffect(() => {
@@ -63,6 +66,23 @@ const OrdersScreen = ({navigation}) => {
       console.log('All storage keys', keys);
     };
     getAllKeys();
+
+
+
+    var date1 = new Date('December 25, 2017 01:30:00');
+    var date2 = new Date('June 18, 2016 02:30:00');
+    
+    //best to use .getTime() to compare dates
+    if(date1.getTime() === date2.getTime()){
+        //same date
+        console.log("same date")
+    }
+    
+    if(date1.getTime() > date2.getTime()){
+        //date 1 is newer
+        console.log("date 1 is newer")
+    }
+
   }, []);
 
   useEffect(() => {
@@ -184,15 +204,52 @@ const OrdersScreen = ({navigation}) => {
     setSearchInputValue('');
     setIsSearchCleared(true);
   };
-const refreshData = ()=>[
-  fetchAllData()
-]
+  const refreshData = () => {
+    fetchAllData();
+  };
+
+  const handleSettingsClick = item => {
+    console.log('clicked item', item);
+    if (item == 'delete') {
+      handleDeleteOrders();
+    }
+  };
+  const renderDatePicker = () => {
+    return (
+      <DatePicker
+        modal
+        mode={'date'}
+        open={open}
+        date={selectedOrderDate||new Date()}
+        minimumDate={new Date()}
+        onConfirm={date => {
+          console.log('date result', date);
+          setOpen(false);
+          setSelectedOrderDate(date);
+        }}
+        onCancel={() => {
+          setOpen(false);
+          setSelectedOrderDate("");
+        }}
+      />
+    );
+  };
+
+  const toggleDateModal = () => {
+    //console.log('opened');
+    setOpen(!open);
+  };
+
+
   return (
     <ViewProviderComponent>
       <HeaderComponent
         name="Orders"
         isDashboard
-        performDelete={handleDeleteOrders}
+        displayCalendar
+        shouldDisplaySettingIcon
+        handleSettingsClick={handleSettingsClick}
+        toggleDateModal={toggleDateModal}
         performSearch={handleSearch}
         shouldDisplayIcon={orders.length > 0}
         performRefresh={refreshData}
@@ -216,9 +273,15 @@ const refreshData = ()=>[
         onPress2={handleIncompleteOrders}
         onPress3={handleCompleteOrders}
       />
-      <View style={{justifyContent: 'center', alignItems: 'flex-end', paddingRight:20}}>
+        {renderDatePicker()}
+      <View
+        style={{
+          justifyContent: 'center',
+          alignItems: 'flex-end',
+          paddingRight: 20,
+        }}>
         <ProductSans style={{fontSize: 12, color: COLOURS.labelTextColor}}>
-         Total count:
+          Total count:
           {searchInputValue.length > 0
             ? filteredOrdersData.length
             : orders.length}

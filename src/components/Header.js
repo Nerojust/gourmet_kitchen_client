@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
   Platform,
 } from 'react-native';
+import moment from 'moment';
 import {
   hp,
   wp,
@@ -40,6 +41,9 @@ export const BackViewMoreSettings = ({
   shouldDisplayIcon,
   shouldDisplayBackArrow,
   performRefresh,
+  displayCalendar,
+  dateText,
+  toggleDateModal,
 }) => {
   return (
     <View style={[styles.exitView]}>
@@ -55,7 +59,12 @@ export const BackViewMoreSettings = ({
         </TouchableOpacity>
       ) : null}
       <ProductSansBold
-        style={{fontSize: fp(19), flex: 1.3, color: COLOURS.gray2}}
+        style={{
+          fontSize: fp(19),
+          flex: 1.3,
+          color: COLOURS.gray2,
+          right: displayCalendar ? -wp(10) : 0,
+        }}
         numberOfLines={1}>
         {backText}
       </ProductSansBold>
@@ -93,11 +102,13 @@ export const BackViewMoreSettings = ({
             {renderSettingsMore(handleClick)}
           </TouchableOpacity>
         ) : null}
+
         {shouldDisplayDelete ? (
           <TouchableOpacity activeOpacity={0.7} onPress={handleClick}>
             {renderDelete(handleClick)}
           </TouchableOpacity>
         ) : null}
+
         {displayDelete ? (
           <TouchableOpacity onPress={performDelete}>
             <Image
@@ -108,6 +119,35 @@ export const BackViewMoreSettings = ({
           </TouchableOpacity>
         ) : null}
       </View>
+      
+      {displayCalendar ? (
+        <View
+          style={{
+            flexDirection: 'row',
+            flex: 1.3,
+            //justifyContent: 'space-between',
+            alignItems: 'center',
+          }}>
+          <ProductSansBold
+            style={{
+              fontSize: fp(16),
+              flex: 2,
+              color: COLOURS.gray2,
+              //right: -wp(50),
+            }}
+            numberOfLines={1}>
+            {dateText ? moment(dateText).format('LL') : 'Today\'s Date'}
+          </ProductSansBold>
+
+          <TouchableOpacity onPress={toggleDateModal} style={{flex: 0.7}}>
+            <Image
+              source={require('../assets/images/calendar.png')}
+              style={[styles.deleteImage, {tintColor: COLOURS.gray4}]}
+              resizeMode={'contain'}
+            />
+          </TouchableOpacity>
+        </View>
+      ) : null}
     </View>
   );
 };

@@ -105,7 +105,7 @@ export const HomeStackNavigator = () => {
                       focused ? IMAGES.analyticsImage : IMAGES.analyticsImage
                     }
                     resizeMode={'contain'}
-                    style={[styles.productImage]}
+                    style={[styles.productImage,{tintColor:COLOURS.gray5}]}
                   />
                   <ProductSans
                     style={[

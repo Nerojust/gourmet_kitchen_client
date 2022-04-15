@@ -269,10 +269,27 @@ const OrderDetailsScreen = ({navigation, route}) => {
                   : 'None'}
               </Averta>
             </View>
+            {order?.modifiedorderdate ? (
+              <View
+                style={[
+                  styles.customerNameView,
+                  {paddingTop: 5, marginRight: 10},
+                ]}>
+                <ProductSansBold
+                  style={[styles.labelText, {paddingBottom: 12, left: 0}]}>
+                  MODIFIED ORDER DATE
+                </ProductSansBold>
+                <Averta style={styles.address}>
+                  {order?.modifiedorderdate
+                    ? moment(order?.modifiedorderdate).format('LLL')
+                    : 'None'}
+                </Averta>
+              </View>
+            ) : null}
 
             <View style={styles.customerNameView}>
               <ProductSansBold style={[styles.labelText, {left: 0}]}>
-               ORDER CREATED BY
+                ORDER CREATED BY
               </ProductSansBold>
               <TouchableOpacity onPress={null}>
                 <Averta style={styles.address}>
