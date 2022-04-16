@@ -2,6 +2,7 @@ import {Alert} from 'react-native';
 import client from '../../utils/Api';
 import clientZupa from '../../utils/ApiZupa';
 import {LOGIN_TOKEN} from '../../utils/Constants';
+import {getDateWithoutTime} from '../../utils/DateFilter';
 import {handleError} from '../../utils/utils';
 import {createCustomer} from './customers';
 import {logoutUser} from './users';
@@ -107,7 +108,14 @@ export const getAllOrderedProductsStats = status => {
       });
   };
 };
-
+export const saveOrderDate = date => {
+  return async dispatch => {
+    await dispatch({
+      type: 'SAVE_ORDER_DATE',
+      orderDate: date,
+    });
+  };
+};
 export const getAllOrderedProductsStatsById = id => {
   console.log('About to get stats with id', id);
   return dispatch => {
@@ -154,7 +162,7 @@ export const getAllOrderedProductsStatsById = id => {
       });
   };
 };
-export const getAllOrderedProducts = status => {
+export const getAllOrderedProducts = (status, orderDate) => {
   console.log('About to get all orders');
   return dispatch => {
     dispatch({
@@ -162,7 +170,9 @@ export const getAllOrderedProducts = status => {
       loading: true,
       error: null,
     });
-    var getUrl = `/orders?status=${status}`;
+    var getUrl = `/orders?status=${status}&startDate=${
+      orderDate + ' 00:00:01'
+    }&endDate=${orderDate + ' 23:59:59'}`;
     console.log('geturl', getUrl);
     //client.defaults.headers.common['Authorization'] = `Bearer ${LOGIN_TOKEN}`;
     return client
@@ -469,6 +479,7 @@ export const createOrder = (kitchenPayload, customerPayload, orderPayload) => {
                   loading: false,
                   error: error.message,
                 });
+                displayRetryDialog();
 
                 console.log('zupz Error ooops ', error);
               }
@@ -521,6 +532,7 @@ const displayRetryDialog = () => {
                   loading: false,
                   error: error.message,
                 });
+                displayRetryDialog();
               }
             },
           );

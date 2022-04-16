@@ -34,7 +34,7 @@ import {
 } from '../../utils/utils';
 import {BackViewMoreSettings} from '../../components/Header';
 import useKeyboardHeight from 'react-native-use-keyboard-height';
-
+import dateFormat, { masks } from "dateformat";
 import {getAllProducts, syncZupaProducts} from '../../store/actions/products';
 import {
   BottomSheetDeliveryTypesComponent,
@@ -48,7 +48,11 @@ import Averta from '../../components/Text/Averta';
 import {useDispatch, useSelector} from 'react-redux';
 import {IMAGES} from '../../utils/Images';
 import CustomSuccessModal from '../../components/CustomSuccessModal';
-import {createOrder, createZupaOrder} from '../../store/actions/orders';
+import {
+  createOrder,
+  createZupaOrder,
+  saveOrderDate,
+} from '../../store/actions/orders';
 import LoaderShimmerComponent from '../../components/LoaderShimmerComponent';
 import GoogleSearchComponent from '../../components/GoogleSearchComponent';
 import BlinkingTextComponent from '../../components/BlinkingTextComponent';
@@ -60,6 +64,7 @@ import {
 import ProductSans from '../../components/Text/ProductSans';
 import {getAllUsers} from '../../store/actions/users';
 import {sin} from 'react-native/Libraries/Animated/Easing';
+import {getDateWithoutTime} from '../../utils/DateFilter';
 
 // create a component
 const NewOrderScreen = ({navigation}) => {
@@ -124,7 +129,7 @@ const NewOrderScreen = ({navigation}) => {
   var finalDeliveryArray = [];
   let newArray = [];
 
-  const [selectedOrderDate, setSelectedOrderDate] = useState();
+  const [selectedOrderDate, setSelectedOrderDate] = useState(new Date());
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -144,7 +149,7 @@ const NewOrderScreen = ({navigation}) => {
         //console.log("array", newArray)
       }
     });
-  }, [user]);
+  }, []);
 
   useEffect(() => {
     dispatch(getAllProducts('')).then(result => {
@@ -175,7 +180,7 @@ const NewOrderScreen = ({navigation}) => {
     } else {
       setMergedArrayProducts(products);
     }
-  }, [sets, products]);
+  }, [products, sets]);
 
   useEffect(() => {
     deliveryTypes.map(type => {
@@ -827,7 +832,7 @@ const NewOrderScreen = ({navigation}) => {
               name: selectedDelivery?.name,
             },
             createdById: clickedUserObject?.id,
-            modifiedOrderDate:selectedOrderDate,
+            selectedDateTimeStamp: dateFormat(selectedOrderDate, "yyyy-mm-dd'T'HH:MM:ss"),
             products: productArray,
           };
         } else {
@@ -854,7 +859,7 @@ const NewOrderScreen = ({navigation}) => {
               name: selectedDelivery?.name,
             },
             createdById: clickedUserObject?.id,
-            modifiedOrderDate:selectedOrderDate,
+            selectedDateTimeStamp: dateFormat(selectedOrderDate, "yyyy-mm-dd'T'HH:MM:ss"),
             products: productArray,
           };
         }
@@ -871,6 +876,8 @@ const NewOrderScreen = ({navigation}) => {
             setIsLoading(false);
             showSuccessDialog();
             resetFields();
+            //save the date for use in orders page.
+            dispatch(saveOrderDate(getDateWithoutTime(selectedOrderDate)));
           }
         })
         .catch(() => {
@@ -1064,16 +1071,17 @@ const NewOrderScreen = ({navigation}) => {
         modal
         mode={'date'}
         open={open}
-        date={selectedOrderDate||new Date()}
+        date={selectedOrderDate || new Date()}
         minimumDate={new Date()}
         onConfirm={date => {
           console.log('date result', date);
           setOpen(false);
           setSelectedOrderDate(date);
+         
         }}
         onCancel={() => {
           setOpen(false);
-          setSelectedOrderDate("");
+          setSelectedOrderDate('');
         }}
       />
     );

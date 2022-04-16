@@ -261,15 +261,15 @@ const OrderDetailsScreen = ({navigation, route}) => {
               ]}>
               <ProductSansBold
                 style={[styles.labelText, {paddingBottom: 12, left: 0}]}>
-                ORDER DATE
+              MODIFIED ORDER DATE
               </ProductSansBold>
-              <Averta style={styles.address}>
+              <AvertaBold style={styles.custName}>
                 {order?.createdat
                   ? moment(order?.createdat).format('LLL')
                   : 'None'}
-              </Averta>
+              </AvertaBold>
             </View>
-            {order?.modifiedorderdate ? (
+            {order?.originalorderdate ? (
               <View
                 style={[
                   styles.customerNameView,
@@ -277,11 +277,11 @@ const OrderDetailsScreen = ({navigation, route}) => {
                 ]}>
                 <ProductSansBold
                   style={[styles.labelText, {paddingBottom: 12, left: 0}]}>
-                  MODIFIED ORDER DATE
+                  ORIGINAL ORDER DATE
                 </ProductSansBold>
-                <Averta style={styles.address}>
-                  {order?.modifiedorderdate
-                    ? moment(order?.modifiedorderdate).format('LLL')
+                <Averta style={styles.custName}>
+                  {order?.originalorderdate
+                    ? moment(order?.originalorderdate).format('LLL')
                     : 'None'}
                 </Averta>
               </View>

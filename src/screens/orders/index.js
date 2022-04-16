@@ -17,17 +17,21 @@ import DatePicker from 'react-native-date-picker';
 import {
   deleteAllOrders,
   getAllOrderedProducts,
+  saveOrderDate,
   setOrderStatus,
   updateCompleteStatusForOrder,
 } from '../../store/actions/orders';
 import ProductSans from '../../components/Text/ProductSans';
 import {COLOURS} from '../../utils/Colours';
+import dateFormat, {masks} from 'dateformat';
 import {getAllProducts, syncZupaProducts} from '../../store/actions/products';
 import SearchInputComponent from '../../components/SearchInputComponent';
 import SliderTabComponent from '../../components/SliderTabComponent';
 import {useIsFocused} from '@react-navigation/native';
 import {HeaderComponent} from '../../components/HeaderComponent';
 import AsyncStorage from '@react-native-community/async-storage';
+import {getDateWithoutTime, subtractOneDayFromTime} from '../../utils/DateFilter';
+import moment from 'moment';
 
 // create a component
 const OrdersScreen = ({navigation}) => {
@@ -38,7 +42,9 @@ const OrdersScreen = ({navigation}) => {
     error,
     ordersLoading,
     updateOrderLoading,
+    orderDate,
   } = useSelector(state => state.orders);
+  console.log('order date is ', orderDate);
   var ordersData = Object.assign([], orders);
   const [filteredOrdersData, setFilteredOrdersData] = useState(ordersData);
   const [searchInputValue, setSearchInputValue] = useState('');
@@ -48,7 +54,7 @@ const OrdersScreen = ({navigation}) => {
   const [selectedTab, setSelectedTab] = useState(0);
   const [isTabClicked, setIsTabClicked] = useState(false);
   const [isSearchClicked, setIsSearchClicked] = useState(false);
-  const [selectedOrderDate, setSelectedOrderDate] = useState();
+  const [selectedOrderDate, setSelectedOrderDate] = useState(new Date());
   const [open, setOpen] = useState(false);
 
   const {loginError, accessToken} = useSelector(x => x.users);
@@ -63,31 +69,18 @@ const OrdersScreen = ({navigation}) => {
         // read key error
       }
 
+     
+      console.log('final date', subtractOneDayFromTime(new Date(),1));
       console.log('All storage keys', keys);
     };
     getAllKeys();
-
-
-
-    var date1 = new Date('December 25, 2017 01:30:00');
-    var date2 = new Date('June 18, 2016 02:30:00');
-    
-    //best to use .getTime() to compare dates
-    if(date1.getTime() === date2.getTime()){
-        //same date
-        console.log("same date")
-    }
-    
-    if(date1.getTime() > date2.getTime()){
-        //date 1 is newer
-        console.log("date 1 is newer")
-    }
-
-  }, []);
+    //console.log('value==========', orderDate);
+    //console.log('value=============',dateFormat(selectedOrderDate, "yyyy-mm-dd"));
+  }, [orderDate]);
 
   useEffect(() => {
-    dispatch(getAllOrderedProducts(statusState));
-  }, [navigation, statusState, selectedTab]);
+    dispatch(getAllOrderedProducts(statusState, getDateWithoutTime(orderDate)));
+  }, [navigation, statusState, selectedTab, orderDate]);
 
   // useEffect(() => {
   //   const unsubscribe = navigation.addListener('focus', () => {
@@ -99,7 +92,12 @@ const OrdersScreen = ({navigation}) => {
   // }, [navigation, statusState, selectedTab]);
 
   const fetchAllData = () => {
-    dispatch(getAllOrderedProducts(statusState));
+    dispatch(
+      getAllOrderedProducts(
+        statusState,
+        getDateWithoutTime(selectedOrderDate.toISOString()),
+      ),
+    );
     dispatch(getAllProducts('', 0, 0, null));
   };
 
@@ -220,16 +218,19 @@ const OrdersScreen = ({navigation}) => {
         modal
         mode={'date'}
         open={open}
-        date={selectedOrderDate||new Date()}
-        minimumDate={new Date()}
+        title={"Select order date range"}
+        theme={'auto'}
+        date={selectedOrderDate || new Date()}
+        // minimumDate={ }
         onConfirm={date => {
           console.log('date result', date);
           setOpen(false);
           setSelectedOrderDate(date);
+          dispatch(saveOrderDate(getDateWithoutTime(date)));
         }}
         onCancel={() => {
           setOpen(false);
-          setSelectedOrderDate("");
+          setSelectedOrderDate('');
         }}
       />
     );
@@ -239,7 +240,6 @@ const OrdersScreen = ({navigation}) => {
     //console.log('opened');
     setOpen(!open);
   };
-
 
   return (
     <ViewProviderComponent>
@@ -273,7 +273,7 @@ const OrdersScreen = ({navigation}) => {
         onPress2={handleIncompleteOrders}
         onPress3={handleCompleteOrders}
       />
-        {renderDatePicker()}
+      {renderDatePicker()}
       <View
         style={{
           justifyContent: 'center',

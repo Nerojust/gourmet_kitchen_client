@@ -1,20 +1,21 @@
 const initialState = {
   phoneArray: [],
   orders: [],
-  analytics:[],
+  analytics: [],
   orderedProductsStats: [],
   orderedProducts: [],
   order: {},
-  countItem:{},
+  countItem: {},
   selectedOrderStatus: '',
   ordersLoading: false,
   deleteAllOrdersLoading: false,
-  analyticsLoading :false,
+  analyticsLoading: false,
   createOrderLoading: false,
   updateSurplusOrderLoading: false,
   updateOrderLoading: false,
   isOrderUpdated: false,
   error: '',
+  orderDate: '',
 };
 
 export default (state = initialState, action) => {
@@ -29,6 +30,11 @@ export default (state = initialState, action) => {
       return {
         ...state,
         orders: [],
+      };
+    case 'SAVE_ORDER_DATE':
+      return {
+        ...state,
+        orderDate: action.orderDate,
       };
     case 'SELECTED_ORDER_STATUS':
       return {
@@ -106,9 +112,8 @@ export default (state = initialState, action) => {
         analyticsLoading: action.loading,
         error: action.error,
       };
-   
-   
-      case 'GET_ALL_ORDERED_PRODUCTS_PENDING':
+
+    case 'GET_ALL_ORDERED_PRODUCTS_PENDING':
       return {
         ...state,
         ordersLoading: action.loading,
@@ -162,23 +167,23 @@ export default (state = initialState, action) => {
         error: action.error,
       };
 
-      case 'GET_SINGLE_PRODUCT_STAT_PENDING':
-        return {
-          ...state,
-          ordersLoading: action.loading,
-        };
-      case 'GET_SINGLE_PRODUCT_STAT_SUCCESS':
-        return {
-          ...state,
-          countItem: action.data,
-          ordersLoading: action.loading,
-        };
-      case 'GET_SINGLE_PRODUCT_STAT_FAILED':
-        return {
-          ...state,
-          ordersLoading: action.loading,
-          error: action.error,
-        };
+    case 'GET_SINGLE_PRODUCT_STAT_PENDING':
+      return {
+        ...state,
+        ordersLoading: action.loading,
+      };
+    case 'GET_SINGLE_PRODUCT_STAT_SUCCESS':
+      return {
+        ...state,
+        countItem: action.data,
+        ordersLoading: action.loading,
+      };
+    case 'GET_SINGLE_PRODUCT_STAT_FAILED':
+      return {
+        ...state,
+        ordersLoading: action.loading,
+        error: action.error,
+      };
 
     case 'UPDATE_COMPLETE_ORDER_PENDING':
       return {
@@ -198,7 +203,7 @@ export default (state = initialState, action) => {
         updateOrderLoading: action.loading,
         error: action.error,
       };
-  
+
     case 'UPDATE_ORDER_SPECIAL_NOTE_PENDING':
       return {
         ...state,
@@ -217,8 +222,8 @@ export default (state = initialState, action) => {
         updateOrderLoading: action.loading,
         error: action.error,
       };
-  
-      case 'UPDATE_SURPLUS_STATUS_ORDER_ITEM_PENDING':
+
+    case 'UPDATE_SURPLUS_STATUS_ORDER_ITEM_PENDING':
       return {
         ...state,
         updateSurplusOrderLoading: action.loading,
@@ -236,8 +241,6 @@ export default (state = initialState, action) => {
         updateSurplusOrderLoading: action.loading,
         error: action.error,
       };
-
-
 
     case 'UPDATE_OVEN_COUNT_PENDING':
       return {
