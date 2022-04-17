@@ -13,6 +13,7 @@ import {
   StyleSheet,
   Image,
   TouchableOpacity,
+  Alert,
   FlatList,
   Platform,
 } from 'react-native';
@@ -45,6 +46,7 @@ import ProductSansBold from '../../components/Text/ProductSansBold';
 import OrderListItemComponent from '../../components/OrderListItemComponent';
 import {useDispatch, useSelector} from 'react-redux';
 import {
+  deleteOrderById,
   getOrder,
   updateOrderById,
   updateOrderSpecialNoteById,
@@ -55,7 +57,7 @@ import useKeyboardHeight from 'react-native-use-keyboard-height';
 import {createNote, updateNoteById} from '../../store/actions/notes';
 import {IMAGES} from '../../utils/Images';
 import ProductSans from '../../components/Text/ProductSans';
-import {ACTIVE_OPACITY, NAIRA_} from '../../utils/Constants';
+import {ACTIVE_OPACITY, DIALOG_TIMEOUT, NAIRA_} from '../../utils/Constants';
 import GoogleSearchComponent from '../../components/GoogleSearchComponent';
 import BlinkingTextComponent from '../../components/BlinkingTextComponent';
 import {
@@ -67,6 +69,7 @@ import {getAllProducts} from '../../store/actions/products';
 import OrderListItem from '../../components/OrderListItem';
 import OrdersHelper from '../../components/OrdersHelper';
 import {DataTable} from 'react-native-paper';
+import CustomSuccessModal from '../../components/CustomSuccessModal';
 
 // create a component
 const OrderDetailsScreen = ({navigation, route}) => {
@@ -112,7 +115,9 @@ const OrderDetailsScreen = ({navigation, route}) => {
   const [isProductSelected, setIsProductSelected] = useState(false);
   var basketArray = [];
   const [newBasketArray, setNewBasketArray] = useState(basketArray);
-  const {createOrderLoading} = useSelector(x => x.orders);
+  const {createOrderLoading, deleteAllOrdersLoading} = useSelector(
+    x => x.orders,
+  );
   const {sets} = useSelector(x => x.sets);
   const [mergedArrayProducts, setMergedArrayProducts] = useState(products);
   //console.log("sets",sets)
@@ -135,11 +140,13 @@ const OrderDetailsScreen = ({navigation, route}) => {
   const [isInputVisible, setIsInputVisible] = useState(false);
   const [specialNote, setSpecialNote] = useState('');
   let id = route.params.id;
+  let orderDate = route.params.orderDate;
   const [hasDataLoaded, setHasDataLoaded] = useState(false);
   const [specialNoteArray, setSpecialNoteArray] = useState(
     order?.specialnote || [],
   );
   const [selectedSpecialNote, setSelectedSpecialNote] = useState({});
+  const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false);
   var deliveryTypesData = Object.assign([], mainDeliveryArray);
   const [filteredDeliveryTypesData, setFilteredDeliveryTypesData] =
     useState(deliveryTypesData);
@@ -261,7 +268,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
               ]}>
               <ProductSansBold
                 style={[styles.labelText, {paddingBottom: 12, left: 0}]}>
-              MODIFIED ORDER DATE
+                MODIFIED ORDER DATE
               </ProductSansBold>
               <AvertaBold style={styles.custName}>
                 {order?.createdat
@@ -1184,10 +1191,55 @@ const OrderDetailsScreen = ({navigation, route}) => {
   };
 
   const handleClickEvent = item => {
-    console.log('item clicked is ', item);
-    // if (item == 'edit') {
-    //   setIsEditMode(!isEditMode);
-    // }
+   // console.log('item clicked is ', item);
+    if (item == 'edit') {
+      setIsEditMode(!isEditMode);
+    } else if (item == 'delete') {
+      //console.log('delete clicked');
+      handleDeleteOrders();
+    }
+  };
+  const handleDeleteOrders = () => {
+    // console.log('delete clicked');
+
+    Alert.alert(
+      'Alert',
+      `Do you want to delete this order?`,
+      [
+        {
+          text: 'No',
+          onPress: () => {
+            console.log('cancel Pressed');
+          },
+        },
+        {
+          text: 'Yes',
+          onPress: () =>
+            dispatch(deleteOrderById(id,orderDate)).then(result => {
+              if (result.isSuccessful) {
+                showSuccessDialog();
+              }
+            }),
+        },
+      ],
+      {cancelable: true},
+    );
+  };
+
+  const renderSuccessModal = () => (
+    <CustomSuccessModal
+      isModalVisible={isSuccessModalVisible}
+      dismissModal={showSuccessDialog}
+      message={'Order deleted successfully'}
+      //onPressButton={() => navigation.goBack()}
+    />
+  );
+  const showSuccessDialog = () => {
+    setIsSuccessModalVisible(!isSuccessModalVisible);
+    setTimeout(() => {
+      setIsSuccessModalVisible(false);
+      navigation.goBack();
+    }, DIALOG_TIMEOUT);
   };
 
   return (
@@ -1203,7 +1255,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
             }
             handleClick={handleClickEvent}
           />
-
+          {renderSuccessModal()}
           <FlatList
             data={[]}
             keyboardShouldPersistTaps={'handled'}
@@ -1225,6 +1277,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
             keyExtractor={item => item.id}
           />
           <LoaderShimmerComponent isLoading={updateOrderLoading} />
+          <LoaderShimmerComponent isLoading={deleteAllOrdersLoading} />
           <LoaderShimmerComponent isLoading={updateNoteLoading} />
           <LoaderShimmerComponent isLoading={ordersLoading} />
           <LoaderShimmerComponent isLoading={createNoteLoading} />

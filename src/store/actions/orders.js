@@ -162,7 +162,7 @@ export const getAllOrderedProductsStatsById = id => {
       });
   };
 };
-export const getAllOrderedProducts = (status, orderDate) => {
+export const getAllOrderedProducts = (status = 'all', orderDate) => {
   console.log('About to get all orders');
   return dispatch => {
     dispatch({
@@ -170,10 +170,13 @@ export const getAllOrderedProducts = (status, orderDate) => {
       loading: true,
       error: null,
     });
+
     var getUrl = `/orders?status=${status}&startDate=${
-      orderDate + ' 00:00:01'
-    }&endDate=${orderDate + ' 23:59:59'}`;
+        orderDate + ' 00:00:01'
+      }&endDate=${orderDate + ' 23:59:59'}`;
+ 
     console.log('geturl', getUrl);
+
     //client.defaults.headers.common['Authorization'] = `Bearer ${LOGIN_TOKEN}`;
     return client
       .get(getUrl)
@@ -186,9 +189,13 @@ export const getAllOrderedProducts = (status, orderDate) => {
           //check status if it failed to patch from BE
           if (!status || status.length == 0) {
             //patch it
-            handleCompleteOrdersStatus(response?.data?.results, dispatch);
+            handleCompleteOrdersStatus(
+              response?.data?.results,
+              dispatch,
+              orderDate,
+            );
             //refresh list
-            getAllOrderedProducts();
+            getAllOrderedProducts('all', orderDate);
           }
 
           if (response?.data?.isSuccessful) {
@@ -220,7 +227,7 @@ export const getAllOrderedProducts = (status, orderDate) => {
       });
   };
 };
-const handleCompleteOrdersStatus = (orders, dispatch) => {
+const handleCompleteOrdersStatus = (orders, dispatch, orderDate) => {
   if (orders && orders.length > 0) {
     // console.log('here ');
     orders?.map(fullOrderItem => {
@@ -246,7 +253,11 @@ const handleCompleteOrdersStatus = (orders, dispatch) => {
                 isfulfilled: true,
               };
               dispatch(
-                updateCompleteStatusForOrder(fullOrderItem?.id, payload),
+                updateCompleteStatusForOrder(
+                  fullOrderItem?.id,
+                  payload,
+                  orderDate,
+                ),
               );
               count = 0;
             }
@@ -257,7 +268,7 @@ const handleCompleteOrdersStatus = (orders, dispatch) => {
   }
 };
 
-export const updateOrderListProductCount = payload => {
+export const updateOrderListProductCount = (payload, orderDate) => {
   console.log('About to update breadlist count', payload);
   return dispatch => {
     dispatch({
@@ -282,7 +293,7 @@ export const updateOrderListProductCount = payload => {
               data: response?.data?.results,
             });
             dispatch(getAllOrderedProductsStats());
-            dispatch(getAllOrderedProducts());
+            dispatch(getAllOrderedProducts('all', orderDate));
             return response?.data?.results;
           } else {
             dispatch({
@@ -351,7 +362,7 @@ export const updateSurplusStatusForOrderItemById = (id, payload) => {
       });
   };
 };
-export const updateCompleteStatusForOrder = (id, payload) => {
+export const updateCompleteStatusForOrder = (id, payload, orderDate) => {
   console.log('About to updateCompleteStatusForOrder with id', id);
   return dispatch => {
     dispatch({
@@ -376,7 +387,7 @@ export const updateCompleteStatusForOrder = (id, payload) => {
               data: response?.data?.results,
             });
 
-            dispatch(getAllOrderedProducts());
+            dispatch(getAllOrderedProducts('all', orderDate));
             return response?.data?.results;
           } else {
             dispatch({
@@ -446,7 +457,12 @@ export const updateOrderSpecialNoteById = (id, payload) => {
   };
 };
 
-export const createOrder = (kitchenPayload, customerPayload, orderPayload) => {
+export const createOrder = (
+  kitchenPayload,
+  customerPayload,
+  orderPayload,
+  orderDate,
+) => {
   console.log('About to create a new kitchen order');
   //console.log("order payload", orderPayload);
   return dispatch => {
@@ -466,7 +482,7 @@ export const createOrder = (kitchenPayload, customerPayload, orderPayload) => {
           dispatch(createZupaOrder(customerPayload, orderPayload)).then(
             (result, error) => {
               if (!error) {
-                dispatch(getAllOrderedProducts(''));
+                dispatch(getAllOrderedProducts('all', orderDate));
                 dispatch({
                   type: 'CREATE_ORDER_SUCCESS',
                   loading: false,
@@ -622,7 +638,42 @@ export const getOrder = id => {
       });
   };
 };
-export const deleteAllOrders = id => {
+export const deleteOrderById = (id,orderDate) => {
+  console.log('About to delete single order with id', id);
+  return dispatch => {
+    dispatch({
+      type: 'DELETE_SINGLE_ORDERS_PENDING',
+      loading: true,
+      error: null,
+    });
+    return client
+      .delete(`/orders/${id}`)
+      .then(response => {
+        if (response.data.isSuccessful) {
+          console.log('Single order deleted successfully');
+          dispatch(getAllOrderedProducts('all', orderDate));
+          dispatch({
+            type: 'DELETE_SINGLE_ORDERS_SUCCESS',
+            loading: false,
+            data: response.data,
+          });
+          return response.data;
+        }
+      })
+
+      .catch(error => {
+        console.log('Error deleting single surplus', error);
+        handleError(error, dispatch, 'delete surplus');
+        dispatch({
+          type: 'DELETE_SINGLE_ORDERS_FAILED',
+          loading: false,
+          error: error.message,
+        });
+      });
+  };
+};
+
+export const deleteAllOrders = orderDate => {
   console.log('About to delete all orders');
 
   return dispatch => {
@@ -632,12 +683,16 @@ export const deleteAllOrders = id => {
       error: null,
     });
 
+    var url = `/orders/deleteAll?startDate=${orderDate + ' 00:00:01'}&endDate=${
+      orderDate + ' 23:59:59'
+    }`;
+
     return client
-      .delete(`/orders/deleteAll`)
+      .delete(url)
       .then(response => {
         if (response.data) {
           console.log('Deleted all orders successfully');
-          dispatch(getAllOrderedProducts(''));
+          dispatch(getAllOrderedProducts('all', orderDate));
           dispatch({
             type: 'DELETE_ORDERS_SUCCESS',
             loading: false,

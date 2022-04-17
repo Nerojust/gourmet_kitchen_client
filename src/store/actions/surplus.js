@@ -230,7 +230,7 @@ export const deleteSurplusById = id => {
       .delete(`/surplus/${id}`)
       .then(response => {
         if (response.data) {
-          console.log('Single order deleted successfully');
+          console.log('Single surplus deleted successfully');
           dispatch({
             type: 'DELETE_SINGLE_SURPLUS_SUCCESS',
             loading: false,

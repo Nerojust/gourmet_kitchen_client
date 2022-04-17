@@ -30,8 +30,13 @@ import SliderTabComponent from '../../components/SliderTabComponent';
 import {useIsFocused} from '@react-navigation/native';
 import {HeaderComponent} from '../../components/HeaderComponent';
 import AsyncStorage from '@react-native-community/async-storage';
-import {getDateWithoutTime, subtractOneDayFromTime} from '../../utils/DateFilter';
+import {
+  getDateWithoutTime,
+  subtractOneDayFromTime,
+} from '../../utils/DateFilter';
 import moment from 'moment';
+import CustomSuccessModal from '../../components/CustomSuccessModal';
+import {DIALOG_TIMEOUT} from '../../utils/Constants';
 
 // create a component
 const OrdersScreen = ({navigation}) => {
@@ -44,39 +49,38 @@ const OrdersScreen = ({navigation}) => {
     updateOrderLoading,
     orderDate,
   } = useSelector(state => state.orders);
-  console.log('order date is ', orderDate);
+  //console.log('order date is ', orderDate);
   var ordersData = Object.assign([], orders);
   const [filteredOrdersData, setFilteredOrdersData] = useState(ordersData);
   const [searchInputValue, setSearchInputValue] = useState('');
   const [isSearchCleared, setIsSearchCleared] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [statusState, setStatusState] = useState('');
+  const [statusState, setStatusState] = useState('all');
   const [selectedTab, setSelectedTab] = useState(0);
   const [isTabClicked, setIsTabClicked] = useState(false);
   const [isSearchClicked, setIsSearchClicked] = useState(false);
   const [selectedOrderDate, setSelectedOrderDate] = useState(new Date());
   const [open, setOpen] = useState(false);
-
+  const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false);
   const {loginError, accessToken} = useSelector(x => x.users);
   //console.log("token is redux",accessToken)
 
-  useEffect(() => {
-    getAllKeys = async () => {
-      let keys = [];
-      try {
-        keys = await AsyncStorage.getAllKeys();
-      } catch (e) {
-        // read key error
-      }
+  // useEffect(() => {
+  //   getAllKeys = async () => {
+  //     let keys = [];
+  //     try {
+  //       keys = await AsyncStorage.getAllKeys();
+  //     } catch (e) {
+  //       // read key error
+  //     }
 
-     
-      console.log('final date', subtractOneDayFromTime(new Date(),1));
-      console.log('All storage keys', keys);
-    };
-    getAllKeys();
-    //console.log('value==========', orderDate);
-    //console.log('value=============',dateFormat(selectedOrderDate, "yyyy-mm-dd"));
-  }, [orderDate]);
+  //     // console.log('final date', subtractOneDayFromTime(new Date(), 1));
+  //     //console.log('All storage keys', keys);
+  //   };
+  //   getAllKeys();
+  //   // console.log('value==========', getDateWithoutTime(selectedOrderDate));
+  //   //console.log('value=============',dateFormat(selectedOrderDate, "yyyy-mm-dd"));
+  // }, [orderDate]);
 
   useEffect(() => {
     dispatch(getAllOrderedProducts(statusState, getDateWithoutTime(orderDate)));
@@ -92,12 +96,7 @@ const OrdersScreen = ({navigation}) => {
   // }, [navigation, statusState, selectedTab]);
 
   const fetchAllData = () => {
-    dispatch(
-      getAllOrderedProducts(
-        statusState,
-        getDateWithoutTime(selectedOrderDate.toISOString()),
-      ),
-    );
+    dispatch(getAllOrderedProducts(statusState, getDateWithoutTime(orderDate)));
     dispatch(getAllProducts('', 0, 0, null));
   };
 
@@ -110,6 +109,7 @@ const OrdersScreen = ({navigation}) => {
     //console.log("order item",item)
     navigation.navigate('OrderDetails', {
       id: item.id,
+      orderDate: getDateWithoutTime(selectedOrderDate),
     });
   };
 
@@ -119,8 +119,8 @@ const OrdersScreen = ({navigation}) => {
 
   const handleAllOrders = () => {
     selectTab(0);
-    setStatusState('');
-    dispatch(setOrderStatus(''));
+    setStatusState('all');
+    dispatch(setOrderStatus('all'));
   };
   const handleIncompleteOrders = () => {
     selectTab(1);
@@ -154,7 +154,9 @@ const OrdersScreen = ({navigation}) => {
 
     Alert.alert(
       'Alert',
-      'Do you want to delete all order records?',
+      `Do you want to delete all order records for ${getDateWithoutTime(
+        orderDate,
+      )} ?`,
       [
         {
           text: 'No',
@@ -164,11 +166,36 @@ const OrdersScreen = ({navigation}) => {
         },
         {
           text: 'Yes',
-          onPress: () => dispatch(deleteAllOrders()),
+          onPress: () =>
+            dispatch(deleteAllOrders(getDateWithoutTime(orderDate))).then(
+              result => {
+                if (result.isSuccessful) {
+                  showSuccessDialog();
+                }
+              },
+            ),
         },
       ],
       {cancelable: true},
     );
+  };
+
+  const renderSuccessModal = () => (
+    <CustomSuccessModal
+      isModalVisible={isSuccessModalVisible}
+      dismissModal={showSuccessDialog}
+      message={
+        'Orders deleted successfully for ' + getDateWithoutTime(orderDate)
+      }
+      //onPressButton={() => navigation.goBack()}
+    />
+  );
+  const showSuccessDialog = () => {
+    setIsSuccessModalVisible(!isSuccessModalVisible);
+    setTimeout(() => {
+      setIsSuccessModalVisible(false);
+      // navigation.goBack();
+    }, DIALOG_TIMEOUT);
   };
 
   const handleSearch = () => {
@@ -218,10 +245,10 @@ const OrdersScreen = ({navigation}) => {
         modal
         mode={'date'}
         open={open}
-        title={"Select order date range"}
+        title={'Select order date range'}
         theme={'auto'}
         date={selectedOrderDate || new Date()}
-        // minimumDate={ }
+        //minimumDate={subtractOneDayFromTime(new Date(), 1)}
         onConfirm={date => {
           console.log('date result', date);
           setOpen(false);
@@ -244,7 +271,7 @@ const OrdersScreen = ({navigation}) => {
   return (
     <ViewProviderComponent>
       <HeaderComponent
-        name="Orders"
+        name={'Orders for ' + moment(selectedOrderDate).format('LL')}
         isDashboard
         displayCalendar
         shouldDisplaySettingIcon
@@ -287,6 +314,7 @@ const OrdersScreen = ({navigation}) => {
             : orders.length}
         </ProductSans>
       </View>
+      {renderSuccessModal()}
       <FlatList
         data={searchInputValue.length > 0 ? filteredOrdersData : orders}
         renderItem={renderItems}

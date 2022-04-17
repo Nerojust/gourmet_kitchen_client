@@ -53,7 +53,7 @@ const BreadListDetailsScreen = ({navigation, route}) => {
     selectedOrderStatus,
     ordersLoading,
     updateSurplusOrderLoading,
-    countItem,
+    orderDate,
   } = useSelector(x => x.orders);
   //console.log('count item', countItem);
   var {productid} = route.params.bread;
@@ -357,6 +357,7 @@ const BreadListDetailsScreen = ({navigation, route}) => {
     dispatch(
       updateOrderListProductCount(
         foundSurplus && shouldUseSurplusTofulfill ? surplusPayload : payload,
+        orderDate,
       ),
     )
       .then((result, error) => {
@@ -496,7 +497,7 @@ const BreadListDetailsScreen = ({navigation, route}) => {
       <DismissKeyboard>
         <KeyboardObserverComponent>
           <BackViewMoreSettings
-           shouldDisplayBackArrow={true}
+            shouldDisplayBackArrow={true}
             backText={route?.params?.bread?.name || 'Bread List Details'}
             onClose={() => navigation.goBack()}
           />

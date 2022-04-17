@@ -34,7 +34,7 @@ import {
 } from '../../utils/utils';
 import {BackViewMoreSettings} from '../../components/Header';
 import useKeyboardHeight from 'react-native-use-keyboard-height';
-import dateFormat, { masks } from "dateformat";
+import dateFormat, {masks} from 'dateformat';
 import {getAllProducts, syncZupaProducts} from '../../store/actions/products';
 import {
   BottomSheetDeliveryTypesComponent,
@@ -832,7 +832,10 @@ const NewOrderScreen = ({navigation}) => {
               name: selectedDelivery?.name,
             },
             createdById: clickedUserObject?.id,
-            selectedDateTimeStamp: dateFormat(selectedOrderDate, "yyyy-mm-dd'T'HH:MM:ss"),
+            selectedDateTimeStamp: dateFormat(
+              selectedOrderDate,
+              "yyyy-mm-dd'T'HH:MM:ss",
+            ),
             products: productArray,
           };
         } else {
@@ -859,17 +862,23 @@ const NewOrderScreen = ({navigation}) => {
               name: selectedDelivery?.name,
             },
             createdById: clickedUserObject?.id,
-            selectedDateTimeStamp: dateFormat(selectedOrderDate, "yyyy-mm-dd'T'HH:MM:ss"),
+            selectedDateTimeStamp: dateFormat(
+              selectedOrderDate,
+              "yyyy-mm-dd'T'HH:MM:ss",
+            ),
             products: productArray,
           };
         }
       });
+      let dateOnly = dateFormat(selectedOrderDate, 'yyyy-mm-dd');
       //console.log('customer payload', customerPayload);
       console.log('order payload', orderPayload);
       console.log('order items', orderPayload.order_items);
       console.log('kitchen payload', kitchen_payload);
       setIsLoading(true);
-      dispatch(createOrder(kitchen_payload, customerPayload, orderPayload))
+      dispatch(
+        createOrder(kitchen_payload, customerPayload, orderPayload, dateOnly),
+      )
         .then(response => {
           //console.log("inside result", response);
           if (response) {
@@ -1077,7 +1086,6 @@ const NewOrderScreen = ({navigation}) => {
           console.log('date result', date);
           setOpen(false);
           setSelectedOrderDate(date);
-         
         }}
         onCancel={() => {
           setOpen(false);

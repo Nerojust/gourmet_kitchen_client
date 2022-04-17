@@ -42,7 +42,24 @@ export default (state = initialState, action) => {
         selectedOrderStatus: action.status,
       };
 
-    case 'DELETE_ORDERS_PENDING':
+    case 'DELETE_SINGLE_ORDERS_PENDING':
+      return {
+        ...state,
+        deleteAllOrdersLoading: action.loading,
+      };
+    case 'DELETE_SINGLE_ORDERS_SUCCESS':
+      return {
+        ...state,
+        deleteAllOrdersLoading: action.loading,
+      };
+    case 'DELETE_SINGLE_ORDERS_FAILED':
+      return {
+        ...state,
+        deleteAllOrdersLoading: action.loading,
+        error: action.error,
+      };
+  
+      case 'DELETE_ORDERS_PENDING':
       return {
         ...state,
         deleteAllOrdersLoading: action.loading,
