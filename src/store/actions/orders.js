@@ -143,6 +143,7 @@ export const getAllOrderedProductsStatsById = id => {
 
             return response?.data?.results;
           } else {
+            alert(response?.data?.message);
             dispatch({
               type: 'GET_SINGLE_PRODUCT_STAT_FAILED',
               loading: false,
@@ -172,9 +173,9 @@ export const getAllOrderedProducts = (status = 'all', orderDate) => {
     });
 
     var getUrl = `/orders?status=${status}&startDate=${
-        orderDate + ' 00:00:01'
-      }&endDate=${orderDate + ' 23:59:59'}`;
- 
+      orderDate + ' 00:00:01'
+    }&endDate=${orderDate + ' 23:59:59'}`;
+
     console.log('geturl', getUrl);
 
     //client.defaults.headers.common['Authorization'] = `Bearer ${LOGIN_TOKEN}`;
@@ -187,7 +188,7 @@ export const getAllOrderedProducts = (status = 'all', orderDate) => {
             response?.data?.recordCount,
           );
           //check status if it failed to patch from BE
-          if (!status || status.length == 0) {
+          //if (!status || status.length == 0) {
             //patch it
             handleCompleteOrdersStatus(
               response?.data?.results,
@@ -196,7 +197,7 @@ export const getAllOrderedProducts = (status = 'all', orderDate) => {
             );
             //refresh list
             getAllOrderedProducts('all', orderDate);
-          }
+          //}
 
           if (response?.data?.isSuccessful) {
             dispatch({
@@ -229,7 +230,7 @@ export const getAllOrderedProducts = (status = 'all', orderDate) => {
 };
 const handleCompleteOrdersStatus = (orders, dispatch, orderDate) => {
   if (orders && orders.length > 0) {
-    // console.log('here ');
+    console.log('here ');
     orders?.map(fullOrderItem => {
       // console.log('fulfilled status', fullOrderItem?.isfulfilled);
       let count = 0;
@@ -296,6 +297,7 @@ export const updateOrderListProductCount = (payload, orderDate) => {
             dispatch(getAllOrderedProducts('all', orderDate));
             return response?.data?.results;
           } else {
+            alert(response?.data?.message);
             dispatch({
               type: 'UPDATE_OVEN_COUNT_FAILED',
               loading: false,
@@ -437,6 +439,7 @@ export const updateOrderSpecialNoteById = (id, payload) => {
             dispatch(getOrder(id));
             return response?.data?.results;
           } else {
+            alert(response?.data?.message);
             dispatch({
               type: 'UPDATE_ORDER_SPECIAL_NOTE_FAILED',
               loading: false,
@@ -503,6 +506,13 @@ export const createOrder = (
           );
           //alert('Order created successfully');
           return response.data?.results;
+        } else {
+          alert(response?.data?.message);
+          dispatch({
+            type: 'CREATE_ORDER_FAILED',
+            loading: false,
+            error: response?.data?.message,
+          });
         }
       })
       .catch(error => {
@@ -575,7 +585,7 @@ export const createZupaOrder = (customerPayload, orderPayload) => {
         return clientZupa
           .post(`/orders`, orderPayload)
           .then(response => {
-            //console.log("response", response);
+            console.log('zupa status response', response.status);
             if (response?.data) {
               console.log('=========ZUPA ORDER CREATED successfully==========');
               dispatch({
@@ -616,7 +626,7 @@ export const getOrder = id => {
     return client
       .get(`/orders/${id}`)
       .then(response => {
-        if (response.data) {
+        if (response.data.isSuccessful) {
           console.log('Single order gotten successfully');
           dispatch({
             type: 'GET_SINGLE_ORDERED_PRODUCTS_SUCCESS',
@@ -624,6 +634,13 @@ export const getOrder = id => {
             data: response.data.results[0],
           });
           return response.data.results[0];
+        } else {
+          alert(response?.data?.message);
+          dispatch({
+            type: 'GET_SINGLE_ORDERED_PRODUCTS_FAILED',
+            loading: false,
+            error: response?.data?.message,
+          });
         }
       })
 
@@ -638,7 +655,7 @@ export const getOrder = id => {
       });
   };
 };
-export const deleteOrderById = (id,orderDate) => {
+export const deleteOrderById = (id, orderDate) => {
   console.log('About to delete single order with id', id);
   return dispatch => {
     dispatch({
@@ -658,6 +675,13 @@ export const deleteOrderById = (id,orderDate) => {
             data: response.data,
           });
           return response.data;
+        } else {
+          alert(response?.data?.message);
+          dispatch({
+            type: 'DELETE_SINGLE_ORDERS_FAILED',
+            loading: false,
+            error: response?.data?.message,
+          });
         }
       })
 

@@ -268,7 +268,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
               ]}>
               <ProductSansBold
                 style={[styles.labelText, {paddingBottom: 12, left: 0}]}>
-                MODIFIED ORDER DATE
+                SCHEDULED ORDER DATE
               </ProductSansBold>
               <AvertaBold style={styles.custName}>
                 {order?.createdat
@@ -364,7 +364,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
                     },
                   ]}>
                   {order?.delivery.length > 0
-                    ? 'Delivery to:\n' + order.delivery[0]?.locationname
+                    ? 'Delivery to:\n' + order?.delivery[0]?.locationname
                     : 'Delivery Type: Walk-In'}
                 </AvertaBold>
 
