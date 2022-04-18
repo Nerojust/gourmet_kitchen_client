@@ -230,7 +230,7 @@ export const getAllOrderedProducts = (status = 'all', orderDate) => {
 };
 const handleCompleteOrdersStatus = (orders, dispatch, orderDate) => {
   if (orders && orders.length > 0) {
-    console.log('here ');
+    //console.log('here ');
     orders?.map(fullOrderItem => {
       // console.log('fulfilled status', fullOrderItem?.isfulfilled);
       let count = 0;
@@ -411,7 +411,7 @@ export const updateCompleteStatusForOrder = (id, payload, orderDate) => {
       });
   };
 };
-export const updateOrderById = (id, payload) => {
+export const updateOrderById = (id, payload, orderDate) => {
   console.log('About to update(put) single order with id', id);
   return dispatch => {
     dispatch({
@@ -437,6 +437,9 @@ export const updateOrderById = (id, payload) => {
             });
 
             //dispatch(getOrder(id));
+            dispatch(
+              getAllOrderedProducts('all', getDateWithoutTime(orderDate)),
+            );
             return response?.data?.results;
           } else {
             alert(response?.data?.message);

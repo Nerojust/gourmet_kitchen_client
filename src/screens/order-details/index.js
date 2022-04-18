@@ -1137,7 +1137,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
       };
 
       console.log('final kitchen payload is', kitchen_payload);
-      dispatch(updateOrderById(id, kitchen_payload)).then(result => {
+      dispatch(updateOrderById(id, kitchen_payload,orderDate)).then(result => {
         if (result) {
           setIsEditMode(false);
           showSuccessDialog(false);

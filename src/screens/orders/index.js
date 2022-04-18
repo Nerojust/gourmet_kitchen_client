@@ -271,7 +271,10 @@ const OrdersScreen = ({navigation}) => {
   return (
     <ViewProviderComponent>
       <HeaderComponent
-        name={'Orders for ' + moment(selectedOrderDate).format('LL')}
+        name={
+          'Orders for ' + moment(orderDate).format('LL') ||
+          moment(selectedOrderDate).format('LL')
+        }
         isDashboard
         displayCalendar
         shouldDisplaySettingIcon

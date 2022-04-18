@@ -65,6 +65,7 @@ import ProductSans from '../../components/Text/ProductSans';
 import {getAllUsers} from '../../store/actions/users';
 import {sin} from 'react-native/Libraries/Animated/Easing';
 import {getDateWithoutTime} from '../../utils/DateFilter';
+import moment from 'moment';
 
 // create a component
 const NewOrderScreen = ({navigation}) => {
@@ -1053,7 +1054,14 @@ const NewOrderScreen = ({navigation}) => {
   const displayNameListView = () => {
     return (
       <View>
-        <View style={[styles.actions, {paddingVertical: 13}]}>
+        <View style={[styles.actions, ]}>
+          <ProductSansBold style={styles.actiontext}>
+            SCHEDULED DATE: {moment(selectedOrderDate).format('LL')}
+          </ProductSansBold>
+        </View>
+      
+       
+        <View style={[styles.actions, {paddingVertical: 10}]}>
           <ProductSansBold style={styles.actiontext}>
             WHO IS CREATING THIS ORDER?
           </ProductSansBold>
