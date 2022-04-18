@@ -98,6 +98,16 @@ const BreadListDetailsScreen = ({navigation, route}) => {
       }
     });
   };
+   useEffect(() => {
+    if (surplus) {
+      let fSurplus = surplus.find(item => item.productid == productid);
+      if (fSurplus) {
+        console.log('found the surplus', fSurplus);
+      }
+      setFoundSurplus(fSurplus);
+    }
+  }, [surplus, productid, shouldDismissPage]);
+
   const onRefresh = async () => {
     setHasDateLoaded(false);
     fetchAllData();
@@ -115,16 +125,7 @@ const BreadListDetailsScreen = ({navigation, route}) => {
     return countData;
   }
 
-  useEffect(() => {
-    if (surplus) {
-      let fSurplus = surplus.find(item => item.productid == productid);
-      if (fSurplus) {
-        console.log('found the surplus', fSurplus);
-      }
-      setFoundSurplus(fSurplus);
-    }
-  }, [productid, shouldDismissPage]);
-
+ 
   const renderDetails = () => {
     return (
       <View style={{marginHorizontal: 25, marginTop: 10}}>

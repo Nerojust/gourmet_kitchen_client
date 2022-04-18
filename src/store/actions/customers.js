@@ -1,6 +1,5 @@
-
 import clientZupa from '../../utils/ApiZupa';
-import { handleError } from '../../utils/utils';
+import {handleError} from '../../utils/utils';
 
 export const createCustomer = payload => {
   //console.log('About to create customer', payload);
@@ -13,7 +12,7 @@ export const createCustomer = payload => {
     return clientZupa
       .post('/customers', payload)
       .then(response => {
-        if (response.data) {
+        if (response?.status == 201 && response.data) {
           //console.log("Created customer successfully", response.data);
           const customer = response.data;
           dispatch({

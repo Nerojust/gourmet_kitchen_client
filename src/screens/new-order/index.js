@@ -802,8 +802,6 @@ const NewOrderScreen = ({navigation}) => {
         specialNote,
       };
 
-      //prepare zupa payload
-
       //prepare kitchen payload
       let kitchen_payload = {};
       let productArray = [];

@@ -68,7 +68,7 @@ export const BackViewMoreSettings = ({
         numberOfLines={1}>
         {backText}
       </ProductSansBold>
-      {shouldDisplayIcon ? (
+      {/* {shouldDisplayIcon ? (
         <>
           <TouchableOpacity onPress={performRefresh}>
             <Image
@@ -78,7 +78,7 @@ export const BackViewMoreSettings = ({
             />
           </TouchableOpacity>
         </>
-      ) : null}
+      ) : null} */}
       {shouldDisplayIcon ? (
         <>
           <TouchableOpacity onPress={performSearch}>
@@ -119,7 +119,7 @@ export const BackViewMoreSettings = ({
           </TouchableOpacity>
         ) : null}
       </View>
-      
+
       {displayCalendar ? (
         <View
           style={{
@@ -136,7 +136,7 @@ export const BackViewMoreSettings = ({
               //right: -wp(50),
             }}
             numberOfLines={1}>
-            {dateText ? moment(dateText).format('LL') : 'Today\'s Date'}
+            {dateText ? moment(dateText).format('LL') : "Today's Date"}
           </ProductSansBold>
 
           <TouchableOpacity onPress={toggleDateModal} style={{flex: 0.7}}>

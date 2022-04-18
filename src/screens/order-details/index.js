@@ -88,7 +88,6 @@ const OrderDetailsScreen = ({navigation, route}) => {
 
   const productSheetRef = useRef();
   const zupaProductAssociateSheetRef = useRef();
-  const submitOrderRef = useRef();
 
   const fullNameRef = useRef(null);
   const phoneNumberRef = useRef(null);
@@ -102,7 +101,6 @@ const OrderDetailsScreen = ({navigation, route}) => {
   const [additionalAddressDescription, setAdditionalAddressDescription] =
     useState('');
   const [selectedProduct, setSelectedProduct] = useState({});
-  const [selectedDelivery, setSelectedDelivery] = useState({});
 
   const {products, productsLoading} = useSelector(state => state.products);
   var productsData = Object.assign([], products);
@@ -115,9 +113,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
   const [isProductSelected, setIsProductSelected] = useState(false);
   var basketArray = [];
   const [newBasketArray, setNewBasketArray] = useState(basketArray);
-  const {createOrderLoading, deleteAllOrdersLoading} = useSelector(
-    x => x.orders,
-  );
+  const {deleteAllOrdersLoading} = useSelector(x => x.orders);
   const {sets} = useSelector(x => x.sets);
   const [mergedArrayProducts, setMergedArrayProducts] = useState(products);
   //console.log("sets",sets)
@@ -126,13 +122,13 @@ const OrderDetailsScreen = ({navigation, route}) => {
   const {deliveryTypes, deliveryTypesLoading, deliveryStates} = useSelector(
     state => state.deliveryTypes,
   );
-  let additionalArray = [];
   var finalDeliveryArray = [];
-
-  const {order, updateOrderLoading, error, ordersLoading} = useSelector(
+  let deleteArray = [];
+  const [deletedOrders, setDeletedOrders] = useState([]);
+  const {order, updateOrderLoading, ordersLoading} = useSelector(
     state => state.orders,
   );
-  const {notes, createNoteLoading, updateNoteLoading} = useSelector(
+  const {createNoteLoading, updateNoteLoading} = useSelector(
     state => state.notes,
   );
   const keyboardHeight = useKeyboardHeight();
@@ -163,14 +159,14 @@ const OrderDetailsScreen = ({navigation, route}) => {
     if (id) {
       fetchAllData();
     }
-  }, [id, hasAddedNewNote]);
+  }, [id, hasAddedNewNote, isEditMode]);
 
   useEffect(() => {
     dispatch(getAllDeliveryTypes(''));
   }, []);
 
   const fetchAllData = () => {
-    dispatch(getOrder(route?.params?.id)).then((result, error) => {
+    dispatch(getOrder(route?.params?.id)).then(result => {
       if (result) {
         //console.log('data', result);
         setHasDataLoaded(true);
@@ -179,11 +175,13 @@ const OrderDetailsScreen = ({navigation, route}) => {
         if (result) {
           setOrderItems(result?.products);
           setSelectedDeliveryType(result.delivery[0]);
-
           setFullName(result?.customer?.name);
           setAddress(result?.customer?.address);
           setAdditionalAddressDescription(result?.customer?.addressdescription);
           setPhoneNumber(result?.customer?.phonenumber);
+          //console.log("dell",result?.delivery[0])
+          setSelectedDeliveryType(result?.delivery[0]);
+          setDeletedOrders([]);
           // setSpecialNote(
           //   result?.specialNote ? result?.specialnote[0]?.specialnote : '',
           // );
@@ -522,7 +520,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
           handleBlur={() => {
             setIsFullNameFieldFocused(false);
           }}
-          onSubmitEditing={event => {}}
+          onSubmitEditing={() => {}}
         />
 
         <View style={styles.spaceBetweenInputs} />
@@ -668,7 +666,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
       //console.log("selected id", this.state.selectedProduct.id);
       let isProductExisting = false;
       if (productid) {
-        orderItems?.map((order, i) => {
+        orderItems?.map(order => {
           //("orderid", order.product.id);
           if (productid === order?.productid) {
             isProductExisting = true;
@@ -682,13 +680,10 @@ const OrderDetailsScreen = ({navigation, route}) => {
       }
 
       if (!isProductExisting) {
-        const results = orderItems.concat({
-          productId: productid,
-          product: selectedProduct,
-          quantity: 1,
-        });
+        //re-arrange the product object from zupa to be like kitchen product list
+        const results = orderItems.concat(selectedProduct);
         setOrderItems(results);
-        console.log('res', results);
+        console.log('total products list now is', results);
       }
       setSelectedProduct(undefined);
     } else {
@@ -793,19 +788,35 @@ const OrderDetailsScreen = ({navigation, route}) => {
       </>
     );
   };
+
   const deleteFromOrderBasket = order => {
-    var updatedOrderItems = orderItems.filter(item => item.id !== order.id);
+    //console.log('deleted it', order.id);
+    setDeletedOrders([...deletedOrders, order.id]);
+    //deleteArray.push(order.id)
+    let updatedOrderItems = orderItems.filter(item =>
+      item?.id > 0
+        ? item.id !== order.id
+        : item.name !== order.name && item.productsize !== order.productsize,
+    );
     setOrderItems(updatedOrderItems);
+    console.log('after deleting array', deletedOrders);
   };
 
   const updateItemQuantity = (qty, item) => {
-    const updatedOrders = orderItems.map(obj =>
-      obj.id === item.id ? {...obj, quantity: qty} : obj,
+    let updatedOrders = orderItems.map(obj =>
+      obj?.id > 0
+        ? obj.id === item?.id
+          ? {...obj, quantity: qty}
+          : obj
+        : obj?.name === item?.name && obj?.productsize === item?.productsize
+        ? {...obj, quantity: qty}
+        : obj,
     );
     setOrderItems(updatedOrders);
   };
   const renderCheckout = () => {
     var grandTotalAmount = 0;
+
     if (isEditMode) {
       var _data = Object.assign({}, data);
       _data.products = orderItems;
@@ -877,25 +888,14 @@ const OrderDetailsScreen = ({navigation, route}) => {
                     },
                   ]}
                   activeOpacity={ACTIVE_OPACITY}>
-                  {isEditMode ? (
-                    <ProductSans
-                      style={[styles.productText, {flex: 1}]}
-                      numberOfLines={1}>
-                      {selectedDeliveryType?.name ||
-                      selectedDeliveryType?.locationname
-                        ? selectedDeliveryType?.name ||
-                          selectedDeliveryType?.locationname
-                        : 'Select a delivery type'}
-                    </ProductSans>
-                  ) : (
-                    <ProductSans
-                      style={[styles.productText, {flex: 1}]}
-                      numberOfLines={1}>
-                      {selectedDeliveryType?.locationname
-                        ? selectedDeliveryType?.locationname
-                        : 'Select a delivery type'}
-                    </ProductSans>
-                  )}
+                  <ProductSans
+                    style={[styles.productText, {flex: 1}]}
+                    numberOfLines={1}>
+                    {selectedDeliveryType?.locationname
+                      ? selectedDeliveryType?.locationname
+                      : 'Select a delivery type'}
+                  </ProductSans>
+
                   <FontAwesome
                     name="angle-down"
                     size={hp(20)}
@@ -935,13 +935,42 @@ const OrderDetailsScreen = ({navigation, route}) => {
   const handleSingleItemPress = async (item, isProduct, isDelivery) => {
     console.log('clicked item is ', item);
     if (isProduct) {
-      setSelectedProduct(item);
+      let object = {};
+      if (isEditMode) {
+        //create a new object to match kitchen product pattern
+        object = {
+          categoryid: item?.categorySize?.categoryId,
+          categorysize: item?.categorySize?.name,
+          categorysizeid: item?.categorySize?.id,
+          isset: false,
+          name: item?.name,
+          orderid: id,
+          price: item?.unitPrice,
+          productid: item?.id,
+          productsize: item?.categorySize?.name,
+          quantity: 1,
+        };
+        setSelectedProduct(object);
+      } else {
+        setSelectedProduct(item);
+      }
+
       setIsProductSelected(true);
       setProductInputValue('');
       dismissBottomSheetDialog(productSheetRef);
     }
     if (isDelivery) {
-      setSelectedDeliveryType(item);
+      if (isEditMode) {
+        let object = {
+          id: order.delivery[0].id,
+          locationname: item.name,
+          state: item.state,
+          price: item.price,
+          deliveryTypeId: item.id,
+        };
+        console.log('delivery object', object);
+        setSelectedDeliveryType(object);
+      }
       setDeliveryInputValue('');
       dismissBottomSheetDialog(deliverySheetRef);
     }
@@ -965,7 +994,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
     //newAddress = text;
     setAddress(text);
   };
-  const handleSearchResult = (data, details, input) => {
+  const handleSearchResult = (data, details) => {
     console.log(details?.formatted_address, details?.geometry?.location);
     setAddress(details?.formatted_address);
     //newAddress = input;
@@ -989,7 +1018,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
     return formatNumberComma(result);
   });
 
-  const handleEditNote = (item, index) => {
+  const handleEditNote = item => {
     //console.log('edited is ', item, 'index is ', index);
     setSpecialNote(item?.note);
     setSelectedSpecialNote(item);
@@ -1009,7 +1038,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
     setIsEditNoteMode(false);
   };
 
-  const handleProductSubmitSearchext = text => {
+  const handleProductSubmitSearchext = () => {
     console.log('submit text', productInputValue);
     //dispatch(ProductActions.searchAllBaseProducts(text, 400, 0));
   };
@@ -1019,14 +1048,13 @@ const OrderDetailsScreen = ({navigation, route}) => {
       alert('Please input a note');
       return;
     }
-    dispatch(createNote({note: specialNote, orderid: id})).then(
-      (result, error) => {
-        if (result) {
-          setHasAddedNewNote(!hasAddedNewNote);
-          handleCancelNote();
-        }
-      },
-    );
+    dispatch(createNote({note: specialNote, orderid: id})).then(result => {
+      if (result) {
+        setHasAddedNewNote(!hasAddedNewNote);
+        handleCancelNote();
+        showSuccessDialog(false);
+      }
+    });
   };
 
   const updateSpecialNote = () => {
@@ -1039,22 +1067,13 @@ const OrderDetailsScreen = ({navigation, route}) => {
         note: specialNote,
         orderid: id,
       }),
-    ).then((result, error) => {
+    ).then(result => {
       if (result) {
         setHasAddedNewNote(!hasAddedNewNote);
         handleCancelNote();
+        showSuccessDialog(false);
       }
     });
-  };
-
-  const handleEditOrder = () => {
-    console.log('submit order clicked');
-    setIsEditMode(!isEditMode);
-    setFullName(fullName);
-    setPhoneNumber(phoneNumber);
-    setAddress(address);
-    setAdditionalAddressDescription(additionalAddressDescription);
-    setSpecialNote(specialNote);
   };
 
   const sendPatchRequest = async () => {
@@ -1079,65 +1098,52 @@ const OrderDetailsScreen = ({navigation, route}) => {
         alert('Please select at least one product');
         return;
       }
-      const orderId = data?.id;
-      const {id} = data?.customer;
-      var customerId = id;
 
-      const customerPayload = {
-        name: customerName,
-        phoneNumber: phoneNumber,
-        address: address,
-        addressdescription: additionalAddressDescription,
-      };
-      //console.log("customer payload is", customerPayload);
-      const orderPayload = {
-        specialNote,
-        order_items: {
-          set: orderItems?.map(({productid, quantity}, i) => {
-            return {
-              productid,
-              quantity,
-              orderId,
-            };
-          }),
+      let kitchen_payload = {};
+      let productArray = [];
+
+      orderItems.map(data => {
+        //normal single item
+        var item = {
+          id: data?.id,
+          productId: data?.productid,
+          productName: data?.name,
+          quantity: data?.quantity,
+          price: data?.price,
+          size: data?.productsize,
+        };
+        productArray.push(item);
+      });
+
+      kitchen_payload = {
+        customer: {
+          id: order?.customer?.id,
+          name: fullName,
+          phoneNumber: phoneNumber,
+          address,
+          addressDescription: additionalAddressDescription,
+          specialNote: order?.specialnote,
         },
+        delivery: {
+          id: order?.delivery[0]?.id,
+          deliveryTypeId: selectedDeliveryType?.deliveryTypeId,
+          price: selectedDeliveryType?.price,
+          state: selectedDeliveryType?.state,
+          name: selectedDeliveryType?.locationname,
+        },
+        createdById: order?.createdbyuserid,
+        products: productArray,
+        deleteArray: deletedOrders,
       };
-      if (selectedDeliveryType) {
-        orderPayload['deliveryTypeId'] = selectedDeliveryType?.id;
-      }
 
-      if (orderItems.length > 0) {
-        showLoader(loadingButtonRef);
-
-        dispatch(
-          patchOrder(
-            orderId,
-            customerId,
-            customerPayload,
-            orderPayload,
-            false,
-            periodType,
-          ),
-        ).then(result => {
-          if (result) {
-            // console.log("outside received", result)
-            showSuccessDialog();
-            setData(result);
-            set_Data(result);
-            setOrderItems(orderItems);
-            setIsLoading(false);
-            setIsEditClicked(false);
-
-            dispatch(
-              OrderActions.getAllOrders('', periodType, LIMIT_FIGURE, 0),
-            );
-            dispatch(OrderActions.getAllDashboardOrders('', periodType, 5, 0));
-            dispatch(UserActions.getDashboardStats(periodType));
-            dispatch(UserActions.getTopItemsAnalytics(periodType));
-          }
-        });
-        dismissLoader(loadingButtonRef);
-      }
+      console.log('final kitchen payload is', kitchen_payload);
+      dispatch(updateOrderById(id, kitchen_payload)).then(result => {
+        if (result) {
+          setIsEditMode(false);
+          showSuccessDialog(false);
+          setDeletedOrders([]);
+        }
+      });
     });
   };
   const displaySubmitButton = () => {
@@ -1145,7 +1151,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
       <>
         {isEditMode ? (
           <TouchableOpacity
-            onPress={handleEditOrder}
+            onPress={sendPatchRequest}
             style={{
               marginTop: 5,
               justifyContent: 'center',
@@ -1191,7 +1197,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
   };
 
   const handleClickEvent = item => {
-   // console.log('item clicked is ', item);
+    // console.log('item clicked is ', item);
     if (item == 'edit') {
       setIsEditMode(!isEditMode);
     } else if (item == 'delete') {
@@ -1199,9 +1205,9 @@ const OrderDetailsScreen = ({navigation, route}) => {
       handleDeleteOrders();
     }
   };
+
   const handleDeleteOrders = () => {
     // console.log('delete clicked');
-
     Alert.alert(
       'Alert',
       `Do you want to delete this order?`,
@@ -1215,9 +1221,9 @@ const OrderDetailsScreen = ({navigation, route}) => {
         {
           text: 'Yes',
           onPress: () =>
-            dispatch(deleteOrderById(id,orderDate)).then(result => {
+            dispatch(deleteOrderById(id, orderDate)).then(result => {
               if (result.isSuccessful) {
-                showSuccessDialog();
+                showSuccessDialog(true);
               }
             }),
         },
@@ -1230,15 +1236,16 @@ const OrderDetailsScreen = ({navigation, route}) => {
     <CustomSuccessModal
       isModalVisible={isSuccessModalVisible}
       dismissModal={showSuccessDialog}
-      message={'Order deleted successfully'}
-      //onPressButton={() => navigation.goBack()}
+      message={'Order updated successfully'}
     />
   );
-  const showSuccessDialog = () => {
+
+  const showSuccessDialog = (shouldDismiss = false) => {
     setIsSuccessModalVisible(!isSuccessModalVisible);
     setTimeout(() => {
       setIsSuccessModalVisible(false);
-      navigation.goBack();
+
+      shouldDismiss ? navigation.goBack() : null;
     }, DIALOG_TIMEOUT);
   };
 
@@ -1301,7 +1308,7 @@ const styles = StyleSheet.create({
   calculatedAmountText: {
     fontWeight: 'bold',
     alignSelf: 'center',
-    fontSize: 14,
+    fontSize: fp(15),
     color: COLOURS.textInputColor,
     //right: deviceWidth * 0.09,
   },
@@ -1327,7 +1334,7 @@ const styles = StyleSheet.create({
     //fontWeight: "bold",
     flex: 1,
     alignSelf: 'center',
-    fontSize: 12,
+    fontSize: fp(13),
     color: COLOURS.labelTextColor,
     left: 13,
   },
@@ -1354,7 +1361,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   actiontext: {
-    fontSize: 12,
+    fontSize: fp(13),
     //lineHeight: hp(19),
     color: COLOURS.labelTextColor,
     fontWeight: 'bold',
@@ -1430,7 +1437,7 @@ const styles = StyleSheet.create({
     //width: deviceWidth / 4,
     alignSelf: 'center',
     //flex: 0.3,
-    fontSize: 14,
+    fontSize: fp(15),
     color: COLOURS.textInputColor,
   },
   grandTotalview: {
@@ -1446,7 +1453,7 @@ const styles = StyleSheet.create({
   grandTotalText: {
     color: COLOURS.textInputColor,
     alignSelf: 'center',
-    fontSize: 14,
+    fontSize: fp(15),
 
     fontWeight: 'bold',
   },
