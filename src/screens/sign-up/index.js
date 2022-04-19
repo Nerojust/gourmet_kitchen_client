@@ -35,15 +35,15 @@ import {getAllRoles} from '../../store/actions/roles';
 import SingleRadioComponent from '../../components/SingleRadioComponent';
 
 const SignUpScreen = ({navigation}) => {
-  const [email, setEmail] = useState('osagie@gmail.com');
+  const [email, setEmail] = useState('');
   const keyboardHeight = useKeyboardHeight();
-  const [password, setPassword] = useState('123456');
-  const [firstName, setFirstName] = useState('Osagie');
-  const [phoneNumber, setPhoneNumber] = useState('08011111111');
+  const [password, setPassword] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [isYesClicked, setIsYesClicked] = useState(false);
   const [radioButtonState, setRadioButtonState] = useState('');
   const [roleRadioButtonState, setRoleRadioButtonState] = useState('');
-  const [lastName, setLastName] = useState('Uwa');
+  const [lastName, setLastName] = useState('');
   const [isEmailFocused, setIsEmailFocused] = useState(false);
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
   const [isFirstNameFocused, setIsFirstNameFocused] = useState(false);
@@ -126,7 +126,7 @@ const SignUpScreen = ({navigation}) => {
       };
 
       setIsLoading(true);
-       console.log('payload', payload);
+      console.log('payload', payload);
       dispatch(register(payload)).then(result => {
         //console.log("result", result)
         if (result) {

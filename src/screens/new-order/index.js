@@ -1051,16 +1051,26 @@ const NewOrderScreen = ({navigation}) => {
     );
   };
 
+  const scheduledDateView = () => {
+    return (
+      <View>
+        <View style={[styles.actions]}>
+          <ProductSansBold style={styles.actiontext}>
+            SCHEDULED DATE: {moment(selectedOrderDate).format('LLLL')}
+          </ProductSansBold>
+        </View>
+      </View>
+    );
+  };
   const displayNameListView = () => {
     return (
       <View>
-        <View style={[styles.actions, ]}>
+        {/* <View style={[styles.actions]}>
           <ProductSansBold style={styles.actiontext}>
             SCHEDULED DATE: {moment(selectedOrderDate).format('LL')}
           </ProductSansBold>
-        </View>
-      
-       
+        </View> */}
+
         <View style={[styles.actions, {paddingVertical: 10}]}>
           <ProductSansBold style={styles.actiontext}>
             WHO IS CREATING THIS ORDER?
@@ -1127,7 +1137,8 @@ const NewOrderScreen = ({navigation}) => {
             showsVerticalScrollIndicator={false}
             ListHeaderComponent={
               <>
-                {user?.roleid == 3 ? displayNameListView() : null}
+                {scheduledDateView()}
+                {user?.roleid == 1 || 2 || 3 ? displayNameListView() : null}
                 {renderInputFields()}
               </>
             }
