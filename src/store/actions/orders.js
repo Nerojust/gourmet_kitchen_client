@@ -16,15 +16,22 @@ export const setOrderStatus = status => {
   };
 };
 
-export const getAllAnalytics = status => {
+export const getAllAnalytics = (date) => {
   console.log('About to get all analytics data');
+
   return dispatch => {
     dispatch({
       type: 'GET_ANALYTICS_PENDING',
       loading: true,
       error: null,
     });
-    var getUrl = `/orders/analytics`;
+    var getUrl = `/orders/analytics?startDate=${
+      date + ' 00:00:01'
+    }&endDate=${date + ' 23:59:59'}`;
+
+    console.log('geturl', getUrl);
+
+   // var getUrl = `/orders/analytics`;
     //console.log("geturl", getUrl);
     return client
       .get(getUrl)

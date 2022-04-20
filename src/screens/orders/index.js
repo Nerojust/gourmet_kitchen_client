@@ -150,7 +150,7 @@ const OrdersScreen = ({navigation}) => {
     navigation.navigate('NewOrder');
   };
   const handleDeleteOrders = () => {
-    console.log('delete clicked');
+    //console.log('delete clicked');
 
     Alert.alert(
       'Alert',
@@ -190,6 +190,7 @@ const OrdersScreen = ({navigation}) => {
       //onPressButton={() => navigation.goBack()}
     />
   );
+ 
   const showSuccessDialog = () => {
     setIsSuccessModalVisible(!isSuccessModalVisible);
     setTimeout(() => {

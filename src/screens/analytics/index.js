@@ -30,8 +30,11 @@ import SurplusListItemComponent from '../../components/SurplusListItemComponent'
 import SearchInputComponent from '../../components/SearchInputComponent';
 import {logoutUser} from '../../store/actions/users';
 import {wp} from '../../utils/responsive-screen';
-import {getAllAnalytics} from '../../store/actions/orders';
+import {getAllAnalytics, saveOrderDate} from '../../store/actions/orders';
 import AnalyticsItemComponent from '../../components/AnalyticsItemComponent';
+import DatePicker from 'react-native-date-picker';
+import moment from 'moment';
+import {getDateWithoutTime} from '../../utils/DateFilter';
 
 // create a component
 const AnalyticsScreen = ({navigation}) => {
@@ -45,14 +48,24 @@ const AnalyticsScreen = ({navigation}) => {
   const [searchInputValue, setSearchInputValue] = useState('');
   //console.log('redux surplus', surplus);
   const dispatch = useDispatch();
+  const {
+    orders,
+    deleteAllOrdersLoading,
+    error,
+    ordersLoading,
+    updateOrderLoading,
+    orderDate,
+  } = useSelector(state => state.orders);
+  const [open, setOpen] = useState(false);
   const [isSearchCleared, setIsSearchCleared] = useState(false);
+  const [selectedOrderDate, setSelectedOrderDate] = useState(new Date());
 
   useEffect(() => {
     fetchAllData();
-  }, []);
+  }, [selectedOrderDate]);
 
   const fetchAllData = () => {
-    dispatch(getAllAnalytics());
+    dispatch(getAllAnalytics(getDateWithoutTime(orderDate)));
   };
 
   const showDialog = () => {
@@ -87,19 +100,52 @@ const AnalyticsScreen = ({navigation}) => {
   const renderItems = ({item, index}) => {
     return <AnalyticsItemComponent item={item} handleClick={handleClick} />;
   };
+
+  const renderDatePicker = () => {
+    return (
+      <DatePicker
+        modal
+        mode={'date'}
+        open={open}
+        title={'Select order date range'}
+        theme={'auto'}
+        date={selectedOrderDate || new Date()}
+        //minimumDate={subtractOneDayFromTime(new Date(), 1)}
+        onConfirm={date => {
+          console.log('date result', date);
+          setOpen(false);
+          setSelectedOrderDate(date);
+          dispatch(saveOrderDate(getDateWithoutTime(date)));
+        }}
+        onCancel={() => {
+          setOpen(false);
+          setSelectedOrderDate('');
+        }}
+      />
+    );
+  };
+  const toggleDateModal = () => {
+    //console.log('opened');
+    setOpen(!open);
+  };
+
   return (
     <ViewProviderComponent>
       <DismissKeyboard>
         <KeyboardObserverComponent>
           <BackViewWithLogout
-            backText="Analytics"
+            backText={
+              'Analytics for ' +
+              moment(orderDate ? orderDate : selectedOrderDate).format('LL')
+            }
             shouldDisplayLogoutIcon
             navigation={navigation}
-            style={{right: wp(20)}}
+            displayCalendar
+            toggleDateModal={toggleDateModal}
             handleLogout={showDialog}
             onClose={() => navigation.goBack()}
           />
-
+          {renderDatePicker()}
           <View
             style={{
               justifyContent: 'center',

@@ -156,6 +156,9 @@ export const BackViewWithLogout = ({
   backText,
   shouldDisplayLogoutIcon,
   handleLogout,
+
+  displayCalendar,
+  toggleDateModal,
   style,
 }) => {
   return (
@@ -174,7 +177,15 @@ export const BackViewWithLogout = ({
         numberOfLines={1}>
         {backText}
       </ProductSansBold>
-
+  {displayCalendar ? (
+          <TouchableOpacity onPress={toggleDateModal}>
+            <Image
+              source={require('../assets/images/calendar.png')}
+              style={[styles.calendarImage, {tintColor: COLOURS.gray4}]}
+              resizeMode={'contain'}
+            />
+          </TouchableOpacity>
+        ) : null}
       <View
         style={{
           flexDirection: 'row',
@@ -182,6 +193,9 @@ export const BackViewWithLogout = ({
           justifyContent: 'space-between',
           alignItems: 'center',
         }}>
+
+      
+
         {shouldDisplayLogoutIcon ? (
           <TouchableOpacity
             activeOpacity={0.4}
@@ -220,6 +234,13 @@ const styles = StyleSheet.create({
     width: wp(19),
     height: wp(19),
     marginLeft: 0,
+    flex:1
+  },
+calendarImage: {
+    width: wp(19),
+    height: wp(19),
+   marginRight:30,
+    flex:1
   },
   refreshImage: {
     width: wp(19),
