@@ -52,15 +52,15 @@ const LoginScreen = ({navigation}) => {
   // const [email, setEmail] = useState('zupa@intelia.io');
   // const [password, setPassword] = useState('Pass#Secret');
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  // const [email, setEmail] = useState('');
+  // const [password, setPassword] = useState('');
 
-  // const [email, setEmail] = useState('nerojust4@gmail.com');
-  // const [password, setPassword] = useState('123456');
+  const [email, setEmail] = useState('nerojust4@gmail.com');
+  const [password, setPassword] = useState('123456');
 
   // const [email, setEmail] = useState('fredBakim@gmail.com');
   // const [password, setPassword] = useState('123456');
- 
+
   // const [email, setEmail] = useState('osagie@gmail.com');
   // const [password, setPassword] = useState('123456');
 
@@ -91,7 +91,7 @@ const LoginScreen = ({navigation}) => {
         password,
       };
 
-      dispatch(login(payload))
+      dispatch(login(payload));
     });
   };
 
@@ -109,7 +109,6 @@ const LoginScreen = ({navigation}) => {
         onPress={onSubmit}
         style={{
           marginTop: 5,
-
           justifyContent: 'center',
           marginBottom:
             keyboardHeight > 0 ? (Platform.OS == 'ios' ? 270 : 100) : 20,
