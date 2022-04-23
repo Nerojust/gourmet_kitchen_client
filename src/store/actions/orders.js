@@ -16,7 +16,7 @@ export const setOrderStatus = status => {
   };
 };
 
-export const getAllAnalytics = (date) => {
+export const getAllAnalytics = date => {
   console.log('About to get all analytics data');
 
   return dispatch => {
@@ -25,13 +25,13 @@ export const getAllAnalytics = (date) => {
       loading: true,
       error: null,
     });
-    var getUrl = `/orders/analytics?startDate=${
-      date + ' 00:00:01'
-    }&endDate=${date + ' 23:59:59'}`;
+    var getUrl = `/orders/analytics?startDate=${date + ' 00:00:01'}&endDate=${
+      date + ' 23:59:59'
+    }`;
 
     console.log('geturl', getUrl);
 
-   // var getUrl = `/orders/analytics`;
+    // var getUrl = `/orders/analytics`;
     //console.log("geturl", getUrl);
     return client
       .get(getUrl)
@@ -365,6 +365,52 @@ export const updateSurplusStatusForOrderItemById = (id, payload) => {
         handleError(error, dispatch, 'updating order');
         dispatch({
           type: 'UPDATE_SURPLUS_STATUS_ORDER_ITEM_FAILED',
+          loading: false,
+          error: error.message,
+        });
+      });
+  };
+};
+export const updateOrderDispatchByOrderId = (id, payload) => {
+  console.log('About to update order dispatch with id', id);
+  return dispatch => {
+    dispatch({
+      type: 'UPDATE_ORDER_DISPATCH_PENDING',
+      loading: true,
+      error: null,
+    });
+    var url = `/orders/updateDispatch/${id}`;
+    //console.log("geturl", getUrl);
+    return client
+      .patch(url, payload)
+      .then(response => {
+        if (response?.data) {
+          if (response?.data?.isSuccessful) {
+            console.log(
+              'order dispatch field updated successfully',
+              response?.data?.recordCount,
+            );
+            dispatch({
+              type: 'UPDATE_ORDER_DISPATCH_SUCCESS',
+              loading: false,
+              data: response?.data?.results,
+            });
+           
+            return response?.data?.results;
+          } else {
+            dispatch({
+              type: 'UPDATE_ORDER_DISPATCH_FAILED',
+              loading: false,
+              error: response?.data?.message,
+            });
+          }
+        }
+      })
+      .catch(error => {
+        console.log('updateCompleteStatusForOrder failed', error);
+        handleError(error, dispatch, 'updating order dispatch');
+        dispatch({
+          type: 'UPDATE_ORDER_DISPATCH_FAILED',
           loading: false,
           error: error.message,
         });

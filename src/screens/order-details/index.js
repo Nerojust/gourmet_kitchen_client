@@ -27,6 +27,7 @@ import {
   DismissKeyboard,
   dismissTextInput,
   formatNumberComma,
+  getProcessingTime,
   removeDuplicatesFromArray,
   showBottomSheet,
   sortArrayByDate,
@@ -49,6 +50,7 @@ import {
   deleteOrderById,
   getOrder,
   updateOrderById,
+  updateOrderDispatchByOrderId,
   updateOrderSpecialNoteById,
 } from '../../store/actions/orders';
 import LoaderShimmerComponent from '../../components/LoaderShimmerComponent';
@@ -63,6 +65,7 @@ import BlinkingTextComponent from '../../components/BlinkingTextComponent';
 import {
   BottomSheetDeliveryTypesComponent,
   BottomSheetProductComponent,
+  BottomSheetRiderComponent,
 } from '../../components/BottomSheetComponent';
 import {getAllDeliveryTypes} from '../../store/actions/delivery-types';
 import {getAllProducts} from '../../store/actions/products';
@@ -70,6 +73,7 @@ import OrderListItem from '../../components/OrderListItem';
 import OrdersHelper from '../../components/OrdersHelper';
 import {DataTable} from 'react-native-paper';
 import CustomSuccessModal from '../../components/CustomSuccessModal';
+import {getAllRiders} from '../../store/actions/riders';
 
 // create a component
 const OrderDetailsScreen = ({navigation, route}) => {
@@ -87,6 +91,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
   ] = useState(false);
 
   const productSheetRef = useRef();
+  const ridersSheetRef = useRef();
   const zupaProductAssociateSheetRef = useRef();
 
   const fullNameRef = useRef(null);
@@ -101,8 +106,17 @@ const OrderDetailsScreen = ({navigation, route}) => {
   const [additionalAddressDescription, setAdditionalAddressDescription] =
     useState('');
   const [selectedProduct, setSelectedProduct] = useState({});
+  const [selectedRider, setSelectedRider] = useState({});
 
   const {products, productsLoading} = useSelector(state => state.products);
+  const {riders, rider, ridersLoading, updateRidersLoading} = useSelector(
+    state => state.riders,
+  );
+
+  var ridersData = Object.assign([], riders);
+  const [filteredRidersData, setFilteredRidersData] = useState(ridersData);
+  const [ridersInputValue, setRidersInputValue] = useState('');
+
   var productsData = Object.assign([], products);
   //console.log("pdts",productsData)
   const [quantity, setQuantity] = useState(1);
@@ -113,7 +127,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
   const [isProductSelected, setIsProductSelected] = useState(false);
   var basketArray = [];
   const [newBasketArray, setNewBasketArray] = useState(basketArray);
-  const {deleteAllOrdersLoading} = useSelector(x => x.orders);
+
   const {sets} = useSelector(x => x.sets);
   const [mergedArrayProducts, setMergedArrayProducts] = useState(products);
   //console.log("sets",sets)
@@ -125,9 +139,14 @@ const OrderDetailsScreen = ({navigation, route}) => {
   var finalDeliveryArray = [];
   let deleteArray = [];
   const [deletedOrders, setDeletedOrders] = useState([]);
-  const {order, updateOrderLoading, ordersLoading} = useSelector(
-    state => state.orders,
-  );
+  const [hasPatchedDispatch, setHasPatchedDispatch] = useState(false);
+  const {
+    order,
+    updateOrderLoading,
+    ordersLoading,
+    deleteAllOrdersLoading,
+    isOrderPatched,
+  } = useSelector(state => state.orders);
   const {createNoteLoading, updateNoteLoading} = useSelector(
     state => state.notes,
   );
@@ -159,14 +178,15 @@ const OrderDetailsScreen = ({navigation, route}) => {
     if (id) {
       fetchAllData();
     }
-  }, [id, hasAddedNewNote, isEditMode]);
+  }, [id, hasAddedNewNote, isEditMode, hasPatchedDispatch]);
 
   useEffect(() => {
     dispatch(getAllDeliveryTypes(''));
+    dispatch(getAllRiders());
   }, []);
 
   const fetchAllData = () => {
-    dispatch(getOrder(route?.params?.id)).then(result => {
+    dispatch(getOrder(id)).then(result => {
       if (result) {
         //console.log('data', result);
         setHasDataLoaded(true);
@@ -174,14 +194,13 @@ const OrderDetailsScreen = ({navigation, route}) => {
 
         if (result) {
           setOrderItems(result?.products);
-          setSelectedDeliveryType(result.delivery[0]);
+          setSelectedDeliveryType(result?.delivery);
           setFullName(result?.customer?.name);
           setAddress(result?.customer?.address);
           setAdditionalAddressDescription(result?.customer?.addressdescription);
           setPhoneNumber(result?.customer?.phonenumber);
-          //console.log("dell",result?.delivery[0])
-          setSelectedDeliveryType(result?.delivery[0]);
           setDeletedOrders([]);
+          setSelectedRider(result?.rider);
           // setSpecialNote(
           //   result?.specialNote ? result?.specialnote[0]?.specialnote : '',
           // );
@@ -361,18 +380,19 @@ const OrderDetailsScreen = ({navigation, route}) => {
                       flex: 1.06,
                     },
                   ]}>
-                  {order?.delivery.length > 0
-                    ? 'Delivery to:\n' + order?.delivery[0]?.locationname
+                  {order?.delivery
+                    ? 'Delivery to:\n' + order?.delivery?.locationname
                     : 'Delivery Type: Walk-In'}
                 </AvertaBold>
 
                 <AvertaBold
                   style={[styles.calculatedAmountText, {right: 0, flex: 0.38}]}>
-                  {order.delivery[0]?.price
-                    ? NAIRA_ + formatNumberComma(order.delivery[0]?.price)
+                  {order.delivery?.price
+                    ? NAIRA_ + formatNumberComma(order.delivery?.price)
                     : null}
                 </AvertaBold>
               </View>
+
               <View style={[styles.grandTotalview]}>
                 <AvertaBold style={[styles.grandTotalText, {flex: 2}]}>
                   Grand Total
@@ -385,11 +405,80 @@ const OrderDetailsScreen = ({navigation, route}) => {
               </View>
             </View>
 
-            <View
-              style={[styles.customerNameView, {top: -20, marginBottom: 20}]}>
+            <View style={styles.dispatchView}>
+              <View style={[styles.customerNameView, {marginTop: 0}]}>
+                <ProductSansBold
+                  style={[styles.labelText, {left: 0, paddingTop: 0}]}>
+                  DISPATCHED BY
+                </ProductSansBold>
+                <Averta style={{color: COLOURS.textInputColor}}>
+                  {selectedRider ? selectedRider?.name : 'No rider assigned'}
+                </Averta>
+                <Averta
+                  style={[styles.address, {color: COLOURS.textInputColor}]}>
+                  {selectedRider ? selectedRider?.phonenumber : null}
+                </Averta>
+
+                <ProductSans style={[styles.noteTimetext, {marginTop: 5}]}>
+                  Updated at{' '}
+                  {order?.dispatch?.updatedat
+                    ? moment(order?.dispatch?.updatedat).format('LT')
+                    : 'None'}
+                </ProductSans>
+                {selectedRider ? (
+                  <>
+                    <ProductSansBold
+                      style={[
+                        styles.labelText,
+                        {left: 0, paddingTop: 5, paddingBottom: 4},
+                      ]}>
+                      TIME IN PROCESSING
+                    </ProductSansBold>
+                    <Averta style={{color: COLOURS.textInputColor}}>
+                      {getProcessingTime(
+                        order?.createdat,
+                        order?.dispatch?.updatedat,
+                      )}
+                    </Averta>
+                  </>
+                ) : null}
+              </View>
+
+              <TouchableOpacity
+                onPress={handleLoadRidersBottomSheet}
+                activeOpacity={0.6}
+                style={{
+                  height: hp(35),
+                  justifyContent: 'center',
+                  paddingHorizontal: 10,
+                  borderRadius: 10,
+                  borderWidth: 0.8,
+                  borderColor: COLOURS.blue,
+
+                  alignItems: 'center',
+                }}>
+                <ProductSansBold
+                  style={[
+                    styles.actiontext,
+                    {
+                      left: 0,
+                      marginTop: 0,
+                    },
+                  ]}>
+                  {selectedRider ? 'Edit Dispatch' : 'Add dispatch'}
+                </ProductSansBold>
+              </TouchableOpacity>
+            </View>
+
+            {/* special note section */}
+            <View style={[styles.customerNameView, {marginVertical: 20}]}>
               <View>
                 <TouchableOpacity
-                  style={{alignItems: 'flex-end', marginRight: 20}}
+                  style={{
+                    alignItems: 'flex-end',
+                    marginRight: 20,
+                    marginTop: 15,
+                  }}
                   onPress={!isAddNewNote ? handleAddNote : handleCancelNote}>
                   <ProductSansBold
                     style={[
@@ -697,6 +786,9 @@ const OrderDetailsScreen = ({navigation, route}) => {
     dismissTextInput(fullNameRef);
     showBottomSheet(productSheetRef);
   };
+  const handleLoadRidersBottomSheet = () => {
+    showBottomSheet(ridersSheetRef);
+  };
 
   const handleProductInputSearchText = text => {
     if (text) {
@@ -740,6 +832,22 @@ const OrderDetailsScreen = ({navigation, route}) => {
       setDeliveryInputValue(text);
     }
   };
+  const handleRidersSearchText = text => {
+    if (text) {
+      const newData = riders?.filter(item => {
+        const itemData = item?.name
+          ? item?.name.toUpperCase()
+          : ''.toUpperCase();
+        const textData = text.toUpperCase();
+        return itemData.indexOf(textData) > -1;
+      });
+      setFilteredRidersData(newData);
+      setRidersInputValue(text);
+    } else {
+      setFilteredRidersData(riders);
+      setRidersInputValue(text);
+    }
+  };
   const handleCloseActionProduct = () => {
     setProductInputValue('');
     setFilteredProductsData([]);
@@ -766,6 +874,18 @@ const OrderDetailsScreen = ({navigation, route}) => {
           handleSearchInputSubmit={handleProductSubmitSearchext}
           handleInputSearchText={handleProductInputSearchText}
           // handleAddProduct={createNewProduct}
+        />
+        <BottomSheetRiderComponent
+          sheetRef={ridersSheetRef}
+          handleRefresh={handleRefreshIncaseOfNetworkFailure}
+          isRidersLoading={ridersLoading}
+          filteredDataSource={filteredRidersData}
+          dataSource={ridersInputValue.length > 0 ? filteredRidersData : riders}
+          closeAction={handleCloseActionRider}
+          handleSingleItemPress={handleSingleItemPress}
+          inputValue={ridersInputValue}
+          handleSearchInputSubmit={handleProductSubmitSearchext}
+          handleInputSearchText={handleRidersSearchText}
         />
 
         {/* delivery bottom sheet */}
@@ -821,7 +941,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
       var _data = Object.assign({}, data);
       _data.products = orderItems;
       if (_data?.delivery) {
-        _data.delivery[0].price = selectedDeliveryType?.price;
+        _data.delivery.price = selectedDeliveryType?.price;
       }
       grandTotalAmount = OrdersHelper.resolveAmount(_data).grandTotalAmount;
 
@@ -868,7 +988,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
           {/* bottom views */}
           {isEditMode ? (
             <>
-              {renderBottomSheets()}
+              {/* {renderBottomSheets()} */}
 
               {/* select delivery type view */}
               <TouchableOpacity
@@ -932,7 +1052,12 @@ const OrderDetailsScreen = ({navigation, route}) => {
     showBottomSheet(deliverySheetRef);
   };
 
-  const handleSingleItemPress = async (item, isProduct, isDelivery) => {
+  const handleSingleItemPress = async (
+    item,
+    isProduct,
+    isDelivery,
+    isRider,
+  ) => {
     console.log('clicked item is ', item);
     if (isProduct) {
       let object = {};
@@ -962,7 +1087,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
     if (isDelivery) {
       if (isEditMode) {
         let object = {
-          id: order.delivery[0].id,
+          id: order.delivery.id,
           locationname: item.name,
           state: item.state,
           price: item.price,
@@ -974,19 +1099,36 @@ const OrderDetailsScreen = ({navigation, route}) => {
       setDeliveryInputValue('');
       dismissBottomSheetDialog(deliverySheetRef);
     }
+    if (isRider) {
+      setSelectedRider(item);
+      dismissBottomSheetDialog(ridersSheetRef);
+
+      handlePatchDisptach(item);
+    }
   };
 
-  const handleRefreshIncaseOfNetworkFailure = (isProduct, isDelivery) => {
+  const handleRefreshIncaseOfNetworkFailure = (
+    isProduct,
+    isDelivery,
+    isRider,
+  ) => {
     if (isProduct) {
       dispatch(getAllProducts('', 0, 0));
     }
     if (isDelivery) {
       dispatch(getAllDeliveryTypes(''));
     }
+    if (isRider) {
+      dispatch(getAllRiders());
+    }
   };
   const handleCloseActionDelivery = () => {
     setDeliveryInputValue('');
     dismissBottomSheetDialog(deliverySheetRef);
+  };
+  const handleCloseActionRider = () => {
+    setRidersInputValue('');
+    dismissBottomSheetDialog(ridersSheetRef);
   };
 
   const handleAddressInputText = text => {
@@ -1005,12 +1147,13 @@ const OrderDetailsScreen = ({navigation, route}) => {
     for (let i = 0; i < order.products.length; i++) {
       const item = order.products[i];
       amount = amount + item?.price * item?.quantity;
-    } //console.log("Total order amount is ", amount);
+    }
+    //console.log('Total order amount is ', amount);
 
     var result = 0;
 
-    if (order.delivery && order?.delivery[0]?.price) {
-      result = amount + order?.delivery[0]?.price;
+    if (order.delivery && order?.delivery?.price) {
+      result = amount + order?.delivery?.price;
     } else {
       result = amount;
     }
@@ -1125,7 +1268,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
           specialNote: order?.specialnote,
         },
         delivery: {
-          id: order?.delivery[0]?.id,
+          id: order?.delivery?.id,
           deliveryTypeId: selectedDeliveryType?.deliveryTypeId,
           price: selectedDeliveryType?.price,
           state: selectedDeliveryType?.state,
@@ -1137,7 +1280,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
       };
 
       console.log('final kitchen payload is', kitchen_payload);
-      dispatch(updateOrderById(id, kitchen_payload,orderDate)).then(result => {
+      dispatch(updateOrderById(id, kitchen_payload, orderDate)).then(result => {
         if (result) {
           setIsEditMode(false);
           showSuccessDialog(false);
@@ -1249,6 +1392,21 @@ const OrderDetailsScreen = ({navigation, route}) => {
     }, DIALOG_TIMEOUT);
   };
 
+  const handlePatchDisptach = rider => {
+    //console.log('Patch dispatch');
+    setHasPatchedDispatch(false);
+    let payload = {
+      riderId: rider?.id,
+    };
+    console.log('payload dispatch', payload);
+    dispatch(updateOrderDispatchByOrderId(order?.id, payload)).then(result => {
+      if (result) {
+        // getOrder(id);
+        setHasPatchedDispatch(true);
+      }
+    });
+  };
+
   return (
     <ViewProviderComponent>
       <DismissKeyboard>
@@ -1263,6 +1421,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
             handleClick={handleClickEvent}
           />
           {renderSuccessModal()}
+          {renderBottomSheets()}
           <FlatList
             data={[]}
             keyboardShouldPersistTaps={'handled'}
@@ -1448,7 +1607,17 @@ const styles = StyleSheet.create({
     borderTopColor: COLOURS.lightGray,
     borderBottomWidth: 0.4,
     borderBottomColor: COLOURS.lightGray,
-    paddingVertical: 20,
+    paddingVertical: 10,
+  },
+  dispatchView: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingLeft: 13,
+    //borderBottomWidth: 0.4,
+    //borderTopColor: COLOURS.lightGray,
+    borderBottomWidth: 0.4,
+    borderBottomColor: COLOURS.lightGray,
+    paddingBottom: 15,
   },
   grandTotalText: {
     color: COLOURS.textInputColor,

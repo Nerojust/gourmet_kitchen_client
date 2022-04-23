@@ -4,6 +4,7 @@ import {deviceHeight} from '../utils/responsive-screen';
 import ProductListComponent from '../components/ProductListComponent';
 import {COLOURS} from '../utils/Colours';
 import DeliveryListComponent from './DeliveryListComponent';
+import RiderListComponent from './RiderListComponent';
 
 export function BottomSheetProductComponent({
   sheetRef,
@@ -57,6 +58,64 @@ export function BottomSheetProductComponent({
         handleSearchInputSubmit={handleSearchInputSubmit}
         handleSingleItemPress={item => handleSingleItemPress(item, true, false)}
         addProductPress={() => addProductPress()}
+        inputValue={inputValue}
+        handleInputSearchText={handleInputSearchText}
+      />
+    </RBSheet>
+  );
+}
+export function BottomSheetRiderComponent({
+  sheetRef,
+  dataSource,
+  filteredDataSource,
+  handleSingleItemPress,
+  addProductPress,
+  inputValue,
+  handleInputSearchText,
+  closeAction,
+  isRidersLoading,
+  handleSearchInputSubmit,
+  handleRefresh,
+  handleAddProduct,
+}) {
+  return (
+    <RBSheet
+      ref={sheetRef}
+      animationType={'slide'}
+      closeDuration={0}
+      openDuration={0}
+      closeOnDragDown={true}
+      closeOnPressMask={true}
+      closeOnPressBack={true}
+      keyboardAvoidingViewEnabled={true}
+      //height={deviceHeight / 1.04}
+      height={Platform.OS == 'ios' ? deviceHeight / 1.04 : deviceHeight / 1.055}
+      customStyles={{
+        wrapper: {
+          backgroundColor: COLOURS.transparentColour,
+        },
+        draggableIcon: {
+          width: 0,
+          top: 5,
+        },
+        container: {
+          borderTopLeftRadius: 20,
+          borderTopRightRadius: 20,
+          borderColor: COLOURS.lightGray,
+          borderWidth: 0.4,
+          backgroundColor: COLOURS.white,
+        },
+      }}>
+      <RiderListComponent
+        dataSource={dataSource}
+        filteredDataSource={filteredDataSource}
+        closeAction={closeAction}
+        handleRefresh={() => handleRefresh(false, false,true)}
+        //handleAddProduct={handleAddProduct}
+        isRidersLoading={isRidersLoading}
+        handleSearchInputSubmit={handleSearchInputSubmit}
+        handleSingleItemPress={item => handleSingleItemPress(item, false, false,true)}
+        //addProductPress={() => addProductPress()}
         inputValue={inputValue}
         handleInputSearchText={handleInputSearchText}
       />

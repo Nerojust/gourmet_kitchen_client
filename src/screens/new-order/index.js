@@ -1065,12 +1065,6 @@ const NewOrderScreen = ({navigation}) => {
   const displayNameListView = () => {
     return (
       <View>
-        {/* <View style={[styles.actions]}>
-          <ProductSansBold style={styles.actiontext}>
-            SCHEDULED DATE: {moment(selectedOrderDate).format('LL')}
-          </ProductSansBold>
-        </View> */}
-
         <View style={[styles.actions, {paddingVertical: 10}]}>
           <ProductSansBold style={styles.actiontext}>
             WHO IS CREATING THIS ORDER?

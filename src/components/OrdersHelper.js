@@ -8,7 +8,7 @@ const OrdersHelper = {
    
 
       const deliveryAmount = order?.delivery
-        ? order?.delivery[0]?.price
+        ? order?.delivery?.price
         : 0;
   
   

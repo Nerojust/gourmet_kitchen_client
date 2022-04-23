@@ -18,6 +18,7 @@ import {GET_RIDER_REQUESTS} from './Api';
 import {COLOURS} from '../utils/Colours';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {DrawerActions} from '@react-navigation/routers';
+import moment from 'moment';
 
 export const capitalizeWord = string => {
   var result = [];
@@ -78,7 +79,42 @@ export const showBottomSheet = ref => {
 export const dismissTextInput = refdata => {
   refdata.current.blur();
 };
+export const getProcessingTime = (date1, date2) => {
+  var a = moment(date2);
+  var b = moment(date1);
+  let diffMs = a.diff(b);
+  //console.log(a.diff(b, 'hours')) // 1
+  var sec = diffMs / 1000;
+  if (sec < 0) return 'now';
 
+  if (sec < 60) {
+    return parseInt(sec) + ' second' + (parseInt(sec) > 1 ? 's' : '') + '';
+  }
+
+  var min = sec / 60;
+  if (min < 60) {
+    //console.log("minutes",min)
+    return parseInt(min) + ' minute' + (parseInt(min) > 1 ? 's' : '') + '';
+  }
+
+  var h = min / 60;
+  if (h < 24) {
+    return parseInt(h) + ' hour' + (parseInt(h) > 1 ? 's' : '') + '';
+  }
+
+  var d = h / 24;
+  if (d < 30) {
+    return parseInt(d) + ' day' + (parseInt(d) > 1 ? 's' : '') + '';
+  }
+
+  var m = d / 30;
+  if (m < 12) {
+    return parseInt(m) + ' month' + (parseInt(m) > 1 ? 's' : '') + '';
+  }
+
+  var y = m / 12;
+  return parseInt(y) + ' year' + (parseInt(y) > 1 ? 's' : '') + '';
+};
 export const NAIRA_ = '\u20a6';
 
 export const formatNumberComma = inputNumber => {

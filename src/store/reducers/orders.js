@@ -111,6 +111,25 @@ export default (state = initialState, action) => {
         ordersLoading: action.loading,
         error: action.error,
       };
+    case 'UPDATE_ORDER_DISPATCH_PENDING':
+      return {
+        ...state,
+        isOrderPatched:false,
+        ordersLoading: action.loading,
+      };
+    case 'UPDATE_ORDER_DISPATCH_SUCCESS':
+      return {
+        ...state,
+        isOrderPatched: true,
+        ordersLoading: action.loading,
+      };
+    case 'UPDATE_ORDER_DISPATCH_FAILED':
+      return {
+        ...state,
+        isOrderPatched:false,
+        ordersLoading: action.loading,
+        error: action.error,
+      };
 
     case 'GET_ANALYTICS_PENDING':
       return {
