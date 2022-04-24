@@ -33,6 +33,7 @@ import {
   getAllSurplus,
   updateSurplusById,
 } from '../../store/actions/surplus';
+import { getDateWithoutTime } from '../../utils/DateFilter';
 
 // create a component
 const BreadListDetailsScreen = ({navigation, route}) => {
@@ -57,6 +58,8 @@ const BreadListDetailsScreen = ({navigation, route}) => {
   } = useSelector(x => x.orders);
   //console.log('count item', countItem);
   var {productid} = route.params.bread;
+  var selectedOrderDate = route.params.date;
+  //console.log("dddd",selectedOrderDate)
   //console.log('route.params.brea item', route.params.bread);
   const [foundSurplus, setFoundSurplus] = useState();
   const [category, setCategory] = useState('');
@@ -81,7 +84,7 @@ const BreadListDetailsScreen = ({navigation, route}) => {
   const fetchAllData = () => {
     dispatch(getAllSurplus()).then(resultData => {
       if (resultData) {
-        dispatch(getAllOrderedProductsStatsById(productid)).then(result => {
+        dispatch(getAllOrderedProductsStatsById(productid,getDateWithoutTime(selectedOrderDate))).then(result => {
           if (result) {
             //console.log('full bread count profile', result);
             //pick the first object data because they are all the same values except sum

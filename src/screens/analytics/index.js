@@ -79,7 +79,7 @@ const AnalyticsScreen = ({navigation}) => {
   const getRiderData = () => {
     dispatch(getRiderAnalytics(getDateWithoutTime(selectedOrderDate)));
   };
-  
+
   const getAllSalesData = () => {
     dispatch(getSalesAnalytics(getDateWithoutTime(selectedOrderDate)));
   };
@@ -287,7 +287,7 @@ const AnalyticsScreen = ({navigation}) => {
           <BackViewWithLogout
             backText={
               'Analytics for ' +
-              moment(orderDate ? orderDate : selectedOrderDate).format('LL')
+              moment( selectedOrderDate).format('LL')
             }
             shouldDisplayLogoutIcon
             navigation={navigation}

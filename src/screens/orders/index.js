@@ -85,7 +85,7 @@ const OrdersScreen = ({navigation}) => {
   useEffect(() => {
     fetchAllData();
   }, [statusState, selectedTab, selectedOrderDate]);
-  
+
   useEffect(() => {
     dispatch(getAllProducts('', 0, 0, null));
   }, []);
@@ -279,7 +279,7 @@ const OrdersScreen = ({navigation}) => {
       <HeaderComponent
         name={
           'Orders for ' +
-          moment(orderDate ? orderDate : selectedOrderDate).format('LL')
+          moment(selectedOrderDate).format('LL')
         }
         isDashboard
         displayCalendar

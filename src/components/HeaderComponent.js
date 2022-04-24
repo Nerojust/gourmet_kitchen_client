@@ -61,7 +61,7 @@ export const HeaderComponent = ({
             <TouchableOpacity onPress={performSearch}>
               <Image
                 source={require('../assets/images/search.png')}
-                style={styles.deleteImage}
+                style={styles.searchImage}
                 resizeMode={'contain'}
               />
             </TouchableOpacity>
@@ -153,8 +153,13 @@ const styles = StyleSheet.create({
     height: wp(19),
     marginLeft: 24,
   },
+  searchImage: {
+    width: wp(19),
+    height: wp(19),
+    left: 7,
+  },
   titleHeaderText: {
-    fontSize: fp(20),
+    fontSize: fp(19),
     flex: 0.9,
     left: 20,
     color: COLOURS.gray2,

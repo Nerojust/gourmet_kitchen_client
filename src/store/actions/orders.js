@@ -1,4 +1,5 @@
 import {Alert} from 'react-native';
+import { get } from 'react-native/Libraries/Utilities/PixelRatio';
 import client from '../../utils/Api';
 import clientZupa from '../../utils/ApiZupa';
 import {LOGIN_TOKEN} from '../../utils/Constants';
@@ -25,11 +26,11 @@ export const getSalesAnalytics = date => {
       loading: true,
       error: null,
     });
-    var getUrl = `/orders/analytics/sales?startDate=${date + ' 00:00:01'}&endDate=${
-      date + ' 23:59:59'
-    }`;
+    var getUrl = `/orders/analytics/sales?startDate=${
+      date + ' 00:00:01'
+    }&endDate=${date + ' 23:59:59'}`;
 
-    console.log('geturl', getUrl);
+   // console.log('geturl', getUrl);
 
     // var getUrl = `/orders/analytics`;
     //console.log("geturl", getUrl);
@@ -69,16 +70,21 @@ export const getSalesAnalytics = date => {
       });
   };
 };
-export const getAllOrderedProductsStats = status => {
+export const getAllOrderedProductsStats = date => {
   console.log('About to get all orders stats');
+
   return dispatch => {
     dispatch({
       type: 'GET_ALL_PRODUCTS_STATS_PENDING',
       loading: true,
       error: null,
     });
-    var getUrl = `/orders/count`;
-    //console.log("geturl", getUrl);
+    var getUrl = `/orders/count?startDate=${date + ' 00:00:01'}&endDate=${
+      date + ' 23:59:59'
+    }`;
+
+   
+   // console.log("geturl", getUrl);
     return client
       .get(getUrl)
       .then(response => {
@@ -123,7 +129,7 @@ export const saveOrderDate = date => {
     });
   };
 };
-export const getAllOrderedProductsStatsById = id => {
+export const getAllOrderedProductsStatsById = (id,date) => {
   console.log('About to get stats with id', id);
   return dispatch => {
     dispatch({
@@ -131,10 +137,14 @@ export const getAllOrderedProductsStatsById = id => {
       loading: true,
       error: null,
     });
-    var url = `/orders/count/${id}`;
-    //console.log("geturl", getUrl);
+
+    var getUrl = `/orders/count/${id}?startDate=${
+      date + ' 00:00:01'
+    }&endDate=${date + ' 23:59:59'}`;
+    //var url = `/orders/count/${id}`;
+    console.log("geturl", getUrl);
     return client
-      .get(url)
+      .get(getUrl)
       .then(response => {
         if (response?.data) {
           if (response?.data?.isSuccessful) {
@@ -183,7 +193,7 @@ export const getAllOrderedProducts = (status = 'all', orderDate) => {
       orderDate + ' 00:00:01'
     }&endDate=${orderDate + ' 23:59:59'}`;
 
-    console.log('geturl', getUrl);
+   // console.log('geturl', getUrl);
 
     //client.defaults.headers.common['Authorization'] = `Bearer ${LOGIN_TOKEN}`;
     return client
@@ -395,7 +405,7 @@ export const updateOrderDispatchByOrderId = (id, payload) => {
               loading: false,
               data: response?.data?.results,
             });
-           
+
             return response?.data?.results;
           } else {
             dispatch({

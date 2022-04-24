@@ -1,10 +1,12 @@
+import {getDateWithoutTime} from '../../utils/DateFilter';
+
 const initialState = {
   phoneArray: [],
   orders: [],
   analytics: [],
   orderedProductsStats: [],
   orderedProducts: [],
-  riderAnalytics:[],
+  riderAnalytics: [],
   order: {},
   countItem: {},
   selectedOrderStatus: '',
@@ -16,7 +18,7 @@ const initialState = {
   updateOrderLoading: false,
   isOrderUpdated: false,
   error: '',
-  orderDate: '',
+  orderDate: getDateWithoutTime(new Date()),
 };
 
 export default (state = initialState, action) => {
@@ -59,8 +61,8 @@ export default (state = initialState, action) => {
         deleteAllOrdersLoading: action.loading,
         error: action.error,
       };
-  
-      case 'DELETE_ORDERS_PENDING':
+
+    case 'DELETE_ORDERS_PENDING':
       return {
         ...state,
         deleteAllOrdersLoading: action.loading,
@@ -115,7 +117,7 @@ export default (state = initialState, action) => {
     case 'UPDATE_ORDER_DISPATCH_PENDING':
       return {
         ...state,
-        isOrderPatched:false,
+        isOrderPatched: false,
         ordersLoading: action.loading,
       };
     case 'UPDATE_ORDER_DISPATCH_SUCCESS':
@@ -127,7 +129,7 @@ export default (state = initialState, action) => {
     case 'UPDATE_ORDER_DISPATCH_FAILED':
       return {
         ...state,
-        isOrderPatched:false,
+        isOrderPatched: false,
         ordersLoading: action.loading,
         error: action.error,
       };
@@ -257,8 +259,8 @@ export default (state = initialState, action) => {
         updateOrderLoading: action.loading,
         error: action.error,
       };
-   
-      case 'UPDATE_COMPLETE_ORDER_PENDING':
+
+    case 'UPDATE_COMPLETE_ORDER_PENDING':
       return {
         ...state,
         updateOrderLoading: action.loading,

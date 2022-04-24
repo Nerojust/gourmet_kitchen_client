@@ -9,7 +9,7 @@ import {
   Platform,
 } from 'react-native';
 import {COLOURS} from '../../utils/Colours';
-import {BackViewMoreSettings} from '../../components/Header';
+import {BackViewHeader, BackViewMoreSettings} from '../../components/Header';
 import {KeyboardObserverComponent} from '../../components/KeyboardObserverComponent';
 import ViewProviderComponent from '../../components/ViewProviderComponent';
 import {
@@ -26,15 +26,21 @@ import BreadListItemComponent from '../../components/BreadListItemComponent';
 import SearchInputComponent from '../../components/SearchInputComponent';
 import ProductSans from '../../components/Text/ProductSans';
 import {fp} from '../../utils/responsive-screen';
-import {getAllOrderedProductsStats, saveOrderDate} from '../../store/actions/orders';
+import {
+  getAllOrderedProductsStats,
+  saveOrderDate,
+} from '../../store/actions/orders';
 import {Menu, MenuItem, MenuDivider} from 'react-native-material-menu';
 import moment from 'moment';
+import {getDateWithoutTime} from '../../utils/DateFilter';
 
 // create a component
 const BreadListScreen = ({navigation}) => {
   const dispatch = useDispatch();
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const {orderedProducts, ordersLoading,orderDate} = useSelector(x => x.orders);
+  const {orderedProducts, ordersLoading, orderDate} = useSelector(
+    x => x.orders,
+  );
   // console.log('pending bread list', orderedProducts.length);
   var orderProductsData = Object.assign([], orderedProducts);
   const [filteredOrdersData, setFilteredOrdersData] =
@@ -57,15 +63,16 @@ const BreadListScreen = ({navigation}) => {
   // }, [navigation]);
   useEffect(() => {
     fetchAllData();
-  }, []);
+  }, [selectedOrderDate]);
 
   const fetchAllData = () => {
-    dispatch(getAllOrderedProductsStats());
+    dispatch(getAllOrderedProductsStats(getDateWithoutTime(selectedOrderDate)));
   };
   const handleClick = item => {
     console.log('item', item);
     navigation.navigate('BreadListDetails', {
       bread: item,
+      date: selectedOrderDate,
     });
   };
   const renderDetails = ({item}) => (
@@ -131,7 +138,7 @@ const BreadListScreen = ({navigation}) => {
           console.log('date result', date);
           setOpen(false);
           setSelectedOrderDate(date);
-          //dispatch(saveOrderDate(getDateWithoutTime(date)));
+          dispatch(saveOrderDate(getDateWithoutTime(date)));
         }}
         onCancel={() => {
           setOpen(false);
@@ -145,10 +152,9 @@ const BreadListScreen = ({navigation}) => {
     <ViewProviderComponent>
       <DismissKeyboard>
         <KeyboardObserverComponent>
-          <BackViewMoreSettings
+          <BackViewHeader
             backText={
-              'Bread List for ' +
-              moment(orderDate ? orderDate : selectedOrderDate).format('LL')
+              'Bread List for ' + moment(selectedOrderDate).format('LL')
             }
             onClose={() => navigation.goBack()}
             toggleDateModal={toggleDateModal}
@@ -170,7 +176,7 @@ const BreadListScreen = ({navigation}) => {
               cancelPress={handleCancelSearch}
             />
           ) : null}
-             {renderDatePicker()}
+          {renderDatePicker()}
           <View
             style={{
               justifyContent: 'center',
