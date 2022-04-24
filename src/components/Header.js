@@ -44,6 +44,7 @@ export const BackViewMoreSettings = ({
   displayCalendar,
   dateText,
   toggleDateModal,
+  breadStyle
 }) => {
   return (
     <View style={[styles.exitView]}>
@@ -68,59 +69,8 @@ export const BackViewMoreSettings = ({
         numberOfLines={1}>
         {backText}
       </ProductSansBold>
-      {/* {shouldDisplayIcon ? (
-        <>
-          <TouchableOpacity onPress={performRefresh}>
-            <Image
-              source={require('../assets/images/refresh.png')}
-              style={styles.refreshImage}
-              resizeMode={'contain'}
-            />
-          </TouchableOpacity>
-        </>
-      ) : null} */}
-      {shouldDisplayIcon ? (
-        <>
-          <TouchableOpacity onPress={performSearch}>
-            <Image
-              source={require('../assets/images/search.png')}
-              style={styles.searchImage}
-              resizeMode={'contain'}
-            />
-          </TouchableOpacity>
-        </>
-      ) : null}
-      <View
-        style={{
-          flexDirection: 'row',
-          flex: 0.2,
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}>
-        {shouldDisplaySettingIcon ? (
-          <TouchableOpacity activeOpacity={0.7} onPress={handleClick}>
-            {renderSettingsMore(handleClick)}
-          </TouchableOpacity>
-        ) : null}
-
-        {shouldDisplayDelete ? (
-          <TouchableOpacity activeOpacity={0.7} onPress={handleClick}>
-            {renderDelete(handleClick)}
-          </TouchableOpacity>
-        ) : null}
-
-        {displayDelete ? (
-          <TouchableOpacity onPress={performDelete}>
-            <Image
-              source={require('../assets/images/delete.png')}
-              style={styles.deleteImage}
-              resizeMode={'contain'}
-            />
-          </TouchableOpacity>
-        ) : null}
-      </View>
-
-      {displayCalendar ? (
+    
+     {displayCalendar ? (
         <View
           style={{
             flexDirection: 'row',
@@ -148,6 +98,50 @@ export const BackViewMoreSettings = ({
           </TouchableOpacity>
         </View>
       ) : null}
+      
+        {shouldDisplayIcon ? (
+        <>
+          <TouchableOpacity onPress={performSearch}>
+            <Image
+              source={require('../assets/images/search.png')}
+              style={styles.searchImage}
+              resizeMode={'contain'}
+            />
+          </TouchableOpacity>
+        </>
+      ) : null}
+      <View
+        style={{
+          flexDirection: 'row',
+          flex: 0.2,
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          ...breadStyle
+        }}>
+        {shouldDisplaySettingIcon ? (
+          <TouchableOpacity activeOpacity={0.7} onPress={handleClick}>
+            {renderSettingsMore(handleClick)}
+          </TouchableOpacity>
+        ) : null}
+
+        {shouldDisplayDelete ? (
+          <TouchableOpacity activeOpacity={0.7} onPress={handleClick}>
+            {renderDelete(handleClick)}
+          </TouchableOpacity>
+        ) : null}
+
+        {displayDelete ? (
+          <TouchableOpacity onPress={performDelete}>
+            <Image
+              source={require('../assets/images/delete.png')}
+              style={styles.deleteImage}
+              resizeMode={'contain'}
+            />
+          </TouchableOpacity>
+        ) : null}
+      </View>
+
+     
     </View>
   );
 };

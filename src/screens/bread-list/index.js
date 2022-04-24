@@ -19,20 +19,22 @@ import {
   sortArrayData,
 } from '../../utils/utils';
 import OrderListItemComponent from '../../components/OrderListItemComponent';
+import DatePicker from 'react-native-date-picker';
 import {useDispatch, useSelector} from 'react-redux';
 import LoaderShimmerComponent from '../../components/LoaderShimmerComponent';
 import BreadListItemComponent from '../../components/BreadListItemComponent';
 import SearchInputComponent from '../../components/SearchInputComponent';
 import ProductSans from '../../components/Text/ProductSans';
 import {fp} from '../../utils/responsive-screen';
-import {getAllOrderedProductsStats} from '../../store/actions/orders';
+import {getAllOrderedProductsStats, saveOrderDate} from '../../store/actions/orders';
 import {Menu, MenuItem, MenuDivider} from 'react-native-material-menu';
+import moment from 'moment';
 
 // create a component
 const BreadListScreen = ({navigation}) => {
   const dispatch = useDispatch();
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const {orderedProducts, ordersLoading} = useSelector(x => x.orders);
+  const {orderedProducts, ordersLoading,orderDate} = useSelector(x => x.orders);
   // console.log('pending bread list', orderedProducts.length);
   var orderProductsData = Object.assign([], orderedProducts);
   const [filteredOrdersData, setFilteredOrdersData] =
@@ -40,6 +42,9 @@ const BreadListScreen = ({navigation}) => {
   const [searchInputValue, setSearchInputValue] = useState('');
   const [isSearchCleared, setIsSearchCleared] = useState(false);
   const [isSearchClicked, setIsSearchClicked] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  const [selectedOrderDate, setSelectedOrderDate] = useState(new Date());
 
   //console.log('products', orderedProducts);
 
@@ -104,21 +109,54 @@ const BreadListScreen = ({navigation}) => {
       setSearchInputValue(text);
     }
   };
-
+  const toggleDateModal = () => {
+    //console.log('opened');
+    setOpen(!open);
+  };
   const handleCancelSearch = () => {
     setSearchInputValue('');
     setIsSearchCleared(true);
   };
+  const renderDatePicker = () => {
+    return (
+      <DatePicker
+        modal
+        mode={'date'}
+        open={open}
+        title={'Select order date range'}
+        theme={'auto'}
+        date={selectedOrderDate || new Date()}
+        //minimumDate={subtractOneDayFromTime(new Date(), 1)}
+        onConfirm={date => {
+          console.log('date result', date);
+          setOpen(false);
+          setSelectedOrderDate(date);
+          //dispatch(saveOrderDate(getDateWithoutTime(date)));
+        }}
+        onCancel={() => {
+          setOpen(false);
+          setSelectedOrderDate('');
+        }}
+      />
+    );
+  };
+
   return (
     <ViewProviderComponent>
       <DismissKeyboard>
         <KeyboardObserverComponent>
           <BackViewMoreSettings
-            backText="Pending Bread List"
+            backText={
+              'Bread List for ' +
+              moment(orderDate ? orderDate : selectedOrderDate).format('LL')
+            }
             onClose={() => navigation.goBack()}
+            toggleDateModal={toggleDateModal}
             shouldDisplaySettingIcon
+            displayCalendar
             shouldDisplayBackArrow={true}
             performSearch={handleSearch}
+            breadStyle={{flex: 0.4}}
             shouldDisplayIcon={orderedProducts.length > 0}
             handleClick={openSettingsMenu}
             performRefresh={() => fetchAllData()}
@@ -132,6 +170,7 @@ const BreadListScreen = ({navigation}) => {
               cancelPress={handleCancelSearch}
             />
           ) : null}
+             {renderDatePicker()}
           <View
             style={{
               justifyContent: 'center',

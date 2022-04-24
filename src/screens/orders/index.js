@@ -83,8 +83,12 @@ const OrdersScreen = ({navigation}) => {
   // }, [orderDate]);
 
   useEffect(() => {
-    dispatch(getAllOrderedProducts(statusState, getDateWithoutTime(orderDate)));
-  }, [navigation, statusState, selectedTab, orderDate]);
+    fetchAllData();
+  }, [statusState, selectedTab, selectedOrderDate]);
+  
+  useEffect(() => {
+    dispatch(getAllProducts('', 0, 0, null));
+  }, []);
 
   // useEffect(() => {
   //   const unsubscribe = navigation.addListener('focus', () => {
@@ -96,8 +100,9 @@ const OrdersScreen = ({navigation}) => {
   // }, [navigation, statusState, selectedTab]);
 
   const fetchAllData = () => {
-    dispatch(getAllOrderedProducts(statusState, getDateWithoutTime(orderDate)));
-    dispatch(getAllProducts('', 0, 0, null));
+    dispatch(
+      getAllOrderedProducts(statusState, getDateWithoutTime(selectedOrderDate)),
+    );
   };
 
   const onRefresh = async () => {
@@ -190,7 +195,7 @@ const OrdersScreen = ({navigation}) => {
       //onPressButton={() => navigation.goBack()}
     />
   );
- 
+
   const showSuccessDialog = () => {
     setIsSuccessModalVisible(!isSuccessModalVisible);
     setTimeout(() => {
@@ -235,7 +240,7 @@ const OrdersScreen = ({navigation}) => {
   };
 
   const handleSettingsClick = item => {
-    console.log('clicked item', item);
+    // console.log('clicked item', item);
     if (item == 'delete') {
       handleDeleteOrders();
     }

@@ -405,71 +405,72 @@ const OrderDetailsScreen = ({navigation, route}) => {
               </View>
             </View>
 
-            <View style={styles.dispatchView}>
-              <View style={[styles.customerNameView, {marginTop: 0}]}>
-                <ProductSansBold
-                  style={[styles.labelText, {left: 0, paddingTop: 0}]}>
-                  DISPATCHED BY
-                </ProductSansBold>
-                <Averta style={{color: COLOURS.textInputColor}}>
-                  {selectedRider ? selectedRider?.name : 'No rider assigned'}
-                </Averta>
-                <Averta
-                  style={[styles.address, {color: COLOURS.textInputColor}]}>
-                  {selectedRider ? selectedRider?.phonenumber : null}
-                </Averta>
+            {order?.status == 'completed' ? (
+              <View style={styles.dispatchView}>
+                <View style={[styles.customerNameView, {marginTop: 0}]}>
+                  <ProductSansBold
+                    style={[styles.labelText, {left: 0, paddingTop: 0}]}>
+                    DISPATCHED BY
+                  </ProductSansBold>
+                  <Averta style={{color: COLOURS.textInputColor}}>
+                    {selectedRider ? selectedRider?.name : 'No rider assigned'}
+                  </Averta>
+                  <Averta
+                    style={[styles.address, {color: COLOURS.textInputColor}]}>
+                    {selectedRider ? selectedRider?.phonenumber : null}
+                  </Averta>
 
-                <ProductSans style={[styles.noteTimetext, {marginTop: 5}]}>
-                  Updated at{' '}
-                  {order?.dispatch?.updatedat
-                    ? moment(order?.dispatch?.updatedat).format('LT')
-                    : 'None'}
-                </ProductSans>
-                {selectedRider ? (
-                  <>
-                    <ProductSansBold
-                      style={[
-                        styles.labelText,
-                        {left: 0, paddingTop: 5, paddingBottom: 4},
-                      ]}>
-                      TIME IN PROCESSING
-                    </ProductSansBold>
-                    <Averta style={{color: COLOURS.textInputColor}}>
-                      {getProcessingTime(
-                        order?.createdat,
-                        order?.dispatch?.updatedat,
-                      )}
-                    </Averta>
-                  </>
-                ) : null}
+                  <ProductSans style={[styles.noteTimetext, {marginTop: 5}]}>
+                    Updated at{' '}
+                    {order?.dispatch?.updatedat
+                      ? moment(order?.dispatch?.updatedat).format('LT')
+                      : 'None'}
+                  </ProductSans>
+                  {selectedRider ? (
+                    <>
+                      <ProductSansBold
+                        style={[
+                          styles.labelText,
+                          {left: 0, paddingTop: 5, paddingBottom: 4},
+                        ]}>
+                        TIME IN PROCESSING
+                      </ProductSansBold>
+                      <Averta style={{color: COLOURS.textInputColor}}>
+                        {getProcessingTime(
+                          order?.createdat,
+                          order?.dispatch?.updatedat,
+                        )}
+                      </Averta>
+                    </>
+                  ) : null}
+                </View>
+
+                <TouchableOpacity
+                  onPress={handleLoadRidersBottomSheet}
+                  activeOpacity={0.6}
+                  style={{
+                    height: hp(35),
+                    justifyContent: 'center',
+                    paddingHorizontal: 10,
+                    borderRadius: 10,
+                    borderWidth: 0.8,
+                    borderColor: COLOURS.blue,
+
+                    alignItems: 'center',
+                  }}>
+                  <ProductSansBold
+                    style={[
+                      styles.actiontext,
+                      {
+                        left: 0,
+                        marginTop: 0,
+                      },
+                    ]}>
+                    {selectedRider ? 'Edit Dispatch' : 'Add dispatch'}
+                  </ProductSansBold>
+                </TouchableOpacity>
               </View>
-
-              <TouchableOpacity
-                onPress={handleLoadRidersBottomSheet}
-                activeOpacity={0.6}
-                style={{
-                  height: hp(35),
-                  justifyContent: 'center',
-                  paddingHorizontal: 10,
-                  borderRadius: 10,
-                  borderWidth: 0.8,
-                  borderColor: COLOURS.blue,
-
-                  alignItems: 'center',
-                }}>
-                <ProductSansBold
-                  style={[
-                    styles.actiontext,
-                    {
-                      left: 0,
-                      marginTop: 0,
-                    },
-                  ]}>
-                  {selectedRider ? 'Edit Dispatch' : 'Add dispatch'}
-                </ProductSansBold>
-              </TouchableOpacity>
-            </View>
-
+            ) : null}
             {/* special note section */}
             <View style={[styles.customerNameView, {marginVertical: 20}]}>
               <View>

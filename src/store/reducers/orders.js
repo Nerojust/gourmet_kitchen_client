@@ -4,6 +4,7 @@ const initialState = {
   analytics: [],
   orderedProductsStats: [],
   orderedProducts: [],
+  riderAnalytics:[],
   order: {},
   countItem: {},
   selectedOrderStatus: '',
@@ -131,6 +132,23 @@ export default (state = initialState, action) => {
         error: action.error,
       };
 
+    case 'GET_RIDER_ANALYTICS_PENDING':
+      return {
+        ...state,
+        analyticsLoading: action.loading,
+      };
+    case 'GET_RIDER_ANALYTICS_SUCCESS':
+      return {
+        ...state,
+        riderAnalytics: action.data,
+        analyticsLoading: action.loading,
+      };
+    case 'GET_RIDER_ANALYTICS_FAILED':
+      return {
+        ...state,
+        analyticsLoading: action.loading,
+        error: action.error,
+      };
     case 'GET_ANALYTICS_PENDING':
       return {
         ...state,

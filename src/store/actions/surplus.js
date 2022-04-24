@@ -1,6 +1,7 @@
 import client from '../../utils/Api';
 import {dateFilterParser} from '../../utils/DateFilter';
 import {clearStorage, handleError} from '../../utils/utils';
+import { getAllOrderedProductsStats } from './orders';
 
 
 
@@ -26,6 +27,7 @@ export const createSurplus = orderPayload => {
           });
           //alert('Order created successfully');
           dispatch(getAllSurplus());
+          dispatch(getAllOrderedProductsStats());
           return response.data?.results;
         }
       })

@@ -349,10 +349,12 @@ const BreadListDetailsScreen = ({navigation, route}) => {
       wasFulfilledFromSurplus: shouldUseSurplusTofulfill,
       orderProductIdFromPayload,
     };
+
     console.log(
       'payload',
       shouldUseSurplusTofulfill ? surplusPayload : payload,
     );
+
     setIsLoading(true);
     //fulfill the item in breadlist
     dispatch(
@@ -368,6 +370,7 @@ const BreadListDetailsScreen = ({navigation, route}) => {
               'subtracting from found surplus',
               foundSurplus?.count - countTofulfill,
             );
+            
             dispatch(
               updateSurplusById(foundSurplus?.id, {
                 count: foundSurplus?.count - countTofulfill,

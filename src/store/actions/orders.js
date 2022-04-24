@@ -16,8 +16,8 @@ export const setOrderStatus = status => {
   };
 };
 
-export const getAllAnalytics = date => {
-  console.log('About to get all analytics data');
+export const getSalesAnalytics = date => {
+  console.log('About to get all sales analytics data');
 
   return dispatch => {
     dispatch({
@@ -25,7 +25,7 @@ export const getAllAnalytics = date => {
       loading: true,
       error: null,
     });
-    var getUrl = `/orders/analytics?startDate=${date + ' 00:00:01'}&endDate=${
+    var getUrl = `/orders/analytics/sales?startDate=${date + ' 00:00:01'}&endDate=${
       date + ' 23:59:59'
     }`;
 
@@ -38,7 +38,7 @@ export const getAllAnalytics = date => {
       .then(response => {
         if (response?.data) {
           console.log(
-            'Analytics gotten successfully',
+            'Sales Analytics gotten successfully',
             response?.data?.recordCount,
           );
           if (response?.data?.isSuccessful) {
@@ -59,8 +59,8 @@ export const getAllAnalytics = date => {
         }
       })
       .catch(error => {
-        console.log('Getting analytics failed', error);
-        handleError(error, dispatch, 'get analytics list');
+        console.log('Getting sales analytics failed', error);
+        handleError(error, dispatch, 'get sales analytics list');
         dispatch({
           type: 'GET_ANALYTICS_FAILED',
           loading: false,

@@ -10,6 +10,7 @@ import deliveryTypes from './delivery-types';
 import users from './users';
 import roles from './roles';
 import riders from './riders'
+import dispatch from './dispatch'
 
 export default combineReducers({
   orders,
@@ -21,5 +22,6 @@ export default combineReducers({
   deliveryTypes,
   users,
   roles,
-  riders
+  riders,
+  dispatch
 });
