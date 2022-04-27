@@ -28,7 +28,7 @@ const BreadListItemComponent = ({item, onClick}) => {
             {item?.productsize.trim()}
           </ProductSans>
         </View>
-        <View style={{flex: 0.12}}>
+        {/* <View style={{flex: 0.12}}>
           <ProductSans
             style={[
               styles.labelText,
@@ -40,14 +40,14 @@ const BreadListItemComponent = ({item, onClick}) => {
             ]}>
             {item?.count || '0'}
           </ProductSans>
-        </View>
-        <View style={{flex: 0.1}}>
+        </View> */}
+        <View style={{flex: 0.2}}>
           <ProductSans
             style={[
               styles.labelText,
-              {fontWeight: 'bold', fontSize: fp(19), color: COLOURS.textInputColor},
+              {fontWeight: 'bold', fontSize: fp(19), color: COLOURS.labelTextColor},
             ]}>
-            {item?.sum || '0'}
+            {item?.sum || '0'} pcs
           </ProductSans>
         </View>
       </View>

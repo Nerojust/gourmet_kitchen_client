@@ -1,5 +1,5 @@
 import {Alert} from 'react-native';
-import { get } from 'react-native/Libraries/Utilities/PixelRatio';
+import {get} from 'react-native/Libraries/Utilities/PixelRatio';
 import client from '../../utils/Api';
 import clientZupa from '../../utils/ApiZupa';
 import {LOGIN_TOKEN} from '../../utils/Constants';
@@ -30,7 +30,7 @@ export const getSalesAnalytics = date => {
       date + ' 00:00:01'
     }&endDate=${date + ' 23:59:59'}`;
 
-   // console.log('geturl', getUrl);
+    // console.log('geturl', getUrl);
 
     // var getUrl = `/orders/analytics`;
     //console.log("geturl", getUrl);
@@ -83,8 +83,7 @@ export const getAllOrderedProductsStats = date => {
       date + ' 23:59:59'
     }`;
 
-   
-   // console.log("geturl", getUrl);
+    // console.log("geturl", getUrl);
     return client
       .get(getUrl)
       .then(response => {
@@ -129,7 +128,7 @@ export const saveOrderDate = date => {
     });
   };
 };
-export const getAllOrderedProductsStatsById = (id,date) => {
+export const getAllOrderedProductsStatsById = (id, date) => {
   console.log('About to get stats with id', id);
   return dispatch => {
     dispatch({
@@ -138,11 +137,11 @@ export const getAllOrderedProductsStatsById = (id,date) => {
       error: null,
     });
 
-    var getUrl = `/orders/count/${id}?startDate=${
-      date + ' 00:00:01'
-    }&endDate=${date + ' 23:59:59'}`;
+    var getUrl = `/orders/count/${id}?startDate=${date + ' 00:00:01'}&endDate=${
+      date + ' 23:59:59'
+    }`;
     //var url = `/orders/count/${id}`;
-    console.log("geturl", getUrl);
+    console.log('geturl', getUrl);
     return client
       .get(getUrl)
       .then(response => {
@@ -180,6 +179,62 @@ export const getAllOrderedProductsStatsById = (id,date) => {
       });
   };
 };
+export const getAllSalesAverage = orderDate => {
+  console.log('About to get all sales average');
+  return dispatch => {
+    dispatch({
+      type: 'GET_SALES_AVERAGE_PENDING',
+      loading: true,
+      error: null,
+    });
+
+    var getUrl = `/orders/averageSales?startDate=${
+      orderDate + ' 00:00:01'
+    }&endDate=${orderDate + ' 23:59:59'}`;
+
+    console.log('geturl', getUrl);
+    return client
+      .get(getUrl)
+      .then(response => {
+        if (response?.data) {
+          console.log(
+            'Sales average data gotten successfully',
+            response?.data?.recordCount,
+          );
+
+          if (response?.data?.isSuccessful) {
+            dispatch({
+              type: 'GET_SALES_AVERAGE_SUCCESS',
+              loading: false,
+              data: response?.data?.results,
+            });
+            return response?.data?.results;
+          } else {
+            if (response.data.code == 400) {
+              alert('No record found');
+            } else {
+              alert(response?.data?.message);
+            }
+
+            dispatch({
+              type: 'GET_SALES_AVERAGE_FAILED',
+              loading: false,
+              error: response?.data?.message,
+            });
+          }
+        }
+      })
+      .catch(error => {
+        console.log('Getting sales average failed', error);
+        handleError(error, dispatch, 'get sales average list');
+        dispatch({
+          type: 'GET_SALES_AVERAGE_FAILED',
+          loading: false,
+          error: error.message,
+        });
+      });
+  };
+};
 export const getAllOrderedProducts = (status = 'all', orderDate) => {
   console.log('About to get all orders');
   return dispatch => {
@@ -193,7 +248,7 @@ export const getAllOrderedProducts = (status = 'all', orderDate) => {
       orderDate + ' 00:00:01'
     }&endDate=${orderDate + ' 23:59:59'}`;
 
-   // console.log('geturl', getUrl);
+    // console.log('geturl', getUrl);
 
     //client.defaults.headers.common['Authorization'] = `Bearer ${LOGIN_TOKEN}`;
     return client
@@ -286,7 +341,7 @@ const handleCompleteOrdersStatus = (orders, dispatch, orderDate) => {
   }
 };
 
-export const updateOrderListProductCount = (payload, orderDate) => {
+export const updateOrderListProductCount = (payload, date) => {
   console.log('About to update breadlist count', payload);
   return dispatch => {
     dispatch({
@@ -294,10 +349,13 @@ export const updateOrderListProductCount = (payload, orderDate) => {
       loading: true,
       error: null,
     });
-    var url = `/orders/updateOrders`;
+    var getUrl = `/orders/updateOrders?startDate=${
+      date + ' 00:00:01'
+    }&endDate=${date + ' 23:59:59'}`;
+    //var url = `/orders/updateOrders`;
     //console.log("geturl", getUrl);
     return client
-      .patch(url, payload)
+      .patch(getUrl, payload)
       .then(response => {
         if (response?.data) {
           console.log(
@@ -310,8 +368,8 @@ export const updateOrderListProductCount = (payload, orderDate) => {
               loading: false,
               data: response?.data?.results,
             });
-            dispatch(getAllOrderedProductsStats());
-            dispatch(getAllOrderedProducts('all', orderDate));
+            dispatch(getAllOrderedProductsStats(date));
+            dispatch(getAllOrderedProducts('all', date));
             return response?.data?.results;
           } else {
             alert(response?.data?.message);

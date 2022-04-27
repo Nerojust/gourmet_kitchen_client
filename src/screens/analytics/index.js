@@ -6,6 +6,7 @@ import {
   StyleSheet,
   FlatList,
   RefreshControl,
+  TouchableOpacity,
   Platform,
   Alert,
 } from 'react-native';
@@ -18,6 +19,7 @@ import {KeyboardObserverComponent} from '../../components/KeyboardObserverCompon
 import ViewProviderComponent from '../../components/ViewProviderComponent';
 import {
   DismissKeyboard,
+  getProcessingTimeString,
   sortArrayByDate,
   sortArrayByDateDesc,
 } from '../../utils/utils';
@@ -29,9 +31,10 @@ import {getAllSurplus} from '../../store/actions/surplus';
 import SurplusListItemComponent from '../../components/SurplusListItemComponent';
 import SearchInputComponent from '../../components/SearchInputComponent';
 import {logoutUser} from '../../store/actions/users';
-import {wp} from '../../utils/responsive-screen';
+import {fp, wp} from '../../utils/responsive-screen';
 import {
   getAllAnalytics,
+  getAllSalesAverage,
   getSalesAnalytics,
   saveOrderDate,
 } from '../../store/actions/orders';
@@ -42,6 +45,9 @@ import moment from 'moment';
 import {getDateWithoutTime} from '../../utils/DateFilter';
 import SliderTabComponent from '../../components/SliderTabComponent';
 import {getRiderAnalytics} from '../../store/actions/dispatch';
+import SalesAverageComponent from '../../components/SalesAverageComponent';
+import ProductSansBold from '../../components/Text/ProductSansBold';
+import AvertaBold from '../../components/Text/AvertaBold';
 
 // create a component
 const AnalyticsScreen = ({navigation}) => {
@@ -67,7 +73,10 @@ const AnalyticsScreen = ({navigation}) => {
     ordersLoading,
     updateOrderLoading,
     orderDate,
+    salesAverage,
+    getSalesLoading,
   } = useSelector(state => state.orders);
+  //console.log('average', salesAverage);
   const [open, setOpen] = useState(false);
   const [isSearchCleared, setIsSearchCleared] = useState(false);
   const [selectedOrderDate, setSelectedOrderDate] = useState(new Date());
@@ -75,6 +84,11 @@ const AnalyticsScreen = ({navigation}) => {
   useEffect(() => {
     fetchAllData();
   }, [selectedOrderDate, selectedTab]);
+
+  const getAverageData = () => {
+    dispatch(getAllSalesAverage(getDateWithoutTime(selectedOrderDate)));
+    
+  };
 
   const getRiderData = () => {
     dispatch(getRiderAnalytics(getDateWithoutTime(selectedOrderDate)));
@@ -86,6 +100,7 @@ const AnalyticsScreen = ({navigation}) => {
 
   const fetchAllData = () => {
     if (selectedTab == 0) {
+      getAverageData();
     } else if (selectedTab == 1) {
       getAllSalesData();
     } else if (selectedTab == 2) {
@@ -233,6 +248,83 @@ const AnalyticsScreen = ({navigation}) => {
       </>
     );
   };
+  const displayAverageOrdersView = () => {
+    return (
+      <>
+        {salesAverage.length > 0 ? (
+          <>
+            <View style={styles.customerNameView}>
+              <ProductSansBold style={[styles.labelText, {left: 0}]}>
+                TOTAL AVERAGE PROCESSING TIME
+              </ProductSansBold>
+              <TouchableOpacity onPress={null}>
+                <AvertaBold style={styles.custName}>
+                  {salesAverage.avg_time
+                    ? getProcessingTimeString(salesAverage[0]?.avg_time)
+                    : 'None'}
+                </AvertaBold>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.customerNameView}>
+              <ProductSansBold style={[styles.labelText, {left: 0}]}>
+                TOTAL COMPLETED ORDERS
+              </ProductSansBold>
+              <TouchableOpacity onPress={null}>
+                <AvertaBold style={styles.custName}>
+                  {salesAverage ? salesAverage[0]?.completed_count : 'None'}
+                </AvertaBold>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.customerNameView}>
+              <ProductSansBold style={[styles.labelText, {left: 0}]}>
+                TOTAL PENDING ORDERS
+              </ProductSansBold>
+              <TouchableOpacity onPress={null}>
+                <AvertaBold style={styles.custName}>
+                  {salesAverage ? salesAverage[0]?.pending_count : 'None'}
+                </AvertaBold>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.customerNameView}>
+              <ProductSansBold style={[styles.labelText, {left: 0}]}>
+                TOTAL INCOMPLETE ORDERS
+              </ProductSansBold>
+              <TouchableOpacity onPress={null}>
+                <AvertaBold style={styles.custName}>
+                  {salesAverage ? salesAverage[0]?.incomplete_count : 'None'}
+                </AvertaBold>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.customerNameView}>
+              <ProductSansBold style={[styles.labelText, {left: 0}]}>
+                TOTAL AVERAGE PROCESSING TIME
+              </ProductSansBold>
+              <TouchableOpacity onPress={null}>
+                <AvertaBold style={styles.custName}>
+                  {salesAverage?.total_average
+                    ? getProcessingTimeString(salesAverage[0]?.total_average)
+                    : 'None'}
+                </AvertaBold>
+              </TouchableOpacity>
+            </View>
+          </>
+        ) : (
+          <View
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              flex: 1,
+              //top: Platform.OS == 'ios' ? 300 : 0,
+             // marginTop: Platform.OS == 'android' ? 300 : 0,
+            }}>
+            <ProductSans style={{fontSize: 16, color: COLOURS.textInputColor}}>
+              No record found
+            </ProductSans>
+          </View>
+        )}
+      </>
+    );
+  };
   const displaySalesView = () => {
     return (
       <>
@@ -285,10 +377,7 @@ const AnalyticsScreen = ({navigation}) => {
       <DismissKeyboard>
         <KeyboardObserverComponent>
           <BackViewWithLogout
-            backText={
-              'Analytics for ' +
-              moment( selectedOrderDate).format('LL')
-            }
+            backText={'Analytics for ' + moment(selectedOrderDate).format('LL')}
             shouldDisplayLogoutIcon
             navigation={navigation}
             displayCalendar
@@ -308,9 +397,11 @@ const AnalyticsScreen = ({navigation}) => {
           />
           {renderDatePicker()}
 
+          {selectedTab == 0 ? displayAverageOrdersView() : null}
           {selectedTab == 1 ? displaySalesView() : null}
           {selectedTab == 2 ? displayRiderAnalyticsView() : null}
           {/* {displaySalesView()} */}
+          <LoaderShimmerComponent isLoading={getSalesLoading} />
           <LoaderShimmerComponent isLoading={analyticsLoading} />
         </KeyboardObserverComponent>
       </DismissKeyboard>
@@ -325,6 +416,23 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: COLOURS.zupa_gray_bg,
+  },
+  labelText: {
+    fontSize: fp(13),
+    color: COLOURS.labelTextColor,
+    paddingTop: 5,
+    paddingBottom: 12,
+    left: 12,
+  },
+  custName: {
+    fontSize: fp(15),
+    color: COLOURS.textInputColor,
+    fontWeight: 'bold',
+  },
+  customerNameView: {
+    //width: deviceWidth - 50,
+    marginTop: 10,
+    paddingHorizontal: 20,
   },
 });
 

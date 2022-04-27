@@ -28,6 +28,7 @@ import {
   dismissTextInput,
   formatNumberComma,
   getProcessingTime,
+  getProcessingTimeString,
   removeDuplicatesFromArray,
   showBottomSheet,
   sortArrayByDate,
@@ -405,7 +406,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
               </View>
             </View>
 
-            {order?.status == 'completed' ? (
+            {order?.dispatch || order?.status == 'completed' ? (
               <View style={styles.dispatchView}>
                 <View style={[styles.customerNameView, {marginTop: 0}]}>
                   <ProductSansBold
@@ -419,15 +420,16 @@ const OrderDetailsScreen = ({navigation, route}) => {
                     style={[styles.address, {color: COLOURS.textInputColor}]}>
                     {selectedRider ? selectedRider?.phonenumber : null}
                   </Averta>
-
-                  <ProductSans style={[styles.noteTimetext, {marginTop: 5}]}>
-                    Updated at{' '}
-                    {order?.dispatch?.updatedat
-                      ? moment(order?.dispatch?.updatedat).format('LT')
-                      : 'None'}
-                  </ProductSans>
-                  {selectedRider ? (
+                  {order?.dispatch?.updatedat ? (
                     <>
+                      <ProductSans
+                        style={[styles.noteTimetext, {marginTop: 5}]}>
+                        Updated at{' '}
+                        {order?.dispatch?.updatedat
+                          ? moment(order?.dispatch?.updatedat).format('LT')
+                          : 'None'}
+                      </ProductSans>
+
                       <ProductSansBold
                         style={[
                           styles.labelText,
@@ -436,10 +438,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
                         TIME IN PROCESSING
                       </ProductSansBold>
                       <Averta style={{color: COLOURS.textInputColor}}>
-                        {getProcessingTime(
-                          order?.createdat,
-                          order?.dispatch?.updatedat,
-                        )}
+                        {getProcessingTimeString(order?.processingtime)}
                       </Averta>
                     </>
                   ) : null}

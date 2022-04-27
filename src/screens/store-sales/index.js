@@ -10,7 +10,7 @@ import {
   Alert,
 } from 'react-native';
 import {COLOURS} from '../../utils/Colours';
-import {BackViewMoreSettings} from '../../components/Header';
+import {BackViewMoreSettings, BackViewSurplus} from '../../components/Header';
 import {KeyboardObserverComponent} from '../../components/KeyboardObserverComponent';
 import ViewProviderComponent from '../../components/ViewProviderComponent';
 import {
@@ -25,6 +25,10 @@ import {useSelector, useDispatch} from 'react-redux';
 import {getAllSurplus} from '../../store/actions/surplus';
 import SurplusListItemComponent from '../../components/SurplusListItemComponent';
 import SearchInputComponent from '../../components/SearchInputComponent';
+import {getDateWithoutTime} from '../../utils/DateFilter';
+import {saveOrderDate} from '../../store/actions/orders';
+import DatePicker from 'react-native-date-picker';
+import moment from 'moment';
 
 // create a component
 const StoreSalesScreen = ({navigation}) => {
@@ -38,15 +42,22 @@ const StoreSalesScreen = ({navigation}) => {
   //console.log('redux surplus', surplus);
   const dispatch = useDispatch();
   const [isSearchCleared, setIsSearchCleared] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  const [selectedOrderDate, setSelectedOrderDate] = useState(new Date());
+
+  // useEffect(() => {
+  //   const unsubscribe = navigation.addListener('focus', () => {
+  //     dispatch(getAllSurplus(getDateWithoutTime(selectedOrderDate)));
+  //     //Put your Data loading function here instead of my loadData()
+  //   });
+
+  //   return unsubscribe;
+  // }, [navigation, selectedOrderDate]);
+
   useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      dispatch(getAllSurplus());
-      //Put your Data loading function here instead of my loadData()
-    });
-
-    return unsubscribe;
-  }, [navigation]);
-
+    dispatch(getAllSurplus(getDateWithoutTime(selectedOrderDate)));
+  }, [selectedOrderDate]);
   const renderItems = ({item, index}) => {
     return (
       <SurplusListItemComponent
@@ -56,17 +67,52 @@ const StoreSalesScreen = ({navigation}) => {
       />
     );
   };
+  const renderDatePicker = () => {
+    return (
+      <DatePicker
+        modal
+        mode={'date'}
+        open={open}
+        title={'Select order date range'}
+        theme={'auto'}
+        date={selectedOrderDate || new Date()}
+        //minimumDate={subtractOneDayFromTime(new Date(), 1)}
+        onConfirm={date => {
+          console.log('date result', date);
+          setOpen(false);
+          setSelectedOrderDate(date);
+          dispatch(saveOrderDate(getDateWithoutTime(date)));
+        }}
+        onCancel={() => {
+          setOpen(false);
+          setSelectedOrderDate('');
+        }}
+      />
+    );
+  };
+
+  const toggleDateModal = () => {
+    //console.log('opened');
+    setOpen(!open);
+  };
 
   const handleChangeSurplusClick = item => {
     navigation.navigate('StoreSalesDetails', {
       surplus: item,
       edit: true,
+      date: getDateWithoutTime(selectedOrderDate),
     });
   };
   const handleNormalClick = item => {
     navigation.navigate('StoreSalesDetails', {
       surplus: item,
       edit: false,
+      date: getDateWithoutTime(selectedOrderDate),
+    });
+  };
+  const goToNewSurplus = item => {
+    navigation.navigate('AddStoreSale', {
+      date: getDateWithoutTime(selectedOrderDate),
     });
   };
   const onRefresh = () => {
@@ -105,7 +151,7 @@ const StoreSalesScreen = ({navigation}) => {
     setIsSearchCleared(true);
   };
   const handleDeleteOrders = () => {
-    console.log('delete clicked');
+    //console.log('delete clicked');
 
     Alert.alert(
       'Alert',
@@ -125,19 +171,25 @@ const StoreSalesScreen = ({navigation}) => {
       {cancelable: true},
     );
   };
+
   return (
     <ViewProviderComponent>
       <DismissKeyboard>
         <KeyboardObserverComponent>
-          <BackViewMoreSettings
-            backText="Store Sales"
+          <BackViewSurplus
+            backText={
+              'Store Sales for ' + moment(selectedOrderDate).format('LL')
+            }
             onClose={() => navigation.goBack()}
             shouldDisplayIcon={surplus && surplus.length > 0}
             performSearch={handleSearch}
             shouldDisplayBackArrow={true}
+            displayCalendar
+            toggleDateModal={toggleDateModal}
             displayDelete={false}
             performDelete={handleDeleteOrders}
           />
+
           {isSearchClicked ? (
             <SearchInputComponent
               shouldDisplaySearchView
@@ -147,6 +199,7 @@ const StoreSalesScreen = ({navigation}) => {
               cancelPress={handleCancelSearch}
             />
           ) : null}
+          {renderDatePicker()}
           <View
             style={{
               justifyContent: 'center',
@@ -193,7 +246,7 @@ const StoreSalesScreen = ({navigation}) => {
           />
 
           <LoaderShimmerComponent isLoading={surplusLoading} />
-          <AddComponent goto={() => navigation.navigate('AddStoreSale')} />
+          <AddComponent goto={goToNewSurplus} />
         </KeyboardObserverComponent>
       </DismissKeyboard>
     </ViewProviderComponent>

@@ -1,11 +1,9 @@
 import client from '../../utils/Api';
 import {dateFilterParser} from '../../utils/DateFilter';
 import {clearStorage, handleError} from '../../utils/utils';
-import { getAllOrderedProductsStats } from './orders';
+import {getAllOrderedProductsStats} from './orders';
 
-
-
-export const createSurplus = orderPayload => {
+export const createSurplus = (orderPayload, date) => {
   console.log('About to create a new surplus');
   //console.log("order payload", orderPayload);
   return dispatch => {
@@ -14,9 +12,10 @@ export const createSurplus = orderPayload => {
       loading: true,
       error: null,
     });
-
+    var getUrl = `/surplus`;
+    console.log('surplus create url', getUrl);
     return client
-      .post(`/surplus`, orderPayload)
+      .post(getUrl, orderPayload)
       .then(response => {
         if (response.data?.isSuccessful) {
           console.log('surplus created successfully');
@@ -26,8 +25,8 @@ export const createSurplus = orderPayload => {
             loading: false,
           });
           //alert('Order created successfully');
-          dispatch(getAllSurplus());
-          dispatch(getAllOrderedProductsStats());
+          dispatch(getAllSurplus(date));
+          dispatch(getAllOrderedProductsStats(date));
           return response.data?.results;
         }
       })
@@ -43,7 +42,7 @@ export const createSurplus = orderPayload => {
   };
 };
 
-export const getAllSurplus = () => {
+export const getAllSurplus = date => {
   console.log('About to get all surplus');
   return dispatch => {
     dispatch({
@@ -51,8 +50,11 @@ export const getAllSurplus = () => {
       loading: true,
       error: null,
     });
-    var getUrl = `/surplus`;
-    //console.log('geturl', getUrl);
+    var getUrl = `/surplus?startDate=${date + ' 00:00:01'}&endDate=${
+      date + ' 23:59:59'
+    }`;
+
+    console.log('geturl surplus', getUrl);
     return client
       .get(getUrl)
       .then(response => {
@@ -69,7 +71,7 @@ export const getAllSurplus = () => {
             });
             return response?.data?.results;
           } else {
-            alert(response?.data?.message)
+            alert(response?.data?.message);
             dispatch({
               type: 'GET_ALL_SURPLUS_FAILED',
               loading: false,
@@ -90,7 +92,7 @@ export const getAllSurplus = () => {
   };
 };
 
-export const getSurplusById = id => {
+export const getSurplusById = (id, date) => {
   console.log('About to get single surplus with id', id);
   return dispatch => {
     dispatch({
@@ -124,8 +126,8 @@ export const getSurplusById = id => {
   };
 };
 
-export const deductSurplusCount = ( payload) => {
-  console.log('About to deduct count from surplus');
+export const deductSurplusCount = (payload, date) => {
+  console.log('About to deduct count from surplus',date);
 
   return dispatch => {
     dispatch({
@@ -140,17 +142,17 @@ export const deductSurplusCount = ( payload) => {
       .then(response => {
         if (response?.data) {
           if (response?.data?.isSuccessful) {
-          console.log(
-            'Surplus deducted successfully',
-            response?.data?.recordCount,
-          );
+            console.log(
+              'Surplus deducted successfully',
+              response?.data?.recordCount,
+            );
             dispatch({
               type: 'DEDUCT_SURPLUS_SUCCESS',
               loading: false,
               data: response?.data?.results,
             });
 
-            dispatch(getAllSurplus());
+            dispatch(getAllSurplus(date));
             return response?.data?.results;
           } else {
             dispatch({
@@ -172,8 +174,8 @@ export const deductSurplusCount = ( payload) => {
       });
   };
 };
-export const updateSurplusById = (id, payload) => {
-  console.log('About to update surplus');
+export const updateSurplusById = (id, payload, date) => {
+  console.log('About to update surplus',date);
 
   return dispatch => {
     dispatch({
@@ -181,24 +183,27 @@ export const updateSurplusById = (id, payload) => {
       loading: true,
       error: null,
     });
-    var url = `/surplus/${id}`;
+    var getUrl = `/surplus/${id}?startDate=${date + ' 00:00:01'}&endDate=${
+      date + ' 23:59:59'
+    }`;
+    //var url = `/surplus/${id}`;
     //console.log("geturl", getUrl);
     return client
-      .patch(url, payload)
+      .patch(getUrl, payload)
       .then(response => {
         if (response?.data) {
           if (response?.data?.isSuccessful) {
-          console.log(
-            'Surplus updated successfully',
-            response?.data?.recordCount,
-          );
+            console.log(
+              'Surplus updated successfully',
+              response?.data?.recordCount,
+            );
             dispatch({
               type: 'UPDATE_SURPLUS_SUCCESS',
               loading: false,
               data: response?.data?.results,
             });
 
-            dispatch(getAllSurplus());
+            dispatch(getAllSurplus(date));
             return response?.data?.results;
           } else {
             dispatch({
@@ -220,8 +225,8 @@ export const updateSurplusById = (id, payload) => {
       });
   };
 };
-export const deleteSurplusById = id => {
-  console.log('About to delete single surplus with id', id);
+export const deleteSurplusById = (id, date) => {
+  console.log('About to delete single surplus with id', id,date);
   return dispatch => {
     dispatch({
       type: 'DELETE_SINGLE_SURPLUS_PENDING',
@@ -238,6 +243,7 @@ export const deleteSurplusById = id => {
             loading: false,
             data: response.data,
           });
+          dispatch(getAllSurplus(date));
           return response.data;
         }
       })

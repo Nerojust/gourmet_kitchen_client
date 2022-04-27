@@ -61,7 +61,7 @@ import ProductSans from '../../components/Text/ProductSans';
 import {createSurplus} from '../../store/actions/surplus';
 
 // create a component
-const NewStoreSalesScreen = ({navigation}) => {
+const NewStoreSalesScreen = ({navigation,route}) => {
   const dispatch = useDispatch();
   const [fullName, setFullName] = useState('');
   const [surplusCount, setSurplusCount] = useState('');
@@ -115,13 +115,15 @@ const NewStoreSalesScreen = ({navigation}) => {
   );
   let additionalArray = [];
   var finalDeliveryArray = [];
+  const orderDate = route?.params?.date;
+  //console.log('route date', orderDate);
 
   useEffect(() => {
     dispatch(getAllProducts('', 0, 0));
   }, []);
 
   const handleSingleItemPress = async (item, isProduct, isDelivery) => {
-    console.log('clicked item is ', item);
+    //console.log('clicked item is ', item);
     if (isProduct) {
       setSelectedProduct(item);
       setIsProductSelected(true);
@@ -315,7 +317,7 @@ const NewStoreSalesScreen = ({navigation}) => {
       };
       console.log('surplus payload', payload);
 
-      dispatch(createSurplus(payload))
+      dispatch(createSurplus(payload,orderDate))
         .then((result, error) => {
           if (result) {
             showSuccessDialog(true);

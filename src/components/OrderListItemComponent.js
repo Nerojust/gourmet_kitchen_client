@@ -129,7 +129,7 @@ const OrderListItemComponent = ({item}) => {
               </ProductSans>
               <ProductSans style={[styles.priceName, {fontWeight: 'normal'}]}>
                 {item?.surplusupdatedat
-                  ? moment(item?.surplusupdatedat).format('LT')
+                  ? moment(item?.surplusupdatedat).format('LLL')
                   : 'None'}
               </ProductSans>
             </View>
@@ -141,7 +141,7 @@ const OrderListItemComponent = ({item}) => {
                 WHOLE ITEM UPDATED AT
               </ProductSans>
               <ProductSans style={[styles.priceName, {fontWeight: 'normal'}]}>
-                {item.updatedat ? moment(item.updatedat).format('LT') : 'None'}
+                {item.updatedat ? moment(item.updatedat).format('LLL') : 'None'}
               </ProductSans>
             </View>
           </View>

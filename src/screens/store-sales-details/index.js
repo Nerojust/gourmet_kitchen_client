@@ -57,6 +57,8 @@ const StoreSalesDetailsScreen = ({navigation, route}) => {
   const [remainingSurplusCount, setRemaningSurplusCount] = useState('0');
   const [remainingSurplusCountDeduct, setRemaningSurplusCountDeduct] =
     useState('0');
+  const orderDate = route?.params?.date;
+  //console.log('route date', orderDate);
 
   const handleSurplusChange = text => {
     if (text) {
@@ -240,7 +242,7 @@ const StoreSalesDetailsScreen = ({navigation, route}) => {
 
     console.log('surplus payload', payload);
 
-    dispatch(updateSurplusById(id, payload))
+    dispatch(updateSurplusById(id, payload, orderDate))
       .then((result, error) => {
         if (result) {
           //if (isSurplusUpdated) {
@@ -273,7 +275,7 @@ const StoreSalesDetailsScreen = ({navigation, route}) => {
     };
     console.log('surplus payload', payload);
 
-    dispatch(deductSurplusCount(payload))
+    dispatch(deductSurplusCount(payload, orderDate))
       .then((result, error) => {
         if (result) {
           //if (isSurplusUpdated) {
@@ -369,13 +371,13 @@ const StoreSalesDetailsScreen = ({navigation, route}) => {
         {
           text: 'Yes',
           onPress: () =>
-            dispatch(deleteSurplusById(route.params.surplus.id)).then(
-              result => {
-                if (result) {
-                  showSuccessDialog();
-                }
-              },
-            ),
+            dispatch(
+              deleteSurplusById(route.params.surplus.id, orderDate),
+            ).then(result => {
+              if (result) {
+                showSuccessDialog();
+              }
+            }),
         },
       ],
       {cancelable: true},

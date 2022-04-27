@@ -17,6 +17,8 @@ const initialState = {
   updateSurplusOrderLoading: false,
   updateOrderLoading: false,
   isOrderUpdated: false,
+  salesAverage:{},
+  getSalesLoading:false,
   error: '',
   orderDate: getDateWithoutTime(new Date()),
 };
@@ -97,7 +99,25 @@ export default (state = initialState, action) => {
         error: action.error,
       };
 
-    case 'GET_SINGLE_ORDERED_PRODUCTS_PENDING':
+    case 'GET_SALES_AVERAGE_PENDING':
+      return {
+        ...state,
+        getSalesLoading: action.loading,
+      };
+    case 'GET_SALES_AVERAGE_SUCCESS':
+      return {
+        ...state,
+        salesAverage: action.data,
+        getSalesLoading: action.loading,
+      };
+    case 'GET_SALES_AVERAGE_FAILED':
+      return {
+        ...state,
+        getSalesLoading: action.loading,
+        error: action.error,
+      };
+  
+      case 'GET_SINGLE_ORDERED_PRODUCTS_PENDING':
       return {
         ...state,
         ordersLoading: action.loading,

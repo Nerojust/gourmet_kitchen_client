@@ -115,6 +115,101 @@ export const BackViewHeader = ({
     </View>
   );
 };
+export const BackViewSurplus = ({
+  onClose,
+  backText,
+  shouldDisplaySettingIcon = false,
+  shouldDisplayDelete = false,
+  displayDelete = false,
+  handleClick,
+  performSearch,
+  performDelete,
+  shouldDisplayIcon,
+  shouldDisplayBackArrow,
+  performRefresh,
+  displayCalendar,
+  dateText,
+  toggleDateModal,
+  breadStyle,
+}) => {
+  return (
+    <View style={[styles.exitView]}>
+      {shouldDisplayBackArrow ? (
+        <TouchableOpacity
+          onPress={() => onClose()}
+          style={{flex: 0.2, paddingLeft: 15}}>
+          <Image
+            source={require('../assets/images/arrowleft1.png')}
+            resizeMode={'contain'}
+            style={{width: 25, height: 18}}
+          />
+        </TouchableOpacity>
+      ) : null}
+      <ProductSansBold
+        style={{
+          fontSize: fp(19),
+          flex: 2,
+          color: COLOURS.gray2,
+          right: displayCalendar ? -wp(10) : 0,
+        }}
+        numberOfLines={1}>
+        {backText}
+      </ProductSansBold>
+
+      {displayCalendar ? (
+        <TouchableOpacity onPress={toggleDateModal} style={{flex: 0.3}}>
+          <Image
+            source={require('../assets/images/calendar.png')}
+            style={[styles.deleteImage, {tintColor: COLOURS.gray4}]}
+            resizeMode={'contain'}
+          />
+        </TouchableOpacity>
+      ) : null}
+
+      {shouldDisplayIcon ? (
+        <>
+          <TouchableOpacity onPress={performSearch}>
+            <Image
+              source={require('../assets/images/search.png')}
+              style={styles.searchImage}
+              resizeMode={'contain'}
+            />
+          </TouchableOpacity>
+        </>
+      ) : null}
+      <View
+        style={{
+          flexDirection: 'row',
+          //flex: 0.2,
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          ...breadStyle,
+        }}>
+        {shouldDisplaySettingIcon ? (
+          <TouchableOpacity activeOpacity={0.7} onPress={handleClick}>
+            {renderSettingsMore(handleClick)}
+          </TouchableOpacity>
+        ) : null}
+
+        {shouldDisplayDelete ? (
+          <TouchableOpacity activeOpacity={0.7} onPress={handleClick}>
+            {renderDelete(handleClick)}
+          </TouchableOpacity>
+        ) : null}
+
+        {displayDelete ? (
+          <TouchableOpacity onPress={performDelete}>
+            <Image
+              source={require('../assets/images/delete.png')}
+              style={styles.deleteImage}
+              resizeMode={'contain'}
+            />
+          </TouchableOpacity>
+        ) : null}
+      </View>
+    </View>
+  );
+};
 export const BackViewMoreSettings = ({
   onClose,
   backText,

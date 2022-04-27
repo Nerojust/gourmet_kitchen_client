@@ -33,7 +33,7 @@ import {
   getAllSurplus,
   updateSurplusById,
 } from '../../store/actions/surplus';
-import { getDateWithoutTime } from '../../utils/DateFilter';
+import {getDateWithoutTime} from '../../utils/DateFilter';
 
 // create a component
 const BreadListDetailsScreen = ({navigation, route}) => {
@@ -82,26 +82,33 @@ const BreadListDetailsScreen = ({navigation, route}) => {
   }, [productid, shouldDismissPage]);
 
   const fetchAllData = () => {
-    dispatch(getAllSurplus()).then(resultData => {
-      if (resultData) {
-        dispatch(getAllOrderedProductsStatsById(productid,getDateWithoutTime(selectedOrderDate))).then(result => {
-          if (result) {
-            //console.log('full bread count profile', result);
-            //pick the first object data because they are all the same values except sum
-            setCategory(result[0]?.category);
-            setProductsize(result[0]?.productsize);
-            //setProductid(result[0]?.productid);
-            setOrderProductIdFromPayload(result[0]?.id);
-            setName(result[0]?.name);
-            //calculate all the sum together
-            setCount(addAllCounts(result));
-            setHasDateLoaded(true);
-          }
-        });
-      }
-    });
+    dispatch(getAllSurplus(getDateWithoutTime(selectedOrderDate))).then(
+      resultData => {
+        if (resultData) {
+          dispatch(
+            getAllOrderedProductsStatsById(
+              productid,
+              getDateWithoutTime(selectedOrderDate),
+            ),
+          ).then(result => {
+            if (result) {
+              //console.log('full bread count profile', result);
+              //pick the first object data because they are all the same values except sum
+              setCategory(result[0]?.category);
+              setProductsize(result[0]?.productsize);
+              //setProductid(result[0]?.productid);
+              setOrderProductIdFromPayload(result[0]?.id);
+              setName(result[0]?.name);
+              //calculate all the sum together
+              setCount(addAllCounts(result));
+              setHasDateLoaded(true);
+            }
+          });
+        }
+      },
+    );
   };
-   useEffect(() => {
+  useEffect(() => {
     if (surplus) {
       let fSurplus = surplus.find(item => item.productid == productid);
       if (fSurplus) {
@@ -128,7 +135,6 @@ const BreadListDetailsScreen = ({navigation, route}) => {
     return countData;
   }
 
- 
   const renderDetails = () => {
     return (
       <View style={{marginHorizontal: 25, marginTop: 10}}>
@@ -165,31 +171,43 @@ const BreadListDetailsScreen = ({navigation, route}) => {
           </View>
 
           {foundSurplus ? (
-            <TouchableOpacity
-              activeOpacity={0.6}
-              onPress={() =>
-                foundSurplus ? displayChooseDialog() : handleSubmit(false)
-              }
-              style={{
-                //marginTop: 5,
-                justifyContent: 'center',
-                backgroundColor: COLOURS.zupaBlue,
-                height: 40,
-                borderRadius: 10,
-                paddingHorizontal: 7,
-                alignItems: 'center',
-                flex: 0.6,
-                //left: 50,
-              }}>
-              <Text
+            <View>
+              <TouchableOpacity
+                activeOpacity={0.6}
+                onPress={() =>
+                  foundSurplus ? displayChooseDialog() : handleSubmit(false)
+                }
                 style={{
-                  color: COLOURS.white,
-                  fontSize: fp(12),
-                  fontWeight: '700',
+                  //marginTop: 5,
+                  justifyContent: 'center',
+                  backgroundColor: COLOURS.zupaBlue,
+                  height: 40,
+                  borderRadius: 10,
+                  paddingHorizontal: 7,
+                  alignItems: 'center',
+                  flex: 0.6,
+                  //left: 50,
                 }}>
-                Fulfill from surplus
-              </Text>
-            </TouchableOpacity>
+                <Text
+                  style={{
+                    color: COLOURS.white,
+                    fontSize: fp(12),
+                    fontWeight: '700',
+                  }}>
+                  Fulfill from surplus
+                </Text>
+              </TouchableOpacity>
+
+              <View style={[styles.customerNameView, {flex: 1}]}>
+                <ProductSansBold style={[styles.actiontext, {left: 0}]}>
+                  SURPLUS FOUND
+                </ProductSansBold>
+
+                <Averta style={styles.custName} numberOfLines={5}>
+                  {foundSurplus.count.toString()}
+                </Averta>
+              </View>
+            </View>
           ) : null}
         </View>
         <View style={styles.customerNameView}>
@@ -279,36 +297,6 @@ const BreadListDetailsScreen = ({navigation, route}) => {
     }
   };
 
-  const handleCreateSurplus = () => {
-    if (!surplusCount) {
-      alert('Surplus count is required');
-      return;
-    }
-    if (surplusCount.length < 1 || surplusCount == '0') {
-      alert('Surplus count must be greater than zero');
-      return;
-    }
-    var payload = {
-      count: parseInt(surplusCount),
-      productId: productid,
-      productName: name,
-      productCategory: category,
-      productSize: productsize,
-    };
-    console.log('surplus payload', payload);
-
-    dispatch(createSurplus(payload))
-      .then((result, error) => {
-        if (result) {
-          showSuccessDialog(true);
-          resetFields();
-        }
-      })
-      .catch(error => {
-        console.log('updadte error', error);
-      });
-  };
-
   const handleSubmit = (shouldUseSurplusTofulfill = false) => {
     if (!foundSurplus && !ovenCount) {
       alert('Oven count is required');
@@ -373,11 +361,15 @@ const BreadListDetailsScreen = ({navigation, route}) => {
               'subtracting from found surplus',
               foundSurplus?.count - countTofulfill,
             );
-            
+
             dispatch(
-              updateSurplusById(foundSurplus?.id, {
-                count: foundSurplus?.count - countTofulfill,
-              }),
+              updateSurplusById(
+                foundSurplus?.id,
+                {
+                  count: foundSurplus?.count - countTofulfill,
+                },
+                orderDate,
+              ),
             );
 
             console.log(
@@ -386,7 +378,7 @@ const BreadListDetailsScreen = ({navigation, route}) => {
             );
 
             //get this page data again
-            dispatch(getAllOrderedProductsStatsById(productid)).then(
+            dispatch(getAllOrderedProductsStatsById(productid, orderDate)).then(
               newResult => {
                 //console.log('new result data is ', newResult);
 
