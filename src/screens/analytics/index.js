@@ -253,18 +253,7 @@ const AnalyticsScreen = ({navigation}) => {
       <>
         {salesAverage.length > 0 ? (
           <>
-            <View style={styles.customerNameView}>
-              <ProductSansBold style={[styles.labelText, {left: 0}]}>
-                TOTAL AVERAGE PROCESSING TIME
-              </ProductSansBold>
-              <TouchableOpacity onPress={null}>
-                <AvertaBold style={styles.custName}>
-                  {salesAverage.avg_time
-                    ? getProcessingTimeString(salesAverage[0]?.avg_time)
-                    : 'None'}
-                </AvertaBold>
-              </TouchableOpacity>
-            </View>
+           
             <View style={styles.customerNameView}>
               <ProductSansBold style={[styles.labelText, {left: 0}]}>
                 TOTAL COMPLETED ORDERS
@@ -292,6 +281,19 @@ const AnalyticsScreen = ({navigation}) => {
               <TouchableOpacity onPress={null}>
                 <AvertaBold style={styles.custName}>
                   {salesAverage ? salesAverage[0]?.incomplete_count : 'None'}
+                </AvertaBold>
+              </TouchableOpacity>
+            </View>
+
+             <View style={styles.customerNameView}>
+              <ProductSansBold style={[styles.labelText, {left: 0}]}>
+                AVERAGE PROCESSING TIME
+              </ProductSansBold>
+              <TouchableOpacity onPress={null}>
+                <AvertaBold style={styles.custName}>
+                  {salesAverage.avg_time
+                    ? getProcessingTimeString(salesAverage[0]?.avg_time)
+                    : 'None'}
                 </AvertaBold>
               </TouchableOpacity>
             </View>

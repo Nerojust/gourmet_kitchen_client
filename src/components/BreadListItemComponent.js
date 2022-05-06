@@ -45,9 +45,13 @@ const BreadListItemComponent = ({item, onClick}) => {
           <ProductSans
             style={[
               styles.labelText,
-              {fontWeight: 'bold', fontSize: fp(19), color: COLOURS.labelTextColor},
+              {
+                fontWeight: 'bold',
+                fontSize: fp(19),
+                color: COLOURS.labelTextColor,
+              },
             ]}>
-            {item?.sum || '0'} pcs
+            {parseInt(item?.sum)== 1 ? item?.sum + ' pc' : item?.sum + ' pcs'}
           </ProductSans>
         </View>
       </View>
