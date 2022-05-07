@@ -12,7 +12,11 @@ import {
 import {COLOURS} from '../utils/Colours';
 import {IMAGES} from '../utils/Images';
 import {deviceWidth, fp} from '../utils/responsive-screen';
-import {getColourCode, getReadableDateAndTime} from '../utils/utils';
+import {
+  formatNumberComma,
+  getColourCode,
+  getReadableDateAndTime,
+} from '../utils/utils';
 import ColourComponent from './ColorComponent';
 import ProductSans from './Text/ProductSans';
 import ProductSansBold from './Text/ProductSansBold';
@@ -44,7 +48,7 @@ const AnalyticsItemComponent = ({item, handleClick}) => {
           </ProductSans>
         </View>
 
-        <View style={{flex: 0.1}}>
+        <View style={{flex: 0.22}}>
           <ProductSans
             style={[
               styles.labelText,
@@ -54,7 +58,7 @@ const AnalyticsItemComponent = ({item, handleClick}) => {
                 color: COLOURS.textInputColor,
               },
             ]}>
-            {item?.count || '0'}
+            {formatNumberComma(item?.count) || '0'}
           </ProductSans>
         </View>
       </View>

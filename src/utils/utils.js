@@ -44,11 +44,13 @@ export function findEarliestDate(dates) {
   }
   return earliestDate;
 }
+
 export const emailValidator = value => {
   var re =
     /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return re.test(String(value).toLowerCase());
 };
+
 export const isAlphaNumeric = value => {
   var re = /^([a-zA-Z ]*)$/;
   return re.test(value);
