@@ -41,7 +41,7 @@ const BreadListItemComponent = ({item, onClick}) => {
             {item?.count || '0'}
           </ProductSans>
         </View> */}
-        <View style={{flex: 0.2}}>
+        <View style={{flex: 0.32}}>
           <ProductSans
             style={[
               styles.labelText,
@@ -51,7 +51,7 @@ const BreadListItemComponent = ({item, onClick}) => {
                 color: COLOURS.labelTextColor,
               },
             ]}>
-            {parseInt(item?.sum)== 1 ? item?.sum + ' pc' : item?.sum + ' pcs'}
+            {parseInt(item?.sum) == 1 ? item?.sum + ' pc' : item?.sum + ' pcs'}
           </ProductSans>
         </View>
       </View>
