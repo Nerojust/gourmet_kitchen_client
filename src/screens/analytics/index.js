@@ -167,7 +167,7 @@ const AnalyticsScreen = ({navigation}) => {
         }}
         onCancel={() => {
           setOpen(false);
-          setSelectedOrderDate('');
+          //setSelectedOrderDate('');
         }}
       />
     );

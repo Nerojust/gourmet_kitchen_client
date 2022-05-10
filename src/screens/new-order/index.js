@@ -1099,7 +1099,7 @@ const NewOrderScreen = ({navigation}) => {
         }}
         onCancel={() => {
           setOpen(false);
-          setSelectedOrderDate('');
+          //setSelectedOrderDate('');
         }}
       />
     );

@@ -1423,7 +1423,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
         }}
         onCancel={() => {
           setOpen(false);
-          setSelectedOrderDate('');
+          //setSelectedOrderDate('');
         }}
       />
     );

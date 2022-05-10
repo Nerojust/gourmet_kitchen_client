@@ -59,7 +59,7 @@ const StoreSalesScreen = ({navigation}) => {
   // }, [navigation, selectedOrderDate]);
 
   useEffect(() => {
-    if(selectedOrderDate){
+    if (selectedOrderDate) {
       dispatch(getAllSurplus(getDateWithoutTime(selectedOrderDate)));
     }
   }, [selectedOrderDate]);
@@ -91,7 +91,7 @@ const StoreSalesScreen = ({navigation}) => {
         }}
         onCancel={() => {
           setOpen(false);
-          setSelectedOrderDate('');
+          //setSelectedOrderDate('');
         }}
       />
     );
@@ -211,9 +211,7 @@ const StoreSalesScreen = ({navigation}) => {
       <DismissKeyboard>
         <KeyboardObserverComponent>
           <BackViewSurplus
-            backText={
-              'Store Sales: ' + moment(selectedOrderDate).format('LL')
-            }
+            backText={'Store Sales: ' + moment(selectedOrderDate).format('LL')}
             onClose={() => navigation.goBack()}
             shouldDisplayIcon={surplus && surplus.length > 0}
             shouldDisplaySettingIcon

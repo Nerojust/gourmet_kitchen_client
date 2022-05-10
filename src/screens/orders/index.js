@@ -263,7 +263,7 @@ const OrdersScreen = ({navigation}) => {
         }}
         onCancel={() => {
           setOpen(false);
-          setSelectedOrderDate('');
+          //setSelectedOrderDate('');
         }}
       />
     );
