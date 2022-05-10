@@ -1,64 +1,42 @@
 import React, {PureComponent, useState} from 'react';
 import {StyleSheet, View, Text, Image, TouchableOpacity} from 'react-native';
-import {Menu, MenuItem, MenuDivider} from 'react-native-material-menu';
 import {COLOURS} from '../utils/Colours';
 import {deviceWidth, hp, wp} from '../utils/responsive-screen';
+import {Button, Menu, Divider, Provider} from 'react-native-paper';
 import AvertaBold from './Text/AvertaBold';
 
-export default class OrdersSelector extends PureComponent {
-  constructor(props) {
-    super(props);
+const OrdersSelector = ({onPressIcon}) => {
+  const [visible, setVisible] = React.useState(false);
 
-    this.state = {
-      text: '',
-      showMenu: false,
-    };
-  }
-  _menu = null;
+  const openMenu = () => setVisible(true);
 
-  setMenuRef = ref => {
-    this._menu = ref;
+  const closeMenu = () => setVisible(false);
+
+  const onPressItem = status => {
+    onPressIcon(status);
+    closeMenu();
   };
 
-  closeMenu = () => {
-    this._menu.hide();
-  };
-
-  openMenu = () => {
-    this._menu.show();
-  };
-
-  onPressItem = status => {
-    this.props.onPressIcon(status);
-    this.closeMenu();
-  };
-
-  render() {
-    return (
-      <Menu
-        animationDuration={200}
-        ref={this.setMenuRef}
-        anchor={
-          <TouchableOpacity
-            onPress={this.openMenu}
-            style={styles.transpClickableBg}>
-            <Image
-              source={require('../assets/images/moresettings.png')}
-              resizeMode={'contain'}
-              style={styles.imageIcon}
-            />
-          </TouchableOpacity>
-        }>
-        <>
-          <MenuItem onPress={() => this.onPressItem('delete')}>
-            <AvertaBold style={styles.text}>Delete All</AvertaBold>
-          </MenuItem>
-          <MenuDivider />
-        </>
-      </Menu>
-    );
-  }
-}
+  return (
+    <Menu
+      visible={visible}
+      onDismiss={closeMenu}
+      anchor={
+        <TouchableOpacity onPress={openMenu} style={styles.transpClickableBg}>
+          <Image
+            source={require('../assets/images/moresettings.png')}
+            resizeMode={'contain'}
+            style={styles.imageIcon}
+          />
+        </TouchableOpacity>
+      }>
+      <>
+        <Menu.Item onPress={() => onPressItem('delete')} title="Delete all" />
+      </>
+    </Menu>
+  );
+};
+export default OrdersSelector;
 
 const styles = StyleSheet.create({
   statusText: {

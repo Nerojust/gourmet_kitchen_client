@@ -4,7 +4,7 @@ import {Button, Menu, Divider, Provider} from 'react-native-paper';
 import {COLOURS} from '../utils/Colours';
 import {deviceWidth, hp, wp} from '../utils/responsive-screen';
 
-const SettingsSelector = ({onPressIcon}) => {
+const CopySelector = ({onPressIcon}) => {
   const [visible, setVisible] = React.useState(false);
 
   const openMenu = () => setVisible(true);
@@ -30,8 +30,8 @@ const SettingsSelector = ({onPressIcon}) => {
         </TouchableOpacity>
       }>
       <Menu.Item
-        onPress={() => onPressItem('manageSets')}
-        title="Manage Sets"
+        onPress={() => onPressItem('copy')}
+        title="Copy all"
       />
 
       {/* <Divider /> */}
@@ -40,7 +40,7 @@ const SettingsSelector = ({onPressIcon}) => {
   );
 };
 
-export default SettingsSelector;
+export default CopySelector;
 
 const styles = StyleSheet.create({
   statusText: {

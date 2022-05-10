@@ -655,23 +655,23 @@ export const createOrder = (
           console.log('Kitchen Order created successfully');
 
           //save to zupa too
-          dispatch(
-            createZupaOrder(customerPayload, orderPayload, orderDate),
-          ).then((result, error) => {
-            if (!error) {
-            } else {
-              console.log('zupa save error', error);
-              //there was an error, process it
-              dispatch({
-                type: 'CREATE_ORDER_FAILED',
-                loading: false,
-                error: error.message,
-              });
-              displayRetryDialog();
+          // dispatch(
+          //   createZupaOrder(customerPayload, orderPayload, orderDate),
+          // ).then((result, error) => {
+          //   if (!error) {
+          //   } else {
+          //     console.log('zupa save error', error);
+          //     //there was an error, process it
+          //     dispatch({
+          //       type: 'CREATE_ORDER_FAILED',
+          //       loading: false,
+          //       error: error.message,
+          //     });
+          //     displayRetryDialog();
 
-              console.log('zupz Error ooops ', error);
-            }
-          });
+          //     console.log('zupz Error ooops ', error);
+          //   }
+          // });
           //alert('Order created successfully');
           return response.data?.results;
         } else {
@@ -694,6 +694,7 @@ export const createOrder = (
       });
   };
 };
+
 const displayRetryDialog = (
   dispatch,
   customerPayload,

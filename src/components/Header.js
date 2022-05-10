@@ -1,33 +1,22 @@
-import React, {Component, useState} from 'react';
+import React, {} from 'react';
 import {
   StyleSheet,
   View,
-  Text,
-  FlatList,
-  ScrollView,
-  Animated,
-  CheckBox,
   Image,
-  Alert,
-  SafeAreaView,
   TouchableOpacity,
   Platform,
 } from 'react-native';
 import moment from 'moment';
 import {
-  hp,
   wp,
   fp,
   deviceHeight,
-  deviceWidth,
 } from '../utils/responsive-screen';
-import {getStatusBarHeight} from 'react-native-iphone-x-helper';
 import ProductSansBold from './Text/ProductSansBold';
 import {COLOURS} from '../utils/Colours';
-import {IMAGES} from '../utils/Images';
-import {Menu, MenuItem, MenuDivider} from 'react-native-material-menu';
 import SettingsSelector from './SettingsSelector';
 import DeleteSelector from './DeleteSelector';
+import CopySelector from './CopySelector';
 
 export const BackViewHeader = ({
   onClose,
@@ -187,7 +176,7 @@ export const BackViewSurplus = ({
         }}>
         {shouldDisplaySettingIcon ? (
           <TouchableOpacity activeOpacity={0.7} onPress={handleClick}>
-            {renderSettingsMore(handleClick)}
+            {renderCopy(handleClick)}
           </TouchableOpacity>
         ) : null}
 
@@ -381,6 +370,9 @@ export const BackViewWithLogout = ({
       </View>
     </View>
   );
+};
+export const renderCopy = handleMoreClick => {
+  return <CopySelector onPressIcon={handleMoreClick} />;
 };
 export const renderSettingsMore = handleMoreClick => {
   return <SettingsSelector onPressIcon={handleMoreClick} />;

@@ -1038,6 +1038,11 @@
     "@nodelib/fs.scandir" "2.1.5"
     "fastq" "^1.6.0"
 
+"@react-native-clipboard/clipboard@^1.10.0":
+  "integrity" "sha512-1L+I0vmeUJgMi8MnNsqI00391/RFLkmmxj9qAuOS2madpvce/oNqJb8Pwk2Fc/uxIJSxOckTpq+dQwyPU6s+7w=="
+  "resolved" "https://registry.npmjs.org/@react-native-clipboard/clipboard/-/clipboard-1.10.0.tgz"
+  "version" "1.10.0"
+
 "@react-native-community/async-storage@^1.12.1":
   "integrity" "sha512-70WGaH3PKYASi4BThuEEKMkyAgE9k7VytBqmgPRx3MzJx9/MkspwqJGmn3QLCgHLIFUgF1pit2mWICbRJ3T3lg=="
   "resolved" "https://registry.npmjs.org/@react-native-community/async-storage/-/async-storage-1.12.1.tgz"

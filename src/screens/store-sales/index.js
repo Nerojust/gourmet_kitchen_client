@@ -12,6 +12,9 @@ import {
 import {COLOURS} from '../../utils/Colours';
 import {BackViewMoreSettings, BackViewSurplus} from '../../components/Header';
 import {KeyboardObserverComponent} from '../../components/KeyboardObserverComponent';
+
+import Clipboard from '@react-native-clipboard/clipboard';
+
 import ViewProviderComponent from '../../components/ViewProviderComponent';
 import {
   DismissKeyboard,
@@ -43,7 +46,7 @@ const StoreSalesScreen = ({navigation}) => {
   const dispatch = useDispatch();
   const [isSearchCleared, setIsSearchCleared] = useState(false);
   const [open, setOpen] = useState(false);
-
+  const [copiedText, setCopiedText] = useState('');
   const [selectedOrderDate, setSelectedOrderDate] = useState(new Date());
 
   // useEffect(() => {
@@ -172,19 +175,49 @@ const StoreSalesScreen = ({navigation}) => {
     );
   };
 
+  const fetchCopiedText = async () => {
+    const text = await Clipboard.getString();
+    setCopiedText(text);
+  };
+
+  const handleClick = item => {
+    console.log('item', item);
+    var stringData = '';
+    //map through the list
+    surplus.map((item, i) => {
+      if (item) {
+        // console.log('pdt', item.productname, 'size', item.productsize);
+        stringData =
+          stringData +
+          '\n' +
+          (i + 1) +
+          '. ) ' +
+          item.productname +
+          ' => Size: (' +
+          item.productsize +
+          ')';
+      }
+    });
+
+    Clipboard.setString(stringData);
+    alert('Copied to clipboard');
+  };
+
   return (
     <ViewProviderComponent>
       <DismissKeyboard>
         <KeyboardObserverComponent>
           <BackViewSurplus
             backText={
-              'Store Sales for ' + moment(selectedOrderDate).format('LL')
+              'Store Sales: ' + moment(selectedOrderDate).format('LL')
             }
             onClose={() => navigation.goBack()}
             shouldDisplayIcon={surplus && surplus.length > 0}
+            shouldDisplaySettingIcon
             performSearch={handleSearch}
             shouldDisplayBackArrow={true}
             displayCalendar
+            handleClick={handleClick}
             toggleDateModal={toggleDateModal}
             displayDelete={false}
             performDelete={handleDeleteOrders}
