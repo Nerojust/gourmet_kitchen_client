@@ -379,7 +379,7 @@ const AnalyticsScreen = ({navigation}) => {
       <DismissKeyboard>
         <KeyboardObserverComponent>
           <BackViewWithLogout
-            backText={'Analytics for ' + moment(selectedOrderDate).format('LL')}
+            backText={'Analytics: ' + moment(selectedOrderDate).format('LL')}
             shouldDisplayLogoutIcon
             navigation={navigation}
             displayCalendar

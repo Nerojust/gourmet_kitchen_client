@@ -26,6 +26,7 @@ import {
   getAllOrderedProducts,
   getAllOrderedProductsStatsById,
   updateOrderListProductCount,
+  updateOrderProductById,
   updateSurplusStatusForOrderItemById,
 } from '../../store/actions/orders';
 import {
@@ -36,7 +37,7 @@ import {
 import {getDateWithoutTime} from '../../utils/DateFilter';
 
 // create a component
-const BreadListDetailsScreen = ({navigation, route}) => {
+const OrderFulfillScreen = ({navigation, route}) => {
   //console.log('bread details', route.params.bread);
   const [ovenCount, setOvenCount] = useState();
   const [pendingCount, setPendingCount] = useState('0');
@@ -53,87 +54,145 @@ const BreadListDetailsScreen = ({navigation, route}) => {
     updateOrderLoading,
     selectedOrderStatus,
     ordersLoading,
+    isOrderProductUpdated,
     updateSurplusOrderLoading,
     orderDate,
   } = useSelector(x => x.orders);
   //console.log('count item', countItem);
-  var {productid} = route.params.bread;
+  var orderProduct = route?.params?.item;
   var selectedOrderDate = route.params.date;
   //console.log("dddd",selectedOrderDate)
   //console.log('route.params.brea item', route.params.bread);
   const [foundSurplus, setFoundSurplus] = useState();
-  const [category, setCategory] = useState('');
-  const [productsize, setProductsize] = useState('');
-  // const [productid, setProductid] = useState('');
-  const [name, setName] = useState('');
-  const [count, setCount] = useState(0);
-  // console.log('state is ', selectedOrderStatus);
+
   const {surplus, surplusLoading, updateSurplusLoading, createSurplusLoading} =
     useSelector(x => x.surplus);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [shouldDismissPage, setShouldDismissPage] = useState(true);
-  const [orderProductIdFromPayload, setOrderProductIdFromPayload] = useState();
   //console.log('surplus in breadlist ', surplus.length);
 
   useEffect(() => {
-    if (productid) {
+    if (orderProduct?.id) {
       fetchAllData();
     }
-  }, [productid, shouldDismissPage]);
+  }, [orderProduct?.id]);
 
   const fetchAllData = () => {
-    dispatch(getAllSurplus(getDateWithoutTime(selectedOrderDate))).then(
-      resultData => {
-        if (resultData) {
-          dispatch(
-            getAllOrderedProductsStatsById(
-              productid,
-              getDateWithoutTime(selectedOrderDate),
-            ),
-          ).then(result => {
-            if (result) {
-              //console.log('full bread count profile', result);
-              //pick the first object data because they are all the same values except sum
-              setCategory(result[0]?.category);
-              setProductsize(result[0]?.productsize);
-              //setProductid(result[0]?.productid);
-              setOrderProductIdFromPayload(result[0]?.id);
-              setName(result[0]?.name);
-              //calculate all the sum together
-              setCount(addAllCounts(result));
-              setHasDateLoaded(true);
-            }
-          });
-        }
-      },
-    );
+    dispatch(getAllSurplus(getDateWithoutTime(selectedOrderDate)));
   };
+
   useEffect(() => {
     if (surplus) {
-      let fSurplus = surplus.find(item => item.productid == productid);
+      let fSurplus = surplus.find(
+        item => item.productid == orderProduct?.productid,
+      );
       if (fSurplus) {
         console.log('found the surplus', fSurplus);
       }
       setFoundSurplus(fSurplus);
     }
-  }, [surplus, productid, shouldDismissPage]);
+  }, [surplus]);
 
-  const onRefresh = async () => {
-    setHasDateLoaded(false);
-    fetchAllData();
-    setIsRefreshing(false);
+  const renderSuccessModal = () => (
+    <CustomSuccessModal
+      isModalVisible={isSuccessModalVisible}
+      dismissModal={showSuccessDialog}
+      message={'Order List Updated Successfully'}
+    />
+  );
+
+  const resetFields = () => {
+    setPendingCount('0');
+    setOvenCount('');
   };
 
-  function addAllCounts(data) {
-    let countData = 0;
-    data.map((oneItem, i) => {
-      if (oneItem.sum) {
-        countData = countData + parseInt(oneItem.sum);
+  const showSuccessDialog = () => {
+    setIsSuccessModalVisible(!isSuccessModalVisible);
+    setTimeout(() => {
+      setIsSuccessModalVisible(false);
+      navigation.goBack();
+    }, DIALOG_TIMEOUT);
+  };
+
+  const handleSubmit = (shouldUseSurplusTofulfill = false) => {
+    console.log('submit clicked');
+    if (!foundSurplus && !ovenCount) {
+      alert('Oven count is required');
+      return;
+    }
+    if ((!foundSurplus && ovenCount.length < 1) || ovenCount == '0') {
+      alert('Oven count must be greater than zero');
+      return;
+    }
+    //=============If surplus exists===============
+    let remainSurplusCount;
+    let countTofulfill;
+    if (foundSurplus && shouldUseSurplusTofulfill) {
+      if (foundSurplus?.count >= orderProduct?.quantity) {
+        remainSurplusCount = foundSurplus?.count - orderProduct?.quantity;
+        console.log(
+          'SURPLUS IS GREATER THAN REQUIRED COUNT',
+          remainSurplusCount,
+        );
+        countTofulfill = orderProduct?.quantity;
+      } else if (
+        foundSurplus.count < orderProduct?.quantity &&
+        orderProduct?.quantity > 0
+      ) {
+        remainSurplusCount = orderProduct?.quantity - foundSurplus?.count;
+        console.log(
+          'REQUIRED COUNT IS GREATER THAN SURPLUS',
+          remainSurplusCount,
+        );
+        countTofulfill = foundSurplus?.count;
+      }
+    }
+    var payload = {
+      quantityToFulfill: parseInt(ovenCount),
+      surplusCount,
+    };
+
+    var surplusPayload = {
+      quantityToFulfill: countTofulfill,
+      surplusCount,
+      wasFulfilledFromSurplus: shouldUseSurplusTofulfill,
+    };
+
+    dispatch(
+      updateOrderProductById(
+        orderProduct?.id,
+        foundSurplus && shouldUseSurplusTofulfill ? surplusPayload : payload,
+        orderProduct.orderid,selectedOrderDate
+      ),
+    ).then(result => {
+      if (result) {
+        resetFields();
+        showSuccessDialog();
       }
     });
-    console.log('total sum for this item is ', countData);
-    return countData;
-  }
+  };
+
+  const displaySubmitButton = () => {
+    return (
+      <TouchableOpacity
+        activeOpacity={0.6}
+        onPress={handleSubmit}
+        style={{
+          marginTop: 5,
+          justifyContent: 'center',
+          backgroundColor: COLOURS.zupaBlue,
+          height: 50,
+          borderRadius: 10,
+          marginHorizontal: 20,
+          alignItems: 'center',
+          marginTop: 30,
+        }}>
+        <Text
+          style={{color: COLOURS.white, fontSize: fp(15), fontWeight: '700'}}>
+          Fullfill Item
+        </Text>
+      </TouchableOpacity>
+    );
+  };
 
   const renderDetails = () => {
     return (
@@ -145,7 +204,7 @@ const BreadListDetailsScreen = ({navigation, route}) => {
             </ProductSansBold>
 
             <Averta style={styles.custName} numberOfLines={5}>
-              {category}
+              {orderProduct?.category}
             </Averta>
           </View>
           <View style={[styles.customerNameView, {left: -30}]}>
@@ -154,7 +213,7 @@ const BreadListDetailsScreen = ({navigation, route}) => {
             </ProductSansBold>
 
             <Averta style={styles.custName} numberOfLines={5}>
-              {productsize}
+              {orderProduct?.productsize}
             </Averta>
           </View>
         </View>
@@ -166,7 +225,7 @@ const BreadListDetailsScreen = ({navigation, route}) => {
             </ProductSansBold>
 
             <Averta style={styles.custName} numberOfLines={5}>
-              {count.toString()}
+              {orderProduct?.quantity?.toString()}
             </Averta>
           </View>
 
@@ -210,7 +269,7 @@ const BreadListDetailsScreen = ({navigation, route}) => {
             </View>
           ) : null}
         </View>
-        <View style={styles.customerNameView}>
+        {/* <View style={styles.customerNameView}>
           <ProductSansBold style={[styles.actiontext, {left: 0}]}>
             PENDING
           </ProductSansBold>
@@ -218,7 +277,7 @@ const BreadListDetailsScreen = ({navigation, route}) => {
           <Averta style={styles.custName} numberOfLines={5}>
             {parseInt(pendingCount) < 0 ? '0' : parseInt(pendingCount)}
           </Averta>
-        </View>
+        </View> */}
 
         <View
           style={[styles.customerNameView, {paddingTop: 5, marginRight: 10}]}>
@@ -273,137 +332,6 @@ const BreadListDetailsScreen = ({navigation, route}) => {
       </View>
     );
   };
-
-  const handleOvenChange = text => {
-    if (text) {
-      setOvenCount(text);
-      setPendingCount(count - text);
-      if (count - text < 0) {
-        console.log('surplus is ', text - count);
-        setSurplusCount(text - count);
-      } else {
-        setSurplusCount('0');
-      }
-    } else {
-      setPendingCount('0');
-      setOvenCount('');
-      setSurplusCount('');
-    }
-  };
-
-  const handleSubmit = (shouldUseSurplusTofulfill = false) => {
-    if (!foundSurplus && !ovenCount) {
-      alert('Oven count is required');
-      return;
-    }
-    if ((!foundSurplus && ovenCount.length < 1) || ovenCount == '0') {
-      alert('Oven count must be greater than zero');
-      return;
-    }
-    //=============If surplus exists===============
-    let remainSurplusCount;
-    let countTofulfill;
-    if (foundSurplus && shouldUseSurplusTofulfill) {
-      if (foundSurplus?.count >= count) {
-        remainSurplusCount = foundSurplus?.count - count;
-        console.log(
-          'SURPLUS IS GREATER THAN REQUIRED COUNT',
-          remainSurplusCount,
-        );
-        countTofulfill = count;
-      } else if (foundSurplus.count < count && count > 0) {
-        remainSurplusCount = count - foundSurplus?.count;
-        console.log(
-          'REQUIRED COUNT IS GREATER THAN SURPLUS',
-          remainSurplusCount,
-        );
-        countTofulfill = foundSurplus?.count;
-      }
-    }
-    //==============================================
-    var payload = {
-      count: parseInt(ovenCount),
-      productid: productid,
-      surplusCount,
-    };
-
-    var surplusPayload = {
-      count: countTofulfill,
-      productid: productid,
-      surplusCount,
-      wasFulfilledFromSurplus: shouldUseSurplusTofulfill,
-      orderProductIdFromPayload,
-    };
-
-    console.log(
-      'payload',
-      shouldUseSurplusTofulfill ? surplusPayload : payload,
-    );
-
-    setIsLoading(true);
-    //fulfill the item in breadlist
-    dispatch(
-      updateOrderListProductCount(
-        foundSurplus && shouldUseSurplusTofulfill ? surplusPayload : payload,
-        orderDate,
-      ),
-    )
-      .then((result, error) => {
-        if (result) {
-          if (foundSurplus && shouldUseSurplusTofulfill) {
-            console.log(
-              'subtracting from found surplus',
-              foundSurplus?.count - countTofulfill,
-            );
-
-            dispatch(
-              updateSurplusById(
-                foundSurplus?.id,
-                {
-                  count: foundSurplus?.count - countTofulfill,
-                },
-                orderDate,
-              ),
-            );
-
-            console.log(
-              'Before updating order status, surplus count is ',
-              countTofulfill,
-            );
-
-            //get this page data again
-            dispatch(getAllOrderedProductsStatsById(productid, orderDate)).then(
-              newResult => {
-                //console.log('new result data is ', newResult);
-
-                if (newResult.length > 0) {
-                  setIsLoading(false);
-                  showSuccessDialog(false);
-                  setShouldDismissPage(false);
-                } else {
-                  showSuccessDialog(true);
-                  setShouldDismissPage(true);
-                  setIsLoading(false);
-                }
-              },
-            );
-          } else {
-            showSuccessDialog(true);
-            setIsLoading(false);
-          }
-          //}
-          if (isLoading) {
-            setIsLoading(false);
-          }
-          resetFields();
-        }
-      })
-      .catch(error => {
-        console.log('update error', error);
-        setIsLoading(false);
-      });
-  };
-
   const displayChooseDialog = () => {
     let countTofulfill;
 
@@ -418,7 +346,7 @@ const BreadListDetailsScreen = ({navigation, route}) => {
 
     Alert.alert(
       'Alert',
-      `Surplus available: ${foundSurplus.count} pieces \nRequired: ${count} pieces`,
+      `Surplus available: ${foundSurplus.count} pieces \nRequired: ${orderProduct?.quantity} pieces`,
       [
         {
           text: `Fulfil`,
@@ -435,90 +363,46 @@ const BreadListDetailsScreen = ({navigation, route}) => {
       {cancelable: true},
     );
   };
-
-  const renderSuccessModal = () => (
-    <CustomSuccessModal
-      isModalVisible={isSuccessModalVisible}
-      dismissModal={showSuccessDialog}
-      message={'Order List Updated Successfully'}
-    />
-  );
-
-  const resetFields = () => {
-    setPendingCount('0');
-    setOvenCount('');
-  };
-
-  const showSuccessDialog = dismiss => {
-    setIsSuccessModalVisible(!isSuccessModalVisible);
-    setTimeout(() => {
-      setIsSuccessModalVisible(false);
-      if (dismiss) {
-        console.log('dismiss dialog', dismiss);
-        navigation.goBack();
+  const handleOvenChange = text => {
+    if (text) {
+      setOvenCount(text);
+      setPendingCount(orderProduct?.quantity - text);
+      if (orderProduct?.quantity - text < 0) {
+        console.log('surplus is ', text - orderProduct?.quantity);
+        setSurplusCount(text - orderProduct?.quantity);
       } else {
-        console.log('dont disimiss dialog', dismiss);
+        setSurplusCount('0');
       }
-    }, DIALOG_TIMEOUT);
+    } else {
+      setPendingCount('0');
+      setOvenCount('');
+      setSurplusCount('');
+    }
   };
-
-  const displaySubmitButton = () => {
-    return (
-      <TouchableOpacity
-        activeOpacity={0.6}
-        onPress={handleSubmit}
-        style={{
-          marginTop: 5,
-          justifyContent: 'center',
-          backgroundColor: COLOURS.zupaBlue,
-          height: 50,
-          borderRadius: 10,
-          marginHorizontal: 20,
-          alignItems: 'center',
-          marginTop: 30,
-        }}>
-        <Text
-          style={{color: COLOURS.white, fontSize: fp(15), fontWeight: '700'}}>
-          Update Order List
-        </Text>
-      </TouchableOpacity>
-    );
-  };
-
   return (
     <ViewProviderComponent>
       <DismissKeyboard>
         <KeyboardObserverComponent>
           <BackViewMoreSettings
             shouldDisplayBackArrow={true}
-            backText={route?.params?.bread?.name || 'Bread List Details'}
+            backText={route?.params?.item?.name || 'Fulfill Item'}
             onClose={() => navigation.goBack()}
           />
           <FlatList
             data={[]}
             keyboardShouldPersistTaps={'handled'}
-            refreshControl={
-              <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
-            }
             ListHeaderComponent={
               <>
-                {hasDateLoaded ? (
-                  <>
-                    {renderDetails()}
-                    {!foundSurplus ? displaySubmitButton() : null}
-                    {renderSuccessModal()}
-                  </>
-                ) : null}
+                {renderDetails()}
+                {!foundSurplus ? displaySubmitButton() : null}
+                {renderSuccessModal()}
               </>
             }
             renderItem={null}
             keyExtractor={item => item.id}
           />
-          <LoaderShimmerComponent isLoading={isLoading} />
+          <LoaderShimmerComponent isLoading={ordersLoading} />
           <LoaderShimmerComponent isLoading={surplusLoading} />
-          {/* <LoaderShimmerComponent isLoading={ordersLoading} /> */}
-          {/* <LoaderShimmerComponent isLoading={updateOrderLoading} />
-          <LoaderShimmerComponent isLoading={updateSurplusOrderLoading} /> */}
         </KeyboardObserverComponent>
       </DismissKeyboard>
     </ViewProviderComponent>
@@ -559,4 +443,4 @@ const styles = StyleSheet.create({
 });
 
 //make this component available to the app
-export default BreadListDetailsScreen;
+export default OrderFulfillScreen;

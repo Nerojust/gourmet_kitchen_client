@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     fontSize: hp(14),
     marginRight: wp(4),
   },
-  imageIcon: {width: 18, height: 18},
+  imageIcon: {width: 18, height: 18, tintColor: COLOURS.gray},
   transpClickableBg: {
     width: 40,
     height: 20,

@@ -154,7 +154,7 @@ const BreadListScreen = ({navigation}) => {
         <KeyboardObserverComponent>
           <BackViewHeader
             backText={
-              'Bread List for ' + moment(selectedOrderDate).format('LL')
+              'Bread List: ' + moment(selectedOrderDate).format('LL')
             }
             onClose={() => navigation.goBack()}
             toggleDateModal={toggleDateModal}
@@ -162,7 +162,7 @@ const BreadListScreen = ({navigation}) => {
             displayCalendar
             shouldDisplayBackArrow={true}
             performSearch={handleSearch}
-            breadStyle={{flex: 0.4}}
+            breadStyle={{flex: 0.33}}
             shouldDisplayIcon={orderedProducts.length > 0}
             handleClick={openSettingsMenu}
             performRefresh={() => fetchAllData()}

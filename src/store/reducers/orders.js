@@ -15,6 +15,7 @@ const initialState = {
   analyticsLoading: false,
   createOrderLoading: false,
   updateSurplusOrderLoading: false,
+  isOrderProductUpdated:false,
   updateOrderLoading: false,
   isOrderUpdated: false,
   salesAverage:{},
@@ -131,6 +132,25 @@ export default (state = initialState, action) => {
     case 'GET_SINGLE_ORDERED_PRODUCTS_FAILED':
       return {
         ...state,
+        ordersLoading: action.loading,
+        error: action.error,
+      };
+    case 'UPDATE_ORDER_PRODUCT_PENDING':
+      return {
+        ...state,
+        isOrderProductUpdated: false,
+        ordersLoading: action.loading,
+      };
+    case 'UPDATE_ORDER_PRODUCT_SUCCESS':
+      return {
+        ...state,
+        isOrderProductUpdated: true,
+        ordersLoading: action.loading,
+      };
+    case 'UPDATE_ORDER_PRODUCT_FAILED':
+      return {
+        ...state,
+        isOrderProductUpdated: false,
         ordersLoading: action.loading,
         error: action.error,
       };

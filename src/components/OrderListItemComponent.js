@@ -12,14 +12,17 @@ import ProductSans from './Text/ProductSans';
 import ProductSansBold from './Text/ProductSansBold';
 
 // create a component
-const OrderListItemComponent = ({item}) => {
+const OrderListItemComponent = ({item, onClickItem}) => {
   //console.log('item', item);
   var name = item?.name || 'NONE';
   var quantity = item?.quantity;
   var price = item?.price;
 
   return (
-    <View style={styles.customerNameView}>
+    <TouchableOpacity
+      activeOpacity={0.7}
+      style={styles.customerNameView}
+      onPress={() => onClickItem(item)}>
       <View
         style={{
           flexDirection: 'row',
@@ -72,7 +75,7 @@ const OrderListItemComponent = ({item}) => {
             {item?.productsize || 'None'}
           </ProductSans>
         </View>
-       
+
         <View>
           <ProductSans style={styles.labelText}>QUANTITY</ProductSans>
           <ProductSans style={styles.quantityName}>{quantity}</ProductSans>
@@ -154,7 +157,7 @@ const OrderListItemComponent = ({item}) => {
           {item?.fulfilledquantity} of {item?.quantity}
         </ProductSans>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 

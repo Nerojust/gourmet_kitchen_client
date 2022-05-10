@@ -84,7 +84,7 @@ export const BackViewHeader = ({
       <View
         style={{
           flexDirection: 'row',
-          flex: 0.2,
+          flex: 0.3,
           justifyContent: 'space-between',
           alignItems: 'center',
           ...breadStyle,
@@ -95,11 +95,11 @@ export const BackViewHeader = ({
           </TouchableOpacity>
         ) : null}
 
-        {shouldDisplayDelete ? (
+        {/* {shouldDisplayDelete ? (
           <TouchableOpacity activeOpacity={0.7} onPress={handleClick}>
             {renderDelete(handleClick)}
           </TouchableOpacity>
-        ) : null}
+        ) : null} */}
       </View>
     </View>
   );

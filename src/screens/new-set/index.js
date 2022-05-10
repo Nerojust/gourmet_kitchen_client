@@ -438,9 +438,9 @@ const NewSetScreen = ({navigation}) => {
       const orderPayload = {
         name: setName,
         products: productArray,
-        zupaSetAssociatedId:selectedZupaProduct?.id,
-        zupaSetName:selectedZupaProduct?.name,
-        zupaSetCategorySize:selectedZupaProduct.categorySize.name
+        zupaSetAssociatedId: selectedZupaProduct?.id,
+        zupaSetName: selectedZupaProduct?.name,
+        zupaSetCategorySize: selectedZupaProduct.categorySize.name,
       };
 
       console.log('order payload', orderPayload);
@@ -463,7 +463,7 @@ const NewSetScreen = ({navigation}) => {
     <CustomSuccessModal
       isModalVisible={isSuccessModalVisible}
       dismissModal={showSuccessDialog}
-      message={'Order created successfully'}
+      message={'Set created successfully'}
       //onPressButton={() => navigation.goBack()}
     />
   );

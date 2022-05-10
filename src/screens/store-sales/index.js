@@ -59,8 +59,11 @@ const StoreSalesScreen = ({navigation}) => {
   // }, [navigation, selectedOrderDate]);
 
   useEffect(() => {
-    dispatch(getAllSurplus(getDateWithoutTime(selectedOrderDate)));
+    if(selectedOrderDate){
+      dispatch(getAllSurplus(getDateWithoutTime(selectedOrderDate)));
+    }
   }, [selectedOrderDate]);
+
   const renderItems = ({item, index}) => {
     return (
       <SurplusListItemComponent
@@ -120,7 +123,7 @@ const StoreSalesScreen = ({navigation}) => {
   };
   const onRefresh = () => {
     // console.log('refreshed');
-    dispatch(getAllSurplus());
+    dispatch(getAllSurplus(getDateWithoutTime(selectedOrderDate)));
   };
   const handleSearch = () => {
     setIsSearchClicked(!isSearchClicked);

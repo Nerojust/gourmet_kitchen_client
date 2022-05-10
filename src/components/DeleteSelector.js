@@ -1,67 +1,41 @@
-import React, {PureComponent, useState} from 'react';
-import {StyleSheet, View, Text, Image, TouchableOpacity} from 'react-native';
-import {Menu, MenuItem, MenuDivider} from 'react-native-material-menu';
+import * as React from 'react';
+import {View, StyleSheet, Image, TouchableOpacity} from 'react-native';
+import {Button, Menu, Divider, Provider} from 'react-native-paper';
 import {COLOURS} from '../utils/Colours';
 import {deviceWidth, hp, wp} from '../utils/responsive-screen';
-import AvertaBold from './Text/AvertaBold';
 
-export default class DeleteSelector extends PureComponent {
-  constructor(props) {
-    super(props);
+const DeleteSelector = ({onPressIcon}) => {
+  const [visible, setVisible] = React.useState(false);
 
-    this.state = {
-      text: '',
-      showMenu: false,
-    };
-  }
-  _menu = null;
+  const openMenu = () => setVisible(true);
 
-  setMenuRef = ref => {
-    this._menu = ref;
+  const closeMenu = () => setVisible(false);
+
+  const onPressItem = status => {
+    onPressIcon(status);
+    closeMenu();
   };
 
-  closeMenu = () => {
-    this._menu.hide();
-  };
+  return (
+    <Menu
+      visible={visible}
+      onDismiss={closeMenu}
+      anchor={
+        <TouchableOpacity onPress={openMenu} style={styles.transpClickableBg}>
+          <Image
+            source={require('../assets/images/moresettings.png')}
+            resizeMode={'contain'}
+            style={styles.imageIcon}
+          />
+        </TouchableOpacity>
+      }>
+      <Menu.Item onPress={() => onPressItem('edit')} title="Edit" />
+      <Menu.Item onPress={() => onPressItem('delete')} title="Delete" />
+    </Menu>
+  );
+};
 
-  openMenu = () => {
-    this._menu.show();
-  };
-
-  onPressItem = status => {
-    this.props.onPressIcon(status);
-    this.closeMenu();
-  };
-
-  render() {
-    return (
-      <Menu
-        animationDuration={200}
-        ref={this.setMenuRef}
-        anchor={
-          <TouchableOpacity
-            onPress={this.openMenu}
-            style={styles.transpClickableBg}>
-            <Image
-              source={require('../assets/images/moresettings.png')}
-              resizeMode={'contain'}
-              style={styles.imageIcon}
-            />
-          </TouchableOpacity>
-        }>
-        <>
-          <MenuItem onPress={() => this.onPressItem('edit')}>
-            <AvertaBold style={styles.text}>Edit</AvertaBold>
-          </MenuItem>
-          <MenuItem onPress={() => this.onPressItem('delete')}>
-            <AvertaBold style={styles.text}>Delete</AvertaBold>
-          </MenuItem>
-          <MenuDivider />
-        </>
-      </Menu>
-    );
-  }
-}
+export default DeleteSelector;
 
 const styles = StyleSheet.create({
   statusText: {
@@ -69,7 +43,7 @@ const styles = StyleSheet.create({
     fontSize: hp(14),
     marginRight: wp(4),
   },
-  imageIcon: {width: 18, height: 18},
+  imageIcon: {width: 18, height: 18, tintColor: COLOURS.gray},
   transpClickableBg: {
     width: 40,
     height: 20,

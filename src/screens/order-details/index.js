@@ -242,7 +242,15 @@ const OrderDetailsScreen = ({navigation, route}) => {
     fetchAllData();
     setIsRefreshing(false);
   };
-
+  const onClickItem = item => {
+    //console.log('clicked item is ', item);
+    if (!item.isfulfilled) {
+      navigation.push('OrderFulfill', {
+        item: item,
+        date: orderDate,
+      });
+    }
+  };
   const renderDetails = () => {
     return (
       <>
@@ -366,7 +374,10 @@ const OrderDetailsScreen = ({navigation, route}) => {
                   return (
                     <View key={index}>
                       {/* order items list */}
-                      <OrderListItemComponent item={item} />
+                      <OrderListItemComponent
+                        item={item}
+                        onClickItem={onClickItem}
+                      />
                     </View>
                   );
                 })}

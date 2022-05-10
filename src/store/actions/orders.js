@@ -359,7 +359,7 @@ export const updateOrderListProductCount = (payload, date) => {
       .then(response => {
         if (response?.data) {
           console.log(
-            'Orders gotten successfully',
+            'update breadlist count successfully',
             response?.data?.recordCount,
           );
           if (response?.data?.isSuccessful) {
@@ -382,8 +382,8 @@ export const updateOrderListProductCount = (payload, date) => {
         }
       })
       .catch(error => {
-        console.log('Getting orders failed', error);
-        handleError(error, dispatch, 'get orders list');
+        console.log('update breadlist count failed', error);
+        handleError(error, dispatch, 'update breadlist count');
         dispatch({
           type: 'UPDATE_OVEN_COUNT_FAILED',
           loading: false,
@@ -433,6 +433,54 @@ export const updateSurplusStatusForOrderItemById = (id, payload) => {
         handleError(error, dispatch, 'updating order');
         dispatch({
           type: 'UPDATE_SURPLUS_STATUS_ORDER_ITEM_FAILED',
+          loading: false,
+          error: error.message,
+        });
+      });
+  };
+};
+export const updateOrderProductById = (id, payload, orderId, date) => {
+  console.log('About to update order product with id', id);
+  return dispatch => {
+    dispatch({
+      type: 'UPDATE_ORDER_PRODUCT_PENDING',
+      loading: true,
+      error: null,
+    });
+    var url = `/orders/orderProduct/${id}`;
+    //console.log("geturl", getUrl);
+    return client
+      .put(url, payload)
+      .then(response => {
+        if (response?.data) {
+          if (response?.data?.isSuccessful) {
+            console.log(
+              'order product fields updated successfully',
+              response?.data?.recordCount,
+            );
+            dispatch(getOrder(orderId));
+            dispatch(getAllOrderedProducts('all', date));
+            dispatch({
+              type: 'UPDATE_ORDER_PRODUCT_SUCCESS',
+              loading: false,
+              data: response?.data?.results,
+            });
+
+            return response?.data?.results;
+          } else {
+            dispatch({
+              type: 'UPDATE_ORDER_PRODUCT_FAILED',
+              loading: false,
+              error: response?.data?.message,
+            });
+          }
+        }
+      })
+      .catch(error => {
+        console.log('update order product failed', error);
+        handleError(error, dispatch, 'updating order product');
+        dispatch({
+          type: 'UPDATE_ORDER_PRODUCT_FAILED',
           loading: false,
           error: error.message,
         });

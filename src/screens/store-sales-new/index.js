@@ -77,9 +77,7 @@ const NewStoreSalesScreen = ({navigation,route}) => {
   const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false);
 
   const productSheetRef = useRef();
-  const zupaProductAssociateSheetRef = useRef();
 
-  const fullNameRef = useRef(null);
   const surplusCountRef = useRef();
   const deliverySheetRef = useRef();
   const [specialNote, setSpecialNote] = useState('');
@@ -113,9 +111,8 @@ const NewStoreSalesScreen = ({navigation,route}) => {
   const {deliveryTypes, deliveryStates} = useSelector(
     state => state.deliveryTypes,
   );
-  let additionalArray = [];
-  var finalDeliveryArray = [];
   const orderDate = route?.params?.date;
+  const [orderDateValue, setOrderDateValue] = useState(orderDate)
   //console.log('route date', orderDate);
 
   useEffect(() => {
@@ -137,7 +134,7 @@ const NewStoreSalesScreen = ({navigation,route}) => {
     }
   };
 
-  const handleRefreshIncaseOfNetworkFailure = (isProduct, isDelivery) => {
+  const handleRefreshIncaseOfNetworkFailure = (isProduct) => {
     if (isProduct) {
       dispatch(getAllProducts('', 0, 0));
     }
@@ -317,15 +314,15 @@ const NewStoreSalesScreen = ({navigation,route}) => {
       };
       console.log('surplus payload', payload);
 
-      dispatch(createSurplus(payload,orderDate))
-        .then((result, error) => {
+      dispatch(createSurplus(payload,orderDateValue))
+        .then((result) => {
           if (result) {
             showSuccessDialog(true);
             resetFields();
           }
         })
         .catch(error => {
-          console.log('updadte error', error);
+          console.log('updated error', error);
         });
     });
   };
