@@ -32,6 +32,7 @@ const SettingsSelector = ({onPressIcon}) => {
       <Menu.Item
         onPress={() => onPressItem('manageSets')}
         title="Manage Sets"
+        titleStyle={{color: COLOURS.green2}}
       />
 
       {/* <Divider /> */}

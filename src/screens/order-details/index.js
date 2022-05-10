@@ -50,6 +50,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {
   deleteOrderById,
   getOrder,
+  rescheduleOrderDateById,
   updateOrderById,
   updateOrderDispatchByOrderId,
   updateOrderSpecialNoteById,
@@ -75,6 +76,8 @@ import OrdersHelper from '../../components/OrdersHelper';
 import {DataTable} from 'react-native-paper';
 import CustomSuccessModal from '../../components/CustomSuccessModal';
 import {getAllRiders} from '../../store/actions/riders';
+import DatePicker from 'react-native-date-picker';
+import {getDateWithoutTime} from '../../utils/DateFilter';
 
 // create a component
 const OrderDetailsScreen = ({navigation, route}) => {
@@ -113,7 +116,9 @@ const OrderDetailsScreen = ({navigation, route}) => {
   const {riders, rider, ridersLoading, updateRidersLoading} = useSelector(
     state => state.riders,
   );
-
+  const [selectedOrderDate, setSelectedOrderDate] = useState(new Date());
+  const [open, setOpen] = useState(false);
+  let dateData;
   var ridersData = Object.assign([], riders);
   const [filteredRidersData, setFilteredRidersData] = useState(ridersData);
   const [ridersInputValue, setRidersInputValue] = useState('');
@@ -1357,9 +1362,77 @@ const OrderDetailsScreen = ({navigation, route}) => {
     } else if (item == 'delete') {
       //console.log('delete clicked');
       handleDeleteOrders();
+    } else if (item == 'reschedule') {
+      // console.log('reschedule');
+      if (!order.isfulfilled) {
+        toggleDateModal();
+      } else {
+        alert('Sorry you cannot modify a completed order');
+      }
     }
   };
 
+  const displayRescheduleDialog = () => {
+    var payload = {
+      createdAt: dateData,
+      updatedAt: dateData,
+      originalDate: order?.createdat,
+    };
+    Alert.alert(
+      'Alert',
+      `Do you want to reschedule this order to ${moment(dateData).format(
+        'LL',
+      )}?`,
+      [
+        {
+          text: 'No',
+          onPress: () => {
+            console.log('cancel Pressed');
+          },
+        },
+        {
+          text: 'Yes',
+          onPress: () =>
+            dispatch(rescheduleOrderDateById(id, payload)).then(result => {
+              if (result) {
+                showSuccessDialog(true);
+              }
+            }),
+        },
+      ],
+      {cancelable: true},
+    );
+  };
+
+  const renderDatePicker = () => {
+    return (
+      <DatePicker
+        modal
+        mode={'date'}
+        open={open}
+        title={'Select a reschedule date for this order'}
+        theme={'auto'}
+        date={selectedOrderDate || new Date()}
+        //minimumDate={subtractOneDayFromTime(new Date(), 1)}
+        onConfirm={date => {
+          console.log('date result', date);
+          setOpen(false);
+          dateData = date;
+          //setSelectedOrderDate(date);
+          displayRescheduleDialog();
+        }}
+        onCancel={() => {
+          setOpen(false);
+          setSelectedOrderDate('');
+        }}
+      />
+    );
+  };
+
+  const toggleDateModal = () => {
+    //console.log('opened');
+    setOpen(!open);
+  };
   const handleDeleteOrders = () => {
     // console.log('delete clicked');
     Alert.alert(
@@ -1426,6 +1499,9 @@ const OrderDetailsScreen = ({navigation, route}) => {
             backText="Order Details"
             shouldDisplayBackArrow={true}
             shouldDisplayDelete
+            // dateText={selectedOrderDate}
+            // displayCalendar
+            //toggleDateModal={toggleDateModal}
             onClose={() =>
               isEditMode ? setIsEditMode(false) : navigation.goBack()
             }
@@ -1439,6 +1515,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
             ListHeaderComponent={
               hasDataLoaded ? (
                 <>
+                  {renderDatePicker()}
                   {renderDetails()}
                   {renderCheckout()}
                   <View style={{marginBottom: !isEditMode ? 40 : 0}} />

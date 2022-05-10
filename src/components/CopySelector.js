@@ -32,10 +32,10 @@ const CopySelector = ({onPressIcon}) => {
       <Menu.Item
         onPress={() => onPressItem('copy')}
         title="Copy all"
+        titleStyle={{color: COLOURS.yellow1}}
       />
 
       {/* <Divider /> */}
-      {/* <Menu.Item onPress={() => {}} title="Delete" /> */}
     </Menu>
   );
 };

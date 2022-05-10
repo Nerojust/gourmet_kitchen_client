@@ -29,8 +29,19 @@ const DeleteSelector = ({onPressIcon}) => {
           />
         </TouchableOpacity>
       }>
-      <Menu.Item onPress={() => onPressItem('edit')} title="Edit" />
-      <Menu.Item onPress={() => onPressItem('delete')} title="Delete" />
+      <Menu.Item onPress={() => onPressItem('reschedule')} title="Reschedule" />
+      <Divider />
+      <Menu.Item
+        onPress={() => onPressItem('edit')}
+        title="Edit"
+        titleStyle={{color: COLOURS.blue}}
+      />
+      <Divider />
+      <Menu.Item
+        onPress={() => onPressItem('delete')}
+        title="Delete"
+        titleStyle={{color: COLOURS.red}}
+      />
     </Menu>
   );
 };

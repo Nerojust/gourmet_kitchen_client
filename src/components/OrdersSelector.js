@@ -31,7 +31,11 @@ const OrdersSelector = ({onPressIcon}) => {
         </TouchableOpacity>
       }>
       <>
-        <Menu.Item onPress={() => onPressItem('delete')} title="Delete all" />
+        <Menu.Item
+          onPress={() => onPressItem('delete')}
+          titleStyle={{color: COLOURS.red}}
+          title="Delete all"
+        />
       </>
     </Menu>
   );

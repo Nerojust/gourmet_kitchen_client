@@ -135,7 +135,27 @@ export default (state = initialState, action) => {
         ordersLoading: action.loading,
         error: action.error,
       };
-    case 'UPDATE_ORDER_PRODUCT_PENDING':
+    case 'UPDATE_ORDER_RESCHEDULE_PENDING':
+      return {
+        ...state,
+        isOrderProductUpdated: false,
+        ordersLoading: action.loading,
+      };
+    case 'UPDATE_ORDER_RESCHEDULE_SUCCESS':
+      return {
+        ...state,
+        isOrderProductUpdated: true,
+        ordersLoading: action.loading,
+      };
+    case 'UPDATE_ORDER_RESCHEDULE_FAILED':
+      return {
+        ...state,
+        isOrderProductUpdated: false,
+        ordersLoading: action.loading,
+        error: action.error,
+      };
+
+      case 'UPDATE_ORDER_PRODUCT_PENDING':
       return {
         ...state,
         isOrderProductUpdated: false,

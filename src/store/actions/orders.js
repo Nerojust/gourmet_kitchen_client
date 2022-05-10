@@ -487,6 +487,56 @@ export const updateOrderProductById = (id, payload, orderId, date) => {
       });
   };
 };
+
+
+export const rescheduleOrderDateById = (id, payload) => {
+  console.log('About to reschedule order with id', id);
+  return dispatch => {
+    dispatch({
+      type: 'UPDATE_ORDER_RESCHEDULE_PENDING',
+      loading: true,
+      error: null,
+    });
+    var url = `/orders/reschedule/${id}`;
+    //console.log("geturl", getUrl);
+    return client
+      .patch(url, payload)
+      .then(response => {
+        if (response?.data) {
+          if (response?.data?.isSuccessful) {
+            console.log(
+              'Order reschedule date updated successfully',
+              response?.data?.recordCount,
+            );
+            dispatch(getOrder(id));
+            //dispatch(getAllOrderedProducts('all', date));
+            dispatch({
+              type: 'UPDATE_ORDER_RESCHEDULE_SUCCESS',
+              loading: false,
+              data: response?.data?.results,
+            });
+
+            return response?.data?.results;
+          } else {
+            dispatch({
+              type: 'UPDATE_ORDER_RESCHEDULE_FAILED',
+              loading: false,
+              error: response?.data?.message,
+            });
+          }
+        }
+      })
+      .catch(error => {
+        console.log('Order reschedule date failed', error);
+        handleError(error, dispatch, 'Order reschedule date');
+        dispatch({
+          type: 'UPDATE_ORDER_RESCHEDULE_FAILED',
+          loading: false,
+          error: error.message,
+        });
+      });
+  };
+};
 export const updateOrderDispatchByOrderId = (id, payload) => {
   console.log('About to update order dispatch with id', id);
   return dispatch => {

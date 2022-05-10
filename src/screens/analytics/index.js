@@ -20,6 +20,7 @@ import ViewProviderComponent from '../../components/ViewProviderComponent';
 import {
   DismissKeyboard,
   getProcessingTimeString,
+  removeBrackets,
   sortArrayByDate,
   sortArrayByDateDesc,
 } from '../../utils/utils';
@@ -87,7 +88,6 @@ const AnalyticsScreen = ({navigation}) => {
 
   const getAverageData = () => {
     dispatch(getAllSalesAverage(getDateWithoutTime(selectedOrderDate)));
-    
   };
 
   const getRiderData = () => {
@@ -253,14 +253,19 @@ const AnalyticsScreen = ({navigation}) => {
       <>
         {salesAverage.length > 0 ? (
           <>
-           
             <View style={styles.customerNameView}>
               <ProductSansBold style={[styles.labelText, {left: 0}]}>
                 TOTAL COMPLETED ORDERS
               </ProductSansBold>
               <TouchableOpacity onPress={null}>
-                <AvertaBold style={styles.custName}>
-                  {salesAverage ? salesAverage[0]?.completed_count : 'None'}
+                <AvertaBold
+                  style={[
+                    styles.custName,
+                    {color: COLOURS.green2, fontSize: fp(20)},
+                  ]}>
+                  {salesAverage
+                    ? removeBrackets(salesAverage[0]?.completed_count)
+                    : 'None'}
                 </AvertaBold>
               </TouchableOpacity>
             </View>
@@ -269,8 +274,14 @@ const AnalyticsScreen = ({navigation}) => {
                 TOTAL PENDING ORDERS
               </ProductSansBold>
               <TouchableOpacity onPress={null}>
-                <AvertaBold style={styles.custName}>
-                  {salesAverage ? salesAverage[0]?.pending_count : 'None'}
+                <AvertaBold
+                  style={[
+                    styles.custName,
+                    {color: COLOURS.blue, fontSize: fp(20)},
+                  ]}>
+                  {salesAverage
+                    ? removeBrackets(salesAverage[0]?.pending_count)
+                    : 'None'}
                 </AvertaBold>
               </TouchableOpacity>
             </View>
@@ -279,19 +290,29 @@ const AnalyticsScreen = ({navigation}) => {
                 TOTAL INCOMPLETE ORDERS
               </ProductSansBold>
               <TouchableOpacity onPress={null}>
-                <AvertaBold style={styles.custName}>
-                  {salesAverage ? salesAverage[0]?.incomplete_count : 'None'}
+                <AvertaBold
+                  style={[
+                    styles.custName,
+                    {color: COLOURS.red, fontSize: fp(20)},
+                  ]}>
+                  {salesAverage
+                    ? removeBrackets(salesAverage[0]?.incomplete_count)
+                    : 'None'}
                 </AvertaBold>
               </TouchableOpacity>
             </View>
 
-             <View style={styles.customerNameView}>
+            <View style={styles.customerNameView}>
               <ProductSansBold style={[styles.labelText, {left: 0}]}>
                 AVERAGE PROCESSING TIME
               </ProductSansBold>
               <TouchableOpacity onPress={null}>
-                <AvertaBold style={styles.custName}>
-                  {salesAverage.avg_time
+                <AvertaBold
+                  style={[
+                    styles.custName,
+                    {fontSize: fp(20), color: COLOURS.yellow1},
+                  ]}>
+                  {salesAverage[0].avg_time
                     ? getProcessingTimeString(salesAverage[0]?.avg_time)
                     : 'None'}
                 </AvertaBold>
@@ -302,8 +323,12 @@ const AnalyticsScreen = ({navigation}) => {
                 TOTAL AVERAGE PROCESSING TIME
               </ProductSansBold>
               <TouchableOpacity onPress={null}>
-                <AvertaBold style={styles.custName}>
-                  {salesAverage?.total_average
+                <AvertaBold
+                  style={[
+                    styles.custName,
+                    {fontSize: fp(20), color: COLOURS.text_color},
+                  ]}>
+                  {salesAverage[0]?.total_average
                     ? getProcessingTimeString(salesAverage[0]?.total_average)
                     : 'None'}
                 </AvertaBold>
@@ -317,7 +342,7 @@ const AnalyticsScreen = ({navigation}) => {
               alignItems: 'center',
               flex: 1,
               //top: Platform.OS == 'ios' ? 300 : 0,
-             // marginTop: Platform.OS == 'android' ? 300 : 0,
+              // marginTop: Platform.OS == 'android' ? 300 : 0,
             }}>
             <ProductSans style={{fontSize: 16, color: COLOURS.textInputColor}}>
               No record found
