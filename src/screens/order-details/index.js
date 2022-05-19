@@ -20,6 +20,7 @@ import {
 import {BackViewMoreSettings} from '../../components/Header';
 import {KeyboardObserverComponent} from '../../components/KeyboardObserverComponent';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import SendSMS from 'react-native-sms';
 import ViewProviderComponent from '../../components/ViewProviderComponent';
 import {
   capitalizeWord,
@@ -460,30 +461,61 @@ const OrderDetailsScreen = ({navigation, route}) => {
                   ) : null}
                 </View>
 
-                <TouchableOpacity
-                  onPress={handleLoadRidersBottomSheet}
-                  activeOpacity={0.6}
-                  style={{
-                    height: hp(35),
-                    justifyContent: 'center',
-                    paddingHorizontal: 10,
-                    borderRadius: 10,
-                    borderWidth: 0.8,
-                    borderColor: COLOURS.blue,
-
-                    alignItems: 'center',
-                  }}>
-                  <ProductSansBold
-                    style={[
-                      styles.actiontext,
-                      {
-                        left: 0,
-                        marginTop: 0,
-                      },
-                    ]}>
-                    {selectedRider ? 'Edit Dispatch' : 'Add dispatch'}
-                  </ProductSansBold>
-                </TouchableOpacity>
+                <View>
+                  <TouchableOpacity
+                    onPress={handleLoadRidersBottomSheet}
+                    activeOpacity={0.6}
+                    style={{
+                      height: hp(35),
+                      justifyContent: 'center',
+                      paddingHorizontal: 10,
+                      borderRadius: 10,
+                      borderWidth: 0.4,
+                      borderColor: COLOURS.blue,
+                      backgroundColor: COLOURS.green5,
+                      alignItems: 'center',
+                    }}>
+                    <ProductSansBold
+                      style={[
+                        styles.actiontext,
+                        {
+                          left: 0,
+                          marginTop: 0,
+                          color: COLOURS.white,
+                        },
+                      ]}>
+                      {selectedRider ? 'Edit Dispatch' : 'Add dispatch'}
+                    </ProductSansBold>
+                  </TouchableOpacity>
+                  {order.dispatchid ? (
+                    <TouchableOpacity
+                      onPress={initiateSMS}
+                      activeOpacity={0.6}
+                      style={{
+                        height: hp(35),
+                        justifyContent: 'center',
+                        paddingHorizontal: 10,
+                        borderRadius: 10,
+                        borderWidth: 0.4,
+                        borderColor: COLOURS.lightGray,
+                        marginTop: 10,
+                        alignItems: 'center',
+                        backgroundColor: COLOURS.lightShadeBlue,
+                      }}>
+                      <ProductSans
+                        style={[
+                          styles.actiontext,
+                          {
+                            left: 0,
+                            marginTop: 0,
+                            color: COLOURS.white,
+                          },
+                        ]}>
+                        Send SMS
+                      </ProductSans>
+                    </TouchableOpacity>
+                  ) : null}
+                </View>
               </View>
             ) : null}
             {/* special note section */}
@@ -1371,7 +1403,36 @@ const OrderDetailsScreen = ({navigation, route}) => {
       }
     }
   };
+  //const [mobileNumber, setMobileNumber] = useState('');
+  //const [bodySMS, setBodySMS] = useState('');
 
+  const initiateSMS = () => {
+ 
+    let message = `Your order on Gourmet twist has been dispatched by ${selectedRider?.name} (${selectedRider?.phonenumber})`;
+    SendSMS.send(
+      {
+        // Message body
+        body: message,
+        // Recipients Number
+        recipients: [phoneNumber],
+        // An array of types
+        // "completed" response when using android
+        successTypes: ['sent', 'queued'],
+      },
+      (completed, cancelled, error) => {
+        if (completed) {
+          console.log('SMS Sent Completed');
+          alert("SMS sent successfully")
+        } else if (cancelled) {
+          console.log('SMS Sent Cancelled');
+          alert("SMS sending cancelled")
+        } else if (error) {
+          console.log('Some error occured');
+          alert("Unable to send SMS")
+        }
+      },
+    );
+  };
   const displayRescheduleDialog = () => {
     var payload = {
       createdAt: dateData,
@@ -1485,7 +1546,6 @@ const OrderDetailsScreen = ({navigation, route}) => {
     console.log('payload dispatch', payload);
     dispatch(updateOrderDispatchByOrderId(order?.id, payload)).then(result => {
       if (result) {
-        // getOrder(id);
         setHasPatchedDispatch(true);
       }
     });
@@ -1498,10 +1558,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
           <BackViewMoreSettings
             backText="Order Details"
             shouldDisplayBackArrow={true}
-            shouldDisplayDelete
-            // dateText={selectedOrderDate}
-            // displayCalendar
-            //toggleDateModal={toggleDateModal}
+            shouldDisplayDeleteSettings
             onClose={() =>
               isEditMode ? setIsEditMode(false) : navigation.goBack()
             }

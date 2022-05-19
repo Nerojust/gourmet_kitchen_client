@@ -203,7 +203,7 @@ export const BackViewMoreSettings = ({
   onClose,
   backText,
   shouldDisplaySettingIcon = false,
-  shouldDisplayDelete = false,
+  shouldDisplayDeleteSettings = false,
   displayDelete = false,
   handleClick,
   performSearch,
@@ -294,7 +294,7 @@ export const BackViewMoreSettings = ({
           </TouchableOpacity>
         ) : null}
 
-        {shouldDisplayDelete ? (
+        {shouldDisplayDeleteSettings ? (
           <TouchableOpacity activeOpacity={0.7} onPress={handleClick}>
             {renderDelete(handleClick)}
           </TouchableOpacity>

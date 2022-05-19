@@ -259,6 +259,8 @@ PODS:
   - react-native-shimmer (0.6.0):
     - React (>= 0.45.1)
     - Shimmer (~> 1)
+  - react-native-sms (1.11.0):
+    - React
   - react-native-splash-screen (3.3.0):
     - React-Core
   - React-perflogger (0.64.2)
@@ -381,6 +383,7 @@ DEPENDENCIES:
   - react-native-date-picker (from `../node_modules/react-native-date-picker`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - react-native-shimmer (from `../node_modules/react-native-shimmer`)
+  - react-native-sms (from `../node_modules/react-native-sms`)
   - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
@@ -454,6 +457,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-safe-area-context"
   react-native-shimmer:
     :path: "../node_modules/react-native-shimmer"
+  react-native-sms:
+    :path: "../node_modules/react-native-sms"
   react-native-splash-screen:
     :path: "../node_modules/react-native-splash-screen"
   React-perflogger:
@@ -523,6 +528,7 @@ SPEC CHECKSUMS:
   react-native-date-picker: d83ab9cccbc497642a93fdca783ae76ecd6b17b6
   react-native-safe-area-context: 9e40fb181dac02619414ba1294d6c2a807056ab9
   react-native-shimmer: 2fdba9953215a29106febc9d147caa31a0080a8a
+  react-native-sms: 31fbb9d6ebb565ad32e409eaf9dc70329936a129
   react-native-splash-screen: 4312f786b13a81b5169ef346d76d33bc0c6dc457
   React-perflogger: 25373e382fed75ce768a443822f07098a15ab737
   React-RCTActionSheet: af7796ba49ffe4ca92e7277a5d992d37203f7da5

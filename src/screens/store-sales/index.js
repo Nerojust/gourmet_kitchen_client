@@ -19,6 +19,7 @@ import ViewProviderComponent from '../../components/ViewProviderComponent';
 import {
   DismissKeyboard,
   sortArrayByDate,
+  sortArrayData,
   sortArrayByDateDesc,
 } from '../../utils/utils';
 import AddComponent from '../../components/AddComponent';
@@ -178,27 +179,34 @@ const StoreSalesScreen = ({navigation}) => {
     );
   };
 
-  const fetchCopiedText = async () => {
-    const text = await Clipboard.getString();
-    setCopiedText(text);
-  };
+  var _ = require('lodash');
 
   const handleClick = item => {
     console.log('item', item);
+
+    let miniArray = [];
     var stringData = '';
+
     //map through the list
-    surplus.map((item, i) => {
+    sortArrayData(surplus, 'productname').map((item, i) => {
+      let grouped_data = _.chain(surplus)
+        .groupBy('productsize')
+        
+        //.map((productname, productsize) => (productname, productsize))
+        .value();
+     // console.log(grouped_data);
       if (item) {
         // console.log('pdt', item.productname, 'size', item.productsize);
         stringData =
           stringData +
           '\n' +
-          (i + 1) +
-          '. ) ' +
+          '* ' +
           item.productname +
-          ' => Size: (' +
+          ' | ' +
           item.productsize +
-          ')';
+          ' | ' +
+          item.count +
+          (item?.count > 0 ? ' pcs' : 'pc');
       }
     });
 
