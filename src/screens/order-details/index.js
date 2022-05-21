@@ -182,10 +182,22 @@ const OrderDetailsScreen = ({navigation, route}) => {
   //console.log('order details redux ', data);
 
   useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      if (id) {
+        fetchAllData();
+      }
+    });
     if (id) {
       fetchAllData();
     }
+    return unsubscribe;
   }, [id, hasAddedNewNote, isEditMode, hasPatchedDispatch]);
+
+  // useEffect(() => {
+  //   if (id) {
+  //     fetchAllData();
+  //   }
+  // }, [id, hasAddedNewNote, isEditMode, hasPatchedDispatch]);
 
   useEffect(() => {
     dispatch(getAllDeliveryTypes(''));
@@ -1407,7 +1419,6 @@ const OrderDetailsScreen = ({navigation, route}) => {
   //const [bodySMS, setBodySMS] = useState('');
 
   const initiateSMS = () => {
- 
     let message = `Your order on Gourmet twist has been dispatched by ${selectedRider?.name} (${selectedRider?.phonenumber})`;
     SendSMS.send(
       {
@@ -1422,13 +1433,13 @@ const OrderDetailsScreen = ({navigation, route}) => {
       (completed, cancelled, error) => {
         if (completed) {
           console.log('SMS Sent Completed');
-          alert("SMS sent successfully")
+          alert('SMS sent successfully');
         } else if (cancelled) {
           console.log('SMS Sent Cancelled');
-          alert("SMS sending cancelled")
+          alert('SMS sending cancelled');
         } else if (error) {
           console.log('Some error occured');
-          alert("Unable to send SMS")
+          alert('Unable to send SMS');
         }
       },
     );

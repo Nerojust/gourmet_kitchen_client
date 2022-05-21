@@ -18,17 +18,14 @@ import {COLOURS} from '../utils/Colours';
 import ProductSans from './Text/ProductSans';
 
 // create a component
-const SliderTabComponent = ({
+const SliderAnalyticsComponent = ({
   tabRef,
   name1,
   name2,
   name3,
-  name4,
   onPress1,
   onPress2,
   onPress3,
-  onPress4,
-  allowFourth = true,
   style,
   selectedTab,
   isTabClicked,
@@ -37,7 +34,6 @@ const SliderTabComponent = ({
   const [xTabOne, setXTabOne] = useState(0);
   const [xTabTwo, setXTabTwo] = useState(0);
   const [xTabThree, setXTabThree] = useState(0);
-  const [xTabFour, setXTabFour] = useState(0);
   const [translateX, setTranslateX] = useState(new Animated.Value(0));
 
   const handleSlide = type => {
@@ -71,13 +67,6 @@ const SliderTabComponent = ({
     onPress3();
     //}, 330);
   };
-  const pressed4 = () => {
-    handleSlide(xTabFour);
-    setActive(3);
-    //setTimeout(() => {
-    onPress4();
-    //}, 330);
-  };
 
   return (
     <View style={styles.containerView}>
@@ -90,34 +79,18 @@ const SliderTabComponent = ({
             onPress={pressed1}>
             <ProductSans style={styles.allText(active)}>{name1}</ProductSans>
           </TouchableOpacity>
-
           <TouchableOpacity
             style={styles.tabView}
             onLayout={event => setXTabTwo(event.nativeEvent.layout.x)}
             onPress={pressed2}>
-            <ProductSans style={styles.pendingText(active)}>
-              {name2}
-            </ProductSans>
+            <ProductSans style={styles.centerText(active)}>{name2}</ProductSans>
           </TouchableOpacity>
-
           <TouchableOpacity
             style={styles.tabView}
             onLayout={event => setXTabThree(event.nativeEvent.layout.x)}
             onPress={pressed3}>
-            <ProductSans style={styles.incompleteText(active)}>
-              {name3}
-            </ProductSans>
+            <ProductSans style={styles.onlineText(active)}>{name3}</ProductSans>
           </TouchableOpacity>
-          {allowFourth ? (
-            <TouchableOpacity
-              style={styles.tabView}
-              onLayout={event => setXTabFour(event.nativeEvent.layout.x)}
-              onPress={pressed4}>
-              <ProductSans style={styles.completedText(active)}>
-                {name4}
-              </ProductSans>
-            </TouchableOpacity>
-          ) : null}
         </View>
       </TouchableOpacity>
     </View>
@@ -150,7 +123,7 @@ const styles = StyleSheet.create({
   },
   sliderBg: {
     position: 'absolute',
-    width: Platform.OS == 'ios' ? deviceWidth / 5.2 : wp(deviceHeight * 0.11),
+    width: Platform.OS == 'ios' ? deviceWidth / 5.5 : wp(deviceHeight * 0.11),
     height: '85%',
 
     alignContent: 'center',
@@ -163,10 +136,10 @@ const styles = StyleSheet.create({
   },
   animatedStyle: (translateX, active) => ({
     position: 'absolute',
-    width: active == 2 ? deviceWidth / 4.7 : deviceWidth / 5.2,
+    width: '35%',
     height: '100%',
     top: 0,
-    left: active == 0 ? wp(3) : 0,
+    left: active == 0 ? wp(-5) : 0,
     backgroundColor: COLOURS.blue,
     borderRadius: 20,
     transform: [
@@ -179,11 +152,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     height: '100%',
     position: 'relative',
-    // width: '100%',
+    width: '90%',
     borderRadius: 20,
   },
   parentView: {
-    width: '80%',
+    width: '70%',
     height:
       Platform.OS == 'android' ? deviceHeight * 0.048 : deviceHeight * 0.045,
     marginLeft: 'auto',
@@ -201,23 +174,17 @@ const styles = StyleSheet.create({
   },
   allText: active => ({
     color: active === 0 ? COLOURS.white : COLOURS.textInputColor,
-    left: active == 0 ? wp(3) : 0,
+    left: active == 0 ? wp(-5) : 0,
     textAlign: 'center',
     fontSize: fp(14),
   }),
-  pendingText: active => ({
+  centerText: active => ({
     color: active === 1 ? COLOURS.white : COLOURS.textInputColor,
     textAlign: 'center',
     fontSize: fp(14),
   }),
-  incompleteText: active => ({
+  onlineText: active => ({
     color: active === 2 ? COLOURS.white : COLOURS.textInputColor,
-    textAlign: 'center',
-    left: active == 2 ? wp(4) : 0,
-    fontSize: fp(14),
-  }),
-  completedText: active => ({
-    color: active === 3 ? COLOURS.white : COLOURS.textInputColor,
     textAlign: 'center',
     fontSize: fp(14),
   }),
@@ -240,4 +207,4 @@ const styles = StyleSheet.create({
 });
 
 //make this component available to the app
-export default SliderTabComponent;
+export default SliderAnalyticsComponent;

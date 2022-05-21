@@ -19,7 +19,7 @@ import ProductSansBold from './Text/ProductSansBold';
 
 // create a component
 const OrderProductComponent = ({item, handleClick}) => {
-  console.log('item', item);
+ // console.log('item', item);
   var currDate = new Date();
   var diffMs = currDate.getTime() - new Date(item?.createdat).getTime();
   var sec = diffMs / 1000;
@@ -52,7 +52,7 @@ const OrderProductComponent = ({item, handleClick}) => {
           </View>
         ) : null}
 
-        {item?.isonlineorder && item?.onlineorderid.length > 0 ? (
+        {item?.isonlineorder && item?.zupaorderid.length > 0 ? (
           <View style={{alignItems: 'flex-end', paddingVertical: 5}}>
             <ProductSansBold
               style={[

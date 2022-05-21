@@ -49,6 +49,7 @@ import {getRiderAnalytics} from '../../store/actions/dispatch';
 import SalesAverageComponent from '../../components/SalesAverageComponent';
 import ProductSansBold from '../../components/Text/ProductSansBold';
 import AvertaBold from '../../components/Text/AvertaBold';
+import SliderAnalyticsComponent from '../../components/SliderAnalyticsComponent';
 
 // create a component
 const AnalyticsScreen = ({navigation}) => {
@@ -412,7 +413,7 @@ const AnalyticsScreen = ({navigation}) => {
             handleLogout={showDialog}
             onClose={() => navigation.goBack()}
           />
-          <SliderTabComponent
+          <SliderAnalyticsComponent
             isTabClicked={isTabClicked}
             name1={'Orders'}
             name2={'Sales'}
@@ -427,7 +428,7 @@ const AnalyticsScreen = ({navigation}) => {
           {selectedTab == 0 ? displayAverageOrdersView() : null}
           {selectedTab == 1 ? displaySalesView() : null}
           {selectedTab == 2 ? displayRiderAnalyticsView() : null}
-          {/* {displaySalesView()} */}
+          
           <LoaderShimmerComponent isLoading={getSalesLoading} />
           <LoaderShimmerComponent isLoading={analyticsLoading} />
         </KeyboardObserverComponent>

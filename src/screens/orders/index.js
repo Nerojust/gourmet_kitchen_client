@@ -312,6 +312,7 @@ const OrdersScreen = ({navigation}) => {
         onPress2={handlePendingOrders}
         onPress3={handleIncompleteOrders}
         onPress4={handleCompleteOrders}
+        allowFourth
       />
       {renderDatePicker()}
       <View

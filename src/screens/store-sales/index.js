@@ -185,24 +185,24 @@ const StoreSalesScreen = ({navigation}) => {
     console.log('item', item);
 
     let miniArray = [];
-    var stringData = '';
+    var stringData = 'Available Bread List \n';
 
     //map through the list
     sortArrayData(surplus, 'productname').map((item, i) => {
       let grouped_data = _.chain(surplus)
         .groupBy('productsize')
-        
+
         //.map((productname, productsize) => (productname, productsize))
         .value();
-     // console.log(grouped_data);
+      // console.log(grouped_data);
       if (item) {
         // console.log('pdt', item.productname, 'size', item.productsize);
         stringData =
           stringData +
           '\n' +
-          '* ' +
+          '** ' +
           item.productname +
-          ' | ' +
+          ' ** | ' +
           item.productsize +
           ' | ' +
           item.count +
