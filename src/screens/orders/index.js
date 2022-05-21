@@ -137,6 +137,11 @@ const OrdersScreen = ({navigation}) => {
     setStatusState('completed');
     dispatch(setOrderStatus('completed'));
   };
+  const handlePendingOrders = () => {
+    selectTab(2);
+    setStatusState('pending');
+    dispatch(setOrderStatus('pending'));
+  };
 
   const selectTab = tabIndex => {
     if (tabIndex == 0) {
@@ -277,10 +282,7 @@ const OrdersScreen = ({navigation}) => {
   return (
     <ViewProviderComponent>
       <HeaderComponent
-        name={
-          'Orders: ' +
-          moment(selectedOrderDate).format('LL')
-        }
+        name={'Orders: ' + moment(selectedOrderDate).format('LL')}
         isDashboard
         displayCalendar
         shouldDisplaySettingIcon
@@ -302,12 +304,14 @@ const OrdersScreen = ({navigation}) => {
       <SliderTabComponent
         isTabClicked={isTabClicked}
         name1={'All'}
-        name2={'Incomplete'}
-        name3={'Complete'}
+        name2={'Pending'}
+        name3={'Incomplete'}
+        name4={'Complete'}
         selectedTab={selectedTab}
         onPress1={handleAllOrders}
-        onPress2={handleIncompleteOrders}
-        onPress3={handleCompleteOrders}
+        onPress2={handlePendingOrders}
+        onPress3={handleIncompleteOrders}
+        onPress4={handleCompleteOrders}
       />
       {renderDatePicker()}
       <View

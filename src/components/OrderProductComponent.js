@@ -19,7 +19,7 @@ import ProductSansBold from './Text/ProductSansBold';
 
 // create a component
 const OrderProductComponent = ({item, handleClick}) => {
-  //console.log('item', item?.products[0]?.isfulfilled);
+  console.log('item', item);
   var currDate = new Date();
   var diffMs = currDate.getTime() - new Date(item?.createdat).getTime();
   var sec = diffMs / 1000;
