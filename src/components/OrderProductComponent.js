@@ -52,7 +52,7 @@ const OrderProductComponent = ({item, handleClick}) => {
           </View>
         ) : null}
 
-        {item?.isonlineorder && item?.zupaorderid.length > 0 ? (
+        {item?.isonlineorder && item?.zupaorderid?.length > 0 ? (
           <View style={{alignItems: 'flex-end', paddingVertical: 5}}>
             <ProductSansBold
               style={[
