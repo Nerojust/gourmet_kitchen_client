@@ -16,12 +16,18 @@ let client = axios.create({
 client.interceptors.response.use(
   function (response) {
     //console.log("rrhhhhhr", response)
-    return Promise.resolve(response);
+    if (response.status == 200) {
+      return Promise.resolve(response);
+    } else {
+      alert(
+        response.data.message || 'Server error occured, please try again later',
+      );
+    }
   },
   error => {
     //console.log("errrrrrrorrr", error)
     //return Promise.reject(error);
-    if (error?.response?.status === 401) {
+    if (error?.response?.status == 401) {
       //console.log('401 error', error?.response);
       //   alert(
       //     'Session Expired',

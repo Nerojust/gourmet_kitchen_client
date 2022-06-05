@@ -422,7 +422,17 @@ export const getTodaysDate = date => {
     return dateFormat(date, 'dS mmmm, yyyy @ hh:MM TT');
   }
 };
-
+export function groupBy(objectArray, property) {
+   return objectArray.reduce(function (acc, obj) {
+     let key = obj[property];
+     if (!acc[key]) {
+       acc[key] = [];
+     }
+     acc[key].push(obj);
+     return acc;
+   }, {});
+ }
+ 
 export function removeDuplicatesFromArray(arr) {
   return Array.from(new Set(arr));
 }

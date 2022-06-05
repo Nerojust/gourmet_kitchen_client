@@ -14,39 +14,41 @@ export const login = payload => {
       .post(`/login`, payload)
       .then(async response => {
         //console.log('ddddddddd', response.data);
-        if (response?.data?.isSuccessful) {
-          //console.log('Login successful');
+       
+          if (response?.data?.isSuccessful) {
+            //console.log('Login successful');
 
-          const accessToken = response.data.results.token;
-          const user = response.data.results.user;
+            const accessToken = response.data.results.token;
+            const user = response.data.results.user;
 
-          console.log(
-            'Login successful for ',
-            response.data.results?.user?.firstname,
-            response.data.results?.user?.lastname + '\n' + accessToken,
-          );
+            console.log(
+              'Login successful for ',
+              response.data.results?.user?.firstname,
+              response.data.results?.user?.lastname + '\n' + accessToken,
+            );
 
-          client.defaults.headers.common[
-            'Authorization'
-          ] = `Bearer ${accessToken}`;
+            client.defaults.headers.common[
+              'Authorization'
+            ] = `Bearer ${accessToken}`;
 
-          dispatch({
-            type: 'LOGIN_SUCCESS',
-            loading: false,
-            user: user,
-            accessToken: accessToken,
-            error: null,
-          });
+            dispatch({
+              type: 'LOGIN_SUCCESS',
+              loading: false,
+              user: user,
+              accessToken: accessToken,
+              error: null,
+            });
 
-          return response.data.results;
-        } else {
-          alert(response.data.message);
-          dispatch({
-            type: 'LOGIN_FAILED',
-            loading: false,
-            error: response.data.message,
-          });
-        }
+            return response.data.results;
+          } else {
+            alert(response.data.message);
+            dispatch({
+              type: 'LOGIN_FAILED',
+              loading: false,
+              error: response.data.message,
+            });
+          }
+        
       })
       .catch(error => {
         console.log('Login failed =>', error.message);
@@ -334,7 +336,7 @@ export const getAllUsers = () => {
             loading: false,
             users: response.data.results,
           });
-          return response.data.results
+          return response.data.results;
         } else {
           alert(response.data.message);
           dispatch({
@@ -346,7 +348,7 @@ export const getAllUsers = () => {
       })
       .catch(error => {
         console.log('All users retrieval failed =>', error);
-      
+
         dispatch({
           type: 'FETCH_ALL_USERS_FAILED',
           loading: false,

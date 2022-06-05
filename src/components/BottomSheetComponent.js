@@ -5,6 +5,7 @@ import ProductListComponent from '../components/ProductListComponent';
 import {COLOURS} from '../utils/Colours';
 import DeliveryListComponent from './DeliveryListComponent';
 import RiderListComponent from './RiderListComponent';
+import BreadSizeComponent from './BreadSizeComponent';
 
 export function BottomSheetProductComponent({
   sheetRef,
@@ -64,6 +65,53 @@ export function BottomSheetProductComponent({
     </RBSheet>
   );
 }
+
+export function BottomSheetBreadSizeComponent({
+  sheetRef,
+  dataSource,
+  handleSingleItemPress,
+  closeAction,itemName
+}) {
+  return (
+    <RBSheet
+      ref={sheetRef}
+      animationType={'slide'}
+      closeDuration={0}
+      openDuration={0}
+      closeOnDragDown={true}
+      closeOnPressMask={true}
+      closeOnPressBack={true}
+      keyboardAvoidingViewEnabled={true}
+      //height={deviceHeight / 1.04}
+      height={Platform.OS == 'ios' ? deviceHeight / 2 : deviceHeight / 2}
+      customStyles={{
+        wrapper: {
+          backgroundColor: COLOURS.transparentColour,
+        },
+        draggableIcon: {
+          width: 0,
+          top: 5,
+        },
+        container: {
+          borderTopLeftRadius: 20,
+          borderTopRightRadius: 20,
+          borderColor: COLOURS.lightGray,
+          borderWidth: 0.4,
+          backgroundColor: COLOURS.white,
+        },
+      }}>
+      <BreadSizeComponent
+        dataSource={dataSource}
+        closeAction={closeAction}
+        itemName={itemName}
+        handleSingleItemPress={(key, value) =>
+          handleSingleItemPress(key, value)
+        }
+      />
+    </RBSheet>
+  );
+}
+
 export function BottomSheetRiderComponent({
   sheetRef,
   dataSource,
@@ -110,11 +158,13 @@ export function BottomSheetRiderComponent({
         dataSource={dataSource}
         filteredDataSource={filteredDataSource}
         closeAction={closeAction}
-        handleRefresh={() => handleRefresh(false, false,true)}
+        handleRefresh={() => handleRefresh(false, false, true)}
         //handleAddProduct={handleAddProduct}
         isRidersLoading={isRidersLoading}
         handleSearchInputSubmit={handleSearchInputSubmit}
-        handleSingleItemPress={item => handleSingleItemPress(item, false, false,true)}
+        handleSingleItemPress={item =>
+          handleSingleItemPress(item, false, false, true)
+        }
         //addProductPress={() => addProductPress()}
         inputValue={inputValue}
         handleInputSearchText={handleInputSearchText}
@@ -172,9 +222,7 @@ export function BottomSheetZupaAssociateProductComponent({
         handleAddProduct={handleAddProduct}
         isProductLoading={isProductLoading}
         handleSearchInputSubmit={handleSearchInputSubmit}
-        handleSingleItemPress={item =>
-          handleSingleItemPress(item, false, true)
-        }
+        handleSingleItemPress={item => handleSingleItemPress(item, false, true)}
         addProductPress={() => addProductPress()}
         inputValue={inputValue}
         handleInputSearchText={handleInputSearchText}
