@@ -14,7 +14,7 @@ export const login = payload => {
       .post(`/login`, payload)
       .then(async response => {
         //console.log('ddddddddd', response.data);
-       
+        if (response.status == 200) {
           if (response?.data?.isSuccessful) {
             //console.log('Login successful');
 
@@ -48,10 +48,18 @@ export const login = payload => {
               error: response.data.message,
             });
           }
-        
+        } else {
+          alert(response.data.message);
+          dispatch({
+            type: 'LOGIN_FAILED',
+            loading: false,
+            error: response.data.message,
+          });
+        }
       })
       .catch(error => {
         console.log('Login failed =>', error.message);
+       
         dispatch({
           type: 'LOGIN_FAILED',
           loading: false,

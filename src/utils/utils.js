@@ -332,6 +332,9 @@ export const handleError = (errormessage, dispatch, extMessage) => {
   } else if (error.includes('undefined is not an object (evaluating ')) {
     alert('Oops! Server error, unable to ' + extMessage + '. 3');
     return;
+  } else if (error == 'Request failed with status code 504') {
+    alert('Sorry!, Network Error, please check and try again');
+    return;
   } else if (error == 'Request failed with status code 403') {
     alert('Sorry!, Invalid credentials, please check and try again');
     return;

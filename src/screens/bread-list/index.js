@@ -83,51 +83,6 @@ const BreadListScreen = ({navigation}) => {
     }
   }, [selectedOrderDate]);
 
-  // useEffect(() => {
-  //   function groupBy(objectArray, property) {
-  //     return objectArray.reduce(function (acc, obj) {
-  //       let key = obj[property];
-  //       if (!acc[key]) {
-  //         acc[key] = [];
-  //       }
-  //       acc[key].push(obj);
-  //       return acc;
-  //     }, {});
-  //   }
-
-  //   let dataproducts = groupBy(orderProductsData, 'name');
-  //   //console.log('result', dataproducts);
-  //   let anotherObj = {};
-  //   if (dataproducts) {
-  //     Object.keys(dataproducts).forEach((item, i) => {
-  //       const data = {};
-  //       dataproducts[item].forEach(element => {
-  //         //console.log('one element', element);
-  //         if (
-  //           element.productsize === 'Mini < 4' ||
-  //           element.productsize === 'Mini > 4'
-  //         ) {
-  //           // console.log('getting here', data['Mini'], element.sum);
-  //           let sumValue;
-  //           if (data['Mini']) {
-  //             sumValue = parseInt(data['Mini'].sum) + parseInt(element.sum);
-
-  //             data['Mini'].sum = sumValue;
-  //           } else {
-  //             data['Mini'] = element;
-  //           }
-  //         } else {
-  //           //console.log('else block');
-  //           data[element.productsize] = element;
-  //         }
-  //       });
-  //       //console.log('res', data);
-  //       anotherObj[item] = data;
-  //     });
-  //     console.log('another result object', anotherObj);
-  //   }
-  // }, [isRefreshing]);
-
   const handleRearrangementOfBreadList = results => {
     if (results) {
       let dataproducts = groupBy(results, 'name');
@@ -208,9 +163,10 @@ const BreadListScreen = ({navigation}) => {
       navigation.navigate('SetList');
     }
   };
+  //deliberately deactivated this
   const handleSearch = () => {
-    setIsSearchClicked(!isSearchClicked);
-    handleCancelSearch();
+    // setIsSearchClicked(!isSearchClicked);
+    // handleCancelSearch();
   };
   const handleSearchChange = text => {
     if (text) {
