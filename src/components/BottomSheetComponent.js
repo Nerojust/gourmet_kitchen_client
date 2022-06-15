@@ -70,7 +70,8 @@ export function BottomSheetBreadSizeComponent({
   sheetRef,
   dataSource,
   handleSingleItemPress,
-  closeAction,itemName
+  closeAction,
+  itemName,
 }) {
   return (
     <RBSheet
@@ -83,7 +84,7 @@ export function BottomSheetBreadSizeComponent({
       closeOnPressBack={true}
       keyboardAvoidingViewEnabled={true}
       //height={deviceHeight / 1.04}
-      height={Platform.OS == 'ios' ? deviceHeight / 2 : deviceHeight / 2}
+      height={Platform.OS == 'ios' ? deviceHeight / 1.6 : deviceHeight / 1.6}
       customStyles={{
         wrapper: {
           backgroundColor: COLOURS.transparentColour,

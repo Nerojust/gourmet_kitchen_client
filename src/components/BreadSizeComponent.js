@@ -68,9 +68,10 @@ const BreadSizeComponent = ({
           ]}>
           {'Select a size to fulfill for \n' + itemName}
         </ProductSans>
+        
         <ScrollView>
           {Object.entries(dataSource).map(([key, value]) => {
-            console.log(`${key} ${value}`); // "a 5", "b 7", "c 9"
+            //console.log('item detail', `${key} ${value?.set}`); // "a 5", "b 7", "c 9"
             return (
               <TouchableOpacity
                 style={{
@@ -83,18 +84,53 @@ const BreadSizeComponent = ({
                   marginVertical: 5,
                 }}
                 onPress={() => handleSingleItemPress(key, value)}>
-                <ProductSans
-                  style={[
-                    styles.productName,
-                    {
-                      flex: 0.65,
-                    },
-                  ]}>
-                  {key}
-                </ProductSans>
-                <ProductSans style={[styles.productName, {flex: 0.4}]}>
-                  {value?.sum || '0'}
-                </ProductSans>
+                <View
+                  style={{
+                    flexDirection: 'column',
+                    width: '100%',
+                    paddingHorizontal: 20,
+                  }}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      width: '100%',
+                      paddingBottom: value?.set ? 20 : 0,
+                    }}>
+                    <ProductSans
+                      style={[
+                        styles.productName,
+                        {
+                          flex: 0.65,
+                        },
+                      ]}>
+                      {key}
+                    </ProductSans>
+                    <ProductSans style={[styles.productName, {flex: 0.4}]}>
+                      {value?.sum || '0'}
+                    </ProductSans>
+                  </View>
+
+                  {value?.set
+                    ? value?.set?.products.map((item, i) => {
+                        // console.log("iii",item)
+
+                        return (
+                          <ProductSans
+                            style={[
+                              styles.productName,
+                              {paddingVertical: 5, fontWeight: '500'},
+                            ]}>
+                            {i +1 +
+                              '.) ' +
+                              item?.productname +
+                              ' (' +
+                              item?.productsize +
+                              ')'}
+                          </ProductSans>
+                        );
+                      })
+                    : null}
+                </View>
               </TouchableOpacity>
             );
           })}

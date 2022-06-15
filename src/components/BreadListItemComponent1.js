@@ -7,13 +7,13 @@ import ProductSans from './Text/ProductSans';
 
 // create a component
 const BreadListItemComponent1 = ({keyItem, keyValue, onClick}) => {
-  //console.log('item', item);
+  //console.log('item', keyValue);
 
   const renderDetailsList = () => {
     return (
       <View style={{flex: 0.55}}>
         {Object.entries(keyValue).map(([key, value]) => {
-          // console.log(`${key} ${value}`); // "a 5", "b 7", "c 9"
+          //console.log(`${key} ${value}`); // "a 5", "b 7", "c 9"
 
           return (
             <>
@@ -23,7 +23,7 @@ const BreadListItemComponent1 = ({keyItem, keyValue, onClick}) => {
               <View
                 style={{flexDirection: 'row', paddingVertical: 5}}
                 //onPress={toggleModal}
-                >
+              >
                 <ProductSans
                   style={[
                     styles.productName,
@@ -55,7 +55,6 @@ const BreadListItemComponent1 = ({keyItem, keyValue, onClick}) => {
       style={styles.customerNameView}
       activeOpacity={0.6}
       onPress={() => onClick(keyValue)}>
-    
       <View
         style={{
           flexDirection: 'row',

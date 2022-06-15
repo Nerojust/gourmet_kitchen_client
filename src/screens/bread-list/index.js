@@ -39,9 +39,10 @@ import Modal from 'react-native-modal';
 import {Menu, MenuItem, MenuDivider} from 'react-native-material-menu';
 import moment from 'moment';
 import {getDateWithoutTime} from '../../utils/DateFilter';
-import {result} from 'lodash';
+import {result, set} from 'lodash';
 import BreadListItemComponent1 from '../../components/BreadListItemComponent1';
 import {BottomSheetBreadSizeComponent} from '../../components/BottomSheetComponent';
+import {getAllSets} from '../../store/actions/sets';
 
 // create a component
 const BreadListScreen = ({navigation}) => {
@@ -62,12 +63,16 @@ const BreadListScreen = ({navigation}) => {
   const [filteredObjectArray, setFilteredObjectArray] = useState({});
   const [selectedOrderDate, setSelectedOrderDate] = useState(new Date());
   var tempObj = {};
+  let setArray = [];
+  const {createSetsLoading, sets, setsLoading} = useSelector(x => x.sets);
+  //console.log('sets', sets);
   const [isModalVisible, setIsModalVisible] = useState(false);
   //console.log('products', orderedProducts);
   const [selectedItemName, setSelectedItemName] = useState('');
   const [selectedItem, setSelectedItem] = useState({});
   const [keysBreadArray, setKeysBreadArray] = useState([]);
   const breadRef = useRef();
+  let finalArrayData = [];
   // useEffect(() => {
   //   const unsubscribe = navigation.addListener('focus', () => {
   //     fetchAllData();
@@ -128,12 +133,45 @@ const BreadListScreen = ({navigation}) => {
   };
 
   const fetchAllData = () => {
-    dispatch(
-      getAllOrderedProductsStats(getDateWithoutTime(selectedOrderDate)),
-    ).then((result, i) => {
-      if (result) {
-        //console.log("result ",result)
-        handleRearrangementOfBreadList(result);
+    dispatch(getAllSets()).then(setResult => {
+      if (setResult) {
+        dispatch(
+          getAllOrderedProductsStats(getDateWithoutTime(selectedOrderDate)),
+        ).then((result, i) => {
+          if (result) {
+            //console.log("result ",result)
+
+            result.map((singleItem, i) => {
+              if (singleItem && singleItem.name.toLowerCase().includes('set')) {
+                //console.log('set ' + i, singleItem.name);
+                setArray.push(singleItem);
+              } else {
+                finalArrayData.push(singleItem);
+              }
+            }),
+             // console.log('sets arryay', setArray);
+            setArray.map((item, i) => {
+              if (item) {
+                //console.log('item', item);
+                setResult.map((oneSet, i) => {
+                  if (oneSet) {
+                    if (item.productid == oneSet.zupasetid) {
+                      // console.log('one set', oneSet);
+                      let obj = {};
+                      obj = item;
+                      obj.set = oneSet;
+                      //console.log('obj', obj);
+                      finalArrayData.push(obj);
+                    }
+                  }
+                });
+              }
+            });
+
+            //console.log("final",finalArrayData)
+            handleRearrangementOfBreadList(finalArrayData);
+          }
+        });
       }
     });
   };
@@ -141,7 +179,7 @@ const BreadListScreen = ({navigation}) => {
   const handleClick = item => {
     //console.log('clicked', item);
     Object.entries(item).map(([key, value]) => {
-      //console.log('itemmmmm', value.name);
+      console.log('itemmmmm', value.name);
       setSelectedItemName(value?.name);
     });
     setSelectedItem(item);
@@ -297,7 +335,7 @@ const BreadListScreen = ({navigation}) => {
             shouldDisplayBackArrow={true}
             performSearch={handleSearch}
             breadStyle={{flex: 0.33}}
-            shouldDisplayIcon={orderedProducts.length > 0}
+            //shouldDisplayIcon={orderedProducts.length > 0}
             handleClick={openSettingsMenu}
             performRefresh={() => fetchAllData()}
           />
