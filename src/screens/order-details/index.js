@@ -24,6 +24,7 @@ import SendSMS from 'react-native-sms';
 import ViewProviderComponent from '../../components/ViewProviderComponent';
 import {
   capitalizeWord,
+  dialNumber,
   dismissBottomSheetDialog,
   DismissKeyboard,
   dismissTextInput,
@@ -269,6 +270,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
       });
     }
   };
+
   const renderDetails = () => {
     return (
       <>
@@ -298,7 +300,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
               <ProductSansBold style={[styles.labelText, {left: 0}]}>
                 CUSTOMER PHONE NUMBER
               </ProductSansBold>
-              <TouchableOpacity onPress={null}>
+              <TouchableOpacity onPress={dialNumber(phoneNumber.trim())}>
                 <Averta style={styles.address}>
                   {phoneNumber ? capitalizeWord(phoneNumber.trim()) : 'None'}
                 </Averta>

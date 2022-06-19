@@ -39,6 +39,7 @@
     "react-native-material-menu": "^2.0.0",
     "react-native-modal": "^13.0.1",
     "react-native-paper": "^4.12.0",
+    "react-native-phone-call": "^1.2.0",
     "react-native-raw-bottom-sheet": "^2.2.0",
     "react-native-responsive-fontsize": "^0.5.1",
     "react-native-responsive-screen": "^1.4.2",

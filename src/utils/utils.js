@@ -17,6 +17,7 @@ import {
 import {GET_RIDER_REQUESTS} from './Api';
 import {COLOURS} from '../utils/Colours';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import call from 'react-native-phone-call';
 import {DrawerActions} from '@react-navigation/routers';
 import moment from 'moment';
 
@@ -357,6 +358,14 @@ export const handleError = (errormessage, dispatch, extMessage) => {
     // alert(error + '');
     return;
   }
+};
+export const dialNumber = (phoneNumber) => {
+  const args = {
+    number: phoneNumber, // String value with the number to call
+    prompt: true, // Optional boolean property. Determines if the user should be prompt prior to the call
+  };
+
+  call(args).catch(console.error);
 };
 
 export function getColourCode(stringDate) {
