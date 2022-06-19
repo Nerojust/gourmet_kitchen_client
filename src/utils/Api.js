@@ -6,7 +6,7 @@ if (Platform.OS == 'android') {
 } else {
   localBase = 'localhost';
 }
- const baseURL = `http://${localBase}:8089/api/`;
+const baseURL = `http://${localBase}:8089/api/`;
 //const baseURL = 'https://gourmet-kitchen-api-oq8ef.ondigitalocean.app/api/';
 
 let client = axios.create({
@@ -15,17 +15,18 @@ let client = axios.create({
 
 client.interceptors.response.use(
   function (response) {
-    //console.log("rrhhhhhr", response)
-    if (response.status == 200) {
+    //console.log('rrhhhhhr', response.status);
+    if (response.status == 200 || 201) {
       return Promise.resolve(response);
     } else {
+     // console.log('eeeee', response?.data?.message);
       alert(
         response.data.message || 'Server error occured, please try again later',
       );
     }
   },
   error => {
-    //console.log("errrrrrrorrr", error)
+    console.log('errrrrrrorrr', error);
     //return Promise.reject(error);
     if (error?.response?.status == 401) {
       //console.log('401 error', error?.response);

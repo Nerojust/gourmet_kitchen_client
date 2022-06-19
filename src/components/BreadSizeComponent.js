@@ -68,7 +68,7 @@ const BreadSizeComponent = ({
           ]}>
           {'Select a size to fulfill for \n' + itemName}
         </ProductSans>
-        
+
         <ScrollView>
           {Object.entries(dataSource).map(([key, value]) => {
             //console.log('item detail', `${key} ${value?.set}`); // "a 5", "b 7", "c 9"
@@ -83,6 +83,7 @@ const BreadSizeComponent = ({
                   borderRadius: 10,
                   marginVertical: 5,
                 }}
+                key={Math.random()}
                 onPress={() => handleSingleItemPress(key, value)}>
                 <View
                   style={{
@@ -119,8 +120,10 @@ const BreadSizeComponent = ({
                             style={[
                               styles.productName,
                               {paddingVertical: 5, fontWeight: '500'},
-                            ]}>
-                            {i +1 +
+                            ]}
+                            key={Math.random()}>
+                            {i +
+                              1 +
                               '.) ' +
                               item?.productname +
                               ' (' +

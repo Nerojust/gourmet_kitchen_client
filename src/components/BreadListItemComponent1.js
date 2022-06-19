@@ -6,7 +6,7 @@ import {deviceHeight, deviceWidth, fp} from '../utils/responsive-screen';
 import ProductSans from './Text/ProductSans';
 
 // create a component
-const BreadListItemComponent1 = ({keyItem, keyValue, onClick}) => {
+const BreadListItemComponent1 = ({indexKey, keyItem, keyValue, onClick}) => {
   //console.log('item', keyValue);
 
   const renderDetailsList = () => {
@@ -16,7 +16,7 @@ const BreadListItemComponent1 = ({keyItem, keyValue, onClick}) => {
           //console.log(`${key} ${value}`); // "a 5", "b 7", "c 9"
 
           return (
-            <>
+            <View key={indexKey + Math.random()}>
               <View
                 style={{height: 0.3, width: 100, backgroundColor: COLOURS.gray}}
               />
@@ -43,7 +43,7 @@ const BreadListItemComponent1 = ({keyItem, keyValue, onClick}) => {
               <View
                 style={{height: 0.3, width: 100, backgroundColor: COLOURS.gray}}
               />
-            </>
+            </View>
           );
         })}
       </View>

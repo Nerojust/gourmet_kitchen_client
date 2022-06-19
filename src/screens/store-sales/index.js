@@ -200,9 +200,9 @@ const StoreSalesScreen = ({navigation}) => {
         stringData =
           stringData +
           '\n' +
-          '** ' +
+          '' +
           item.productname +
-          ' ** | ' +
+          ' | ' +
           item.productsize +
           ' | ' +
           item.count +

@@ -4,7 +4,7 @@ import {clearStorage, handleError} from '../../utils/utils';
 import {getAllOrderedProductsStats} from './orders';
 
 export const createSurplus = (orderPayload, date) => {
-  console.log('About to create a new surplus');
+  console.log('About to create a new surplus',date);
   //console.log("order payload", orderPayload);
   return dispatch => {
     dispatch({
@@ -17,6 +17,7 @@ export const createSurplus = (orderPayload, date) => {
     return client
       .post(getUrl, orderPayload)
       .then(response => {
+        //console.log("surplus",response)
         if (response.data?.isSuccessful) {
           console.log('surplus created successfully');
 
