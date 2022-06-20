@@ -300,9 +300,9 @@ const OrderDetailsScreen = ({navigation, route}) => {
               <ProductSansBold style={[styles.labelText, {left: 0}]}>
                 CUSTOMER PHONE NUMBER
               </ProductSansBold>
-              <TouchableOpacity onPress={dialNumber(phoneNumber.trim())}>
+              <TouchableOpacity onPress={() => dialNumber(phoneNumber.trim())}>
                 <Averta style={styles.address}>
-                  {phoneNumber ? capitalizeWord(phoneNumber.trim()) : 'None'}
+                  {phoneNumber ? phoneNumber.trim() : 'None'}
                 </Averta>
               </TouchableOpacity>
             </View>

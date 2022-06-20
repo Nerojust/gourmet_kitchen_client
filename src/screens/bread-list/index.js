@@ -75,6 +75,7 @@ const BreadListScreen = ({navigation}) => {
   const [selectedItem, setSelectedItem] = useState({});
   const [keysBreadArray, setKeysBreadArray] = useState([]);
   const [selectedTab, setSelectedTab] = useState(0);
+  const [hasLoaded, setHasLoaded] = useState(false);
   const [isTabClicked, setIsTabClicked] = useState(false);
   const breadRef = useRef();
   let finalArrayData = [];
@@ -105,7 +106,7 @@ const BreadListScreen = ({navigation}) => {
   //   let arraydata = [];
   //   let filteredResult = orderProductsData.map(element => {
   //     if (
-  //       !element.productsize.toLowerCase().includes('mini') 
+  //       !element.productsize.toLowerCase().includes('mini')
   //       ) {
   //       console.log("eee",element.productsize)
   //       arraydata.push(element);
@@ -115,6 +116,7 @@ const BreadListScreen = ({navigation}) => {
   // }, [orderProductsData]);
 
   const getAllLoavesData = () => {
+    setHasLoaded(false);
     dispatch(getAllSets()).then(setResult => {
       if (setResult) {
         dispatch(
@@ -157,6 +159,7 @@ const BreadListScreen = ({navigation}) => {
             //console.log(difference);
 
             //console.log("final",finalArrayData)
+            setHasLoaded(true);
             handleAllLoavesStructure(difference);
           }
         });
@@ -166,6 +169,7 @@ const BreadListScreen = ({navigation}) => {
 
   const getFullLoavesData = () => {
     dispatch(getAllSets()).then(setResult => {
+      setHasLoaded(false);
       if (setResult) {
         dispatch(
           getAllOrderedProductsStats(getDateWithoutTime(selectedOrderDate)),
@@ -173,8 +177,7 @@ const BreadListScreen = ({navigation}) => {
           if (result) {
             //console.log("result ",result)
             let filteredResult = result.filter(
-              element =>
-              !element.productsize.toLowerCase().includes('mini') 
+              element => !element.productsize.toLowerCase().includes('mini'),
             );
 
             setFullLoavesArray(filteredResult);
@@ -214,6 +217,7 @@ const BreadListScreen = ({navigation}) => {
 
             //console.log("final",finalArrayData)
             //handleAllLoavesStructure(difference);
+            setHasLoaded(true);
             handleFullLoavesStructure(difference);
           }
         });
@@ -222,6 +226,7 @@ const BreadListScreen = ({navigation}) => {
   };
 
   const getMinisData = () => {
+    setHasLoaded(false);
     dispatch(getAllSets()).then(setResult => {
       if (setResult) {
         dispatch(
@@ -229,9 +234,8 @@ const BreadListScreen = ({navigation}) => {
         ).then((result, i) => {
           if (result) {
             //console.log("result ",result)
-            let filteredResult = result.filter(
-              element =>
-              element.productsize.toLowerCase().includes('mini') 
+            let filteredResult = result.filter(element =>
+              element.productsize.toLowerCase().includes('mini'),
             );
             setMiniArray(filteredResult);
             setResult.forEach((oneSet, iset) => {
@@ -268,6 +272,7 @@ const BreadListScreen = ({navigation}) => {
             //console.log(difference);
 
             //console.log("final",finalArrayData)
+            setHasLoaded(true);
             handleMinisStructure(difference);
           }
         });
@@ -363,7 +368,6 @@ const BreadListScreen = ({navigation}) => {
 
   const handleMinisStructure = results => {
     //  console.log('mini array size', results);
-
     if (results) {
       let dataproducts = groupBy(results, 'name');
       //console.log('result', dataproducts);
@@ -465,6 +469,7 @@ const BreadListScreen = ({navigation}) => {
     setSearchInputValue('');
     setIsSearchCleared(true);
   };
+
   const renderDatePicker = () => {
     return (
       <DatePicker
@@ -707,38 +712,46 @@ const BreadListScreen = ({navigation}) => {
 
           {renderDatePicker()}
 
-          <View
-            style={{
-              justifyContent: 'center',
-              alignItems: 'flex-end',
-              paddingRight: 20,
-            }}>
-            <ProductSans style={{fontSize: 12, color: COLOURS.labelTextColor}}>
-              Total count:
-              {/* {searchInputValue.length > 0
+          {hasLoaded && !ordersLoading ? (
+            <View
+              style={{
+                justifyContent: 'center',
+                alignItems: 'flex-end',
+                paddingRight: 20,
+              }}>
+              <ProductSans
+                style={{fontSize: 12, color: COLOURS.labelTextColor}}>
+                Total count:
+                {/* {searchInputValue.length > 0
                 ? filteredOrdersData.length
                 : sortArrayByDate(orderedProducts, 'name').length} */}
-              {selectedTab == 0
-                ? sortArrayByDate(orderedProducts, 'name').length
-                : null}
-              {selectedTab == 1
-                ? sortArrayByDate(fullLoavesArray, 'name').length
-                : null}
-              {selectedTab == 2
-                ? sortArrayByDate(miniArray, 'name').length
-                : null}
-            </ProductSans>
-            {/* <ProductSans style={{fontSize: 12, color: COLOURS.labelTextColor}}>
+                {selectedTab == 0
+                  ? sortArrayByDate(orderedProducts, 'name').length
+                  : null}
+                {selectedTab == 1
+                  ? sortArrayByDate(fullLoavesArray, 'name').length
+                  : null}
+                {selectedTab == 2
+                  ? sortArrayByDate(miniArray, 'name').length
+                  : null}
+              </ProductSans>
+              {/* <ProductSans style={{fontSize: 12, color: COLOURS.labelTextColor}}>
               Total count:
               {searchInputValue.length > 0
                 ? filteredOrdersData.length
                 : sortArrayByDate(orderedProducts, 'name').length}
             </ProductSans> */}
-          </View>
+            </View>
+          ) : null}
+
           {renderBottomSheet()}
-          {selectedTab == 0 ? displayAllBreadListView() : null}
-          {selectedTab == 1 ? displayFullLoavesView() : null}
-          {selectedTab == 2 ? displayMinisView() : null}
+          
+          {selectedTab == 0 && !ordersLoading
+            ? displayAllBreadListView()
+            : null}
+          {selectedTab == 1 && !ordersLoading ? displayFullLoavesView() : null}
+          {selectedTab == 2 && !ordersLoading ? displayMinisView() : null}
+
           {/* <FlatList
             // data={sortArrayData(orderedProducts, 'name')}
             data={
