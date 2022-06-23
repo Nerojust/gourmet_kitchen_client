@@ -1199,7 +1199,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
     setAddress(text);
   };
   const handleSearchResult = (data, details) => {
-    console.log(details?.formatted_address, details?.geometry?.location);
+   // console.log(details?.formatted_address, details?.geometry?.location);
     setAddress(details?.formatted_address);
     //newAddress = input;
   };

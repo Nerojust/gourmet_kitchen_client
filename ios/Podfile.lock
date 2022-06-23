@@ -254,6 +254,8 @@ PODS:
   - React-jsinspector (0.64.2)
   - react-native-date-picker (4.2.0):
     - React-Core
+  - react-native-immediate-phone-call (2.0.0):
+    - React
   - react-native-safe-area-context (3.4.1):
     - React-Core
   - react-native-shimmer (0.6.0):
@@ -381,6 +383,7 @@ DEPENDENCIES:
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - react-native-date-picker (from `../node_modules/react-native-date-picker`)
+  - react-native-immediate-phone-call (from `../node_modules/react-native-immediate-phone-call`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - react-native-shimmer (from `../node_modules/react-native-shimmer`)
   - react-native-sms (from `../node_modules/react-native-sms`)
@@ -453,6 +456,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
   react-native-date-picker:
     :path: "../node_modules/react-native-date-picker"
+  react-native-immediate-phone-call:
+    :path: "../node_modules/react-native-immediate-phone-call"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
   react-native-shimmer:
@@ -526,6 +531,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 80c46bd381fd06e418e0d4f53672dc1d1945c4c3
   React-jsinspector: cc614ec18a9ca96fd275100c16d74d62ee11f0ae
   react-native-date-picker: d83ab9cccbc497642a93fdca783ae76ecd6b17b6
+  react-native-immediate-phone-call: eb8a86325478db6c066eac6ecf8fa9ba3fbf66c5
   react-native-safe-area-context: 9e40fb181dac02619414ba1294d6c2a807056ab9
   react-native-shimmer: 2fdba9953215a29106febc9d147caa31a0080a8a
   react-native-sms: 31fbb9d6ebb565ad32e409eaf9dc70329936a129
