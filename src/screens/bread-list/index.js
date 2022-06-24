@@ -454,12 +454,14 @@ const BreadListScreen = ({navigation}) => {
 
   const handleClick = item => {
     // console.log('clicked', item);
-    Object.entries(item).map(([key, value]) => {
-      //console.log('itemmmmm', value.name);
-      setSelectedItemName(value?.name);
-    });
-    setSelectedItem(item);
-    showBottomSheet(breadRef);
+    if (selectedTab != 2) {
+      Object.entries(item).map(([key, value]) => {
+        //console.log('itemmmmm', value.name);
+        setSelectedItemName(value?.name);
+      });
+      setSelectedItem(item);
+      showBottomSheet(breadRef);
+    }
   };
 
   const renderDetails = ({item}) => (
@@ -671,11 +673,12 @@ const BreadListScreen = ({navigation}) => {
 
   const handleSingleItemPress = (key, value) => {
     // console.log('inside key', key, 'value', value);
-    dismissBottomSheetDialog(breadRef);
-    navigation.navigate('BreadListDetails', {
-      bread: value,
-      date: selectedOrderDate,
-    });
+      dismissBottomSheetDialog(breadRef);
+      navigation.navigate('BreadListDetails', {
+        bread: value,
+        date: selectedOrderDate,
+      });
+    
   };
   const renderBottomSheet = () => {
     return (
@@ -688,6 +691,7 @@ const BreadListScreen = ({navigation}) => {
       />
     );
   };
+  
   const handleClose = () => {
     dismissBottomSheetDialog(breadRef);
   };

@@ -439,8 +439,62 @@ export const updateSurplusStatusForOrderItemById = (id, payload) => {
       });
   };
 };
+export const updateOrderProductMultipleById = (id, orderId, date) => {
+  console.log('About to update all order products with id', id);
+  return dispatch => {
+    dispatch({
+      type: 'UPDATE_ORDER_PRODUCT_PENDING',
+      loading: true,
+      error: null,
+    });
+    var url = `/orders/orderProductMultiple/${id}`;
+    //console.log("geturl", getUrl);
+    return client
+      .get(url)
+      .then(response => {
+        if (response?.data) {
+          if (response?.data?.isSuccessful) {
+            console.log(
+              'order product fields updated successfully',
+              response?.data?.recordCount,
+            );
+            dispatch(getOrder(orderId));
+            dispatch(getAllOrderedProducts('all', date));
+            dispatch({
+              type: 'UPDATE_ORDER_PRODUCT_SUCCESS',
+              loading: false,
+              data: response?.data?.results,
+            });
+
+            return response?.data?.results;
+          } else {
+            dispatch({
+              type: 'UPDATE_ORDER_PRODUCT_FAILED',
+              loading: false,
+              error: response?.data?.message,
+            });
+          }
+        }
+      })
+      .catch(error => {
+        console.log('update order product failed', error);
+        handleError(error, dispatch, 'updating order product');
+        dispatch({
+          type: 'UPDATE_ORDER_PRODUCT_FAILED',
+          loading: false,
+          error: error.message,
+        });
+      });
+  };
+};
 export const updateOrderProductById = (id, payload, orderId, date) => {
-  console.log('About to update order product with id', id);
+  console.log(
+    'About to update order product with id',
+    id,
+    payload,
+    orderId,
+    date,
+  );
   return dispatch => {
     dispatch({
       type: 'UPDATE_ORDER_PRODUCT_PENDING',
@@ -487,7 +541,6 @@ export const updateOrderProductById = (id, payload, orderId, date) => {
       });
   };
 };
-
 
 export const rescheduleOrderDateById = (id, payload) => {
   console.log('About to reschedule order with id', id);
@@ -672,6 +725,67 @@ export const updateOrderById = (id, payload, orderDate) => {
       })
       .catch(error => {
         console.log('Updating single order failed', error);
+        handleError(error, dispatch, 'updating order');
+        dispatch({
+          type: 'UPDATE_SINGLE_ORDER_FAILED',
+          loading: false,
+          error: error.message,
+        });
+      });
+  };
+};
+export const updateOrderAllItemsByOrderId = (id, orderDate) => {
+  console.log(
+    'About to fulfill all order items in single order with id',
+    id,
+    orderDate,
+  );
+  return dispatch => {
+    dispatch({
+      type: 'UPDATE_SINGLE_ORDER_PENDING',
+      loading: true,
+      error: null,
+    });
+    var payload = {
+      // id: id,
+      startDate: orderDate + ' 00:00:01',
+      endDate: orderDate + ' 23:59:59',
+    };
+    var url = `/orders/orderProductMultiple/${id}`;
+
+    //console.log("geturl", getUrl);
+    return client
+      .patch(url, payload)
+      .then(response => {
+        if (response?.data) {
+          if (response?.data?.isSuccessful) {
+            console.log(
+              'Single order multiple items updated successfully',
+              response?.data?.recordCount,
+            );
+            dispatch({
+              type: 'UPDATE_SINGLE_ORDER_SUCCESS',
+              loading: false,
+              data: response?.data?.results,
+            });
+
+            dispatch(getOrder(id));
+            dispatch(
+              getAllOrderedProducts('all', getDateWithoutTime(orderDate)),
+            );
+            return response?.data?.results;
+          } else {
+            alert(response?.data?.message);
+            dispatch({
+              type: 'UPDATE_SINGLE_ORDER_FAILED',
+              loading: false,
+              error: response?.data?.message,
+            });
+          }
+        }
+      })
+      .catch(error => {
+        console.log('Updating single order multiple items failed', error);
         handleError(error, dispatch, 'updating order');
         dispatch({
           type: 'UPDATE_SINGLE_ORDER_FAILED',

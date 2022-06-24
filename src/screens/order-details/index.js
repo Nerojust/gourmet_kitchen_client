@@ -53,6 +53,7 @@ import {
   deleteOrderById,
   getOrder,
   rescheduleOrderDateById,
+  updateOrderAllItemsByOrderId,
   updateOrderById,
   updateOrderDispatchByOrderId,
   updateOrderSpecialNoteById,
@@ -106,7 +107,8 @@ const OrderDetailsScreen = ({navigation, route}) => {
   const addressRef = useRef(null);
   const additionalAddressDescriptionRef = useRef(null);
   const specialNoteRef = useRef(null);
-
+  const [isLoadingUpdateAllOrderItems, setIsLoadingUpdateAllOrderItems] =
+    useState(false);
   const [isPhoneNumberFieldFocused, setIsPhoneNumberFieldFocused] =
     useState(false);
   const [additionalAddressDescription, setAdditionalAddressDescription] =
@@ -1199,7 +1201,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
     setAddress(text);
   };
   const handleSearchResult = (data, details) => {
-   // console.log(details?.formatted_address, details?.geometry?.location);
+    // console.log(details?.formatted_address, details?.geometry?.location);
     setAddress(details?.formatted_address);
     //newAddress = input;
   };
@@ -1406,10 +1408,10 @@ const OrderDetailsScreen = ({navigation, route}) => {
     if (item == 'edit') {
       setIsEditMode(!isEditMode);
     } else if (item == 'delete') {
-      //console.log('delete clicked');
       handleDeleteOrders();
+    } else if (item == 'fulfillOrder') {
+      displayFulfillAllDialog();
     } else if (item == 'reschedule') {
-      // console.log('reschedule');
       if (!order.isfulfilled) {
         toggleDateModal();
       } else {
@@ -1446,6 +1448,43 @@ const OrderDetailsScreen = ({navigation, route}) => {
       },
     );
   };
+  const displayFulfillAllDialog = () => {
+    let count = order?.products.length;
+    let msg;
+    if (count > 1) {
+      msg = 'items';
+    } else {
+      msg = 'item';
+    }
+    Alert.alert(
+      'Alert',
+      `Do you want to fulfill ${order?.products.length} ${msg} in this order?`,
+      [
+        {
+          text: 'No',
+          onPress: () => {
+            console.log('cancel Pressed');
+          },
+        },
+        {
+          text: 'Yes',
+          onPress: () => {
+            setIsLoadingUpdateAllOrderItems(true);
+            dispatch(updateOrderAllItemsByOrderId(data?.id, orderDate)).then(
+              result => {
+                if (result) {
+                  setIsLoadingUpdateAllOrderItems(false);
+                  showSuccessDialog(true);
+                }
+              },
+            );
+          },
+        },
+      ],
+      {cancelable: true},
+    );
+  };
+
   const displayRescheduleDialog = () => {
     var payload = {
       createdAt: dateData,
@@ -1600,6 +1639,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
             renderItem={null}
             keyExtractor={item => item.id}
           />
+          <LoaderShimmerComponent isLoading={isLoadingUpdateAllOrderItems} />
           <LoaderShimmerComponent isLoading={updateOrderLoading} />
           <LoaderShimmerComponent isLoading={deleteAllOrdersLoading} />
           <LoaderShimmerComponent isLoading={updateNoteLoading} />
