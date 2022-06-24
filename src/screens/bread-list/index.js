@@ -237,19 +237,19 @@ const BreadListScreen = ({navigation}) => {
             let filteredResult = result.filter(element =>
               element.productsize.toLowerCase().includes('mini'),
             );
+            console.log("filetered minis",filteredResult)
             setMiniArray(filteredResult);
             setResult.forEach((oneSet, iset) => {
               filteredResult.map((singleItem, i) => {
                 if (
                   oneSet.zupasetid.trim() == singleItem?.productid.trim()
-                  //singleItem.name.toLowerCase().includes('supreme')
                 ) {
-                  // console.log('set ' + iset, oneSet.zupasetname);
+                 console.log('set ' + iset, oneSet.zupasetname);
                   setArray.push(singleItem);
                 }
               });
             }),
-              // console.log('sets arryay', setArray);
+               //console.log('sets arryay', setArray);
               setArray.map((item, i) => {
                 if (item) {
                   //console.log('item', item);
@@ -410,7 +410,7 @@ const BreadListScreen = ({navigation}) => {
   };
 
   const handleClick = item => {
-    // console.log('clicked', item);
+     //console.log('clicked', item);
     Object.entries(item).map(([key, value]) => {
       //console.log('itemmmmm', value.name);
       setSelectedItemName(value?.name);
@@ -745,7 +745,7 @@ const BreadListScreen = ({navigation}) => {
           ) : null}
 
           {renderBottomSheet()}
-          
+
           {selectedTab == 0 && !ordersLoading
             ? displayAllBreadListView()
             : null}

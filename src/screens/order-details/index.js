@@ -505,17 +505,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
                     <TouchableOpacity
                       onPress={initiateSMS}
                       activeOpacity={0.6}
-                      style={{
-                        height: hp(35),
-                        justifyContent: 'center',
-                        paddingHorizontal: 10,
-                        borderRadius: 10,
-                        borderWidth: 0.4,
-                        borderColor: COLOURS.lightGray,
-                        marginTop: 10,
-                        alignItems: 'center',
-                        backgroundColor: COLOURS.lightShadeBlue,
-                      }}>
+                      style={styles.sendSmsView}>
                       <ProductSans
                         style={[
                           styles.actiontext,
@@ -1808,6 +1798,17 @@ const styles = StyleSheet.create({
     paddingTop: 5,
     paddingBottom: 12,
     left: 12,
+  },
+  sendSmsView: {
+    height: hp(35),
+    justifyContent: 'center',
+    paddingHorizontal: 10,
+    borderRadius: 10,
+    borderWidth: 0.4,
+    borderColor: COLOURS.lightGray,
+    marginTop: 10,
+    alignItems: 'center',
+    backgroundColor: COLOURS.lightShadeBlue,
   },
 });
 
