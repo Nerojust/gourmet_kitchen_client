@@ -20,7 +20,7 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import call from 'react-native-phone-call';
 import {DrawerActions} from '@react-navigation/routers';
 import moment from 'moment';
-
+import RNImmediatePhoneCall from 'react-native-immediate-phone-call';
 export const capitalizeWord = string => {
   var result = [];
   string &&
@@ -366,6 +366,9 @@ export const dialNumber = (phoneNumber) => {
   };
 
   call(args).catch(console.error);
+};
+export const dialNumber2 = (phoneNumber) => {
+  RNImmediatePhoneCall.immediatePhoneCall(phoneNumber);
 };
 
 export function getColourCode(stringDate) {

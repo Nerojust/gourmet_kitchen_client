@@ -81,6 +81,7 @@ const BreadListScreen = ({navigation}) => {
   let finalArrayData = [];
   const [fullLoavesArray, setFullLoavesArray] = useState([]);
   const [miniArray, setMiniArray] = useState([]);
+
   // useEffect(() => {
   //   const unsubscribe = navigation.addListener('focus', () => {
   //     fetchAllData();
@@ -126,6 +127,7 @@ const BreadListScreen = ({navigation}) => {
             //console.log("result ",result)
 
             setResult.forEach((oneSet, iset) => {
+              //console.log("one set",oneSet)
               result.map((singleItem, i) => {
                 if (
                   oneSet.zupasetid.trim() == singleItem?.productid.trim()
@@ -136,7 +138,7 @@ const BreadListScreen = ({navigation}) => {
                 }
               });
             }),
-              // console.log('sets arryay', setArray);
+              //console.log('sets arryay', setArray);
               setArray.map((item, i) => {
                 if (item) {
                   //console.log('item', item);
@@ -226,6 +228,7 @@ const BreadListScreen = ({navigation}) => {
   };
 
   const getMinisData = () => {
+    console.log('called mini');
     setHasLoaded(false);
     dispatch(getAllSets()).then(setResult => {
       if (setResult) {
@@ -233,13 +236,53 @@ const BreadListScreen = ({navigation}) => {
           getAllOrderedProductsStats(getDateWithoutTime(selectedOrderDate)),
         ).then((result, i) => {
           if (result) {
-            //console.log("result ",result)
-            let filteredResult = result.filter(element =>
+            let tempWithSetArray = [];
+
+            //first we need to extract all the minis from the sets available
+            setResult.forEach((oneSet, iset) => {
+              //console.log("one set dd",oneSet.products)
+              result.map((singleItem, i) => {
+                if (
+                  oneSet.zupasetid.trim() == singleItem?.productid.trim()
+                  //singleItem.name.toLowerCase().includes('supreme')
+                ) {
+                  // console.log('set ' + iset, oneSet.zupasetname);
+                  // console.log('set pdt size', oneSet.products.length);
+                  oneSet?.products.map((foundSetProduct, i) => {
+                    // console.log("found",foundSetProduct.productsize)
+                    if (oneSet?.products) {
+                      if (
+                        foundSetProduct &&
+                        foundSetProduct.productsize
+                          .toLowerCase()
+                          .includes('mini')
+                      ) {
+                        let obj = {};
+                        obj.name = foundSetProduct.productname;
+                        obj.productid = foundSetProduct.productid;
+                        obj.productsize = foundSetProduct.productsize;
+                        obj.sum = foundSetProduct.quantity;
+
+                        tempWithSetArray.push(obj);
+                      }
+                    }
+                  });
+                }
+              });
+            });
+
+            //merge both arrays
+            let newResult = result.concat(tempWithSetArray);
+            //now filter through the merged arrays for only minis
+            let filteredResult = newResult.filter(element =>
               element.productsize.toLowerCase().includes('mini'),
             );
             console.log("filetered minis",filteredResult)
             setMiniArray(filteredResult);
+
+            //now find all the sets ordered
             setResult.forEach((oneSet, iset) => {
+              //console.log('one set dd', oneSet.products);
               filteredResult.map((singleItem, i) => {
                 if (
                   oneSet.zupasetid.trim() == singleItem?.productid.trim()
@@ -249,10 +292,10 @@ const BreadListScreen = ({navigation}) => {
                 }
               });
             }),
-               //console.log('sets arryay', setArray);
+              //now reconstruct the sets found
               setArray.map((item, i) => {
                 if (item) {
-                  //console.log('item', item);
+                  console.log('item', item);
                   setResult.map((oneSet, i) => {
                     if (oneSet) {
                       if (item.productid == oneSet.zupasetid) {
@@ -410,13 +453,15 @@ const BreadListScreen = ({navigation}) => {
   };
 
   const handleClick = item => {
-     //console.log('clicked', item);
-    Object.entries(item).map(([key, value]) => {
-      //console.log('itemmmmm', value.name);
-      setSelectedItemName(value?.name);
-    });
-    setSelectedItem(item);
-    showBottomSheet(breadRef);
+    // console.log('clicked', item);
+    if (selectedTab != 2) {
+      Object.entries(item).map(([key, value]) => {
+        //console.log('itemmmmm', value.name);
+        setSelectedItemName(value?.name);
+      });
+      setSelectedItem(item);
+      showBottomSheet(breadRef);
+    }
   };
 
   const renderDetails = ({item}) => (
@@ -628,11 +673,12 @@ const BreadListScreen = ({navigation}) => {
 
   const handleSingleItemPress = (key, value) => {
     // console.log('inside key', key, 'value', value);
-    dismissBottomSheetDialog(breadRef);
-    navigation.navigate('BreadListDetails', {
-      bread: value,
-      date: selectedOrderDate,
-    });
+      dismissBottomSheetDialog(breadRef);
+      navigation.navigate('BreadListDetails', {
+        bread: value,
+        date: selectedOrderDate,
+      });
+    
   };
   const renderBottomSheet = () => {
     return (
@@ -645,6 +691,7 @@ const BreadListScreen = ({navigation}) => {
       />
     );
   };
+  
   const handleClose = () => {
     dismissBottomSheetDialog(breadRef);
   };
