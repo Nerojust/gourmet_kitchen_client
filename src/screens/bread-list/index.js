@@ -277,17 +277,15 @@ const BreadListScreen = ({navigation}) => {
             let filteredResult = newResult.filter(element =>
               element.productsize.toLowerCase().includes('mini'),
             );
-            console.log("filetered minis",filteredResult)
+            console.log('filetered minis', filteredResult);
             setMiniArray(filteredResult);
 
             //now find all the sets ordered
             setResult.forEach((oneSet, iset) => {
               //console.log('one set dd', oneSet.products);
               filteredResult.map((singleItem, i) => {
-                if (
-                  oneSet.zupasetid.trim() == singleItem?.productid.trim()
-                ) {
-                 console.log('set ' + iset, oneSet.zupasetname);
+                if (oneSet.zupasetid.trim() == singleItem?.productid.trim()) {
+                  console.log('set ' + iset, oneSet.zupasetname);
                   setArray.push(singleItem);
                 }
               });
@@ -673,12 +671,11 @@ const BreadListScreen = ({navigation}) => {
 
   const handleSingleItemPress = (key, value) => {
     // console.log('inside key', key, 'value', value);
-      dismissBottomSheetDialog(breadRef);
-      navigation.navigate('BreadListDetails', {
-        bread: value,
-        date: selectedOrderDate,
-      });
-    
+    dismissBottomSheetDialog(breadRef);
+    navigation.navigate('BreadListDetails', {
+      bread: value,
+      date: selectedOrderDate,
+    });
   };
   const renderBottomSheet = () => {
     return (
@@ -691,7 +688,7 @@ const BreadListScreen = ({navigation}) => {
       />
     );
   };
-  
+
   const handleClose = () => {
     dismissBottomSheetDialog(breadRef);
   };
