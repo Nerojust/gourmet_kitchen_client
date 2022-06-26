@@ -32,6 +32,7 @@ import {
   getProcessingTime,
   getProcessingTimeString,
   removeDuplicatesFromArray,
+  sendWhatsappMessage,
   showBottomSheet,
   sortArrayByDate,
 } from '../../utils/utils';
@@ -81,6 +82,7 @@ import CustomSuccessModal from '../../components/CustomSuccessModal';
 import {getAllRiders} from '../../store/actions/riders';
 import DatePicker from 'react-native-date-picker';
 import {getDateWithoutTime} from '../../utils/DateFilter';
+import {getAllMessages} from '../../store/actions/messages';
 
 // create a component
 const OrderDetailsScreen = ({navigation, route}) => {
@@ -180,7 +182,10 @@ const OrderDetailsScreen = ({navigation, route}) => {
   const [hasAddedNewNote, setHasAddedNewNote] = useState(false);
   const [isEditNoteMode, setIsEditNoteMode] = useState(false);
   const [selectedDeliveryType, setSelectedDeliveryType] = useState();
-
+  const {messageArray, messagesLoading, updateMessagesLoading} = useSelector(
+    state => state.messages,
+  );
+  const [dispatchMesssage, setDispatchMesssage] = useState('');
   const [data, setData] = useState();
   //console.log('order details redux ', data);
 
@@ -195,12 +200,6 @@ const OrderDetailsScreen = ({navigation, route}) => {
     }
     return unsubscribe;
   }, [id, hasAddedNewNote, isEditMode, hasPatchedDispatch]);
-
-  // useEffect(() => {
-  //   if (id) {
-  //     fetchAllData();
-  //   }
-  // }, [id, hasAddedNewNote, isEditMode, hasPatchedDispatch]);
 
   useEffect(() => {
     dispatch(getAllDeliveryTypes(''));
@@ -230,6 +229,13 @@ const OrderDetailsScreen = ({navigation, route}) => {
       }
     });
   };
+  useEffect(() => {
+    dispatch(getAllMessages()).then(result => {
+      if (result) {
+        setDispatchMesssage(result[0]?.message);
+      }
+    });
+  }, []);
 
   useEffect(() => {
     deliveryTypes.map(type => {
@@ -506,7 +512,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
                   {order.dispatchid ? (
                     <TouchableOpacity
                       onPress={initiateSMS}
-                      activeOpacity={0.6}
+                      activeOpacity={0.3}
                       style={{
                         height: hp(35),
                         justifyContent: 'center',
@@ -516,19 +522,38 @@ const OrderDetailsScreen = ({navigation, route}) => {
                         borderColor: COLOURS.lightGray,
                         marginTop: 10,
                         alignItems: 'center',
-                        backgroundColor: COLOURS.lightShadeBlue,
+                        backgroundColor: COLOURS.zupa_gray_bg,
                       }}>
-                      <ProductSans
-                        style={[
-                          styles.actiontext,
-                          {
-                            left: 0,
-                            marginTop: 0,
-                            color: COLOURS.white,
-                          },
-                        ]}>
-                        Send SMS
-                      </ProductSans>
+                      <Image
+                        source={IMAGES.smsImage}
+                        style={{width: 25, height: 25}}
+                      />
+                    </TouchableOpacity>
+                  ) : null}
+                  {order.dispatchid ? (
+                    <TouchableOpacity
+                      onPress={() =>
+                        sendWhatsappMessage(
+                          phoneNumber.trim(),
+                          buildDispatchMessage(),
+                        )
+                      }
+                      activeOpacity={0.3}
+                      style={{
+                        height: hp(35),
+                        justifyContent: 'center',
+                        paddingHorizontal: 10,
+                        borderRadius: 10,
+                        borderWidth: 0.4,
+                        borderColor: COLOURS.lightGray,
+                        marginTop: 10,
+                        alignItems: 'center',
+                        backgroundColor: COLOURS.zupa_gray_bg,
+                      }}>
+                      <Image
+                        source={IMAGES.whatsappImage}
+                        style={{width: 25, height: 25}}
+                      />
                     </TouchableOpacity>
                   ) : null}
                 </View>
@@ -918,6 +943,11 @@ const OrderDetailsScreen = ({navigation, route}) => {
     dismissBottomSheetDialog(productSheetRef);
     dismissBottomSheetDialog(zupaProductAssociateSheetRef);
   };
+  const handleAddRider = () => {
+   // console.log('add rider');
+    navigation.push('AddRider');
+    dismissBottomSheetDialog(ridersSheetRef)
+  };
   const renderBottomSheets = () => {
     return (
       <>
@@ -950,6 +980,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
           inputValue={ridersInputValue}
           handleSearchInputSubmit={handleProductSubmitSearchext}
           handleInputSearchText={handleRidersSearchText}
+          addRiderPress={handleAddRider}
         />
 
         {/* delivery bottom sheet */}
@@ -1410,7 +1441,17 @@ const OrderDetailsScreen = ({navigation, route}) => {
     } else if (item == 'delete') {
       handleDeleteOrders();
     } else if (item == 'fulfillOrder') {
-      displayFulfillAllDialog();
+      if (!data.isfulfilled) {
+        displayFulfillAllDialog();
+      } else {
+        alert('Order already fulfilled');
+      }
+    } else if (item == 'dispatchOrder') {
+      if (!data.isfulfilled) {
+        displayFulfillAllDialog(true);
+      } else {
+        alert('Order already fulfilled');
+      }
     } else if (item == 'reschedule') {
       if (!order.isfulfilled) {
         toggleDateModal();
@@ -1421,13 +1462,24 @@ const OrderDetailsScreen = ({navigation, route}) => {
   };
   //const [mobileNumber, setMobileNumber] = useState('');
   //const [bodySMS, setBodySMS] = useState('');
-
+  const buildDispatchMessage = () => {
+    return (
+      dispatchMesssage +
+      ' ' +
+      selectedRider?.name +
+      ' (' +
+      selectedRider?.phonenumber +
+      ') '
+    );
+  };
   const initiateSMS = () => {
-    let message = `Your order on Gourmet twist has been dispatched by ${selectedRider?.name} (${selectedRider?.phonenumber})`;
+    // let message = dispatchMesssage
+    //   ? dispatchMesssage + ' '
+    //   : '' + selectedRider?.name + ' (' + selectedRider?.phonenumber + ') ';
     SendSMS.send(
       {
         // Message body
-        body: message,
+        body: buildDispatchMessage(),
         // Recipients Number
         recipients: [phoneNumber],
         // An array of types
@@ -1448,7 +1500,9 @@ const OrderDetailsScreen = ({navigation, route}) => {
       },
     );
   };
-  const displayFulfillAllDialog = () => {
+  const [isDispatched, setIsDispatched] = useState(false);
+
+  const displayFulfillAllDialog = (showRiderSheet = false) => {
     let count = order?.products.length;
     let msg;
     if (count > 1) {
@@ -1458,7 +1512,9 @@ const OrderDetailsScreen = ({navigation, route}) => {
     }
     Alert.alert(
       'Alert',
-      `Do you want to fulfill ${order?.products.length} ${msg} in this order?`,
+      `Do you want to ${
+        showRiderSheet ? 'fulfill and dispatch ' : ' fulfill'
+      } ${order?.products.length} ${msg} in this order?`,
       [
         {
           text: 'No',
@@ -1474,7 +1530,12 @@ const OrderDetailsScreen = ({navigation, route}) => {
               result => {
                 if (result) {
                   setIsLoadingUpdateAllOrderItems(false);
-                  showSuccessDialog(true);
+                  if (showRiderSheet) {
+                    setIsDispatched(true);
+                    showBottomSheet(ridersSheetRef);
+                  } else {
+                    showSuccessDialog(true);
+                  }
                 }
               },
             );
@@ -1599,6 +1660,9 @@ const OrderDetailsScreen = ({navigation, route}) => {
     dispatch(updateOrderDispatchByOrderId(order?.id, payload)).then(result => {
       if (result) {
         setHasPatchedDispatch(true);
+        if (isDispatched) {
+          showSuccessDialog(true);
+        }
       }
     });
   };

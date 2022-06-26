@@ -3,7 +3,7 @@ import {dateFilterParser} from '../../utils/DateFilter';
 import {clearStorage, handleError} from '../../utils/utils';
 
 export const createRider = orderPayload => {
-  console.log('About to create a new surplus');
+  console.log('About to create a new rider');
   //console.log("order payload", orderPayload);
   return dispatch => {
     dispatch({

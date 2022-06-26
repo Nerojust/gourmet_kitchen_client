@@ -36,6 +36,8 @@ export const IMAGES = {
   editImage: require('../assets/images/edit.png'),
   addImage:require("../assets/images/add.png"),
   analyticsImage:require("../assets/images/analytics.png"),
+  whatsappImage:require("../assets/images/whatsapp.png"),
+  smsImage:require("../assets/images/sms.png"),
 
 cancel : require('../assets/images/cancel.png')
 };

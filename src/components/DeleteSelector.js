@@ -2,7 +2,7 @@ import * as React from 'react';
 import {View, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import {Button, Menu, Divider, Provider} from 'react-native-paper';
 import {COLOURS} from '../utils/Colours';
-import {deviceWidth, hp, wp} from '../utils/responsive-screen';
+import {deviceWidth, fp, hp, wp} from '../utils/responsive-screen';
 
 const DeleteSelector = ({onPressIcon}) => {
   const [visible, setVisible] = React.useState(false);
@@ -31,22 +31,44 @@ const DeleteSelector = ({onPressIcon}) => {
       }>
       <Menu.Item
         onPress={() => onPressItem('fulfillOrder')}
-        title="Fulfill Order"
-        titleStyle={{color: COLOURS.green2}}
+        title="Fulfill"
+        titleStyle={{
+          color: COLOURS.green2,
+          fontWeight: 'bold',
+          fontSize: fp(15),
+        }}
       />
       <Divider />
-      <Menu.Item onPress={() => onPressItem('reschedule')} title="Reschedule" />
+      <Menu.Item
+        onPress={() => onPressItem('dispatchOrder')}
+        title="Dispatch"
+        titleStyle={{
+          color: COLOURS.darkslateblue,
+          fontWeight: 'bold',
+          fontSize: fp(15),
+        }}
+      />
+      <Divider />
+      <Menu.Item
+        onPress={() => onPressItem('reschedule')}
+        title="Reschedule"
+        titleStyle={{
+          color: COLOURS.gray,
+          fontWeight: 'bold',
+          fontSize: fp(15),
+        }}
+      />
       <Divider />
       <Menu.Item
         onPress={() => onPressItem('edit')}
         title="Edit"
-        titleStyle={{color: COLOURS.blue}}
+        titleStyle={{color: COLOURS.blue, fontSize: fp(15)}}
       />
       <Divider />
       <Menu.Item
         onPress={() => onPressItem('delete')}
         title="Delete"
-        titleStyle={{color: COLOURS.red}}
+        titleStyle={{color: COLOURS.red, fontSize: fp(15)}}
       />
     </Menu>
   );
@@ -62,7 +84,7 @@ const styles = StyleSheet.create({
   },
   imageIcon: {width: 18, height: 18, tintColor: COLOURS.gray},
   transpClickableBg: {
-    width: 40,
+    width: 30,
     height: 20,
     //backgroundColor: COLOURS.white,
     justifyContent: 'center',

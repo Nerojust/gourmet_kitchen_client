@@ -243,11 +243,15 @@ const OrdersScreen = ({navigation}) => {
   const refreshData = () => {
     fetchAllData();
   };
-
+  const goToMessageScreen = () => {
+    navigation.navigate('CustomMessage');
+  };
   const handleSettingsClick = item => {
     // console.log('clicked item', item);
     if (item == 'delete') {
       handleDeleteOrders();
+    } else if (item == 'messages') {
+      goToMessageScreen();
     }
   };
   const renderDatePicker = () => {

@@ -13,6 +13,7 @@ import {
   StatusBar,
   TouchableWithoutFeedback,
   Keyboard,
+  Linking,
 } from 'react-native';
 import {GET_RIDER_REQUESTS} from './Api';
 import {COLOURS} from '../utils/Colours';
@@ -46,9 +47,9 @@ export function findEarliestDate(dates) {
   return earliestDate;
 }
 
-export const removeBrackets=(value)=>{
-return value.replace(/[^a-zA-Z0-9]/g, '')
-}
+export const removeBrackets = value => {
+  return value.replace(/[^a-zA-Z0-9]/g, '');
+};
 
 export const emailValidator = value => {
   var re =
@@ -86,8 +87,7 @@ export const showBottomSheet = ref => {
 export const dismissTextInput = refdata => {
   refdata.current.blur();
 };
-export const getProcessingTimeString = (value) => {
-
+export const getProcessingTimeString = value => {
   var sec = parseInt(value) / 1000;
   if (sec < 0) return 'now';
 
@@ -359,7 +359,7 @@ export const handleError = (errormessage, dispatch, extMessage) => {
     return;
   }
 };
-export const dialNumber = (phoneNumber) => {
+export const dialNumber = phoneNumber => {
   const args = {
     number: phoneNumber, // String value with the number to call
     prompt: true, // Optional boolean property. Determines if the user should be prompt prior to the call
@@ -367,7 +367,7 @@ export const dialNumber = (phoneNumber) => {
 
   call(args).catch(console.error);
 };
-export const dialNumber2 = (phoneNumber) => {
+export const dialNumber2 = phoneNumber => {
   RNImmediatePhoneCall.immediatePhoneCall(phoneNumber);
 };
 
@@ -437,17 +437,56 @@ export const getTodaysDate = date => {
     return dateFormat(date, 'dS mmmm, yyyy @ hh:MM TT');
   }
 };
+
+export const sendWhatsappMessage = (phoneNumber, message) => {
+  var firstSet = phoneNumber.slice(0, 4); // "012"
+  var isNigerian = false;
+  var final = '';
+
+  if (firstSet.startsWith('+234')) {
+    final = '&phone=234' + phoneNumber.trim().substring(4);
+    isNigerian = true;
+  } else if (firstSet.startsWith('234')) {
+    isNigerian = true;
+    final = '&phone=234' + phoneNumber.trim().substring(3);
+  } else if (
+    firstSet.startsWith('080') ||
+    firstSet.startsWith('081') ||
+    firstSet.startsWith('070') ||
+    firstSet.startsWith('071') ||
+    firstSet.startsWith('090')
+  ) {
+    isNigerian = true;
+    final = '&phone=234' + phoneNumber.trim();
+  } else {
+    final = '&phone=' + phoneNumber.trim();
+  }
+
+  //console.log('final number', isNigerian ? '&phone=234' + final : final);
+
+  let URL = 'whatsapp://send?text=' + message + final;
+  console.log('++++++++++', URL);
+  Linking.openURL(URL)
+    .then(data => {
+      //console.log('WhatsApp Opened', data);
+    })
+    .catch(error => {
+      alert('Oops! seems whatsapp is not installed on your device');
+      //console.log('No whatsapp app found', error);
+    });
+};
+
 export function groupBy(objectArray, property) {
-   return objectArray.reduce(function (acc, obj) {
-     let key = obj[property];
-     if (!acc[key]) {
-       acc[key] = [];
-     }
-     acc[key].push(obj);
-     return acc;
-   }, {});
- }
- 
+  return objectArray.reduce(function (acc, obj) {
+    let key = obj[property];
+    if (!acc[key]) {
+      acc[key] = [];
+    }
+    acc[key].push(obj);
+    return acc;
+  }, {});
+}
+
 export function removeDuplicatesFromArray(arr) {
   return Array.from(new Set(arr));
 }

@@ -30,7 +30,7 @@ import RefreshComponent from './RefreshComponent';
 const RiderListComponent = ({
   dataSource,
   handleSingleItemPress,
-  addProductPress,
+  addNewRider,
   handleInputSearchText,
   inputValue,
   handleSearchInputSubmit,
@@ -123,7 +123,19 @@ const RiderListComponent = ({
                 initialNumToRender={10}
                 keyboardShouldPersistTaps={'handled'}
               />
-              <RefreshComponent goto={handleRefresh} style={{bottom: 70}} />
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <AddComponent
+                  goto={addNewRider}
+                  style={{bottom: 70,marginRight:70}}
+                  displayAdd
+                />
+                <RefreshComponent goto={handleRefresh} style={{bottom: 70}} />
+              </View>
               <View style={{paddingBottom: 10}} />
             </>
           ) : (

@@ -1,7 +1,7 @@
 import React, {PureComponent, useState} from 'react';
 import {StyleSheet, View, Text, Image, TouchableOpacity} from 'react-native';
 import {COLOURS} from '../utils/Colours';
-import {deviceWidth, hp, wp} from '../utils/responsive-screen';
+import {deviceWidth, fp, hp, wp} from '../utils/responsive-screen';
 import {Button, Menu, Divider, Provider} from 'react-native-paper';
 import AvertaBold from './Text/AvertaBold';
 
@@ -32,8 +32,18 @@ const OrdersSelector = ({onPressIcon}) => {
       }>
       <>
         <Menu.Item
+          onPress={() => onPressItem('messages')}
+          title="Messages"
+          titleStyle={{
+            color: COLOURS.green2,
+            fontWeight: 'bold',
+            fontSize: fp(15),
+          }}
+        />
+        <Divider />
+        <Menu.Item
           onPress={() => onPressItem('delete')}
-          titleStyle={{color: COLOURS.red}}
+          titleStyle={{color: COLOURS.red, fontSize: fp(15)}}
           title="Delete all"
         />
       </>

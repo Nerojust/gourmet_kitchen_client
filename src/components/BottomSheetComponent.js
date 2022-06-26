@@ -118,14 +118,13 @@ export function BottomSheetRiderComponent({
   dataSource,
   filteredDataSource,
   handleSingleItemPress,
-  addProductPress,
+  addRiderPress,
   inputValue,
   handleInputSearchText,
   closeAction,
   isRidersLoading,
   handleSearchInputSubmit,
   handleRefresh,
-  handleAddProduct,
 }) {
   return (
     <RBSheet
@@ -160,13 +159,12 @@ export function BottomSheetRiderComponent({
         filteredDataSource={filteredDataSource}
         closeAction={closeAction}
         handleRefresh={() => handleRefresh(false, false, true)}
-        //handleAddProduct={handleAddProduct}
         isRidersLoading={isRidersLoading}
         handleSearchInputSubmit={handleSearchInputSubmit}
         handleSingleItemPress={item =>
           handleSingleItemPress(item, false, false, true)
         }
-        //addProductPress={() => addProductPress()}
+        addNewRider={() => addRiderPress()}
         inputValue={inputValue}
         handleInputSearchText={handleInputSearchText}
       />
