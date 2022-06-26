@@ -145,9 +145,11 @@ const AnalyticsScreen = ({navigation}) => {
   };
 
   const renderRiderItems = ({item, index}) => {
-    return (
-      <RiderAnalyticsItemComponent item={item} handleClick={handleClick} />
-    );
+    if (item?.name != null && item?.name != 'null') {
+      return (
+        <RiderAnalyticsItemComponent item={item} handleClick={handleClick} />
+      );
+    }
   };
 
   const renderDatePicker = () => {
@@ -428,7 +430,7 @@ const AnalyticsScreen = ({navigation}) => {
           {selectedTab == 0 ? displayAverageOrdersView() : null}
           {selectedTab == 1 ? displaySalesView() : null}
           {selectedTab == 2 ? displayRiderAnalyticsView() : null}
-          
+
           <LoaderShimmerComponent isLoading={getSalesLoading} />
           <LoaderShimmerComponent isLoading={analyticsLoading} />
         </KeyboardObserverComponent>
