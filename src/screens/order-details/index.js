@@ -1913,6 +1913,17 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
     left: 12,
   },
+  sendSmsView: {
+    height: hp(35),
+    justifyContent: 'center',
+    paddingHorizontal: 10,
+    borderRadius: 10,
+    borderWidth: 0.4,
+    borderColor: COLOURS.lightGray,
+    marginTop: 10,
+    alignItems: 'center',
+    backgroundColor: COLOURS.lightShadeBlue,
+  },
 });
 
 //make this component available to the app
