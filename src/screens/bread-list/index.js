@@ -277,7 +277,7 @@ const BreadListScreen = ({navigation}) => {
             let filteredResult = newResult.filter(element =>
               element.productsize.toLowerCase().includes('mini'),
             );
-            console.log('filetered minis', filteredResult);
+           // console.log('filetered minis', filteredResult);
             setMiniArray(filteredResult);
 
             //now find all the sets ordered

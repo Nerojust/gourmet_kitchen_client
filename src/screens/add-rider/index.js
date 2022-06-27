@@ -86,12 +86,12 @@ const AddRiderScreen = ({navigation}) => {
         return;
       }
 
-      if (!email.toLowerCase().trim()) {
-        return alert('Please enter in your email');
-      }
-      if (!emailValidator(email.trim())) {
-        return alert('Invalid email entered, it shoud contain "@" and "."');
-      }
+      // if (!email.toLowerCase().trim()) {
+      //   return alert('Please enter in your email');
+      // }
+      // if (!emailValidator(email.trim())) {
+      //   return alert('Invalid email entered, it shoud contain "@" and "."');
+      // }
 
       var payload = {
         email,
@@ -143,7 +143,7 @@ const AddRiderScreen = ({navigation}) => {
 
   const resetFields = () => {
     setFullName('');
-    setEmail('');
+    // setEmail('');
     setPhoneNumber('');
   };
   const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false);
@@ -225,7 +225,7 @@ const AddRiderScreen = ({navigation}) => {
         />
 
         <View style={{marginVertical: 10}} />
-
+{/* 
         <TextInputComponent
           defaultValue={email}
           handleTextChange={handleEmail}
@@ -244,7 +244,7 @@ const AddRiderScreen = ({navigation}) => {
           handleBlur={() => setIsEmailFocused(false)}
           onSubmitEditing={() => passwordRef.current.focus()}
         />
-        <View style={{marginVertical: 10}} />
+        <View style={{marginVertical: 10}} /> */}
       </>
     );
   };
