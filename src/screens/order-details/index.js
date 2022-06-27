@@ -1484,7 +1484,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
     let message = `Order for ${name} with Gourmet Twist has been dispatched with 
     \n ${riderName} 
     \n ${riderPhoneNumber}
-    \n \n Thank you for patronizing us.`;
+    \n Thank you for patronizing us.`;
 
     return message;
   };
