@@ -39,7 +39,7 @@ const RiderListComponent = ({
   handleRefresh,
   //handleAddProduct,
 }) => {
-  const RenderProductItem = ({item, categoryName}) => {
+  const renterRiderList = ({item}) => {
     //console.log("products", categoryName, item);
     return (
       <>
@@ -119,7 +119,7 @@ const RiderListComponent = ({
               <FlatList
                 data={dataSource}
                 keyExtractor={item => item.id}
-                renderItem={RenderProductItem}
+                renderItem={renterRiderList}
                 initialNumToRender={10}
                 keyboardShouldPersistTaps={'handled'}
               />
