@@ -187,7 +187,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
   );
   const [dispatchMesssage, setDispatchMesssage] = useState('');
   const [data, setData] = useState();
-  //console.log('order details redux ', data);
+  //console.log('order details redux ', dispatchMesssage);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -1444,13 +1444,13 @@ const OrderDetailsScreen = ({navigation, route}) => {
       if (!data.isfulfilled) {
         displayFulfillAllDialog();
       } else {
-        alert('Order already fulfilled');
+        alert('Sorry, order is already fulfilled');
       }
     } else if (item == 'dispatchOrder') {
       if (!data.isfulfilled) {
         displayFulfillAllDialog(true);
       } else {
-        alert('Order already fulfilled');
+        alert('Sorry, order is already fulfilled');
       }
     } else if (item == 'reschedule') {
       if (!order.isfulfilled) {
@@ -1460,38 +1460,29 @@ const OrderDetailsScreen = ({navigation, route}) => {
       }
     }
   };
-  //const [mobileNumber, setMobileNumber] = useState('');
-  //const [bodySMS, setBodySMS] = useState('');
+
+  /**
+   * gets the template from the DB and updates required fields with customized parameters
+   * @returns the final constructed dispatch message
+   */
   const buildDispatchMessage = () => {
-    // return (
-    //   'Hello ' +
-    //   fullName +
-    //   ', ' +
-    //   (order?.products.length + order?.products.length > 0
-    //     ? 'items '
-    //     : 'item ') +
-    //   dispatchMesssage +
-    //   ' ' +
-    //   selectedRider?.name +
-    //   ' (' +
-    //   selectedRider?.phonenumber +
-    //   ') '
-    // );
-    let name = fullName.trim();
-    let riderName = selectedRider?.name.trim();
-    let riderPhoneNumber = selectedRider?.phonenumber.trim();
-
-    let message = `Order for ${name} with Gourmet Twist has been dispatched with 
-    \n ${riderName} 
-    \n ${riderPhoneNumber}
-    \n \n Thank you for patronizing us.`;
-
-    return message;
+    let message, message1, finalMessage;
+    if (dispatchMesssage) {
+      message = dispatchMesssage.replace('{1}', fullName.trim());
+      message1 = message
+        .toString()
+        .replace('{2}', selectedRider?.phonenumber.trim());
+      finalMessage = message1
+        .toString()
+        .replace('{3}', selectedRider?.phonenumber.trim());
+      //console.log("mess",message2)
+    }
+    return finalMessage;
   };
+  /**
+   * sents sms to the customer
+   */
   const initiateSMS = () => {
-    // let message = dispatchMesssage
-    //   ? dispatchMesssage + ' '
-    //   : '' + selectedRider?.name + ' (' + selectedRider?.phonenumber + ') ';
     SendSMS.send(
       {
         // Message body
@@ -1504,10 +1495,10 @@ const OrderDetailsScreen = ({navigation, route}) => {
       },
       (completed, cancelled, error) => {
         if (completed) {
-          console.log('SMS Sent Completed');
+          console.log('SMS Sent Successfully');
           alert('SMS sent successfully');
         } else if (cancelled) {
-          console.log('SMS Sent Cancelled');
+          console.log('SMS Sending Cancelled');
           alert('SMS sending cancelled');
         } else if (error) {
           console.log('Some error occured');
