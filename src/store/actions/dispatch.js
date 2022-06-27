@@ -23,6 +23,7 @@ export const getRiderAnalytics = date => {
     return client
       .get(getUrl)
       .then(response => {
+        //console.log("status",response.data)
         if (response?.data) {
           console.log(
             'Rider analytics gotten successfully',

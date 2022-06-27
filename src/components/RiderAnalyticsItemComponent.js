@@ -19,7 +19,7 @@ import ProductSansBold from './Text/ProductSansBold';
 
 // create a component
 const RiderAnalyticsItemComponent = ({item, handleClick}) => {
-  //console.log('item', item?.products[0]?.isfulfilled);
+  console.log('item', item);
 
   return (
     <TouchableOpacity
@@ -34,11 +34,11 @@ const RiderAnalyticsItemComponent = ({item, handleClick}) => {
         }}>
         <View style={{flex: 1.2}}>
           <ProductSans style={styles.productName}>
-            {item?.name.trim()}
+            {item.name !="null" ? item?.name.trim() : 'None'}
           </ProductSans>
 
           <ProductSans style={styles.labelText}>
-            {item?.phonenumber.trim()}
+            {item.name !="null"? item?.phonenumber.trim() : 'None'}
           </ProductSans>
         </View>
 
@@ -52,7 +52,7 @@ const RiderAnalyticsItemComponent = ({item, handleClick}) => {
                 color: COLOURS.textInputColor,
               },
             ]}>
-            {item?.count || '0'}
+            {item.name !="null"? item?.count : '0'}
           </ProductSans>
         </View>
       </View>
