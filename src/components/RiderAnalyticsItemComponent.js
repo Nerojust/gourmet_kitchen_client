@@ -19,7 +19,7 @@ import ProductSansBold from './Text/ProductSansBold';
 
 // create a component
 const RiderAnalyticsItemComponent = ({item, handleClick}) => {
-  console.log('item', item);
+ // console.log('item', item);
 
   return (
     <TouchableOpacity

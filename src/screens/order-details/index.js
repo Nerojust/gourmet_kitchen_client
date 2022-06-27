@@ -944,9 +944,9 @@ const OrderDetailsScreen = ({navigation, route}) => {
     dismissBottomSheetDialog(zupaProductAssociateSheetRef);
   };
   const handleAddRider = () => {
-   // console.log('add rider');
+    // console.log('add rider');
     navigation.push('AddRider');
-    dismissBottomSheetDialog(ridersSheetRef)
+    dismissBottomSheetDialog(ridersSheetRef);
   };
   const renderBottomSheets = () => {
     return (
@@ -1463,14 +1463,30 @@ const OrderDetailsScreen = ({navigation, route}) => {
   //const [mobileNumber, setMobileNumber] = useState('');
   //const [bodySMS, setBodySMS] = useState('');
   const buildDispatchMessage = () => {
-    return (
-      dispatchMesssage +
-      ' ' +
-      selectedRider?.name +
-      ' (' +
-      selectedRider?.phonenumber +
-      ') '
-    );
+    // return (
+    //   'Hello ' +
+    //   fullName +
+    //   ', ' +
+    //   (order?.products.length + order?.products.length > 0
+    //     ? 'items '
+    //     : 'item ') +
+    //   dispatchMesssage +
+    //   ' ' +
+    //   selectedRider?.name +
+    //   ' (' +
+    //   selectedRider?.phonenumber +
+    //   ') '
+    // );
+    let name = fullName.trim();
+    let riderName = selectedRider?.name.trim();
+    let riderPhoneNumber = selectedRider?.phonenumber.trim();
+
+    let message = `Order for ${name} with Gourmet Twist has been dispatched with 
+    \n ${riderName} 
+    \n ${riderPhoneNumber}
+    \n \n Thank you for patronizing us.`;
+
+    return message;
   };
   const initiateSMS = () => {
     // let message = dispatchMesssage
