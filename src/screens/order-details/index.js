@@ -188,7 +188,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
   const [dispatchMesssage, setDispatchMesssage] = useState('');
   const [data, setData] = useState();
   //console.log('order details redux ', dispatchMesssage);
-
+const [isDone, setIsDone] = useState(false)
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       if (id) {
@@ -199,7 +199,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
       fetchAllData();
     }
     return unsubscribe;
-  }, [id, hasAddedNewNote, isEditMode, hasPatchedDispatch]);
+  }, [id, hasAddedNewNote, isEditMode, hasPatchedDispatch,isDone]);
 
   useEffect(() => {
     dispatch(getAllDeliveryTypes(''));
@@ -1541,7 +1541,8 @@ const OrderDetailsScreen = ({navigation, route}) => {
                     setIsDispatched(true);
                     showBottomSheet(ridersSheetRef);
                   } else {
-                    showSuccessDialog(true);
+                    showSuccessDialog(false);
+                    setIsDone(true)
                   }
                 }
               },
@@ -1668,7 +1669,8 @@ const OrderDetailsScreen = ({navigation, route}) => {
       if (result) {
         setHasPatchedDispatch(true);
         if (isDispatched) {
-          showSuccessDialog(true);
+          showSuccessDialog(false);
+          setIsDone(true)
         }
       }
     });
