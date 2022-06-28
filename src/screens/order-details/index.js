@@ -1471,7 +1471,7 @@ const [isDone, setIsDone] = useState(false)
       message = dispatchMesssage.replace('{1}', fullName.trim());
       message1 = message
         .toString()
-        .replace('{2}', selectedRider?.phonenumber.trim());
+        .replace('{2}', selectedRider?.name.trim());
       finalMessage = message1
         .toString()
         .replace('{3}', selectedRider?.phonenumber.trim());
