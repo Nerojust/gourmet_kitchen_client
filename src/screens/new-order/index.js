@@ -27,7 +27,7 @@ import {
   dismissBottomSheetDialog,
   DismissKeyboard,
   dismissTextInput,
-  formatNumberComma,
+  formatNumberCommaNaira,
   removeDuplicatesFromArray,
   showBottomSheet,
   validateNumber,
@@ -102,7 +102,7 @@ const NewOrderScreen = ({navigation}) => {
 
   const {user, usersLoading, users} = useSelector(state => state.users);
   //console.log('users', users.length);
-  //console.log('user', user);
+  //console.log('user', user.roleid);
   const {products, productsLoading} = useSelector(state => state.products);
   var productsData = Object.assign([], products);
   //console.log('pdts', products.length);
@@ -640,7 +640,7 @@ const NewOrderScreen = ({navigation}) => {
 
               <AvertaBold style={[styles.deliveryPrice, {flex: 1, left: 65}]}>
                 {selectedDelivery?.price
-                  ? formatNumberComma(selectedDelivery?.price)
+                  ? formatNumberCommaNaira(selectedDelivery?.price)
                   : null}
               </AvertaBold>
             </TouchableOpacity>
@@ -698,7 +698,7 @@ const NewOrderScreen = ({navigation}) => {
       result = amount;
     }
 
-    return formatNumberComma(result);
+    return formatNumberCommaNaira(result);
   });
 
   const displaySubmitButton = () => {
@@ -973,7 +973,7 @@ const NewOrderScreen = ({navigation}) => {
             {item?.selectedProduct?.type != 'custom' ? (
               <AvertaBold style={styles.unitPriceText}>
                 {item
-                  ? formatNumberComma(
+                  ? formatNumberCommaNaira(
                       item?.selectedProduct?.unitPrice * item?.quantity,
                     )
                   : ''}
@@ -1132,7 +1132,11 @@ const NewOrderScreen = ({navigation}) => {
             ListHeaderComponent={
               <>
                 {scheduledDateView()}
-                {user?.roleid == 1 || 2 || 3 ? displayNameListView() : null}
+                {(user && user?.roleid == 1) ||
+                user?.roleid == 2 ||
+                user?.roleid == 3
+                  ? displayNameListView()
+                  : null}
                 {renderInputFields()}
               </>
             }

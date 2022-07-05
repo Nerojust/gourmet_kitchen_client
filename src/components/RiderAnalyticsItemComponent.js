@@ -42,7 +42,7 @@ const RiderAnalyticsItemComponent = ({item, handleClick}) => {
           </ProductSans>
         </View>
 
-        <View style={{flex: 0.1}}>
+        <View style={{flex: 0.25}}>
           <ProductSans
             style={[
               styles.labelText,

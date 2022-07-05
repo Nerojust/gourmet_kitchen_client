@@ -28,7 +28,7 @@ import {
   dismissBottomSheetDialog,
   DismissKeyboard,
   dismissTextInput,
-  formatNumberComma,
+  formatNumberCommaNaira,
   removeDuplicatesFromArray,
   showBottomSheet,
   validateNumber,

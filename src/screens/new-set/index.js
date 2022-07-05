@@ -27,7 +27,7 @@ import {
   dismissBottomSheetDialog,
   DismissKeyboard,
   dismissTextInput,
-  formatNumberComma,
+  formatNumberCommaNaira,
   showBottomSheet,
 } from '../../utils/utils';
 import {BackViewMoreSettings} from '../../components/Header';
@@ -522,7 +522,7 @@ const NewSetScreen = ({navigation}) => {
 
           <AvertaBold style={styles.unitPriceText}>
             {item
-              ? formatNumberComma(
+              ? formatNumberCommaNaira(
                   item?.selectedProduct?.unitPrice * item?.quantity,
                 )
               : ''}

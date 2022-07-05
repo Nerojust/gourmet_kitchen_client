@@ -20,7 +20,7 @@ import AvertaBold from './Text/AvertaBold';
 import Averta from './Text/Averta';
 import LoaderShimmerComponent from './LoaderShimmerComponent';
 import AddComponent from './AddComponent';
-import {capitalizeWord, formatNumberComma, NAIRA_} from '../utils/utils';
+import {capitalizeWord, formatNumberCommaNaira, NAIRA_} from '../utils/utils';
 import {deviceWidth, deviceHeight} from '../utils/responsive-screen';
 import {COLOURS} from '../utils/Colours';
 import {ACTIVE_OPACITY} from '../utils/Constants';
@@ -131,7 +131,7 @@ const RiderListComponent = ({
                 }}>
                 <AddComponent
                   goto={addNewRider}
-                  style={{bottom: 70,marginRight:70}}
+                  style={{bottom: 70, marginRight: 70}}
                   displayAdd
                 />
                 <RefreshComponent goto={handleRefresh} style={{bottom: 70}} />

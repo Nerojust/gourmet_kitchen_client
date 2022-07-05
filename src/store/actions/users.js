@@ -20,11 +20,12 @@ export const login = payload => {
 
             const accessToken = response.data.results.token;
             const user = response.data.results.user;
+            const role = response.data.results.role;
 
             console.log(
               'Login successful for ',
               response.data.results?.user?.firstname,
-              response.data.results?.user?.lastname + '\n' + accessToken,
+              response.data.results?.user?.lastname + '\n' + accessToken + '\n'+ role.name + " "+ role.id,
             );
 
             client.defaults.headers.common[
@@ -35,6 +36,7 @@ export const login = payload => {
               type: 'LOGIN_SUCCESS',
               loading: false,
               user: user,
+              role: role,
               accessToken: accessToken,
               error: null,
             });

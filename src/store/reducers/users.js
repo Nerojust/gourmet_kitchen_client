@@ -1,5 +1,6 @@
 const initialState = {
   user: null,
+  role: null,
   users: [],
   error: '',
   loading: false,
@@ -39,6 +40,7 @@ export default (state = initialState, action) => {
       return {
         ...state,
         user: action.user,
+        role: action.role,
         loading: action.loading,
         accessToken: action.accessToken,
         loginError: null,

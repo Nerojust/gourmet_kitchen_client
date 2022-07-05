@@ -264,7 +264,7 @@ const AnalyticsScreen = ({navigation}) => {
                 <AvertaBold
                   style={[
                     styles.custName,
-                    {color: COLOURS.green2, fontSize: fp(20)},
+                    {color: COLOURS.green2, fontSize: fp(16)},
                   ]}>
                   {salesAverage
                     ? removeBrackets(salesAverage[0]?.completed_count)
@@ -280,7 +280,7 @@ const AnalyticsScreen = ({navigation}) => {
                 <AvertaBold
                   style={[
                     styles.custName,
-                    {color: COLOURS.blue, fontSize: fp(20)},
+                    {color: COLOURS.blue, fontSize: fp(16)},
                   ]}>
                   {salesAverage
                     ? removeBrackets(salesAverage[0]?.pending_count)
@@ -296,7 +296,7 @@ const AnalyticsScreen = ({navigation}) => {
                 <AvertaBold
                   style={[
                     styles.custName,
-                    {color: COLOURS.red, fontSize: fp(20)},
+                    {color: COLOURS.red, fontSize: fp(16)},
                   ]}>
                   {salesAverage
                     ? removeBrackets(salesAverage[0]?.incomplete_count)
@@ -313,7 +313,7 @@ const AnalyticsScreen = ({navigation}) => {
                 <AvertaBold
                   style={[
                     styles.custName,
-                    {fontSize: fp(20), color: COLOURS.yellow1},
+                    {fontSize: fp(16), color: COLOURS.yellow1},
                   ]}>
                   {salesAverage[0].avg_time
                     ? getProcessingTimeString(salesAverage[0]?.avg_time)
@@ -329,7 +329,7 @@ const AnalyticsScreen = ({navigation}) => {
                 <AvertaBold
                   style={[
                     styles.custName,
-                    {fontSize: fp(20), color: COLOURS.text_color},
+                    {fontSize: fp(16), color: COLOURS.text_color},
                   ]}>
                   {salesAverage[0]?.total_average
                     ? getProcessingTimeString(salesAverage[0]?.total_average)

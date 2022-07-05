@@ -363,7 +363,7 @@ export const BackViewWithLogout = ({
             <Image
               source={require('../assets/images/logout.png')}
               resizeMode={'contain'}
-              style={{width: 25, height: 25}}
+              style={{width: 23, height: 23,tintColor:COLOURS.gray4}}
             />
           </TouchableOpacity>
         ) : null}

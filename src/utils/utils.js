@@ -22,6 +22,7 @@ import call from 'react-native-phone-call';
 import {DrawerActions} from '@react-navigation/routers';
 import moment from 'moment';
 import RNImmediatePhoneCall from 'react-native-immediate-phone-call';
+import { useSelector } from 'react-redux';
 export const capitalizeWord = string => {
   var result = [];
   string &&
@@ -156,6 +157,30 @@ export const getProcessingTime = (date1, date2) => {
   return parseInt(y) + ' year' + (parseInt(y) > 1 ? 's' : '') + '';
 };
 export const NAIRA_ = '\u20a6';
+
+export const formatNumberCommaNaira = inputNumber => {
+  let formattedNumber = Number(inputNumber)
+    .toFixed(2)
+    .replace(/\d(?=(\d{3})+\.)/g, '$&,');
+  //console.log("formatted number", formattedNumber);
+  let splitArray = formattedNumber.split('.');
+  //console.log("split", splitArray);
+  if (splitArray.length > 1) {
+    formattedNumber = splitArray[0];
+  }
+  return NAIRA_ + formattedNumber;
+};
+export const addOrSubractDays = (startingDate, number, add) => {
+  if (add) {
+    return new Date(new Date().setDate(startingDate.getDate() + number));
+  } else {
+    return new Date(new Date().setDate(startingDate.getDate() - number));
+  }
+};
+export const hasRightToAccess =()=>{
+  //const {user, role} = useSelector(x => x.users);
+
+}
 
 export const formatNumberComma = inputNumber => {
   let formattedNumber = Number(inputNumber)

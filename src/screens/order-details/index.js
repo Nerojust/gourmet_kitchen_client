@@ -28,7 +28,7 @@ import {
   dismissBottomSheetDialog,
   DismissKeyboard,
   dismissTextInput,
-  formatNumberComma,
+  formatNumberCommaNaira,
   getProcessingTime,
   getProcessingTimeString,
   removeDuplicatesFromArray,
@@ -188,7 +188,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
   const [dispatchMesssage, setDispatchMesssage] = useState('');
   const [data, setData] = useState();
   //console.log('order details redux ', dispatchMesssage);
-const [isDone, setIsDone] = useState(false)
+  const [isDone, setIsDone] = useState(false);
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       if (id) {
@@ -199,7 +199,7 @@ const [isDone, setIsDone] = useState(false)
       fetchAllData();
     }
     return unsubscribe;
-  }, [id, hasAddedNewNote, isEditMode, hasPatchedDispatch,isDone]);
+  }, [id, hasAddedNewNote, isEditMode, hasPatchedDispatch, isDone]);
 
   useEffect(() => {
     dispatch(getAllDeliveryTypes(''));
@@ -428,7 +428,7 @@ const [isDone, setIsDone] = useState(false)
                 <AvertaBold
                   style={[styles.calculatedAmountText, {right: 0, flex: 0.38}]}>
                   {order.delivery?.price
-                    ? NAIRA_ + formatNumberComma(order.delivery?.price)
+                    ? formatNumberCommaNaira(order.delivery?.price)
                     : null}
                 </AvertaBold>
               </View>
@@ -1121,7 +1121,7 @@ const [isDone, setIsDone] = useState(false)
 
                 <AvertaBold style={[styles.deliveryPrice, {flex: 0.281}]}>
                   {selectedDeliveryType?.price
-                    ? formatNumberComma(selectedDeliveryType?.price)
+                    ? formatNumberCommaNaira(selectedDeliveryType?.price)
                     : 0}
                 </AvertaBold>
               </TouchableOpacity>
@@ -1134,7 +1134,7 @@ const [isDone, setIsDone] = useState(false)
                 </AvertaBold>
                 <AvertaBold
                   style={[styles.calculatedAmountText, {flex: 0.9, right: 0}]}>
-                  {formatNumberComma(grandTotalAmount)}
+                  {formatNumberCommaNaira(grandTotalAmount)}
                 </AvertaBold>
               </View>
             </>
@@ -1253,7 +1253,7 @@ const [isDone, setIsDone] = useState(false)
       result = amount;
     }
 
-    return formatNumberComma(result);
+    return formatNumberCommaNaira(result);
   });
 
   const handleEditNote = item => {
@@ -1469,9 +1469,7 @@ const [isDone, setIsDone] = useState(false)
     let message, message1, finalMessage;
     if (dispatchMesssage) {
       message = dispatchMesssage.replace('{1}', fullName.trim());
-      message1 = message
-        .toString()
-        .replace('{2}', selectedRider?.name.trim());
+      message1 = message.toString().replace('{2}', selectedRider?.name.trim());
       finalMessage = message1
         .toString()
         .replace('{3}', selectedRider?.phonenumber.trim());
@@ -1542,7 +1540,7 @@ const [isDone, setIsDone] = useState(false)
                     showBottomSheet(ridersSheetRef);
                   } else {
                     showSuccessDialog(false);
-                    setIsDone(true)
+                    setIsDone(true);
                   }
                 }
               },
@@ -1670,7 +1668,7 @@ const [isDone, setIsDone] = useState(false)
         setHasPatchedDispatch(true);
         if (isDispatched) {
           showSuccessDialog(false);
-          setIsDone(true)
+          setIsDone(true);
         }
       }
     });

@@ -6,7 +6,7 @@ import {COLOURS} from '../utils/Colours';
 import {NAIRA} from '../utils/Constants';
 import {IMAGES} from '../utils/Images';
 import {deviceWidth, fp} from '../utils/responsive-screen';
-import {formatNumberComma, getReadableDateAndTime} from '../utils/utils';
+import {formatNumberCommaNaira, getReadableDateAndTime} from '../utils/utils';
 import ColourComponent from './ColorComponent';
 import ProductSans from './Text/ProductSans';
 import ProductSansBold from './Text/ProductSansBold';
@@ -48,7 +48,7 @@ const SetListItemComponent = ({item, index}) => {
             <ProductSans style={styles.labelText}>PRICE</ProductSans>
             <ProductSans style={styles.priceName}>
               {NAIRA}
-              {formatNumberComma(price)}
+              {formatNumberCommaNaira(price)}
             </ProductSans>
           </View>
           <View>

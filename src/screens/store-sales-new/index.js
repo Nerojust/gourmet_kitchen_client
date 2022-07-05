@@ -27,7 +27,7 @@ import {
   dismissBottomSheetDialog,
   DismissKeyboard,
   dismissTextInput,
-  formatNumberComma,
+  formatNumberCommaNaira,
   removeDuplicatesFromArray,
   showBottomSheet,
   validateNumber,
@@ -61,7 +61,7 @@ import ProductSans from '../../components/Text/ProductSans';
 import {createSurplus} from '../../store/actions/surplus';
 
 // create a component
-const NewStoreSalesScreen = ({navigation,route}) => {
+const NewStoreSalesScreen = ({navigation, route}) => {
   const dispatch = useDispatch();
   const [fullName, setFullName] = useState('');
   const [surplusCount, setSurplusCount] = useState('');
@@ -112,7 +112,7 @@ const NewStoreSalesScreen = ({navigation,route}) => {
     state => state.deliveryTypes,
   );
   const orderDate = route?.params?.date;
-  const [orderDateValue, setOrderDateValue] = useState(orderDate)
+  const [orderDateValue, setOrderDateValue] = useState(orderDate);
   //console.log('route date', orderDate);
 
   useEffect(() => {
@@ -134,7 +134,7 @@ const NewStoreSalesScreen = ({navigation,route}) => {
     }
   };
 
-  const handleRefreshIncaseOfNetworkFailure = (isProduct) => {
+  const handleRefreshIncaseOfNetworkFailure = isProduct => {
     if (isProduct) {
       dispatch(getAllProducts('', 0, 0));
     }
@@ -314,8 +314,8 @@ const NewStoreSalesScreen = ({navigation,route}) => {
       };
       console.log('surplus payload', payload);
 
-      dispatch(createSurplus(payload,orderDateValue))
-        .then((result) => {
+      dispatch(createSurplus(payload, orderDateValue))
+        .then(result => {
           if (result) {
             showSuccessDialog(true);
             resetFields();

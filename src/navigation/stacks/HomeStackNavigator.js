@@ -8,9 +8,12 @@ import {Image, StyleSheet, TouchableOpacity} from 'react-native';
 import {COLOURS} from '../../utils/Colours';
 import ProductSans from '../../components/Text/ProductSans';
 import {AnalyticsStackNavigator} from './AnalyticsStackNavigator';
+import {TransactionsStackNavigator} from './TransactionsStackNavigator';
+import {useSelector} from 'react-redux';
 
 export const HomeStackNavigator = () => {
   const Tab = createBottomTabNavigator();
+  const {user, role} = useSelector(x => x.users);
 
   return (
     <Tab.Navigator
@@ -105,7 +108,7 @@ export const HomeStackNavigator = () => {
                       focused ? IMAGES.analyticsImage : IMAGES.analyticsImage
                     }
                     resizeMode={'contain'}
-                    style={[styles.productImage,{tintColor:COLOURS.gray5}]}
+                    style={[styles.productImage, {tintColor: COLOURS.gray5}]}
                   />
                   <ProductSans
                     style={[
@@ -116,16 +119,50 @@ export const HomeStackNavigator = () => {
                   </ProductSans>
                 </TouchableOpacity>
               );
+            case 'TransactionsStack':
+              return (
+                <TouchableOpacity
+                  style={styles.mainView}
+                  activeOpacity={0.6}
+                  onPress={() => navigation.navigate('TransactionsStack')}>
+                  <Image
+                    source={
+                      focused
+                        ? IMAGES.storePaymentImage
+                        : IMAGES.storePaymentImage
+                    }
+                    resizeMode={'contain'}
+                    style={[styles.productImage, {tintColor: COLOURS.gray5}]}
+                  />
+                  <ProductSans
+                    style={[
+                      styles.textStyle,
+                      !focused ? {color: COLOURS.gray3} : null,
+                    ]}>
+                    Transactions
+                  </ProductSans>
+                </TouchableOpacity>
+              );
 
             default:
               'OrdersStack';
           }
         },
       })}>
+      {/* check for roles and handle display here */}
+
       <Tab.Screen name="OrdersStack" component={OrderStackNavigator} />
       <Tab.Screen name="BreadListStack" component={BreadListStackNavigator} />
       <Tab.Screen name="StoreSalesStack" component={StoreSalesStackNavigator} />
       <Tab.Screen name="AnalyticsStack" component={AnalyticsStackNavigator} />
+
+      {/* admin or super admin only */}
+      {(user && user?.roleid == 1) || user?.roleid == 2 ? (
+        <Tab.Screen
+          name="TransactionsStack"
+          component={TransactionsStackNavigator}
+        />
+      ) : null}
     </Tab.Navigator>
   );
 };

@@ -13,7 +13,7 @@ import {COLOURS} from '../utils/Colours';
 import {IMAGES} from '../utils/Images';
 import {deviceWidth, fp} from '../utils/responsive-screen';
 import {
-  formatNumberComma,
+  formatNumberCommaNaira,
   getColourCode,
   getReadableDateAndTime,
 } from '../utils/utils';
@@ -58,7 +58,7 @@ const AnalyticsItemComponent = ({item, handleClick}) => {
                 color: COLOURS.textInputColor,
               },
             ]}>
-            {formatNumberComma(item?.count) || '0'}
+            {formatNumberCommaNaira(item?.count) || '0'}
           </ProductSans>
         </View>
       </View>

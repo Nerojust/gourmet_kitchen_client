@@ -20,7 +20,7 @@ import AvertaBold from './Text/AvertaBold';
 import Averta from './Text/Averta';
 import LoaderShimmerComponent from './LoaderShimmerComponent';
 import AddComponent from './AddComponent';
-import {capitalizeWord, formatNumberComma, NAIRA_} from '../utils/utils';
+import {capitalizeWord, formatNumberCommaNaira, NAIRA_} from '../utils/utils';
 import {deviceWidth, deviceHeight, fp} from '../utils/responsive-screen';
 import {COLOURS} from '../utils/Colours';
 import {ACTIVE_OPACITY} from '../utils/Constants';
