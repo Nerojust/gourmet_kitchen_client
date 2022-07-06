@@ -79,10 +79,10 @@ const TransactionsScreen = ({navigation}) => {
 
   const handleClick = item => {
     //console.log("order item",item)
-    navigation.navigate('OrderDetails', {
-      id: item.id,
-      orderDate: getDateWithoutTime(selectedOrderDate),
-    });
+    // navigation.navigate('OrderDetails', {
+    //   id: item.id,
+    //   orderDate: getDateWithoutTime(selectedOrderDate),
+    // });
   };
 
   const renderItems = ({item, index}) => {
@@ -148,7 +148,32 @@ const TransactionsScreen = ({navigation}) => {
     fetchAllData();
   };
 
-  const renderDatePicker = () => {
+  const renderDatePickerNoLimit = () => {
+    return (
+      <DatePicker
+        modal
+        mode={'date'}
+        open={open}
+        title={'Select transaction range'}
+        theme={'auto'}
+        date={selectedOrderDate || new Date()}
+        //minimumDate={addOrSubractDays(new Date(), 2, false)}
+        //maximumDate={new Date()}
+        onConfirm={date => {
+          console.log('date result', date);
+          setOpen(false);
+          setSelectedOrderDate(date);
+          dispatch(saveOrderDate(getDateWithoutTime(date)));
+        }}
+        onCancel={() => {
+          setOpen(false);
+          //setSelectedOrderDate('');
+        }}
+      />
+    );
+  };
+
+  const renderDatePickerLimit = () => {
     return (
       <DatePicker
         modal
@@ -201,7 +226,9 @@ const TransactionsScreen = ({navigation}) => {
         />
       ) : null}
 
-      {renderDatePicker()}
+      {user.roleid == 1 || user.roleid == 2
+        ? renderDatePickerNoLimit()
+        : renderDatePickerLimit()}
       <View
         style={{
           justifyContent: 'center',

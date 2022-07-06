@@ -157,7 +157,7 @@ export const HomeStackNavigator = () => {
       <Tab.Screen name="AnalyticsStack" component={AnalyticsStackNavigator} />
 
       {/* admin or super admin only */}
-      {(user && user?.roleid == 1) || user?.roleid == 2 ? (
+      {(user && user?.roleid == 1) || user?.roleid == 2 || user?.roleid == 4 ? (
         <Tab.Screen
           name="TransactionsStack"
           component={TransactionsStackNavigator}

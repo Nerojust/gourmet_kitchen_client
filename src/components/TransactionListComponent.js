@@ -43,6 +43,7 @@ const TransactionListComponent = ({item, handleClick, index}) => {
         <View
           style={{
             flexDirection: 'row',
+            paddingTop: 4,
           }}>
           <ProductSans style={[styles.labelText, {flex: 0.4}]}>
             Sender Name:
@@ -67,6 +68,7 @@ const TransactionListComponent = ({item, handleClick, index}) => {
         <View
           style={{
             flexDirection: 'row',
+            paddingTop: 4,
           }}>
           <ProductSans style={[styles.labelText, {flex: 0.4}]}>
             Bank Name:
@@ -86,6 +88,7 @@ const TransactionListComponent = ({item, handleClick, index}) => {
         <View
           style={{
             flexDirection: 'row',
+            paddingTop: 4,
           }}>
           <ProductSans style={[styles.labelText, {flex: 0.4}]}>
             Amount:
@@ -99,6 +102,7 @@ const TransactionListComponent = ({item, handleClick, index}) => {
                 fontWeight: 'bold',
                 flex: 1,
                 color: COLOURS.green4,
+                fontSize: fp(18),
               },
             ]}>
             {' '}
@@ -110,13 +114,17 @@ const TransactionListComponent = ({item, handleClick, index}) => {
         <View
           style={{
             flexDirection: 'row',
+            paddingTop: 4,
           }}>
           <ProductSans style={[styles.labelText, {flex: 0.4}]}>
             Narration:
           </ProductSans>
 
           <ProductSans
-            style={[styles.labelText, {alignSelf: 'flex-end', flex: 1}]}>
+            style={[
+              styles.labelText,
+              {alignSelf: 'flex-end', flex: 1, color: COLOURS.purple},
+            ]}>
             {' '}
             {item.narration ? item?.narration.trim() : 'None'}
           </ProductSans>
@@ -125,13 +133,17 @@ const TransactionListComponent = ({item, handleClick, index}) => {
         <View
           style={{
             flexDirection: 'row',
+            paddingTop: 4,
           }}>
           <ProductSans style={[styles.labelText, {flex: 0.4}]}>
             Reference:
           </ProductSans>
 
           <ProductSans
-            style={[styles.labelText, {alignSelf: 'flex-end', flex: 1}]}>
+            style={[
+              styles.labelText,
+              {alignSelf: 'flex-end', flex: 1, color: COLOURS.yellow1},
+            ]}>
             {' '}
             {item.referenceNumber ? item?.referenceNumber.trim() : 'None'}
           </ProductSans>
@@ -141,13 +153,17 @@ const TransactionListComponent = ({item, handleClick, index}) => {
         <View
           style={{
             flexDirection: 'row',
+            paddingTop: 4,
           }}>
           <ProductSans style={[styles.labelText, {flex: 0.4}]}>
             Beneficiary Name:
           </ProductSans>
 
           <ProductSans
-            style={[styles.labelText, {alignSelf: 'flex-end', flex: 1}]}>
+            style={[
+              styles.labelText,
+              {alignSelf: 'flex-end', flex: 1, color: COLOURS.textInputColor},
+            ]}>
             {' '}
             {item.beneficiaryName ? item?.beneficiaryName.trim() : 'None'}
           </ProductSans>
@@ -157,6 +173,7 @@ const TransactionListComponent = ({item, handleClick, index}) => {
         <View
           style={{
             flexDirection: 'row',
+            paddingTop: 4,
           }}>
           <ProductSans style={[styles.labelText, {flex: 0.4}]}>
             Date:
