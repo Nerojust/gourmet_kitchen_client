@@ -17,6 +17,22 @@ export const setOrderStatus = status => {
   };
 };
 
+export const clearEverythingOrders = () => {
+  return dispatch => {
+    dispatch({
+      type: 'CLEAR_ORDERS_STATE',
+    });
+  };
+};
+export const clearAnalyticsData = () => {
+  console.log('analytics cleared');
+  return dispatch => {
+    dispatch({
+      type: 'CLEAR_ANALYTICS_STATE',
+    });
+  };
+};
+
 export const getSalesAnalytics = date => {
   console.log('About to get all sales analytics data');
 
@@ -83,7 +99,7 @@ export const getAllOrderedProductsStats = date => {
       date + ' 23:59:59'
     }`;
 
-    // console.log("geturl", getUrl);
+    console.log('geturl', getUrl);
     return client
       .get(getUrl)
       .then(response => {
@@ -211,7 +227,8 @@ export const getAllSalesAverage = orderDate => {
             return response?.data?.results;
           } else {
             if (response.data.code == 400) {
-              alert('No record found');
+              //alert('No record found');
+              dispatch(clearAnalyticsData());
             } else {
               alert(response?.data?.message);
             }

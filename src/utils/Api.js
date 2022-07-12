@@ -6,8 +6,8 @@ if (Platform.OS == 'android') {
 } else {
   localBase = 'localhost';
 }
-const baseURL = `http://${localBase}:8089/api/`;
-//const baseURL = 'https://gourmet-kitchen-api-oq8ef.ondigitalocean.app/api/';
+//const baseURL = `http://${localBase}:8089/api/`;
+const baseURL = 'https://gourmet-kitchen-api-oq8ef.ondigitalocean.app/api/';
 
 let client = axios.create({
   baseURL,
@@ -37,7 +37,7 @@ client.interceptors.response.use(
       //     clearStorage();
       //   });
     } else {
-      console.log('full error is ', error.message);
+      console.log('full error is ', error.response.data.message);
       return Promise.reject(error);
     }
   },

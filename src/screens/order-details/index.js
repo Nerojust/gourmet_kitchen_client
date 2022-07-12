@@ -440,7 +440,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
 
                 <AvertaBold
                   style={[styles.calculatedAmountText, {flex: 0.72, right: 0}]}>
-                  {NAIRA_ + calculateAmount()}
+                  {calculateAmount()}
                 </AvertaBold>
               </View>
             </View>

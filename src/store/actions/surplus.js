@@ -51,8 +51,8 @@ export const getAllSurplus = date => {
       loading: true,
       error: null,
     });
-    var getUrl = `/surplus?startDate=${date + ' 00:00:01'}&endDate=${
-      date + ' 23:59:59'
+    var getUrl = `/surplus?startDate=${date + 'T00:00:01'}&endDate=${
+      date + 'T23:59:59'
     }`;
 
     console.log('geturl surplus', getUrl);

@@ -21,6 +21,7 @@ import {
   sortArrayByDate,
   sortArrayData,
   sortArrayByDateDesc,
+  groupBy,
 } from '../../utils/utils';
 import AddComponent from '../../components/AddComponent';
 import LoaderShimmerComponent from '../../components/LoaderShimmerComponent';
@@ -42,6 +43,7 @@ const StoreSalesScreen = ({navigation}) => {
   const [isSearchClicked, setIsSearchClicked] = useState(false);
   var surplusData = Object.assign([], surplus);
   const [filteredSurplusData, setFilteredSurplusData] = useState(surplusData);
+  const [finalMiniArray, setFinalMiniArray] = useState({});
   const [searchInputValue, setSearchInputValue] = useState('');
   //console.log('redux surplus', surplus);
   const dispatch = useDispatch();
@@ -179,39 +181,109 @@ const StoreSalesScreen = ({navigation}) => {
     );
   };
 
+  const handleMinisStructure = results => {
+    let tempObj = {};
+    if (results) {
+      let dataproducts = groupBy(results, 'productname');
+      //console.log('result', dataproducts);
+      if (dataproducts) {
+        Object.keys(dataproducts).forEach((item, i) => {
+          // console.log("mini item",item)
+          const data = {};
+          dataproducts[item].forEach(element => {
+            //console.log('one element', item, element);
+            if (
+              element.productsize === 'Mini < 4' ||
+              element.productsize === 'Mini > 4'
+            ) {
+              //console.log('getting here', data['Mini'], element.count);
+              let sumValue;
+              if (data['Mini']) {
+                sumValue =
+                  parseInt(data['Mini'].count) + parseInt(element.count);
+
+                data['Mini'].count = sumValue;
+              } else {
+                data['Mini'] = element;
+              }
+            } else {
+              //console.log('else block');
+              data[element.productsize] = element;
+            }
+          });
+          // console.log('res', data);
+          tempObj[item] = data;
+        });
+        const sortedData = Object.fromEntries(
+          Object.keys(tempObj)
+            .sort()
+            .map(key => [key, tempObj[key]]),
+        );
+
+        //setFinalMiniArray(sortedData);
+
+        return sortedData;
+      }
+    }
+  };
+
   var _ = require('lodash');
 
   const handleClick = item => {
-    console.log('item', item);
-
+    // console.log('item', item);
+    // console.log('list is ' + finalMiniArray);
     let miniArray = [];
     var stringData = 'Available Bread List \n';
 
-    //map through the list
-    sortArrayData(surplus, 'productname').map((item, i) => {
-      let grouped_data = _.chain(surplus)
-        .groupBy('productsize')
+    Object.entries(handleMinisStructure(surplus)).map(
+      ([parentKey, value], i) => {
+        // console.log('iii', i);
+        {
+          Object.entries(value).map(([childKey, value]) => {
+            //console.log(`${childKey} ${value}`);
+            if (value) {
+              //console.log('pdt', item.productname, 'size', item.productsize);
+              stringData =
+                stringData +
+                '\n' +
+                '' +
+                parentKey +
+                ' | ' +
+                childKey +
+                ' | ' +
+                value.count +
+                (value?.count > 0 ? ' pcs' : 'pc');
+            }
+          });
+        }
+      },
+    );
 
-        //.map((productname, productsize) => (productname, productsize))
-        .value();
-      // console.log(grouped_data);
-      if (item) {
-        // console.log('pdt', item.productname, 'size', item.productsize);
-        stringData =
-          stringData +
-          '\n' +
-          '' +
-          item.productname +
-          ' | ' +
-          item.productsize +
-          ' | ' +
-          item.count +
-          (item?.count > 0 ? ' pcs' : 'pc');
-      }
-    });
+    //map through the list
+    // sortArrayData(surplus, 'productname').map((item, i) => {
+    //   // let grouped_data = _.chain(surplus)
+    //   //   .groupBy('productsize')
+
+    //   //   //.map((productname, productsize) => (productname, productsize))
+    //   //   .value();
+    //   // console.log(grouped_data);
+    //   if (item) {
+    //     // console.log('pdt', item.productname, 'size', item.productsize);
+    //     stringData =
+    //       stringData +
+    //       '\n' +
+    //       '' +
+    //       item.productname +
+    //       ' | ' +
+    //       item.productsize +
+    //       ' | ' +
+    //       item.count +
+    //       (item?.count > 0 ? ' pcs' : 'pc');
+    //   }
+    // });
 
     Clipboard.setString(stringData);
-    alert('Copied to clipboard');
+    alert('Surplus copied to clipboard');
   };
 
   return (
@@ -241,7 +313,9 @@ const StoreSalesScreen = ({navigation}) => {
               cancelPress={handleCancelSearch}
             />
           ) : null}
+
           {renderDatePicker()}
+
           <View
             style={{
               justifyContent: 'center',
@@ -255,6 +329,7 @@ const StoreSalesScreen = ({navigation}) => {
                 : surplus && sortArrayByDate(surplus, 'productname').length}
             </ProductSans>
           </View>
+
           <FlatList
             data={
               searchInputValue.length > 0

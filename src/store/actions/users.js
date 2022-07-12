@@ -1,5 +1,6 @@
 import client from '../../utils/Api';
 import {handleError} from '../../utils/utils';
+import {clearEverythingOrders} from './orders';
 
 export const login = payload => {
   console.log('About to login with ', payload);
@@ -25,7 +26,13 @@ export const login = payload => {
             console.log(
               'Login successful for ',
               response.data.results?.user?.firstname,
-              response.data.results?.user?.lastname + '\n' + accessToken + '\n'+ role.name + " "+ role.id,
+              response.data.results?.user?.lastname +
+                '\n' +
+                accessToken +
+                '\n' +
+                role.name +
+                ' ' +
+                role.id,
             );
 
             client.defaults.headers.common[
@@ -61,7 +68,7 @@ export const login = payload => {
       })
       .catch(error => {
         console.log('Login failed =>', error.message);
-       
+
         dispatch({
           type: 'LOGIN_FAILED',
           loading: false,
@@ -574,6 +581,8 @@ export const logoutUser = () => {
   //navigation.goBack();
 
   return dispatch => {
+    dispatch(clearEverythingOrders());
+
     dispatch({
       type: 'LOGOUT_USER',
       user: null,

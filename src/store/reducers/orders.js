@@ -36,6 +36,22 @@ export default (state = initialState, action) => {
       return {
         ...state,
         orders: [],
+        phoneArray: [],
+        orders: [],
+        analytics: [],
+        orderedProductsStats: [],
+        orderedProducts: [],
+        riderAnalytics: [],
+      };
+
+
+    case 'CLEAR_ANALYTICS_STATE':
+      return {
+        ...state,
+        analytics: [],
+        orderedProductsStats: [],
+        riderAnalytics: [],
+        salesAverage:{}
       };
     case 'SAVE_ORDER_DATE':
       return {

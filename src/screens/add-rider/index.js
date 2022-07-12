@@ -94,7 +94,7 @@ const AddRiderScreen = ({navigation}) => {
       // }
 
       var payload = {
-        email,
+        //email,
         fullName: fullName,
         phoneNumber: phoneNumber,
         userId: user?.id,

@@ -59,6 +59,7 @@ import {
 } from '../../store/actions/delivery-types';
 import ProductSans from '../../components/Text/ProductSans';
 import {createSurplus} from '../../store/actions/surplus';
+import {getDateWithoutTime} from '../../utils/DateFilter';
 
 // create a component
 const NewStoreSalesScreen = ({navigation, route}) => {
@@ -307,8 +308,10 @@ const NewStoreSalesScreen = ({navigation, route}) => {
 
       var payload = {
         count: parseInt(surplusCount),
-        productId: selectedProduct.id,
-        productName: selectedProduct.name,
+        productId: selectedProduct?.id,
+        startDate: getDateWithoutTime(new Date()) + ' 00:00:01',
+        endDate: getDateWithoutTime(new Date()) + ' 23:59:59',
+        // productName: selectedProduct.name,
         //productCategory: selectedProduct.categorySize.name,
         productSize: selectedProduct.categorySize.name,
       };

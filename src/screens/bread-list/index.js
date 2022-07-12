@@ -158,7 +158,7 @@ const BreadListScreen = ({navigation}) => {
               });
 
             var difference = _.difference(result, setResult);
-            //console.log(difference);
+            // console.log(difference);
 
             //console.log("final",finalArrayData)
             setHasLoaded(true);
@@ -228,7 +228,7 @@ const BreadListScreen = ({navigation}) => {
   };
 
   const getMinisData = () => {
-    console.log('called mini');
+    //console.log('called mini');
     setHasLoaded(false);
     dispatch(getAllSets()).then(setResult => {
       if (setResult) {
@@ -277,7 +277,7 @@ const BreadListScreen = ({navigation}) => {
             let filteredResult = newResult.filter(element =>
               element.productsize.toLowerCase().includes('mini'),
             );
-           // console.log('filetered minis', filteredResult);
+            // console.log('filetered minis', filteredResult);
             setMiniArray(filteredResult);
 
             //now find all the sets ordered
@@ -285,7 +285,7 @@ const BreadListScreen = ({navigation}) => {
               //console.log('one set dd', oneSet.products);
               filteredResult.map((singleItem, i) => {
                 if (oneSet.zupasetid.trim() == singleItem?.productid.trim()) {
-                  console.log('set ' + iset, oneSet.zupasetname);
+                  //console.log('set ' + iset, oneSet.zupasetname);
                   setArray.push(singleItem);
                 }
               });
@@ -293,7 +293,7 @@ const BreadListScreen = ({navigation}) => {
               //now reconstruct the sets found
               setArray.map((item, i) => {
                 if (item) {
-                  console.log('item', item);
+                  //console.log('item', item);
                   setResult.map((oneSet, i) => {
                     if (oneSet) {
                       if (item.productid == oneSet.zupasetid) {
@@ -357,7 +357,7 @@ const BreadListScreen = ({navigation}) => {
             .sort()
             .map(key => [key, tempObj[key]]),
         );
-
+        //console.log("sorted",sortedData)
         setFinalObjectArray(sortedData);
       }
     }
@@ -545,7 +545,7 @@ const BreadListScreen = ({navigation}) => {
         }>
         {Object.entries(finalObjectArray).length > 0 ? (
           Object.entries(finalObjectArray).map(([key, value], i) => {
-            // console.log(`${key} ${value}`);
+            //console.log(`${key} ${value}`);
             // console.log('iii', i);
             return (
               <View key={key + i}>
