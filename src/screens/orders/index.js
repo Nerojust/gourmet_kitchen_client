@@ -37,6 +37,7 @@ import {
 import moment from 'moment';
 import CustomSuccessModal from '../../components/CustomSuccessModal';
 import {DIALOG_TIMEOUT} from '../../utils/Constants';
+import { useMemo } from 'react';
 
 // create a component
 const OrdersScreen = ({navigation}) => {
@@ -254,6 +255,7 @@ const OrdersScreen = ({navigation}) => {
       goToMessageScreen();
     }
   };
+
   const renderDatePicker = () => {
     return (
       <DatePicker
