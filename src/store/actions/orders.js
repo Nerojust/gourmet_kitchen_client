@@ -791,10 +791,10 @@ export const updateOrderAllItemsByOrderId = (
             });
             if (!isDashboard) {
               dispatch(getOrder(id));
+            }
               dispatch(
                 getAllOrderedProducts('all', getDateWithoutTime(orderDate)),
               );
-            }
             return response?.data?.results;
           } else {
             alert(response?.data?.message);

@@ -136,7 +136,7 @@ export const BackViewSurplus = ({
       ) : null}
       <ProductSansBold
         style={{
-          fontSize: fp(19),
+          fontSize: fp(16),
           flex: 2,
           color: COLOURS.gray2,
           right: displayCalendar ? -wp(10) : 0,
@@ -390,7 +390,8 @@ const styles = StyleSheet.create({
   searchImage: {
     width: wp(18),
     height: wp(18),
-    marginRight: 20,
+    left: wp(-5),
+    marginHorizontal:10,
   },
   deleteImage: {
     width: wp(18),

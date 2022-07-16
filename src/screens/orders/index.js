@@ -59,6 +59,7 @@ const OrdersScreen = ({navigation}) => {
   const {riders, rider, ridersLoading, updateRidersLoading} = useSelector(
     state => state.riders,
   );
+  const [selectedOrderItem, setSelectedOrderItem] = useState();
   const [isDispatched, setIsDispatched] = useState(false);
   var ordersData = Object.assign([], orders);
   const [filteredOrdersData, setFilteredOrdersData] = useState(ordersData);
@@ -98,7 +99,7 @@ const OrdersScreen = ({navigation}) => {
 
   useEffect(() => {
     fetchAllData();
-  }, [statusState, selectedTab, selectedOrderDate, isDispatched]);
+  }, [isDispatched, statusState, selectedTab, selectedOrderDate]);
 
   useEffect(() => {
     dispatch(getAllRiders());
@@ -132,7 +133,7 @@ const OrdersScreen = ({navigation}) => {
       orderDate: getDateWithoutTime(selectedOrderDate),
     });
   };
-  const [selectedOrderItem, setSelectedOrderItem] = useState();
+
   const handleFulfillOrderClick = (value, item) => {
     //console.log('dispatch click item', value, item);
     setSelectedOrderItem(item);
@@ -143,7 +144,7 @@ const OrdersScreen = ({navigation}) => {
       displayFulfillAllDialog(true, item);
     }
   };
-  
+
   const displayFulfillAllDialog = (showRiderSheet = false, item) => {
     let count = item?.products.length;
     let msg;
@@ -171,14 +172,13 @@ const OrdersScreen = ({navigation}) => {
               updateOrderAllItemsByOrderId(item?.id, orderDate, true),
             ).then(result => {
               if (result) {
-              
                 if (showRiderSheet) {
                   showBottomSheet(ridersSheetRef);
                 } else {
-                  showSuccessDialogDispatch(false);
+                  showSuccessDialogDispatch();
+                  // setIsDispatched(true);
                   //setIsDone(true);
                 }
-                setIsDispatched(true);
               }
             });
           },
@@ -222,8 +222,10 @@ const OrdersScreen = ({navigation}) => {
     dispatch(updateOrderDispatchByOrderId(selectedOrderItem?.id, payload)).then(
       result => {
         if (result) {
+          // console.log("dispdjfkdljlsjdflksdjfsdf")
+          setSelectedRider({});
           showSuccessDialogDispatch(false);
-          setIsDispatched(true);
+          fetchAllData();
         }
       },
     );
