@@ -184,8 +184,8 @@ const StoreSalesScreen = ({navigation}) => {
   const handleMinisStructure = results => {
     let tempObj = {};
     if (results) {
-      let dataproducts = groupBy(results, 'productname');
-      //console.log('result', dataproducts);
+      let dataproducts = groupBy(surplus, 'productsize');
+      console.log('result', dataproducts);
       if (dataproducts) {
         Object.keys(dataproducts).forEach((item, i) => {
           // console.log("mini item",item)
@@ -232,7 +232,7 @@ const StoreSalesScreen = ({navigation}) => {
   const handleClick = item => {
     // console.log('item', item);
     // console.log('list is ' + finalMiniArray);
-    let miniArray = [];
+    //console.log("surplus",handleMinisStructure(surplus))
     var stringData = 'Available Bread List \n';
 
     Object.entries(handleMinisStructure(surplus)).map(

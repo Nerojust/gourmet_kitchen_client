@@ -1,5 +1,5 @@
 //import liraries
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   View,
   FlatList,
@@ -20,6 +20,8 @@ import {
   saveOrderDate,
   setOrderStatus,
   updateCompleteStatusForOrder,
+  updateOrderAllItemsByOrderId,
+  updateOrderDispatchByOrderId,
 } from '../../store/actions/orders';
 import ProductSans from '../../components/Text/ProductSans';
 import {COLOURS} from '../../utils/Colours';
@@ -37,7 +39,10 @@ import {
 import moment from 'moment';
 import CustomSuccessModal from '../../components/CustomSuccessModal';
 import {DIALOG_TIMEOUT} from '../../utils/Constants';
-import { useMemo } from 'react';
+import {useMemo} from 'react';
+import {BottomSheetRiderComponent} from '../../components/BottomSheetComponent';
+import {getAllRiders} from '../../store/actions/riders';
+import {dismissBottomSheetDialog, showBottomSheet} from '../../utils/utils';
 
 // create a component
 const OrdersScreen = ({navigation}) => {
@@ -51,8 +56,16 @@ const OrdersScreen = ({navigation}) => {
     orderDate,
   } = useSelector(state => state.orders);
   //console.log('order date is ', orderDate);
+  const {riders, rider, ridersLoading, updateRidersLoading} = useSelector(
+    state => state.riders,
+  );
+  const [isDispatched, setIsDispatched] = useState(false);
   var ordersData = Object.assign([], orders);
   const [filteredOrdersData, setFilteredOrdersData] = useState(ordersData);
+  var ridersData = Object.assign([], riders);
+  const [filteredRidersData, setFilteredRidersData] = useState(ridersData);
+  const [ridersInputValue, setRidersInputValue] = useState('');
+  const [selectedRider, setSelectedRider] = useState({});
   const [searchInputValue, setSearchInputValue] = useState('');
   const [isSearchCleared, setIsSearchCleared] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -85,9 +98,10 @@ const OrdersScreen = ({navigation}) => {
 
   useEffect(() => {
     fetchAllData();
-  }, [statusState, selectedTab, selectedOrderDate]);
+  }, [statusState, selectedTab, selectedOrderDate, isDispatched]);
 
   useEffect(() => {
+    dispatch(getAllRiders());
     dispatch(getAllProducts('', 0, 0, null));
   }, []);
 
@@ -118,11 +132,127 @@ const OrdersScreen = ({navigation}) => {
       orderDate: getDateWithoutTime(selectedOrderDate),
     });
   };
-
-  const renderItems = ({item, index}) => {
-    return <OrderProductComponent item={item} handleClick={handleClick} />;
+  const [selectedOrderItem, setSelectedOrderItem] = useState();
+  const handleFulfillOrderClick = (value, item) => {
+    //console.log('dispatch click item', value, item);
+    setSelectedOrderItem(item);
+    if (value == 'Fulfill') {
+      displayFulfillAllDialog(false, item);
+    }
+    if (value == 'Dispatch') {
+      displayFulfillAllDialog(true, item);
+    }
+  };
+  
+  const displayFulfillAllDialog = (showRiderSheet = false, item) => {
+    let count = item?.products.length;
+    let msg;
+    if (count > 1) {
+      msg = 'items';
+    } else {
+      msg = 'item';
+    }
+    Alert.alert(
+      'Alert',
+      `Do you want to ${
+        showRiderSheet ? 'fulfill and dispatch ' : ' fulfill'
+      } ${item?.products.length} ${msg} in this order?`,
+      [
+        {
+          text: 'No',
+          onPress: () => {
+            console.log('cancel Pressed');
+          },
+        },
+        {
+          text: 'Yes',
+          onPress: () => {
+            dispatch(
+              updateOrderAllItemsByOrderId(item?.id, orderDate, true),
+            ).then(result => {
+              if (result) {
+              
+                if (showRiderSheet) {
+                  showBottomSheet(ridersSheetRef);
+                } else {
+                  showSuccessDialogDispatch(false);
+                  //setIsDone(true);
+                }
+                setIsDispatched(true);
+              }
+            });
+          },
+        },
+      ],
+      {cancelable: true},
+    );
   };
 
+  const renderItems = ({item, index}) => {
+    return (
+      <OrderProductComponent
+        item={item}
+        handleClick={handleClick}
+        handleDispatchClick={handleFulfillOrderClick}
+      />
+    );
+  };
+  const handleSingleItemPress = async (
+    item,
+    isProduct,
+    isDelivery,
+    isRider,
+  ) => {
+    console.log('clicked item is ', item);
+
+    if (isRider) {
+      setSelectedRider(item);
+      dismissBottomSheetDialog(ridersSheetRef);
+
+      handlePatchDisptach(item);
+    }
+  };
+  const handlePatchDisptach = rider => {
+    //console.log('Patch dispatch');
+    // setHasPatchedDispatch(false);
+    let payload = {
+      riderId: rider?.id,
+    };
+    console.log('payload dispatch', payload);
+    dispatch(updateOrderDispatchByOrderId(selectedOrderItem?.id, payload)).then(
+      result => {
+        if (result) {
+          showSuccessDialogDispatch(false);
+          setIsDispatched(true);
+        }
+      },
+    );
+  };
+  handleRefreshIncaseOfNetworkFailure = (isProduct, isDelivery, isRider) => {
+    if (isRider) {
+      dispatch(getAllRiders());
+    }
+  };
+  const handleRidersSearchText = text => {
+    if (text) {
+      const newData = riders?.filter(item => {
+        const itemData = item?.name
+          ? item?.name.toUpperCase()
+          : ''.toUpperCase();
+        const textData = text.toUpperCase();
+        return itemData.indexOf(textData) > -1;
+      });
+      setFilteredRidersData(newData);
+      setRidersInputValue(text);
+    } else {
+      setFilteredRidersData(riders);
+      setRidersInputValue(text);
+    }
+  };
+  const handleCloseActionRider = () => {
+    setRidersInputValue('');
+    dismissBottomSheetDialog(ridersSheetRef);
+  };
   const handleAllOrders = () => {
     selectTab(0);
     setStatusState('all');
@@ -201,8 +331,23 @@ const OrdersScreen = ({navigation}) => {
       //onPressButton={() => navigation.goBack()}
     />
   );
+  const renderSuccessModalDispatch = () => (
+    <CustomSuccessModal
+      isModalVisible={isSuccessModalVisible}
+      dismissModal={showSuccessDialogDispatch}
+      message={'Order fulfilled successfully'}
+      //onPressButton={() => navigation.goBack()}
+    />
+  );
 
   const showSuccessDialog = () => {
+    setIsSuccessModalVisible(!isSuccessModalVisible);
+    setTimeout(() => {
+      setIsSuccessModalVisible(false);
+      // navigation.goBack();
+    }, DIALOG_TIMEOUT);
+  };
+  const showSuccessDialogDispatch = () => {
     setIsSuccessModalVisible(!isSuccessModalVisible);
     setTimeout(() => {
       setIsSuccessModalVisible(false);
@@ -255,7 +400,11 @@ const OrdersScreen = ({navigation}) => {
       goToMessageScreen();
     }
   };
-
+  const handleAddRider = () => {
+    // console.log('add rider');
+    navigation.push('AddRider');
+    dismissBottomSheetDialog(ridersSheetRef);
+  };
   const renderDatePicker = () => {
     return (
       <DatePicker
@@ -285,6 +434,24 @@ const OrdersScreen = ({navigation}) => {
     setOpen(!open);
   };
 
+  const ridersSheetRef = useRef();
+  const renderBottomSheet = () => {
+    return (
+      <BottomSheetRiderComponent
+        sheetRef={ridersSheetRef}
+        handleRefresh={handleRefreshIncaseOfNetworkFailure}
+        isRidersLoading={ridersLoading}
+        filteredDataSource={filteredRidersData}
+        dataSource={ridersInputValue.length > 0 ? filteredRidersData : riders}
+        closeAction={handleCloseActionRider}
+        handleSingleItemPress={handleSingleItemPress}
+        inputValue={ridersInputValue}
+        // handleSearchInputSubmit={handleProductSubmitSearchext}
+        handleInputSearchText={handleRidersSearchText}
+        addRiderPress={handleAddRider}
+      />
+    );
+  };
   return (
     <ViewProviderComponent>
       <HeaderComponent
@@ -321,6 +488,10 @@ const OrdersScreen = ({navigation}) => {
         allowFourth
       />
       {renderDatePicker()}
+      {renderBottomSheet()}
+      {renderSuccessModal()}
+      {renderSuccessModalDispatch()}
+
       <View
         style={{
           justifyContent: 'center',
@@ -334,7 +505,7 @@ const OrdersScreen = ({navigation}) => {
             : orders.length}
         </ProductSans>
       </View>
-      {renderSuccessModal()}
+
       <FlatList
         data={searchInputValue.length > 0 ? filteredOrdersData : orders}
         renderItem={renderItems}
@@ -363,6 +534,7 @@ const OrdersScreen = ({navigation}) => {
         }
       />
       <AddComponent goto={handleNewOrder} />
+      <LoaderShimmerComponent isLoading={updateOrderLoading} />
       <LoaderShimmerComponent isLoading={deleteAllOrdersLoading} />
       <LoaderShimmerComponent isLoading={ordersLoading} />
     </ViewProviderComponent>

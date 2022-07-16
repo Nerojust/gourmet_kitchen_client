@@ -51,7 +51,7 @@ export const BackViewHeader = ({
 
       <ProductSansBold
         style={{
-          fontSize: fp(19),
+          fontSize: fp(16),
           flex: 2,
           color: COLOURS.gray2,
           right: displayCalendar ? -wp(10) : 0,
@@ -335,7 +335,7 @@ export const BackViewWithLogout = ({
         />
       </TouchableOpacity>
       <ProductSansBold
-        style={{fontSize: fp(19), flex: 1.3, color: COLOURS.gray2}}
+        style={{fontSize: fp(18), flex: 1.3, color: COLOURS.gray2}}
         numberOfLines={1}>
         {backText}
       </ProductSansBold>
@@ -343,7 +343,7 @@ export const BackViewWithLogout = ({
         <TouchableOpacity onPress={toggleDateModal}>
           <Image
             source={require('../assets/images/calendar.png')}
-            style={[styles.calendarImage, {tintColor: COLOURS.gray4}]}
+            style={[styles.calendarImage, {tintColor: COLOURS.gray5}]}
             resizeMode={'contain'}
           />
         </TouchableOpacity>
@@ -363,7 +363,7 @@ export const BackViewWithLogout = ({
             <Image
               source={require('../assets/images/logout.png')}
               resizeMode={'contain'}
-              style={{width: 23, height: 23,tintColor:COLOURS.gray4}}
+              style={{width: 23, height: 23,tintColor:COLOURS.gray}}
             />
           </TouchableOpacity>
         ) : null}
@@ -388,19 +388,19 @@ const styles = StyleSheet.create({
     flex: 0.9,
   },
   searchImage: {
-    width: wp(19),
-    height: wp(19),
+    width: wp(18),
+    height: wp(18),
     marginRight: 20,
   },
   deleteImage: {
-    width: wp(19),
-    height: wp(19),
+    width: wp(18),
+    height: wp(18),
     marginLeft: 0,
     flex: 1,
   },
   calendarImage: {
-    width: wp(19),
-    height: wp(19),
+    width: wp(18),
+    height: wp(18),
     marginRight: 30,
     flex: 1,
   },

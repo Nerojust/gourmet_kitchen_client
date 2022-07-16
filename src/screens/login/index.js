@@ -89,8 +89,10 @@ const LoginScreen = ({navigation}) => {
       var payload = {
         email: email,
         password,
+        device: Platform.OS + ' ' + Platform.Version,
       };
 
+      // console.log('login payload', payload);
       dispatch(login(payload));
     });
   };

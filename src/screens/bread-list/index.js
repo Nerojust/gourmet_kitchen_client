@@ -670,11 +670,12 @@ const BreadListScreen = ({navigation}) => {
   };
 
   const handleSingleItemPress = (key, value) => {
-    // console.log('inside key', key, 'value', value);
+    console.log('inside key', key, 'value', value);
     dismissBottomSheetDialog(breadRef);
     navigation.navigate('BreadListDetails', {
       bread: value,
       date: selectedOrderDate,
+
     });
   };
   const renderBottomSheet = () => {
