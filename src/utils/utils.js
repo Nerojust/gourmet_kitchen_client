@@ -22,7 +22,7 @@ import call from 'react-native-phone-call';
 import {DrawerActions} from '@react-navigation/routers';
 import moment from 'moment';
 import RNImmediatePhoneCall from 'react-native-immediate-phone-call';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 export const capitalizeWord = string => {
   var result = [];
   string &&
@@ -177,10 +177,9 @@ export const addOrSubractDays = (startingDate, number, add) => {
     return new Date(new Date().setDate(startingDate.getDate() - number));
   }
 };
-export const hasRightToAccess =()=>{
+export const hasRightToAccess = () => {
   //const {user, role} = useSelector(x => x.users);
-
-}
+};
 
 export const formatNumberComma = inputNumber => {
   let formattedNumber = Number(inputNumber)
@@ -502,13 +501,15 @@ export const sendWhatsappMessage = (phoneNumber, message) => {
 };
 
 export function groupBy(objectArray, property) {
-  return objectArray.reduce(function (acc, obj) {
-    let key = obj[property];
-    if (!acc[key]) {
-      acc[key] = [];
+  return objectArray.reduce(function (objectMapResult, singleItem) {
+    // console.log('acc', objectMapResult);
+    // console.log('obj', singleItem);
+    let keyValueToMapWith = singleItem[property]; //single item from the list e.g. size
+    if (!objectMapResult[keyValueToMapWith]) {
+      objectMapResult[keyValueToMapWith] = [];
     }
-    acc[key].push(obj);
-    return acc;
+    objectMapResult[keyValueToMapWith].push(singleItem);
+    return objectMapResult;
   }, {});
 }
 

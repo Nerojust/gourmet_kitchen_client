@@ -67,9 +67,9 @@ const SurplusListItemComponent = ({
         </View>
       </View>
       <View style={{marginTop: 0}}>
-        <ProductSans style={[styles.labelText, {fontSize: fp(14)}]}>
+        <ProductSans style={[styles.labelText, {fontSize: fp(13)}]}>
           ENTERED OVEN AT{' '}
-          {item.createdat ? moment(item.createdat).format('LLL') : 'None'}
+          {item.createdat ? moment(item.updatedat).format('LLL') : 'None'}
         </ProductSans>
         {/* <ProductSans style={[styles.priceName,{ fontWeight: 'normal',}]}>
             {item.createdat ? moment(item.createdat).format('LT') : 'None'}
@@ -84,18 +84,11 @@ const styles = StyleSheet.create({
   item: {
     backgroundColor: COLOURS.white,
     padding: 10,
-    marginVertical: 5,
+    // marginVertical: 5,
     marginHorizontal: 16,
     paddingHorizontal: 0,
     borderRadius: 10,
     //flex: 1,
-  },
-  labelText: {
-    fontSize: fp(13),
-    color: COLOURS.labelTextColor,
-    paddingTop: 3,
-    paddingBottom: 5,
-    // left: 12,
   },
   productName: {
     fontSize: fp(16),
@@ -108,14 +101,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   quantityName: {
-    fontSize: fp(15),
+    fontSize: fp(14),
     color: COLOURS.textInputColor,
-    fontWeight: 'bold',
+    fontWeight: '500',
     alignSelf: 'center',
   },
   customerNameView: {
     backgroundColor: COLOURS.lightGray4,
-    padding: 10,
+    padding: 5,
     marginVertical: 5,
     marginHorizontal: 16,
     paddingHorizontal: 20,
@@ -123,9 +116,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   labelText: {
-    fontSize: fp(16),
+    fontSize: fp(13),
     color: COLOURS.labelTextColor,
-    paddingTop: 5,
+    paddingTop: 3,
     paddingBottom: 10,
     // left: 12,
   },

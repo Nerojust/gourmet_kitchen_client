@@ -184,7 +184,7 @@ const StoreSalesScreen = ({navigation}) => {
   const handleMinisStructure = results => {
     let tempObj = {};
     if (results) {
-      let dataproducts = groupBy(surplus, 'productsize');
+      let dataproducts = groupBy(surplus, 'productname');
       console.log('result', dataproducts);
       if (dataproducts) {
         Object.keys(dataproducts).forEach((item, i) => {

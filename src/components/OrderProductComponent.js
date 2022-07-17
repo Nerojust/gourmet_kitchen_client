@@ -180,9 +180,7 @@ const OrderProductComponent = ({item, handleClick, handleDispatchClick}) => {
                 Fulfill
               </ProductSansBold>
             </TouchableOpacity>
-          ) : (
-            <View />
-          )}
+          ) : null}
           {!item.dispatch ? (
             <TouchableOpacity
               onPress={() => handleDispatchClick('Dispatch', item)}
@@ -212,9 +210,7 @@ const OrderProductComponent = ({item, handleClick, handleDispatchClick}) => {
                 Dispatch
               </ProductSansBold>
             </TouchableOpacity>
-          ) : (
-            <View />
-          )}
+          ) : null}
         </View>
       </View>
     </TouchableOpacity>
