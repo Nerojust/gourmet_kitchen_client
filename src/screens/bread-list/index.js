@@ -39,7 +39,7 @@ import Modal from 'react-native-modal';
 import {Menu, MenuItem, MenuDivider} from 'react-native-material-menu';
 import moment from 'moment';
 import {getDateWithoutTime} from '../../utils/DateFilter';
-import _, {filter, result, set} from 'lodash';
+import _, {difference, filter, result, set} from 'lodash';
 import BreadListItemComponent1 from '../../components/BreadListItemComponent1';
 import {
   BottomSheetBreadSizeComponent,
@@ -106,8 +106,7 @@ const BreadListScreen = ({navigation}) => {
   //   }, {});
   //   console.log("resss",result)
   // }, []);
- 
- 
+
   useEffect(() => {
     fetchAllData();
   }, [selectedOrderDate, selectedTab]);
@@ -179,7 +178,7 @@ const BreadListScreen = ({navigation}) => {
             // // console.log(difference);
 
             // //console.log("final",finalArrayData)
-            // setHasLoaded(true);
+            setHasLoaded(true);
             handleAllLoavesStructure(result);
           }
         });
@@ -196,11 +195,11 @@ const BreadListScreen = ({navigation}) => {
         ).then((result, i) => {
           if (result) {
             //console.log("result ",result)
-            // let filteredResult = result.filter(
-            //   element => !element.productsize.toLowerCase().includes('mini'),
-            // );
-
-            // setFullLoavesArray(filteredResult);
+            let filteredResult = result.filter(
+              element => !element.productsize.toLowerCase().includes('mini'),
+            );
+            //console.log("filtered result",filteredResult)
+            setFullLoavesArray(filteredResult);
 
             // setResult.forEach((oneSet, iset) => {
             //   filteredResult.map((singleItem, i) => {
@@ -237,7 +236,7 @@ const BreadListScreen = ({navigation}) => {
 
             // //console.log("final",finalArrayData)
             // //handleAllLoavesStructure(difference);
-            // setHasLoaded(true);
+            setHasLoaded(true);
             handleFullLoavesStructure(result);
           }
         });
@@ -375,7 +374,7 @@ const BreadListScreen = ({navigation}) => {
             .sort()
             .map(key => [key, tempObj[key]]),
         );
-       // console.log("sorted",sortedData)
+        // console.log("sorted",sortedData)
         setFinalObjectArray(sortedData);
       }
     }
@@ -708,7 +707,7 @@ const BreadListScreen = ({navigation}) => {
   };
 
   const renderBottomSheet = () => {
-   // console.log("selected",selectedItem)
+    // console.log("selected",selectedItem)
     return (
       <BottomSheetBreadSizeComponent
         sheetRef={breadRef}
@@ -764,7 +763,7 @@ const BreadListScreen = ({navigation}) => {
             breadStyle={{flex: 0.33}}
             //shouldDisplayIcon={orderedProducts.length > 0}
             handleClick={openSettingsMenu}
-           // performRefresh={() => fetchAllData()}
+            // performRefresh={() => fetchAllData()}
           />
           {/* {isSearchClicked ? (
             <SearchInputComponent
