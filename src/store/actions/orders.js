@@ -751,7 +751,11 @@ export const updateOrderById = (id, payload, orderDate) => {
       });
   };
 };
-export const updateOrderAllItemsByOrderId = (id, orderDate) => {
+export const updateOrderAllItemsByOrderId = (
+  id,
+  orderDate,
+  isDashboard = false,
+) => {
   console.log(
     'About to fulfill all order items in single order with id',
     id,
@@ -785,11 +789,12 @@ export const updateOrderAllItemsByOrderId = (id, orderDate) => {
               loading: false,
               data: response?.data?.results,
             });
-
-            dispatch(getOrder(id));
-            dispatch(
-              getAllOrderedProducts('all', getDateWithoutTime(orderDate)),
-            );
+            if (!isDashboard) {
+              dispatch(getOrder(id));
+            }
+              dispatch(
+                getAllOrderedProducts('all', getDateWithoutTime(orderDate)),
+              );
             return response?.data?.results;
           } else {
             alert(response?.data?.message);

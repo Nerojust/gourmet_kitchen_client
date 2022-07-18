@@ -1447,10 +1447,11 @@ const OrderDetailsScreen = ({navigation, route}) => {
         alert('Sorry, order is already fulfilled');
       }
     } else if (item == 'dispatchOrder') {
-      if (!data.isfulfilled) {
+      if (!data.isfulfilled && !data?.dispatch) {
         displayFulfillAllDialog(true);
       } else {
-        alert('Sorry, order is already fulfilled');
+        // alert('Sorry, order is already fulfilled, you can only edit');
+        handleLoadRidersBottomSheet();
       }
     } else if (item == 'reschedule') {
       if (!order.isfulfilled) {

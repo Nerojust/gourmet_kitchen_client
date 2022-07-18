@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
   parentView: {
     width: '80%',
     height:
-      Platform.OS == 'android' ? deviceHeight * 0.048 : deviceHeight * 0.045,
+      Platform.OS == 'android' ? deviceHeight * 0.055 : deviceHeight * 0.045,
     marginLeft: 'auto',
     marginRight: 'auto',
     justifyContent: 'center',
@@ -203,23 +203,23 @@ const styles = StyleSheet.create({
     color: active === 0 ? COLOURS.white : COLOURS.textInputColor,
     left: active == 0 ? wp(3) : 0,
     textAlign: 'center',
-    fontSize: fp(14),
+    fontSize: Platform.OS == 'android' ? fp(12) : fp(13),
   }),
   pendingText: active => ({
     color: active === 1 ? COLOURS.white : COLOURS.textInputColor,
     textAlign: 'center',
-    fontSize: fp(14),
+    fontSize: Platform.OS == 'android' ? fp(12) : fp(13),
   }),
   incompleteText: active => ({
     color: active === 2 ? COLOURS.white : COLOURS.textInputColor,
     textAlign: 'center',
     left: active == 2 ? wp(4) : 0,
-    fontSize: fp(14),
+    fontSize: Platform.OS == 'android' ? fp(12) : fp(13),
   }),
   completedText: active => ({
     color: active === 3 ? COLOURS.white : COLOURS.textInputColor,
     textAlign: 'center',
-    fontSize: fp(14),
+    fontSize: Platform.OS == 'android' ? fp(12) : fp(13),
   }),
   tabSelectorView: {
     flexDirection: 'row',

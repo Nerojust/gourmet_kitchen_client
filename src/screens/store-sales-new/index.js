@@ -306,6 +306,11 @@ const NewStoreSalesScreen = ({navigation, route}) => {
         return;
       }
 
+      if (surplusCount < 0 || surplusCount == 0) {
+        alert('Surplus must be greater than 0');
+        return;
+      }
+
       var payload = {
         count: parseInt(surplusCount),
         productId: selectedProduct?.id,
@@ -313,7 +318,7 @@ const NewStoreSalesScreen = ({navigation, route}) => {
         endDate: getDateWithoutTime(new Date()) + ' 23:59:59',
         // productName: selectedProduct.name,
         //productCategory: selectedProduct.categorySize.name,
-        productSize: selectedProduct.categorySize.name,
+        productSize: selectedProduct?.categorySize?.name,
       };
       console.log('surplus payload', payload);
 

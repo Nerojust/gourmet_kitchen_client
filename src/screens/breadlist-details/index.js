@@ -57,7 +57,7 @@ const BreadListDetailsScreen = ({navigation, route}) => {
     orderDate,
   } = useSelector(x => x.orders);
   //console.log('count item', countItem);
-  var {productid} = route.params.bread;
+  var {productid,mini_productid} = route.params.bread;
   var selectedOrderDate = route.params.date;
   //console.log("dddd",selectedOrderDate)
   //console.log('route.params.brea item', route.params.bread);
@@ -324,12 +324,14 @@ const BreadListDetailsScreen = ({navigation, route}) => {
     var payload = {
       count: parseInt(ovenCount),
       productid: productid,
+      mini_productid,
       surplusCount,
     };
 
     var surplusPayload = {
       count: countTofulfill,
       productid: productid,
+      mini_productid,
       surplusCount,
       wasFulfilledFromSurplus: shouldUseSurplusTofulfill,
       orderProductIdFromPayload,

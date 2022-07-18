@@ -6,6 +6,7 @@ import {COLOURS} from '../utils/Colours';
 import DeliveryListComponent from './DeliveryListComponent';
 import RiderListComponent from './RiderListComponent';
 import BreadSizeComponent from './BreadSizeComponent';
+import BreadSizeComponent1 from './BreadSizeComponent1';
 
 export function BottomSheetProductComponent({
   sheetRef,
@@ -66,6 +67,52 @@ export function BottomSheetProductComponent({
   );
 }
 
+export function BottomSheetBreadSizeComponent1({
+  sheetRef,
+  dataSource,
+  handleSingleItemPress,
+  closeAction,
+  itemName,
+}) {
+  return (
+    <RBSheet
+      ref={sheetRef}
+      animationType={'slide'}
+      closeDuration={0}
+      openDuration={0}
+      closeOnDragDown={true}
+      closeOnPressMask={true}
+      closeOnPressBack={true}
+      keyboardAvoidingViewEnabled={true}
+      //height={deviceHeight / 1.04}
+      height={Platform.OS == 'ios' ? deviceHeight / 1.6 : deviceHeight / 1.6}
+      customStyles={{
+        wrapper: {
+          backgroundColor: COLOURS.transparentColour,
+        },
+        draggableIcon: {
+          width: 0,
+          top: 5,
+        },
+        container: {
+          borderTopLeftRadius: 20,
+          borderTopRightRadius: 20,
+          borderColor: COLOURS.lightGray,
+          borderWidth: 0.4,
+          backgroundColor: COLOURS.white,
+        },
+      }}>
+      <BreadSizeComponent1
+        dataSource={dataSource}
+        closeAction={closeAction}
+        itemName={itemName}
+        handleSingleItemPress={(key, value) =>
+          handleSingleItemPress(key, value)
+        }
+      />
+    </RBSheet>
+  );
+}
 export function BottomSheetBreadSizeComponent({
   sheetRef,
   dataSource,

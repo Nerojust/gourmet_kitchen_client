@@ -41,7 +41,10 @@ import moment from 'moment';
 import {getDateWithoutTime} from '../../utils/DateFilter';
 import _, {filter, result, set} from 'lodash';
 import BreadListItemComponent1 from '../../components/BreadListItemComponent1';
-import {BottomSheetBreadSizeComponent} from '../../components/BottomSheetComponent';
+import {
+  BottomSheetBreadSizeComponent,
+  BottomSheetBreadSizeComponent1,
+} from '../../components/BottomSheetComponent';
 import {getAllSets} from '../../store/actions/sets';
 import SliderAnalyticsComponent from '../../components/SliderAnalyticsComponent';
 
@@ -90,6 +93,21 @@ const BreadListScreen = ({navigation}) => {
   //   return unsubscribe;
   // }, [navigation]);
 
+  // useEffect(() => {
+  // let result=  orderProductsData.reduce(function (objectMapResult, singleItem) {
+  //     // console.log('acc', objectMapResult);
+  //     // console.log('obj', singleItem);
+  //     let keyValueToMapWith = singleItem["mini_productid"]; //single item from the list e.g. size
+  //     if (!objectMapResult[keyValueToMapWith]) {
+  //       objectMapResult[keyValueToMapWith] = [];
+  //     }
+  //     objectMapResult[keyValueToMapWith].push(singleItem);
+  //     return objectMapResult;
+  //   }, {});
+  //   console.log("resss",result)
+  // }, []);
+ 
+ 
   useEffect(() => {
     fetchAllData();
   }, [selectedOrderDate, selectedTab]);
@@ -126,43 +144,43 @@ const BreadListScreen = ({navigation}) => {
           if (result) {
             //console.log("result ",result)
 
-            setResult.forEach((oneSet, iset) => {
-              //console.log("one set",oneSet)
-              result.map((singleItem, i) => {
-                if (
-                  oneSet.zupasetid.trim() == singleItem?.productid.trim()
-                  //singleItem.name.toLowerCase().includes('supreme')
-                ) {
-                  // console.log('set ' + iset, oneSet.zupasetname);
-                  setArray.push(singleItem);
-                }
-              });
-            }),
-              //console.log('sets arryay', setArray);
-              setArray.map((item, i) => {
-                if (item) {
-                  //console.log('item', item);
-                  setResult.map((oneSet, i) => {
-                    if (oneSet) {
-                      if (item.productid == oneSet.zupasetid) {
-                        // console.log('one set', oneSet);
-                        let obj = {};
-                        obj = item;
-                        obj.set = oneSet;
-                        //console.log('obj', obj);
-                        finalArrayData.push(obj);
-                      }
-                    }
-                  });
-                }
-              });
+            // setResult.forEach((oneSet, iset) => {
+            //   //console.log("one set",oneSet)
+            //   result.map((singleItem, i) => {
+            //     if (
+            //       oneSet.zupasetid.trim() == singleItem?.productid.trim()
+            //       //singleItem.name.toLowerCase().includes('supreme')
+            //     ) {
+            //       // console.log('set ' + iset, oneSet.zupasetname);
+            //       setArray.push(singleItem);
+            //     }
+            //   });
+            // }),
+            //   //console.log('sets arryay', setArray);
+            //   setArray.map((item, i) => {
+            //     if (item) {
+            //       //console.log('item', item);
+            //       setResult.map((oneSet, i) => {
+            //         if (oneSet) {
+            //           if (item.productid == oneSet.zupasetid) {
+            //             // console.log('one set', oneSet);
+            //             let obj = {};
+            //             obj = item;
+            //             obj.set = oneSet;
+            //             //console.log('obj', obj);
+            //             finalArrayData.push(obj);
+            //           }
+            //         }
+            //       });
+            //     }
+            //   });
 
-            var difference = _.difference(result, setResult);
-            // console.log(difference);
+            // var difference = _.difference(result, setResult);
+            // // console.log(difference);
 
-            //console.log("final",finalArrayData)
-            setHasLoaded(true);
-            handleAllLoavesStructure(difference);
+            // //console.log("final",finalArrayData)
+            // setHasLoaded(true);
+            handleAllLoavesStructure(result);
           }
         });
       }
@@ -178,49 +196,49 @@ const BreadListScreen = ({navigation}) => {
         ).then((result, i) => {
           if (result) {
             //console.log("result ",result)
-            let filteredResult = result.filter(
-              element => !element.productsize.toLowerCase().includes('mini'),
-            );
+            // let filteredResult = result.filter(
+            //   element => !element.productsize.toLowerCase().includes('mini'),
+            // );
 
-            setFullLoavesArray(filteredResult);
+            // setFullLoavesArray(filteredResult);
 
-            setResult.forEach((oneSet, iset) => {
-              filteredResult.map((singleItem, i) => {
-                if (
-                  oneSet.zupasetid.trim() == singleItem?.productid.trim()
-                  //singleItem.name.toLowerCase().includes('supreme')
-                ) {
-                  // console.log('set ' + iset, oneSet.zupasetname);
-                  setArray.push(singleItem);
-                }
-              });
-            }),
-              // console.log('sets arryay', setArray);
-              setArray.map((item, i) => {
-                if (item) {
-                  //console.log('item', item);
-                  setResult.map((oneSet, i) => {
-                    if (oneSet) {
-                      if (item.productid == oneSet.zupasetid) {
-                        // console.log('one set', oneSet);
-                        let obj = {};
-                        obj = item;
-                        obj.set = oneSet;
-                        //console.log('obj', obj);
-                        finalArrayData.push(obj);
-                      }
-                    }
-                  });
-                }
-              });
+            // setResult.forEach((oneSet, iset) => {
+            //   filteredResult.map((singleItem, i) => {
+            //     if (
+            //       oneSet.zupasetid.trim() == singleItem?.productid.trim()
+            //       //singleItem.name.toLowerCase().includes('supreme')
+            //     ) {
+            //       // console.log('set ' + iset, oneSet.zupasetname);
+            //       setArray.push(singleItem);
+            //     }
+            //   });
+            // }),
+            //   // console.log('sets arryay', setArray);
+            //   setArray.map((item, i) => {
+            //     if (item) {
+            //       //console.log('item', item);
+            //       setResult.map((oneSet, i) => {
+            //         if (oneSet) {
+            //           if (item.productid == oneSet.zupasetid) {
+            //             // console.log('one set', oneSet);
+            //             let obj = {};
+            //             obj = item;
+            //             obj.set = oneSet;
+            //             //console.log('obj', obj);
+            //             finalArrayData.push(obj);
+            //           }
+            //         }
+            //       });
+            //     }
+            //   });
 
-            var difference = _.difference(filteredResult, setResult);
-            //console.log(difference);
+            // var difference = _.difference(filteredResult, setResult);
+            // //console.log(difference);
 
-            //console.log("final",finalArrayData)
-            //handleAllLoavesStructure(difference);
-            setHasLoaded(true);
-            handleFullLoavesStructure(difference);
+            // //console.log("final",finalArrayData)
+            // //handleAllLoavesStructure(difference);
+            // setHasLoaded(true);
+            handleFullLoavesStructure(result);
           }
         });
       }
@@ -357,7 +375,7 @@ const BreadListScreen = ({navigation}) => {
             .sort()
             .map(key => [key, tempObj[key]]),
         );
-        //console.log("sorted",sortedData)
+       // console.log("sorted",sortedData)
         setFinalObjectArray(sortedData);
       }
     }
@@ -451,7 +469,7 @@ const BreadListScreen = ({navigation}) => {
   };
 
   const handleClick = item => {
-    // console.log('clicked', item);
+    //console.log('clicked', item);
     if (selectedTab != 2) {
       Object.entries(item).map(([key, value]) => {
         //console.log('itemmmmm', value.name);
@@ -461,9 +479,20 @@ const BreadListScreen = ({navigation}) => {
       showBottomSheet(breadRef);
     }
   };
+  const handleClick1 = item => {
+    //console.log('clicked', item);
+    // if (selectedTab != 2) {
+    //   Object.entries(item).map(([key, value]) => {
+    //     //console.log('itemmmmm', value.name);
+    //     setSelectedItemName(value?.name);
+    //   });
+    setSelectedItem(item);
+    showBottomSheet(breadRef);
+    // }
+  };
 
   const renderDetails = ({item}) => (
-    <BreadListItemComponent item={item} onClick={handleClick} />
+    <BreadListItemComponent item={item} onClick={handleClick1} />
   );
 
   const onRefresh = async () => {
@@ -670,14 +699,16 @@ const BreadListScreen = ({navigation}) => {
   };
 
   const handleSingleItemPress = (key, value) => {
-    // console.log('inside key', key, 'value', value);
+    //console.log('inside key', key, 'value', value);
     dismissBottomSheetDialog(breadRef);
     navigation.navigate('BreadListDetails', {
       bread: value,
       date: selectedOrderDate,
     });
   };
+
   const renderBottomSheet = () => {
+   // console.log("selected",selectedItem)
     return (
       <BottomSheetBreadSizeComponent
         sheetRef={breadRef}
@@ -717,6 +748,7 @@ const BreadListScreen = ({navigation}) => {
       setIsTabClicked(true);
     }
   };
+
   return (
     <ViewProviderComponent>
       <DismissKeyboard>
@@ -732,7 +764,7 @@ const BreadListScreen = ({navigation}) => {
             breadStyle={{flex: 0.33}}
             //shouldDisplayIcon={orderedProducts.length > 0}
             handleClick={openSettingsMenu}
-            performRefresh={() => fetchAllData()}
+           // performRefresh={() => fetchAllData()}
           />
           {/* {isSearchClicked ? (
             <SearchInputComponent
