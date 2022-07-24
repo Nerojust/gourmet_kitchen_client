@@ -1,5 +1,5 @@
 import client from '../../utils/Api';
-import {handleError} from '../../utils/utils';
+import {handleError, handleLogout} from '../../utils/utils';
 
 export const getKudaTransactionHistory = (date, roleid) => {
   console.log('About to get all kuda transaction history', date, roleid);
@@ -22,6 +22,7 @@ export const getKudaTransactionHistory = (date, roleid) => {
     return client
       .post(getUrl, payload)
       .then(response => {
+        handleLogout(response, dispatch);
         //console.log("status",response.data)
         if (response?.data) {
           console.log(

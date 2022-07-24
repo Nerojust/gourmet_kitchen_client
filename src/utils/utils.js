@@ -23,6 +23,8 @@ import {DrawerActions} from '@react-navigation/routers';
 import moment from 'moment';
 import RNImmediatePhoneCall from 'react-native-immediate-phone-call';
 import {useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
+import {clearEverythingOrders} from '../store/actions/orders';
 export const capitalizeWord = string => {
   var result = [];
   string &&
@@ -336,6 +338,14 @@ export const LIMIT_FIGURE = 50;
 export const INDEX_PAGE_SIZE_DEFAULT = 50;
 export const INDEX_PAGE_SIZE_OPTIONS = [5, 10, 20, 30, 50, 100];
 
+export const handleLogout = (response, dispatch) => {
+  if (response.status == 401) {
+    alert('Session Expired', 'Your session has expired. Please login again');
+    dispatch(clearEverythingOrders());
+    return;
+  }
+};
+
 export const handleError = (errormessage, dispatch, extMessage) => {
   var error = errormessage?.message;
   //console.log('the error is ', error);
@@ -511,6 +521,54 @@ export function groupBy(objectArray, property) {
     objectMapResult[keyValueToMapWith].push(singleItem);
     return objectMapResult;
   }, {});
+}
+export function mergeAddItems(surplus) {
+  let surplusArray = [];
+
+  for (let i = 0; i < surplus.length; i++) {
+    const oneSurplusItem = surplus[i];
+
+    let filterResult = surplusArray.filter(
+      oneItem =>
+        oneItem.productname === oneSurplusItem.productname &&
+        oneItem.productcategory === oneSurplusItem.productcategory,
+    );
+    if (filterResult.length > 0) {
+      if (
+        oneSurplusItem.productsize === 'Mini < 4' ||
+        oneSurplusItem.productsize === 'Mini > 4'
+      ) {
+        //console.log('geting here');
+        let foundIndex = surplusArray.findIndex(
+          index =>
+            index.productname == oneSurplusItem.productname &&
+            index.productcategory == oneSurplusItem.productcategory,
+        );
+        // console.log('found the surplus index', surplusArray[foundIndex]);
+        // console.log('found the filtered rsult', filterResult[0]);
+        if (foundIndex) {
+          let sumValue = filterResult[0].count + oneSurplusItem.count;
+          surplusArray[foundIndex] = {
+            productid: oneSurplusItem.productid,
+            count: sumValue,
+            id: surplusArray[foundIndex].id,
+            productname: oneSurplusItem.productname,
+            productcategory: oneSurplusItem.productcategory,
+            productsize: 'Mini',
+            issurplus: false,
+            createdat: oneSurplusItem.createdat,
+            updatedat: oneSurplusItem.updatedat,
+            mini_productid: oneSurplusItem.mini_productid,
+          };
+        }
+      }
+    } else {
+      // console.log("cccc",oneSurplusItem.productsize)
+      surplusArray.push(oneSurplusItem);
+    }
+  }
+
+  return surplusArray;
 }
 
 export function removeDuplicatesFromArray(arr) {

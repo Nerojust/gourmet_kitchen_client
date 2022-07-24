@@ -31,6 +31,7 @@ const OrderProductComponent = ({item, handleClick, handleDispatchClick}) => {
   let colourResult = getColourCode(item?.createdat);
   let isAllFulfilled = false;
   let fulfillCount = 0;
+
   item.products.map((product, i) => {
     //console.log('iii', product);
     if (product.isfulfilled) {
@@ -59,7 +60,7 @@ const OrderProductComponent = ({item, handleClick, handleDispatchClick}) => {
               <ProductSansBold
                 style={[
                   styles.itemsText,
-                  {fontWeight: '600', color: COLOURS.green2, fontSize: fp(12)},
+                  {fontWeight: '700', color: COLOURS.green2, fontSize: fp(12)},
                 ]}>
                 ONLINE ORDER
               </ProductSansBold>

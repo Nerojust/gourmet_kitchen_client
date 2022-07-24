@@ -34,6 +34,7 @@
     "react-native": "0.64.2",
     "react-native-animate-loading-button": "^1.0.3",
     "react-native-date-picker": "^4.2.0",
+    "react-native-device-info": "^10.0.2",
     "react-native-gesture-handler": "^2.3.2",
     "react-native-google-places-autocomplete": "^2.4.1",
     "react-native-immediate-phone-call": "^2.0.0",

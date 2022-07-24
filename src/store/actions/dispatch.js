@@ -1,5 +1,5 @@
 import client from '../../utils/Api';
-import {handleError} from '../../utils/utils';
+import {handleError, handleLogout} from '../../utils/utils';
 
 export const getRiderAnalytics = date => {
   console.log('About to get all rider analytics data');
@@ -23,6 +23,7 @@ export const getRiderAnalytics = date => {
     return client
       .get(getUrl)
       .then(response => {
+        handleLogout(response, dispatch);
         //console.log("status",response.data)
         if (response?.data) {
           console.log(

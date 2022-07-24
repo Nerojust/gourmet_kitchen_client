@@ -1,6 +1,6 @@
 import client from '../../utils/Api';
 import {dateFilterParser} from '../../utils/DateFilter';
-import {clearStorage, handleError} from '../../utils/utils';
+import {clearStorage, handleError, handleLogout} from '../../utils/utils';
 import {getAllOrderedProductsStats} from './orders';
 
 export const getAllMessages = () => {
@@ -15,6 +15,7 @@ export const getAllMessages = () => {
     return client
       .get('/messages')
       .then(response => {
+        handleLogout(response, dispatch);
         if (response?.data) {
           console.log(
             'Messages gotten successfully, size is ',
@@ -64,6 +65,7 @@ export const updateMessageById = (id, payload) => {
     return client
       .patch(url, payload)
       .then(response => {
+        handleLogout(response, dispatch);
         if (response?.data) {
           if (response?.data?.isSuccessful) {
             console.log(

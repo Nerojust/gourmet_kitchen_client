@@ -1,5 +1,8 @@
 import axios from 'axios';
 import {Platform} from 'react-native';
+import DeviceInfo from 'react-native-device-info';
+import {useDispatch} from 'react-redux';
+import {clearEverythingOrders} from '../store/actions/orders';
 
 let localBase;
 if (Platform.OS == 'android') {
@@ -7,12 +10,16 @@ if (Platform.OS == 'android') {
 } else {
   localBase = 'localhost';
 }
-//const baseURL = `http://${localBase}:8089/api/`;
-const baseURL = 'https://gourmet-kitchen-api-oq8ef.ondigitalocean.app/api/';
+const baseURL = `http://${localBase}:8089/api/`;
+//const baseURL = 'https://gourmet-kitchen-api-oq8ef.ondigitalocean.app/api/';
 
 let client = axios.create({
   baseURL,
-  headers: {device: Platform.OS + ' (' + Platform.Version + ')'},
+  headers: {
+    device: `Brand: ${DeviceInfo.getDeviceId()} | Platform: ${Platform.OS.toUpperCase()} | Version: ${
+      Platform.Version
+    }`,
+  },
 });
 
 client.interceptors.response.use(
@@ -20,10 +27,11 @@ client.interceptors.response.use(
     //console.log('rrhhhhhr', response.status);
     if (response.status == 200 || 201) {
       return Promise.resolve(response);
+    } else if (response.status == 500) {
+      alert('Server error: ' + response.data.message);
     } else {
-      // console.log('eeeee', response?.data?.message);
       alert(
-        response.data.message || 'Server error occured, please try again later',
+        response.data.message || 'Some error occured, please try again later',
       );
     }
   },

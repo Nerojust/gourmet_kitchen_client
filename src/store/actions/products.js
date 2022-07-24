@@ -1,5 +1,5 @@
 import client from '../../utils/Api';
-import {handleError} from '../../utils/utils';
+import {handleError, handleLogout} from '../../utils/utils';
 import {APP_TOKEN} from '../../utils/Constants';
 import clientZupa from '../../utils/ApiZupa';
 
@@ -25,6 +25,7 @@ export const syncZupaProducts = status => {
     return client
       .get(getUrl)
       .then(response => {
+        handleLogout(response, dispatch);
         if (response?.data) {
           console.log(
             'ZUPA products gotten successfully',

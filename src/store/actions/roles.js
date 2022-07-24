@@ -1,6 +1,6 @@
 import client from '../../utils/Api';
 import {dateFilterParser} from '../../utils/DateFilter';
-import {clearStorage, handleError} from '../../utils/utils';
+import {clearStorage, handleError, handleLogout} from '../../utils/utils';
 
 export const getAllRoles = () => {
   console.log('About to get all roles');
@@ -15,6 +15,7 @@ export const getAllRoles = () => {
     return client
       .get(getUrl)
       .then(response => {
+        handleLogout(response, dispatch);
         if (response?.data) {
           console.log('roles gotten successfully', response?.data?.recordCount);
           if (response?.data?.isSuccessful) {
@@ -56,6 +57,7 @@ export const getRoleById = id => {
     return client
       .get(`/roles/${id}`)
       .then(response => {
+        handleLogout(response, dispatch);
         if (response.data) {
           console.log('Single role gotten successfully');
           dispatch({

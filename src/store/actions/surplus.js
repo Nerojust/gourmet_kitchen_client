@@ -1,6 +1,6 @@
 import client from '../../utils/Api';
 import {dateFilterParser} from '../../utils/DateFilter';
-import {clearStorage, handleError} from '../../utils/utils';
+import {clearStorage, handleError, handleLogout} from '../../utils/utils';
 import {getAllOrderedProductsStats} from './orders';
 
 export const createSurplus = (orderPayload, date) => {
@@ -17,6 +17,7 @@ export const createSurplus = (orderPayload, date) => {
     return client
       .post(getUrl, orderPayload)
       .then(response => {
+        handleLogout(response, dispatch);
         //console.log("surplus",response)
         if (response.data?.isSuccessful) {
           console.log('surplus created successfully');
@@ -59,6 +60,7 @@ export const getAllSurplus = date => {
     return client
       .get(getUrl)
       .then(response => {
+        handleLogout(response, dispatch);
         if (response?.data) {
           console.log(
             'Surplus gotten successfully',
@@ -104,6 +106,7 @@ export const getSurplusById = (id, date) => {
     return client
       .get(`/surplus/${id}`)
       .then(response => {
+        handleLogout(response, dispatch);
         if (response.data) {
           console.log('Single order gotten successfully');
           dispatch({
@@ -141,6 +144,7 @@ export const deductSurplusCount = (payload, date) => {
     return client
       .post(url, payload)
       .then(response => {
+        handleLogout(response, dispatch);
         if (response?.data) {
           if (response?.data?.isSuccessful) {
             console.log(
@@ -192,6 +196,7 @@ export const updateSurplusById = (id, payload, date) => {
     return client
       .patch(getUrl, payload)
       .then(response => {
+        handleLogout(response, dispatch);
         if (response?.data) {
           if (response?.data?.isSuccessful) {
             console.log(
@@ -237,6 +242,7 @@ export const deleteSurplusById = (id, date) => {
     return client
       .delete(`/surplus/${id}`)
       .then(response => {
+        handleLogout(response, dispatch);
         if (response.data) {
           console.log('Single surplus deleted successfully');
           dispatch({

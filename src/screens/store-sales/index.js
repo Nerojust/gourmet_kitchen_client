@@ -34,7 +34,8 @@ import {getDateWithoutTime} from '../../utils/DateFilter';
 import {saveOrderDate} from '../../store/actions/orders';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
-
+import {sum} from 'lodash';
+var _ = require('lodash');
 // create a component
 const StoreSalesScreen = ({navigation}) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -181,92 +182,71 @@ const StoreSalesScreen = ({navigation}) => {
     );
   };
 
-  const handleMinisStructure = results => {
-    let tempObj = {};
-    if (results) {
-      let dataproducts = groupBy(surplus, 'productname');
-      console.log('result', dataproducts);
-      if (dataproducts) {
-        Object.keys(dataproducts).forEach((item, i) => {
-          // console.log("mini item",item)
-          const data = {};
-          dataproducts[item].forEach(element => {
-            //console.log('one element', item, element);
-            if (
-              element.productsize === 'Mini < 4' ||
-              element.productsize === 'Mini > 4'
-            ) {
-              //console.log('getting here', data['Mini'], element.count);
-              let sumValue;
-              if (data['Mini']) {
-                sumValue =
-                  parseInt(data['Mini'].count) + parseInt(element.count);
-
-                data['Mini'].count = sumValue;
-              } else {
-                data['Mini'] = element;
-              }
-            } else {
-              //console.log('else block');
-              data[element.productsize] = element;
-            }
-          });
-          // console.log('res', data);
-          tempObj[item] = data;
-        });
-        const sortedData = Object.fromEntries(
-          Object.keys(tempObj)
-            .sort()
-            .map(key => [key, tempObj[key]]),
-        );
-
-        //setFinalMiniArray(sortedData);
-
-        return sortedData;
-      }
-    }
-  };
-
-  var _ = require('lodash');
-
+  let tempObj = {};
   const handleClick = item => {
     // console.log('item', item);
     // console.log('list is ' + finalMiniArray);
     //console.log("surplus",handleMinisStructure(surplus))
     var stringData = 'Available Bread List \n';
 
-    Object.entries(handleMinisStructure(surplus)).map(
-      ([parentKey, value], i) => {
-        // console.log('iii', i);
-        {
-          Object.entries(value).map(([childKey, value]) => {
-            //console.log(`${childKey} ${value}`);
-            if (value) {
-              //console.log('pdt', item.productname, 'size', item.productsize);
-              stringData =
-                stringData +
-                '\n' +
-                '' +
-                parentKey +
-                ' | ' +
-                childKey +
-                ' | ' +
-                value.count +
-                (value?.count > 0 ? ' pcs' : 'pc');
-            }
-          });
-        }
-      },
-    );
+   
+
+    let dataproducts = groupBy(surplusArray, 'productsize');
+    console.log('finalllll array', surplusArray);
+
+    // Object.keys(dataproducts).forEach((parentKey, i) => {
+    //   //console.log('iii', parentKey);
+
+    //   dataproducts[parentKey].forEach((singlePdt, ii) => {
+    //     console.log(`${singlePdt} ${ii}`);
+    //     if (singlePdt) {
+    //       //console.log('pdt', item.productname, 'size', item.productsize);
+    //       stringData =
+    //         stringData +
+    //         '\n' +
+    //         parentKey +
+    //         '\n---------------------------------------------------\n' +
+    //         singlePdt.productname.trim() +
+    //         ' | ' +
+    //         singlePdt.count +
+    //         (singlePdt?.count > 1 ? ' pcs' : ' pc') +
+    //         '\n---------------------------------------------------\n';
+    //     }
+    //   });
+    // });
+
+    // Object.entries(handleMinisStructure(surplus)).map(
+    //   ([parentKey, value], i) => {
+    //     // console.log('iii', i);
+    //     {
+    //       Object.entries(value).map(([childKey, value]) => {
+    //         //console.log(`${childKey} ${value}`);
+    //         if (value) {
+    //           //console.log('pdt', item.productname, 'size', item.productsize);
+    //           stringData =
+    //             stringData +
+    //             '\n' +
+    //             '' +
+    //             parentKey +
+    //             ' | ' +
+    //             childKey +
+    //             ' | ' +
+    //             value.count +
+    //             (value?.count > 1 ? ' pcs' : ' pc');
+    //         }
+    //       });
+    //     }
+    //   },
+    // );
 
     //map through the list
     // sortArrayData(surplus, 'productname').map((item, i) => {
-    //   // let grouped_data = _.chain(surplus)
-    //   //   .groupBy('productsize')
+    //   let grouped_data = _.chain(surplus)
+    //     .groupBy('productsize')
 
-    //   //   //.map((productname, productsize) => (productname, productsize))
-    //   //   .value();
-    //   // console.log(grouped_data);
+    //     //.map((productname, productsize) => (productname, productsize))
+    //     .value();
+    //   console.log(grouped_data);
     //   if (item) {
     //     // console.log('pdt', item.productname, 'size', item.productsize);
     //     stringData =
@@ -278,7 +258,7 @@ const StoreSalesScreen = ({navigation}) => {
     //       item.productsize +
     //       ' | ' +
     //       item.count +
-    //       (item?.count > 0 ? ' pcs' : 'pc');
+    //       (item?.count > 1 ? ' pcs' : ' pc');
     //   }
     // });
 
