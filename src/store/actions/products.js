@@ -25,7 +25,7 @@ export const syncZupaProducts = status => {
     return client
       .get(getUrl)
       .then(response => {
-        handleLogout(response, dispatch);
+      
         if (response?.data) {
           console.log(
             'ZUPA products gotten successfully',

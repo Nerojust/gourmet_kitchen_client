@@ -6,7 +6,6 @@ import {LOGIN_TOKEN} from '../../utils/Constants';
 import {getDateWithoutTime} from '../../utils/DateFilter';
 import {handleError, handleLogout} from '../../utils/utils';
 import {createCustomer} from './customers';
-import {logoutUser} from './users';
 
 export const setOrderStatus = status => {
   return dispatch => {
@@ -53,7 +52,7 @@ export const getSalesAnalytics = date => {
     return client
       .get(getUrl)
       .then(response => {
-        handleLogout(response, dispatch);
+       
 
         if (response?.data) {
           console.log(
@@ -105,7 +104,7 @@ export const getAllOrderedProductsStats = date => {
     return client
       .get(getUrl)
       .then(response => {
-        handleLogout(response, dispatch);
+      
 
         if (response?.data) {
           console.log(
@@ -165,7 +164,7 @@ export const getAllOrderedProductsStatsById = (id, date) => {
     return client
       .get(getUrl)
       .then(response => {
-        handleLogout(response, dispatch);
+       
         if (response?.data) {
           if (response?.data?.isSuccessful) {
             console.log(
@@ -217,7 +216,7 @@ export const getAllSalesAverage = orderDate => {
     return client
       .get(getUrl)
       .then(response => {
-        handleLogout(response, dispatch);
+      
         if (response?.data) {
           console.log(
             'Sales average data gotten successfully',
@@ -277,7 +276,7 @@ export const getAllOrderedProducts = (status = 'all', orderDate) => {
     return client
       .get(getUrl)
       .then(response => {
-        handleLogout(response, dispatch);
+       
         if (response?.data) {
           console.log(
             'Orders gotten successfully',
@@ -381,7 +380,7 @@ export const updateOrderListProductCount = (payload, date) => {
     return client
       .patch(getUrl, payload)
       .then(response => {
-        handleLogout(response, dispatch);
+       
         if (response?.data) {
           console.log(
             'update breadlist count successfully',
@@ -431,7 +430,7 @@ export const updateSurplusStatusForOrderItemById = (id, payload) => {
     return client
       .patch(url, payload)
       .then(response => {
-        handleLogout(response, dispatch);
+       
         if (response?.data) {
           if (response?.data?.isSuccessful) {
             console.log(
@@ -478,7 +477,7 @@ export const updateOrderProductMultipleById = (id, orderId, date) => {
     return client
       .get(url)
       .then(response => {
-        handleLogout(response, dispatch);
+      
         if (response?.data) {
           if (response?.data?.isSuccessful) {
             console.log(
@@ -533,7 +532,7 @@ export const updateOrderProductById = (id, payload, orderId, date) => {
     return client
       .put(url, payload)
       .then(response => {
-        handleLogout(response, dispatch);
+      
         if (response?.data) {
           if (response?.data?.isSuccessful) {
             console.log(
@@ -583,7 +582,7 @@ export const rescheduleOrderDateById = (id, payload) => {
     return client
       .patch(url, payload)
       .then(response => {
-        handleLogout(response, dispatch);
+      
         if (response?.data) {
           if (response?.data?.isSuccessful) {
             console.log(
@@ -632,7 +631,7 @@ export const updateOrderDispatchByOrderId = (id, payload) => {
     return client
       .patch(url, payload)
       .then(response => {
-        handleLogout(response, dispatch);
+      
         if (response?.data) {
           if (response?.data?.isSuccessful) {
             console.log(
@@ -680,7 +679,7 @@ export const updateCompleteStatusForOrder = (id, payload, orderDate) => {
       .patch(url, payload)
       .then(response => {
         if (response?.data) {
-          handleLogout(response, dispatch);
+         
           if (response?.data?.isSuccessful) {
             console.log(
               'updateCompleteStatusForOrder updated successfully',
@@ -727,7 +726,7 @@ export const updateOrderById = (id, payload, orderDate) => {
     return client
       .put(url, payload)
       .then(response => {
-        handleLogout(response, dispatch);
+       
         if (response?.data) {
           if (response?.data?.isSuccessful) {
             console.log(
@@ -794,7 +793,7 @@ export const updateOrderAllItemsByOrderId = (
       .patch(url, payload)
       .then(response => {
         if (response?.data) {
-          handleLogout(response, dispatch);
+        
           if (response?.data?.isSuccessful) {
             console.log(
               'Single order multiple items updated successfully',
@@ -847,7 +846,7 @@ export const updateOrderSpecialNoteById = (id, payload) => {
     return client
       .patch(url, payload)
       .then(response => {
-        handleLogout(response, dispatch);
+       
         if (response?.data) {
           if (response?.data?.isSuccessful) {
             console.log(
@@ -902,7 +901,7 @@ export const createOrder = (
     return client
       .post(`/orders`, kitchenPayload)
       .then(response => {
-        handleLogout(response, dispatch);
+      
         if (response.data?.isSuccessful) {
           console.log('Kitchen Order created successfully');
 
@@ -1056,7 +1055,7 @@ export const getOrder = id => {
     return client
       .get(`/orders/${id}`)
       .then(response => {
-        handleLogout(response, dispatch);
+       
         if (response.data.isSuccessful) {
           console.log('Single order gotten successfully');
           dispatch({
@@ -1097,7 +1096,7 @@ export const deleteOrderById = (id, orderDate) => {
     return client
       .delete(`/orders/${id}`)
       .then(response => {
-        handleLogout(response, dispatch);
+       
         if (response.data.isSuccessful) {
           console.log('Single order deleted successfully');
           dispatch(getAllOrderedProducts('all', orderDate));
@@ -1146,7 +1145,7 @@ export const deleteAllOrders = orderDate => {
     return client
       .delete(url)
       .then(response => {
-        handleLogout(response, dispatch);
+       
         if (response.data) {
           console.log('Deleted all orders successfully');
           dispatch(getAllOrderedProducts('all', orderDate));

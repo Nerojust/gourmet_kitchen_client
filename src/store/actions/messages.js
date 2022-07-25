@@ -15,7 +15,7 @@ export const getAllMessages = () => {
     return client
       .get('/messages')
       .then(response => {
-        handleLogout(response, dispatch);
+      
         if (response?.data) {
           console.log(
             'Messages gotten successfully, size is ',
@@ -65,7 +65,7 @@ export const updateMessageById = (id, payload) => {
     return client
       .patch(url, payload)
       .then(response => {
-        handleLogout(response, dispatch);
+       
         if (response?.data) {
           if (response?.data?.isSuccessful) {
             console.log(

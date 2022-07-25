@@ -10,8 +10,8 @@ if (Platform.OS == 'android') {
 } else {
   localBase = 'localhost';
 }
-const baseURL = `http://${localBase}:8089/api/`;
-//const baseURL = 'https://gourmet-kitchen-api-oq8ef.ondigitalocean.app/api/';
+//const baseURL = `http://${localBase}:8089/api/`;
+const baseURL = 'https://gourmet-kitchen-api-oq8ef.ondigitalocean.app/api/';
 
 let client = axios.create({
   baseURL,
@@ -40,6 +40,7 @@ client.interceptors.response.use(
     console.log('errrrrrrorrr', error);
     //return Promise.reject(error);
     if (error?.response?.status == 401) {
+      return Promise.reject(error);
       //console.log('401 error', error?.response);
       //   alert(
       //     'Session Expired',

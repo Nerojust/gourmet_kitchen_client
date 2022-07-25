@@ -24,7 +24,7 @@ export const getAllSets = () => {
     return client
       .get(getUrl)
       .then(response => {
-        handleLogout(response, dispatch);
+
         if (response?.data) {
           console.log('sets gotten successfully', response?.data?.recordCount);
           if (response?.data?.isSuccessful) {
@@ -68,7 +68,6 @@ export const createSet = orderPayload => {
     return client
       .post(`/sets`, orderPayload)
       .then(response => {
-        handleLogout(response, dispatch);
         if (response.data?.isSuccessful) {
           console.log('set created successfully');
 
@@ -110,7 +109,6 @@ export const getSetById = id => {
     return client
       .get(`/sets/${id}`)
       .then(response => {
-        handleLogout(response, dispatch);
         if (response.data) {
           console.log('Single set gotten successfully');
           dispatch({
@@ -147,7 +145,6 @@ export const deleteSetById = id => {
     return client
       .delete(`/sets/${id}`)
       .then(response => {
-        handleLogout(response, dispatch);
         if (response.data) {
           if (response?.data?.isSuccessful) {
             console.log('Deleted single set successfully', id, response.data);

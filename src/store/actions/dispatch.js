@@ -23,7 +23,7 @@ export const getRiderAnalytics = date => {
     return client
       .get(getUrl)
       .then(response => {
-        handleLogout(response, dispatch);
+        
         //console.log("status",response.data)
         if (response?.data) {
           console.log(

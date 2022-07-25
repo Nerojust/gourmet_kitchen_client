@@ -39,15 +39,19 @@ const StoreSalesDetailsScreen = ({navigation, route}) => {
     productname,
     productcategory,
     productsize,
+    mini_productid,
+
+    details,
     id,
     issurplus,
-    count,
   } = route?.params?.surplus;
   var edit = route.params.edit;
+
   //console.log('Edit', edit);
   //console.log(route?.params?.surplus);
   const dispatch = useDispatch();
   const surplusRef = useRef();
+  const [count, setCount] = useState(route?.params?.surplus?.count);
   const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false);
   const [remainingCount, setRemainingCount] = useState('0');
   const {updateSurplusLoading, deleteSurplusLoading, deductSurplusLoading} =
@@ -59,6 +63,22 @@ const StoreSalesDetailsScreen = ({navigation, route}) => {
     useState('0');
   const orderDate = route?.params?.date;
   //console.log('route date', orderDate);
+  const [addedCount, setAddedCount] = useState(0);
+
+  let countWithDetails = 0;
+  let tempCount = 0;
+
+  useEffect(() => {
+    if (details) {
+      let countArray = JSON.parse(details);
+      //console.log('countarray', countArray);
+      countArray.map((oneItem, i) => {
+        tempCount = tempCount + oneItem?.count;
+      });
+      countWithDetails = tempCount;
+      setCount(tempCount);
+    }
+  }, [details]);
 
   const handleSurplusChange = text => {
     if (text) {
@@ -87,6 +107,7 @@ const StoreSalesDetailsScreen = ({navigation, route}) => {
       if (parseInt(text) > count) {
         setRemaningSurplusCount('0');
         setinputSurplusCount('');
+        setInputSurplusCountDeduct('');
         alert('Number must be less than or equal to ' + count);
         return;
       }
@@ -172,7 +193,7 @@ const StoreSalesDetailsScreen = ({navigation, route}) => {
           </ProductSansBold>
 
           <Averta style={styles.custName} numberOfLines={5}>
-            {count.toString()}
+            {count.toString() || '0'}
           </Averta>
         </View>
 
@@ -215,7 +236,7 @@ const StoreSalesDetailsScreen = ({navigation, route}) => {
             handleBlur={() => {
               setIsSurplusFocused(false);
             }}
-            onSubmitEditing={event => {}}
+            onSubmitEditing={edit ? handleValidation : handleSubmitDeductSurplus}
           />
         </View>
       </View>
@@ -225,8 +246,14 @@ const StoreSalesDetailsScreen = ({navigation, route}) => {
   const handleSubmitUpdateSurplus = () => {
     if (!inputSurplusCount) {
       alert('Enter the number to deduct');
+      setinputSurplusCount('0');
       return;
     }
+    // if (parseInt(inputSurplusCount) > count) {
+    //   alert('Number must be less than or equal to ' + count);
+    //   return;
+    // }
+
     console.log('input', inputSurplusCount);
     if (inputSurplusCount.length < 1) {
       alert('Surplus count must be greater than zero');
@@ -234,10 +261,11 @@ const StoreSalesDetailsScreen = ({navigation, route}) => {
     }
     var payload = {
       count: parseInt(inputSurplusCount),
-      productCategory: productcategory,
-      productSize: productsize,
-      productName: productname,
-      productId: productid,
+      mini_productid: mini_productid,
+      // productCategory: productcategory,
+      // productSize: productsize,
+      // productName: productname,
+      //productId: productid,
     };
 
     console.log('surplus payload', payload);
@@ -259,6 +287,7 @@ const StoreSalesDetailsScreen = ({navigation, route}) => {
   const handleSubmitDeductSurplus = () => {
     if (!inputSurplusCount) {
       alert('Surplus count is required');
+      setInputSurplusCountDeduct('0');
       return;
     }
     console.log('input', inputSurplusCount);
@@ -266,12 +295,17 @@ const StoreSalesDetailsScreen = ({navigation, route}) => {
       alert('Surplus count must be greater than zero');
       return;
     }
+    if (parseInt(inputSurplusCount) > count) {
+      alert('Input cannot be greater than available quantity');
+      return;
+    }
     var payload = {
       count: parseInt(inputSurplusCount),
-      productCategory: productcategory,
-      productSize: productsize,
-      productName: productname,
       productId: productid,
+      mini_productid: mini_productid,
+      //productSize: productsize,
+      // productCategory: productcategory,
+      //  productName: productname,
     };
     console.log('surplus payload', payload);
 

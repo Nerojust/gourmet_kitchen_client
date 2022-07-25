@@ -14,7 +14,18 @@ const SurplusListItemComponent = ({
   handleNormalClick,
 }) => {
   //console.log('item', item);
-
+  let count;
+  let tempCount = 0;
+  if (item?.details) {
+    let countArray = JSON.parse(item?.details);
+    // console.log('countarray', countArray);
+    countArray.map((oneItem, i) => {
+      tempCount = tempCount + oneItem.count;
+    });
+    count = tempCount;
+  } else {
+    count = item?.count;
+  }
   return (
     <TouchableOpacity
       style={styles.customerNameView}
@@ -56,13 +67,13 @@ const SurplusListItemComponent = ({
         <View style={{marginRight: 10}}>
           <ProductSans style={styles.labelText}>SIZE</ProductSans>
           <ProductSans style={styles.quantityName}>
-            {item?.productsize.trim() || 'None'}
+            {item.details ? 'Mini' : item?.productsize.trim()}
           </ProductSans>
         </View>
         <View>
           <ProductSans style={styles.labelText}>SURPLUS COUNT</ProductSans>
           <ProductSans style={[styles.priceName, {alignSelf: 'center'}]}>
-            {item?.count || '0'}
+            {count || '0'}
           </ProductSans>
         </View>
       </View>

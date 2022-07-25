@@ -77,6 +77,7 @@ const OrdersScreen = ({navigation}) => {
   const [selectedOrderDate, setSelectedOrderDate] = useState(new Date());
   const [open, setOpen] = useState(false);
   const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false);
+  const [isSuccessDispatchModalVisible, setIsSuccessDispatchModalVisible] = useState(false);
   const {loginError, accessToken} = useSelector(x => x.users);
   //console.log("token is redux",accessToken)
 
@@ -335,7 +336,7 @@ const OrdersScreen = ({navigation}) => {
   );
   const renderSuccessModalDispatch = () => (
     <CustomSuccessModal
-      isModalVisible={isSuccessModalVisible}
+      isModalVisible={isSuccessDispatchModalVisible}
       dismissModal={showSuccessDialogDispatch}
       message={'Order fulfilled successfully'}
       //onPressButton={() => navigation.goBack()}
@@ -350,9 +351,9 @@ const OrdersScreen = ({navigation}) => {
     }, DIALOG_TIMEOUT);
   };
   const showSuccessDialogDispatch = () => {
-    setIsSuccessModalVisible(!isSuccessModalVisible);
+    setIsSuccessDispatchModalVisible(!isSuccessDispatchModalVisible);
     setTimeout(() => {
-      setIsSuccessModalVisible(false);
+      setIsSuccessDispatchModalVisible(false);
       // navigation.goBack();
     }, DIALOG_TIMEOUT);
   };

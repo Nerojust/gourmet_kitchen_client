@@ -4,7 +4,7 @@ import {clearStorage, handleError, handleLogout} from '../../utils/utils';
 import {getAllOrderedProductsStats} from './orders';
 
 export const createSurplus = (orderPayload, date) => {
-  console.log('About to create a new surplus',date);
+  console.log('About to create a new surplus', date);
   //console.log("order payload", orderPayload);
   return dispatch => {
     dispatch({
@@ -17,7 +17,6 @@ export const createSurplus = (orderPayload, date) => {
     return client
       .post(getUrl, orderPayload)
       .then(response => {
-        handleLogout(response, dispatch);
         //console.log("surplus",response)
         if (response.data?.isSuccessful) {
           console.log('surplus created successfully');
@@ -60,7 +59,6 @@ export const getAllSurplus = date => {
     return client
       .get(getUrl)
       .then(response => {
-        handleLogout(response, dispatch);
         if (response?.data) {
           console.log(
             'Surplus gotten successfully',
@@ -106,7 +104,6 @@ export const getSurplusById = (id, date) => {
     return client
       .get(`/surplus/${id}`)
       .then(response => {
-        handleLogout(response, dispatch);
         if (response.data) {
           console.log('Single order gotten successfully');
           dispatch({
@@ -131,7 +128,7 @@ export const getSurplusById = (id, date) => {
 };
 
 export const deductSurplusCount = (payload, date) => {
-  console.log('About to deduct count from surplus',date);
+  console.log('About to deduct count from surplus', date);
 
   return dispatch => {
     dispatch({
@@ -139,12 +136,13 @@ export const deductSurplusCount = (payload, date) => {
       loading: true,
       error: null,
     });
-    var url = `/surplus/deduct`;
+    var url = `/surplus/deduct?startDate=${date + 'T00:00:01'}&endDate=${
+      date + 'T23:59:59'
+    }`;
     //console.log("geturl", getUrl);
     return client
       .post(url, payload)
       .then(response => {
-        handleLogout(response, dispatch);
         if (response?.data) {
           if (response?.data?.isSuccessful) {
             console.log(
@@ -180,7 +178,7 @@ export const deductSurplusCount = (payload, date) => {
   };
 };
 export const updateSurplusById = (id, payload, date) => {
-  console.log('About to update surplus',date);
+  console.log('About to update surplus', date);
 
   return dispatch => {
     dispatch({
@@ -196,7 +194,6 @@ export const updateSurplusById = (id, payload, date) => {
     return client
       .patch(getUrl, payload)
       .then(response => {
-        handleLogout(response, dispatch);
         if (response?.data) {
           if (response?.data?.isSuccessful) {
             console.log(
@@ -232,7 +229,7 @@ export const updateSurplusById = (id, payload, date) => {
   };
 };
 export const deleteSurplusById = (id, date) => {
-  console.log('About to delete single surplus with id', id,date);
+  console.log('About to delete single surplus with id', id, date);
   return dispatch => {
     dispatch({
       type: 'DELETE_SINGLE_SURPLUS_PENDING',
@@ -242,7 +239,6 @@ export const deleteSurplusById = (id, date) => {
     return client
       .delete(`/surplus/${id}`)
       .then(response => {
-        handleLogout(response, dispatch);
         if (response.data) {
           console.log('Single surplus deleted successfully');
           dispatch({

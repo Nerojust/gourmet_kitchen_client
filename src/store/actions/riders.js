@@ -15,7 +15,7 @@ export const createRider = orderPayload => {
     return client
       .post(`/riders`, orderPayload)
       .then(response => {
-        handleLogout(response, dispatch);
+      
         if (response.data?.isSuccessful) {
           console.log('Rider created successfully');
 
@@ -60,7 +60,7 @@ export const getAllRiders = () => {
     return client
       .get(getUrl)
       .then(response => {
-        handleLogout(response, dispatch);
+       
         if (response?.data) {
           console.log(
             'Riders gotten successfully',
@@ -106,7 +106,7 @@ export const getRiderById = id => {
     return client
       .get(`/riders/${id}`)
       .then(response => {
-        handleLogout(response, dispatch);
+      
         if (response.data) {
           console.log('Single rider gotten successfully');
           dispatch({
@@ -144,7 +144,7 @@ export const updateRiderById = (id, payload) => {
     return client
       .patch(url, payload)
       .then(response => {
-        handleLogout(response, dispatch);
+       
         if (response?.data) {
           if (response?.data?.isSuccessful) {
             console.log(
@@ -190,7 +190,7 @@ export const deleteRiderById = id => {
     return client
       .delete(`/riders/${id}`)
       .then(response => {
-        handleLogout(response, dispatch);
+      
         if (response.data) {
           console.log('Single rider deleted successfully');
           dispatch({

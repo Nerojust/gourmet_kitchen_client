@@ -41,6 +41,7 @@ const StoreSalesScreen = ({navigation}) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const {surplus, surplusLoading, updateSurplusLoading, createSurplusLoading} =
     useSelector(x => x.surplus);
+  // console.log("surplus redux",surplus)
   const [isSearchClicked, setIsSearchClicked] = useState(false);
   var surplusData = Object.assign([], surplus);
   const [filteredSurplusData, setFilteredSurplusData] = useState(surplusData);
@@ -184,83 +185,34 @@ const StoreSalesScreen = ({navigation}) => {
 
   let tempObj = {};
   const handleClick = item => {
-    // console.log('item', item);
-    // console.log('list is ' + finalMiniArray);
-    //console.log("surplus",handleMinisStructure(surplus))
     var stringData = 'Available Bread List \n';
 
-   
+    let dataproducts = groupBy(surplus, 'productsize');
+    // console.log('finalllll array', dataproducts);
 
-    let dataproducts = groupBy(surplusArray, 'productsize');
-    console.log('finalllll array', surplusArray);
-
-    // Object.keys(dataproducts).forEach((parentKey, i) => {
-    //   //console.log('iii', parentKey);
-
-    //   dataproducts[parentKey].forEach((singlePdt, ii) => {
-    //     console.log(`${singlePdt} ${ii}`);
-    //     if (singlePdt) {
-    //       //console.log('pdt', item.productname, 'size', item.productsize);
-    //       stringData =
-    //         stringData +
-    //         '\n' +
-    //         parentKey +
-    //         '\n---------------------------------------------------\n' +
-    //         singlePdt.productname.trim() +
-    //         ' | ' +
-    //         singlePdt.count +
-    //         (singlePdt?.count > 1 ? ' pcs' : ' pc') +
-    //         '\n---------------------------------------------------\n';
-    //     }
-    //   });
-    // });
-
-    // Object.entries(handleMinisStructure(surplus)).map(
-    //   ([parentKey, value], i) => {
-    //     // console.log('iii', i);
-    //     {
-    //       Object.entries(value).map(([childKey, value]) => {
-    //         //console.log(`${childKey} ${value}`);
-    //         if (value) {
-    //           //console.log('pdt', item.productname, 'size', item.productsize);
-    //           stringData =
-    //             stringData +
-    //             '\n' +
-    //             '' +
-    //             parentKey +
-    //             ' | ' +
-    //             childKey +
-    //             ' | ' +
-    //             value.count +
-    //             (value?.count > 1 ? ' pcs' : ' pc');
-    //         }
-    //       });
-    //     }
-    //   },
-    // );
-
-    //map through the list
-    // sortArrayData(surplus, 'productname').map((item, i) => {
-    //   let grouped_data = _.chain(surplus)
-    //     .groupBy('productsize')
-
-    //     //.map((productname, productsize) => (productname, productsize))
-    //     .value();
-    //   console.log(grouped_data);
-    //   if (item) {
-    //     // console.log('pdt', item.productname, 'size', item.productsize);
-    //     stringData =
-    //       stringData +
-    //       '\n' +
-    //       '' +
-    //       item.productname +
-    //       ' | ' +
-    //       item.productsize +
-    //       ' | ' +
-    //       item.count +
-    //       (item?.count > 1 ? ' pcs' : ' pc');
-    //   }
-    // });
+    Object.keys(dataproducts).forEach((parentKey, i) => {
+      //console.log('iii', parentKey);
+      stringData =
+        stringData +
+        '\n' +
+        parentKey +
+        '\n------------------------------------------------------\n';
+      dataproducts[parentKey].forEach((singlePdt, ii) => {
+        //console.log(`${singlePdt} ${ii}`);
+        if (singlePdt) {
+          //console.log('pdt', item.productname, 'size', item.productsize);
+          stringData =
+            stringData +
+            singlePdt.productname.trim() +
+            ' | ' +
+            singlePdt.count +
+            (singlePdt?.count > 1 ? ' pcs' : ' pc') +
+            '\n';
+        }
+      });
+      stringData =
+        stringData + '------------------------------------------------------\n';
+    });
 
     Clipboard.setString(stringData);
     alert('Surplus copied to clipboard');

@@ -15,7 +15,7 @@ export const getAllRoles = () => {
     return client
       .get(getUrl)
       .then(response => {
-        handleLogout(response, dispatch);
+       
         if (response?.data) {
           console.log('roles gotten successfully', response?.data?.recordCount);
           if (response?.data?.isSuccessful) {
@@ -57,7 +57,7 @@ export const getRoleById = id => {
     return client
       .get(`/roles/${id}`)
       .then(response => {
-        handleLogout(response, dispatch);
+       
         if (response.data) {
           console.log('Single role gotten successfully');
           dispatch({

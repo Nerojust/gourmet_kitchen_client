@@ -16,7 +16,7 @@ export const getAllNotes = () => {
     return client
       .get(getUrl)
       .then(response => {
-        handleLogout(response, dispatch);
+       
         if (response?.data) {
           console.log('Notes gotten successfully', response?.data?.recordCount);
           if (response?.data?.isSuccessful) {
@@ -60,7 +60,7 @@ export const createNote = notePayload => {
     return client
       .post(`/notes`, notePayload)
       .then(response => {
-        handleLogout(response, dispatch);
+      
         if (response.data?.isSuccessful) {
           console.log('note created successfully');
 
@@ -103,7 +103,7 @@ export const updateNoteById = (id, payload) => {
     return client
       .patch(`/notes/${id}`, payload)
       .then(response => {
-        handleLogout(response, dispatch);
+       
         if (response.data) {
           console.log('Single note updated successfully');
           dispatch({
@@ -138,7 +138,7 @@ export const getNoteById = id => {
     return client
       .get(`/notes/${id}`)
       .then(response => {
-        handleLogout(response, dispatch);
+       
         if (response.data) {
           console.log('Single note gotten successfully');
           dispatch({
@@ -175,7 +175,7 @@ export const deleteNoteById = id => {
     return client
       .delete(`/notes/${id}`)
       .then(response => {
-        handleLogout(response, dispatch);
+      
         if (response.data) {
           if (response?.data?.isSuccessful) {
             console.log('Deleted single note successfully', id, response.data);

@@ -25,6 +25,7 @@ import RNImmediatePhoneCall from 'react-native-immediate-phone-call';
 import {useSelector} from 'react-redux';
 import {useDispatch} from 'react-redux';
 import {clearEverythingOrders} from '../store/actions/orders';
+import {logoutUser} from '../store/actions/users';
 export const capitalizeWord = string => {
   var result = [];
   string &&
@@ -339,7 +340,8 @@ export const INDEX_PAGE_SIZE_DEFAULT = 50;
 export const INDEX_PAGE_SIZE_OPTIONS = [5, 10, 20, 30, 50, 100];
 
 export const handleLogout = (response, dispatch) => {
-  if (response.status == 401) {
+ // console.log('eeee', response);
+  if (response == '[Error: Request failed with status code 401]') {
     alert('Session Expired', 'Your session has expired. Please login again');
     dispatch(clearEverythingOrders());
     return;
@@ -359,6 +361,7 @@ export const handleError = (errormessage, dispatch, extMessage) => {
     return;
   } else if (error == 'Request failed with status code 401') {
     console.log('session expired. try to go back to auth page.');
+    alert('Unauthorized access, login with valid credentials');
     dispatch(logoutUser());
     return;
   } else if (error == 'Request failed with status code 500') {
