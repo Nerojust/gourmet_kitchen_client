@@ -13,7 +13,7 @@ const SurplusListItemComponent = ({
   handleEditClick,
   handleNormalClick,
 }) => {
-  //console.log('item', item);
+  //console.log('item', item.productsize);
   let count;
   let tempCount = 0;
   if (item?.details) {
@@ -67,7 +67,12 @@ const SurplusListItemComponent = ({
         <View style={{marginRight: 10}}>
           <ProductSans style={styles.labelText}>SIZE</ProductSans>
           <ProductSans style={styles.quantityName}>
-            {item.details ? 'Mini' : item?.productsize.trim()}
+            {item.details
+              ? 'Mini'
+              : item?.productsize.trim() == 'Mini < 4' ||
+                item?.productsize.trim() == 'Mini > 4'
+              ? 'Mini'
+              : item?.productsize.trim()}
           </ProductSans>
         </View>
         <View>

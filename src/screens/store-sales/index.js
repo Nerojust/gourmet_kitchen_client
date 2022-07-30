@@ -183,11 +183,16 @@ const StoreSalesScreen = ({navigation}) => {
     );
   };
 
-  let tempObj = {};
   const handleClick = item => {
     var stringData = 'Available Bread List \n';
+    let newSurplus = surplus.filter(oneItem => {
+      return oneItem.productsize == 'Mini < 4' ||
+        oneItem.productsize == 'Mini > 4'
+        ? (oneItem.productsize = 'Mini')
+        : oneItem.productsize;
+    });
 
-    let dataproducts = groupBy(surplus, 'productsize');
+    let dataproducts = groupBy(newSurplus, 'productsize');
     // console.log('finalllll array', dataproducts);
 
     Object.keys(dataproducts).forEach((parentKey, i) => {
