@@ -26,6 +26,7 @@ const SurplusListItemComponent = ({
   } else {
     count = item?.count;
   }
+
   return (
     <TouchableOpacity
       style={styles.customerNameView}
@@ -67,12 +68,7 @@ const SurplusListItemComponent = ({
         <View style={{marginRight: 10}}>
           <ProductSans style={styles.labelText}>SIZE</ProductSans>
           <ProductSans style={styles.quantityName}>
-            {item.details
-              ? 'Mini'
-              : item?.productsize.trim() == 'Mini < 4' ||
-                item?.productsize.trim() == 'Mini > 4'
-              ? 'Mini'
-              : item?.productsize.trim()}
+            {item?.productsize.trim()}
           </ProductSans>
         </View>
         <View>
