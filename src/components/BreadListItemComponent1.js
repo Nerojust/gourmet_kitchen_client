@@ -41,7 +41,7 @@ const BreadListItemComponent1 = ({indexKey, keyItem, keyValue, onClick}) => {
                   {value?.sum || '0'}
                 </ProductSans>
 
-                {value?.products && !value?.status ? (
+                {value?.products && value?.status == 'incomplete' ? (
                   <Image
                     source={IMAGES.infoImage}
                     style={{

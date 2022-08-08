@@ -122,24 +122,22 @@ const BreadListScreen = ({navigation}) => {
   };
 
   const getFullLoavesData = () => {
-    dispatch(getAllSets()).then(setResult => {
-      setHasLoaded(false);
-      if (setResult) {
-        dispatch(
-          getAllOrderedProductsStats(getDateWithoutTime(selectedOrderDate)),
-        ).then((result, i) => {
-          if (result) {
-            //console.log("result ",result)
-            let filteredResult = result.filter(
-              element => !element.productsize.toLowerCase().includes('mini'),
-            );
-            //console.log("filtered result",filteredResult)
-            setFullLoavesArray(filteredResult);
+    dispatch(
+      getAllOrderedProductsStats(getDateWithoutTime(selectedOrderDate)),
+    ).then((result, i) => {
+      if (result) {
+        //console.log("result ",result)
+        let filteredResult = result.filter(
+          element =>
+            !element.productsize.toLowerCase().includes('mini <') &&
+            !element.productsize.toLowerCase().includes('mini >') &&
+            !element.productsize.toLowerCase().includes('mini'),
+        );
+        console.log('filtered result', filteredResult);
+        setFullLoavesArray(filteredResult);
 
-            setHasLoaded(true);
-            handleFullLoavesStructure(result);
-          }
-        });
+        setHasLoaded(true);
+        handleFullLoavesStructure(filteredResult);
       }
     });
   };
@@ -169,10 +167,13 @@ const BreadListScreen = ({navigation}) => {
                     // console.log("found",foundSetProduct.productsize)
                     if (oneSet?.products) {
                       if (
-                        foundSetProduct &&
+                        (foundSetProduct &&
+                          foundSetProduct.productsize
+                            .toLowerCase()
+                            .includes('mini <')) ||
                         foundSetProduct.productsize
                           .toLowerCase()
-                          .includes('mini')
+                          .includes('mini >')
                       ) {
                         let obj = {};
                         obj.name = foundSetProduct.productname;
@@ -191,8 +192,10 @@ const BreadListScreen = ({navigation}) => {
             //merge both arrays
             let newResult = result.concat(tempWithSetArray);
             //now filter through the merged arrays for only minis
-            let filteredResult = newResult.filter(element =>
-              element.productsize.toLowerCase().includes('mini'),
+            let filteredResult = newResult.filter(
+              element =>
+                element.productsize.toLowerCase().includes('mini <') ||
+                element.productsize.toLowerCase().includes('mini >'),
             );
             // console.log('filtered minis', filteredResult);
             setMiniArray(filteredResult);
@@ -285,7 +288,7 @@ const BreadListScreen = ({navigation}) => {
 
     if (results) {
       let dataproducts = groupBy(results, 'name');
-      //console.log('result', dataproducts);
+      // console.log('result', dataproducts);
       if (dataproducts) {
         Object.keys(dataproducts).forEach((item, i) => {
           // console.log("mini item",item)

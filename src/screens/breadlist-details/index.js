@@ -62,7 +62,7 @@ const BreadListDetailsScreen = ({navigation, route}) => {
   var {productid, mini_productid} = route.params.bread;
   var selectedOrderDate = route.params.date;
   //console.log("dddd",selectedOrderDate)
-  //console.log('route.params.brea item',  productid);
+  //console.log('item',  route.params.bread);
   const [foundSurplus, setFoundSurplus] = useState();
   const [category, setCategory] = useState('');
   const [productsize, setProductsize] = useState('');
