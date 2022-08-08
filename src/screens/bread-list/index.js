@@ -76,7 +76,6 @@ const BreadListScreen = ({navigation}) => {
   //console.log('products', orderedProducts);
   const [selectedItemName, setSelectedItemName] = useState('');
   const [selectedItem, setSelectedItem] = useState({});
-  const [keysBreadArray, setKeysBreadArray] = useState([]);
   const [selectedTab, setSelectedTab] = useState(0);
   const [hasLoaded, setHasLoaded] = useState(false);
   const [isTabClicked, setIsTabClicked] = useState(false);
@@ -85,31 +84,17 @@ const BreadListScreen = ({navigation}) => {
   const [fullLoavesArray, setFullLoavesArray] = useState([]);
   const [miniArray, setMiniArray] = useState([]);
 
-  // useEffect(() => {
-  //   const unsubscribe = navigation.addListener('focus', () => {
-  //     fetchAllData();
-  //   });
-  //   fetchAllData();
-  //   return unsubscribe;
-  // }, [navigation]);
-
-  // useEffect(() => {
-  // let result=  orderProductsData.reduce(function (objectMapResult, singleItem) {
-  //     // console.log('acc', objectMapResult);
-  //     // console.log('obj', singleItem);
-  //     let keyValueToMapWith = singleItem["mini_productid"]; //single item from the list e.g. size
-  //     if (!objectMapResult[keyValueToMapWith]) {
-  //       objectMapResult[keyValueToMapWith] = [];
-  //     }
-  //     objectMapResult[keyValueToMapWith].push(singleItem);
-  //     return objectMapResult;
-  //   }, {});
-  //   console.log("resss",result)
-  // }, []);
-
   useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      fetchAllData();
+    });
     fetchAllData();
+    return unsubscribe;
   }, [selectedOrderDate, selectedTab]);
+
+  // useEffect(() => {
+  //   fetchAllData();
+  // }, [selectedOrderDate, selectedTab]);
 
   const fetchAllData = () => {
     if (selectedTab == 0) {
@@ -120,68 +105,18 @@ const BreadListScreen = ({navigation}) => {
       getMinisData();
     }
   };
-  // useEffect(() => {
-  //   let arraydata = [];
-  //   let filteredResult = orderProductsData.map(element => {
-  //     if (
-  //       !element.productsize.toLowerCase().includes('mini')
-  //       ) {
-  //       console.log("eee",element.productsize)
-  //       arraydata.push(element);
-  //     }
-  //   });
-  //   console.log('filtered', arraydata.length);
-  // }, [orderProductsData]);
 
   const getAllLoavesData = () => {
     setHasLoaded(false);
-    dispatch(getAllSets()).then(setResult => {
-      if (setResult) {
-        dispatch(
-          getAllOrderedProductsStats(getDateWithoutTime(selectedOrderDate)),
-        ).then((result, i) => {
-          if (result) {
-            //console.log("result ",result)
 
-            // setResult.forEach((oneSet, iset) => {
-            //   //console.log("one set",oneSet)
-            //   result.map((singleItem, i) => {
-            //     if (
-            //       oneSet.zupasetid.trim() == singleItem?.productid.trim()
-            //       //singleItem.name.toLowerCase().includes('supreme')
-            //     ) {
-            //       // console.log('set ' + iset, oneSet.zupasetname);
-            //       setArray.push(singleItem);
-            //     }
-            //   });
-            // }),
-            //   //console.log('sets arryay', setArray);
-            //   setArray.map((item, i) => {
-            //     if (item) {
-            //       //console.log('item', item);
-            //       setResult.map((oneSet, i) => {
-            //         if (oneSet) {
-            //           if (item.productid == oneSet.zupasetid) {
-            //             // console.log('one set', oneSet);
-            //             let obj = {};
-            //             obj = item;
-            //             obj.set = oneSet;
-            //             //console.log('obj', obj);
-            //             finalArrayData.push(obj);
-            //           }
-            //         }
-            //       });
-            //     }
-            //   });
+    dispatch(
+      getAllOrderedProductsStats(getDateWithoutTime(selectedOrderDate)),
+    ).then((result, i) => {
+      if (result) {
+        //console.log("result ",result)
 
-            // var difference = _.difference(result, setResult);
-            // // console.log(difference);
-
-            // //console.log("final",finalArrayData)
-            setHasLoaded(true);
-            handleAllLoavesStructure(result);
-          }
-        });
+        setHasLoaded(true);
+        handleAllLoavesStructure(result);
       }
     });
   };
@@ -201,41 +136,6 @@ const BreadListScreen = ({navigation}) => {
             //console.log("filtered result",filteredResult)
             setFullLoavesArray(filteredResult);
 
-            // setResult.forEach((oneSet, iset) => {
-            //   filteredResult.map((singleItem, i) => {
-            //     if (
-            //       oneSet.zupasetid.trim() == singleItem?.productid.trim()
-            //       //singleItem.name.toLowerCase().includes('supreme')
-            //     ) {
-            //       // console.log('set ' + iset, oneSet.zupasetname);
-            //       setArray.push(singleItem);
-            //     }
-            //   });
-            // }),
-            //   // console.log('sets arryay', setArray);
-            //   setArray.map((item, i) => {
-            //     if (item) {
-            //       //console.log('item', item);
-            //       setResult.map((oneSet, i) => {
-            //         if (oneSet) {
-            //           if (item.productid == oneSet.zupasetid) {
-            //             // console.log('one set', oneSet);
-            //             let obj = {};
-            //             obj = item;
-            //             obj.set = oneSet;
-            //             //console.log('obj', obj);
-            //             finalArrayData.push(obj);
-            //           }
-            //         }
-            //       });
-            //     }
-            //   });
-
-            // var difference = _.difference(filteredResult, setResult);
-            // //console.log(difference);
-
-            // //console.log("final",finalArrayData)
-            // //handleAllLoavesStructure(difference);
             setHasLoaded(true);
             handleFullLoavesStructure(result);
           }
@@ -294,7 +194,7 @@ const BreadListScreen = ({navigation}) => {
             let filteredResult = newResult.filter(element =>
               element.productsize.toLowerCase().includes('mini'),
             );
-            // console.log('filetered minis', filteredResult);
+            // console.log('filtered minis', filteredResult);
             setMiniArray(filteredResult);
 
             //now find all the sets ordered

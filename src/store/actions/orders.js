@@ -6,6 +6,7 @@ import {LOGIN_TOKEN} from '../../utils/Constants';
 import {getDateWithoutTime} from '../../utils/DateFilter';
 import {handleError, handleLogout} from '../../utils/utils';
 import {createCustomer} from './customers';
+import {getAllSurplus} from './surplus';
 
 export const setOrderStatus = status => {
   return dispatch => {
@@ -52,8 +53,6 @@ export const getSalesAnalytics = date => {
     return client
       .get(getUrl)
       .then(response => {
-       
-
         if (response?.data) {
           console.log(
             'Sales Analytics gotten successfully',
@@ -88,7 +87,7 @@ export const getSalesAnalytics = date => {
   };
 };
 export const getAllOrderedProductsStats = date => {
-  console.log('About to get all orders stats');
+  console.log('About to get all orders stats', date);
 
   return dispatch => {
     dispatch({
@@ -104,8 +103,6 @@ export const getAllOrderedProductsStats = date => {
     return client
       .get(getUrl)
       .then(response => {
-      
-
         if (response?.data) {
           console.log(
             'Order stats gotten successfully',
@@ -147,7 +144,7 @@ export const saveOrderDate = date => {
     });
   };
 };
-export const getAllOrderedProductsStatsById = (id, date) => {
+export const getAllOrderedProductsStatsById = (id, miniProductId, date) => {
   console.log('About to get stats with id', id);
   return dispatch => {
     dispatch({
@@ -156,15 +153,14 @@ export const getAllOrderedProductsStatsById = (id, date) => {
       error: null,
     });
 
-    var getUrl = `/orders/count/${id}?startDate=${date + ' 00:00:01'}&endDate=${
-      date + ' 23:59:59'
-    }`;
+    var getUrl = `/orders/count/${id}?miniProductId=${miniProductId}&startDate=${
+      date + ' 00:00:01'
+    }&endDate=${date + ' 23:59:59'}`;
     //var url = `/orders/count/${id}`;
     console.log('geturl', getUrl);
     return client
       .get(getUrl)
       .then(response => {
-       
         if (response?.data) {
           if (response?.data?.isSuccessful) {
             console.log(
@@ -177,6 +173,7 @@ export const getAllOrderedProductsStatsById = (id, date) => {
               data: response?.data?.results,
             });
 
+            // dispatch(getAllOrderedProductsStats(date));
             return response?.data?.results;
           } else {
             alert(response?.data?.message);
@@ -187,6 +184,7 @@ export const getAllOrderedProductsStatsById = (id, date) => {
             });
           }
         }
+      
       })
       .catch(error => {
         console.log('getting stat failed', error);
@@ -216,7 +214,6 @@ export const getAllSalesAverage = orderDate => {
     return client
       .get(getUrl)
       .then(response => {
-      
         if (response?.data) {
           console.log(
             'Sales average data gotten successfully',
@@ -276,7 +273,6 @@ export const getAllOrderedProducts = (status = 'all', orderDate) => {
     return client
       .get(getUrl)
       .then(response => {
-       
         if (response?.data) {
           console.log(
             'Orders gotten successfully',
@@ -291,7 +287,7 @@ export const getAllOrderedProducts = (status = 'all', orderDate) => {
             orderDate,
           );
           //refresh list
-          getAllOrderedProducts('all', orderDate);
+         // getAllOrderedProducts('all', orderDate);
           //}
 
           if (response?.data?.isSuccessful) {
@@ -329,6 +325,7 @@ const handleCompleteOrdersStatus = (orders, dispatch, orderDate) => {
     orders?.map(fullOrderItem => {
       // console.log('fulfilled status', fullOrderItem?.isfulfilled);
       let count = 0;
+      let tempArray=[]
       if (fullOrderItem.isfulfilled == false) {
         //console.log('inside ');
         fullOrderItem?.products &&
@@ -365,7 +362,7 @@ const handleCompleteOrdersStatus = (orders, dispatch, orderDate) => {
 };
 
 export const updateOrderListProductCount = (payload, date) => {
-  console.log('About to update breadlist count', payload);
+  console.log('About to update breadlist count', payload, date);
   return dispatch => {
     dispatch({
       type: 'UPDATE_OVEN_COUNT_PENDING',
@@ -380,7 +377,6 @@ export const updateOrderListProductCount = (payload, date) => {
     return client
       .patch(getUrl, payload)
       .then(response => {
-       
         if (response?.data) {
           console.log(
             'update breadlist count successfully',
@@ -392,8 +388,11 @@ export const updateOrderListProductCount = (payload, date) => {
               loading: false,
               data: response?.data?.results,
             });
-            dispatch(getAllOrderedProductsStats(date));
+           // dispatch(getAllOrderedProductsStats(date));
             dispatch(getAllOrderedProducts('all', date));
+            if (parseInt(payload?.surplusCount) > 0) {
+              dispatch(getAllSurplus(date));
+            }
             return response?.data?.results;
           } else {
             alert(response?.data?.message);
@@ -430,7 +429,6 @@ export const updateSurplusStatusForOrderItemById = (id, payload) => {
     return client
       .patch(url, payload)
       .then(response => {
-       
         if (response?.data) {
           if (response?.data?.isSuccessful) {
             console.log(
@@ -477,7 +475,6 @@ export const updateOrderProductMultipleById = (id, orderId, date) => {
     return client
       .get(url)
       .then(response => {
-      
         if (response?.data) {
           if (response?.data?.isSuccessful) {
             console.log(
@@ -532,7 +529,6 @@ export const updateOrderProductById = (id, payload, orderId, date) => {
     return client
       .put(url, payload)
       .then(response => {
-      
         if (response?.data) {
           if (response?.data?.isSuccessful) {
             console.log(
@@ -582,7 +578,6 @@ export const rescheduleOrderDateById = (id, payload) => {
     return client
       .patch(url, payload)
       .then(response => {
-      
         if (response?.data) {
           if (response?.data?.isSuccessful) {
             console.log(
@@ -631,7 +626,6 @@ export const updateOrderDispatchByOrderId = (id, payload) => {
     return client
       .patch(url, payload)
       .then(response => {
-      
         if (response?.data) {
           if (response?.data?.isSuccessful) {
             console.log(
@@ -668,18 +662,17 @@ export const updateOrderDispatchByOrderId = (id, payload) => {
 export const updateCompleteStatusForOrder = (id, payload, orderDate) => {
   console.log('About to updateCompleteStatusForOrder with id', id);
   return dispatch => {
-    dispatch({
-      type: 'UPDATE_COMPLETE_ORDER_PENDING',
-      loading: true,
-      error: null,
-    });
+    // dispatch({
+    //   type: 'UPDATE_COMPLETE_ORDER_PENDING',
+    //   loading: true,
+    //   error: null,
+    // });
     var url = `/orders/updateCompleteStatusForOrder/${id}`;
     //console.log("geturl", getUrl);
     return client
       .patch(url, payload)
       .then(response => {
         if (response?.data) {
-         
           if (response?.data?.isSuccessful) {
             console.log(
               'updateCompleteStatusForOrder updated successfully',
@@ -691,7 +684,7 @@ export const updateCompleteStatusForOrder = (id, payload, orderDate) => {
               data: response?.data?.results,
             });
 
-            dispatch(getAllOrderedProducts('all', orderDate));
+           //dispatch(getAllOrderedProducts('all', orderDate));
             return response?.data?.results;
           } else {
             dispatch({
@@ -726,7 +719,6 @@ export const updateOrderById = (id, payload, orderDate) => {
     return client
       .put(url, payload)
       .then(response => {
-       
         if (response?.data) {
           if (response?.data?.isSuccessful) {
             console.log(
@@ -793,7 +785,6 @@ export const updateOrderAllItemsByOrderId = (
       .patch(url, payload)
       .then(response => {
         if (response?.data) {
-        
           if (response?.data?.isSuccessful) {
             console.log(
               'Single order multiple items updated successfully',
@@ -846,7 +837,6 @@ export const updateOrderSpecialNoteById = (id, payload) => {
     return client
       .patch(url, payload)
       .then(response => {
-       
         if (response?.data) {
           if (response?.data?.isSuccessful) {
             console.log(
@@ -901,7 +891,6 @@ export const createOrder = (
     return client
       .post(`/orders`, kitchenPayload)
       .then(response => {
-      
         if (response.data?.isSuccessful) {
           console.log('Kitchen Order created successfully');
 
@@ -1055,7 +1044,6 @@ export const getOrder = id => {
     return client
       .get(`/orders/${id}`)
       .then(response => {
-       
         if (response.data.isSuccessful) {
           console.log('Single order gotten successfully');
           dispatch({
@@ -1096,7 +1084,6 @@ export const deleteOrderById = (id, orderDate) => {
     return client
       .delete(`/orders/${id}`)
       .then(response => {
-       
         if (response.data.isSuccessful) {
           console.log('Single order deleted successfully');
           dispatch(getAllOrderedProducts('all', orderDate));
@@ -1145,7 +1132,6 @@ export const deleteAllOrders = orderDate => {
     return client
       .delete(url)
       .then(response => {
-       
         if (response.data) {
           console.log('Deleted all orders successfully');
           dispatch(getAllOrderedProducts('all', orderDate));

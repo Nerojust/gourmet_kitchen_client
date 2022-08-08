@@ -77,7 +77,8 @@ const OrdersScreen = ({navigation}) => {
   const [selectedOrderDate, setSelectedOrderDate] = useState(new Date());
   const [open, setOpen] = useState(false);
   const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false);
-  const [isSuccessDispatchModalVisible, setIsSuccessDispatchModalVisible] = useState(false);
+  const [isSuccessDispatchModalVisible, setIsSuccessDispatchModalVisible] =
+    useState(false);
   const {loginError, accessToken} = useSelector(x => x.users);
   //console.log("token is redux",accessToken)
 
@@ -121,6 +122,53 @@ const OrdersScreen = ({navigation}) => {
       getAllOrderedProducts(statusState, getDateWithoutTime(selectedOrderDate)),
     );
   };
+  // useEffect(() => {
+  //   //update status where necessary
+
+  //   if (orders && orders.length > 0) {
+  //     //console.log('here ');
+  //     let count = 0;
+  //     orders?.map(fullOrderItem => {
+  //       // console.log('fulfilled status', fullOrderItem?.isfulfilled);
+  //       let tempArray = [];
+  //       if (fullOrderItem.isfulfilled == false) {
+  //         //console.log('inside ');
+  //         fullOrderItem?.products &&
+  //           fullOrderItem?.products.map(async oneItem => {
+  //             if (
+  //               oneItem.isfulfilled &&
+  //               oneItem.quantity == oneItem.fulfilledquantity
+  //             ) {
+  //               count++;
+  //             }
+  //             if (count == fullOrderItem?.products.length) {
+  //               console.log(
+  //                 'this order has its products all fulfilled, complete it ' +
+  //                   fullOrderItem?.id,
+  //               );
+  //               let payload = {
+  //                 status: 'completed',
+  //                 isfulfilled: true,
+  //               };
+  //               dispatch(
+  //                 updateCompleteStatusForOrder(
+  //                   fullOrderItem?.id,
+  //                   payload,
+  //                   orderDate,
+  //                 ),
+  //               );
+  //               count = 0;
+  //             }
+  //             //'count', count);
+  //           });
+  //       }
+  //     });
+  //     if (count > 0) {
+  //       fetchAllData();
+  //       count = 0;
+  //     }
+  //   }
+  // }, []);
 
   const onRefresh = async () => {
     fetchAllData();
