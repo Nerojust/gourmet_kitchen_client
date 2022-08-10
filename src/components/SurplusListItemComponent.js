@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
     fontSize: fp(13),
     color: COLOURS.labelTextColor,
     paddingTop: 3,
-    paddingBottom: 10,
+    paddingBottom: 5,
     // left: 12,
   },
 });

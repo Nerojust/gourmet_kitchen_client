@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 1,
     backgroundColor: COLOURS.lightGray1,
-    marginVertical: 5,
+    marginVertical: 2,
   },
   productName: {
     fontSize: fp(15),
@@ -196,13 +196,13 @@ const styles = StyleSheet.create({
   },
   customerNameView: {
     backgroundColor: COLOURS.white,
-    padding: 10,
+    padding: 6,
     marginVertical: 5,
     paddingHorizontal: 15,
     borderRadius: 10,
   },
   labelText: {
-    fontSize: fp(13),
+    fontSize: fp(12),
     color: COLOURS.labelTextColor,
     paddingTop: 3,
     paddingBottom: 5,

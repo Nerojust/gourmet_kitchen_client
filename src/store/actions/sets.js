@@ -24,7 +24,6 @@ export const getAllSets = () => {
     return client
       .get(getUrl)
       .then(response => {
-
         if (response?.data) {
           console.log('sets gotten successfully', response?.data?.recordCount);
           if (response?.data?.isSuccessful) {
@@ -45,9 +44,99 @@ export const getAllSets = () => {
       })
       .catch(error => {
         console.log('Getting sets failed', error);
-        handleError(error, dispatch, 'get orders list');
+        handleError(error, dispatch, 'get sets list');
         dispatch({
           type: 'GET_ALL_SETS_FAILED',
+          loading: false,
+          error: error.message,
+        });
+      });
+  };
+};
+export const getAllOrderSets = () => {
+  console.log('About to get all order sets');
+  return dispatch => {
+    dispatch({
+      type: 'GET_ALL_ORDERS_SETS_PENDING',
+      loading: true,
+      error: null,
+    });
+    var getUrl = `/sets/orders`;
+    console.log('geturl sets', getUrl);
+    return client
+      .get(getUrl)
+      .then(response => {
+        if (response?.data) {
+          console.log(
+            'set orders gotten successfully',
+            response?.data?.recordCount,
+          );
+          if (response?.data?.isSuccessful) {
+            dispatch({
+              type: 'GET_ALL_ORDERS_SETS_SUCCESS',
+              loading: false,
+              data: response?.data?.results,
+            });
+            return response?.data?.results;
+          } else {
+            dispatch({
+              type: 'GET_ALL_ORDERS_SETS_FAILED',
+              loading: false,
+              error: response?.data?.message,
+            });
+          }
+        }
+      })
+      .catch(error => {
+        console.log('Getting set orders failed', error);
+        handleError(error, dispatch, 'get set orders list');
+        dispatch({
+          type: 'GET_ALL_ORDERS_SETS_FAILED',
+          loading: false,
+          error: error.message,
+        });
+      });
+  };
+};
+export const getAllOrderSetsBySetId = setid => {
+  console.log('About to get all order sets');
+  return dispatch => {
+    dispatch({
+      type: 'GET_ALL_ORDERS_SETS_PENDING',
+      loading: true,
+      error: null,
+    });
+    var getUrl = `/sets/orders/products/${setid}`;
+    console.log('geturl sets', getUrl);
+    return client
+      .get(getUrl)
+      .then(response => {
+        if (response?.data) {
+          console.log(
+            'set orders gotten successfully',
+            response?.data?.recordCount,
+          );
+          if (response?.data?.isSuccessful) {
+            dispatch({
+              type: 'GET_ALL_ORDERS_SETS_SUCCESS',
+              loading: false,
+              data: response?.data?.results,
+            });
+            return response?.data?.results;
+          } else {
+            dispatch({
+              type: 'GET_ALL_ORDERS_SETS_FAILED',
+              loading: false,
+              error: response?.data?.message,
+            });
+          }
+        }
+      })
+      .catch(error => {
+        console.log('Getting set orders failed', error);
+        handleError(error, dispatch, 'get set orders list');
+        dispatch({
+          type: 'GET_ALL_ORDERS_SETS_FAILED',
           loading: false,
           error: error.message,
         });

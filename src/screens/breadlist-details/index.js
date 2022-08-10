@@ -35,7 +35,7 @@ import {
   updateSurplusById,
 } from '../../store/actions/surplus';
 import {getDateWithoutTime} from '../../utils/DateFilter';
-import {getAllSets} from '../../store/actions/sets';
+import {getAllOrderSetsBySetId, getAllSets} from '../../store/actions/sets';
 
 // create a component
 const BreadListDetailsScreen = ({navigation, route}) => {
@@ -59,10 +59,11 @@ const BreadListDetailsScreen = ({navigation, route}) => {
     orderDate,
   } = useSelector(x => x.orders);
   //console.log('count item', countItem);
-  var {productid, mini_productid} = route.params.bread;
+  var {productid, setid, mini_productid, orderid} = route.params.bread;
   var selectedOrderDate = route.params.date;
-  //console.log("dddd",selectedOrderDate)
-  //console.log('item',  route.params.bread);
+
+  //console.log('order id', route.params.bread.name);
+  //console.log('item',  route.params.bread.productid);
   const [foundSurplus, setFoundSurplus] = useState();
   const [category, setCategory] = useState('');
   const [productsize, setProductsize] = useState('');
@@ -83,6 +84,12 @@ const BreadListDetailsScreen = ({navigation, route}) => {
     }
   }, [productid, shouldDismissPage]);
 
+  useEffect(() => {
+    if (setid) {
+      dispatch(getAllOrderSetsBySetId(setid));
+    }
+  }, [productid, shouldDismissPage]);
+
   const fetchAllData = () => {
     dispatch(getAllSurplus(getDateWithoutTime(selectedOrderDate))).then(
       resultData => {
@@ -90,9 +97,9 @@ const BreadListDetailsScreen = ({navigation, route}) => {
           let fSurplus = resultData.find(item => {
             // console.log(item.productname)
             if (mini_productid) {
-              return item.mini_productid == mini_productid;
+              return item?.mini_productid == mini_productid;
             } else {
-              return item.productid == productid;
+              return item?.productid == productid;
             }
           });
           if (fSurplus) {
@@ -104,24 +111,22 @@ const BreadListDetailsScreen = ({navigation, route}) => {
               let countArray = JSON.parse(newSurplus?.details);
               // console.log('countarray', countArray);
               countArray.map((oneItem, i) => {
-                tempCount = tempCount + oneItem.count;
+                tempCount = tempCount + oneItem?.count;
               });
               count = tempCount;
               newSurplus.count = count;
             }
           }
           setFoundSurplus(newSurplus);
-          //------------------
 
-          //----------------------
-
-          dispatch(
-            getAllOrderedProductsStatsById(
-              productid,
-              mini_productid,
-              getDateWithoutTime(selectedOrderDate),
-            ),
-          ).then(result => {
+          let payload = {
+            productid,
+            mini_productid,
+            setid,
+            date: getDateWithoutTime(selectedOrderDate),
+            orderid,
+          };
+          dispatch(getAllOrderedProductsStatsById(payload)).then(result => {
             if (result) {
               // console.log('full bread count profile', result);
               //pick the first object data because they are all the same values except sum
@@ -142,8 +147,8 @@ const BreadListDetailsScreen = ({navigation, route}) => {
     if (surplus) {
       let fSurplus = surplus.find(item =>
         mini_productid
-          ? item.mini_productid == mini_productid
-          : item.productid == productid,
+          ? item?.mini_productid == mini_productid
+          : item?.productid == productid,
       );
       if (fSurplus) {
         console.log('found the surplus', fSurplus);
@@ -162,7 +167,7 @@ const BreadListDetailsScreen = ({navigation, route}) => {
     let countData = 0;
     if (data)
       data.map((oneItem, i) => {
-        if (oneItem.sum) {
+        if (oneItem?.sum) {
           countData = countData + parseInt(oneItem?.sum);
         }
       });
@@ -414,28 +419,28 @@ const BreadListDetailsScreen = ({navigation, route}) => {
               'Before updating order status, surplus count is ',
               countTofulfill,
             );
+            let payload = {
+              productid,
+              mini_productid,
+              date: getDateWithoutTime(selectedOrderDate),
+            };
 
             //get this page data again
-            dispatch(
-              getAllOrderedProductsStatsById(
-                productid,
-                mini_productid,
-                orderDate,
-              ),
-            ).then(newResult => {
-              //console.log('new result data is ', newResult);
+            dispatch(getAllOrderedProductsStatsById(payload)).then(
+              newResult => {
+                //console.log('new result data is ', newResult);
 
-              if (newResult.length > 0) {
-                setIsLoading(false);
-                showSuccessDialog(false);
-                setShouldDismissPage(false);
-              } else {
-                showSuccessDialog(true);
-                setShouldDismissPage(true);
-                setIsLoading(false);
-              }
-            
-            });
+                if (newResult.length > 0) {
+                  setIsLoading(false);
+                  showSuccessDialog(false);
+                  setShouldDismissPage(false);
+                } else {
+                  showSuccessDialog(true);
+                  setShouldDismissPage(true);
+                  setIsLoading(false);
+                }
+              },
+            );
           } else {
             showSuccessDialog(true);
             setIsLoading(false);
@@ -446,13 +451,11 @@ const BreadListDetailsScreen = ({navigation, route}) => {
           }
           resetFields();
         }
-      
       })
       .catch(error => {
         console.log('update error', error);
         setIsLoading(false);
       });
-   
   };
 
   const displayChooseDialog = () => {

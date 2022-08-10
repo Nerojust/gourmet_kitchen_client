@@ -4,6 +4,7 @@ const initialState = {
   phoneArray: [],
   orders: [],
   analytics: [],
+  minisArray:[],
   orderedProductsStats: [],
   orderedProducts: [],
   riderAnalytics: [],
@@ -263,7 +264,25 @@ export default (state = initialState, action) => {
         error: action.error,
       };
 
-    case 'GET_ALL_ORDERED_PRODUCTS_STATS_PENDING':
+    case 'GET_ALL_PRODUCTS_STATS_MINI_PENDING':
+      return {
+        ...state,
+        ordersLoading: action.loading,
+      };
+    case 'GET_ALL_PRODUCTS_STATS_MINI_SUCCESS':
+      return {
+        ...state,
+        minisArray: action.data,
+        ordersLoading: action.loading,
+      };
+    case 'GET_ALL_PRODUCTS_STATS_MINI_FAILED':
+      return {
+        ...state,
+        ordersLoading: action.loading,
+        error: action.error,
+      };
+  
+      case 'GET_ALL_ORDERED_PRODUCTS_STATS_PENDING':
       return {
         ...state,
         ordersLoading: action.loading,

@@ -47,7 +47,6 @@ const SetListItemComponent = ({item, index}) => {
           <View>
             <ProductSans style={styles.labelText}>PRICE</ProductSans>
             <ProductSans style={styles.priceName}>
-              {NAIRA}
               {formatNumberCommaNaira(price)}
             </ProductSans>
           </View>

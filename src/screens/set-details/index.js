@@ -108,6 +108,7 @@ const SetDetailsScreen = ({navigation, route}) => {
       </View>
     );
   };
+
   const handleDelete = item => {
     console.log('item', item);
    // if (item == 'delete') {
@@ -138,6 +139,7 @@ const SetDetailsScreen = ({navigation, route}) => {
       {cancelable: true},
     );
   };
+
   const showSuccessDialog = () => {
     setIsSuccessModalVisible(!isSuccessModalVisible);
 
@@ -146,6 +148,7 @@ const SetDetailsScreen = ({navigation, route}) => {
       navigation.goBack();
     }, DIALOG_TIMEOUT);
   };
+  
   const renderSuccessModal = () => (
     <CustomSuccessModal
       isModalVisible={isSuccessModalVisible}

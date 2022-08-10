@@ -314,8 +314,8 @@ const NewStoreSalesScreen = ({navigation, route}) => {
       var payload = {
         count: parseInt(surplusCount),
         productId: selectedProduct?.id,
-        startDate: getDateWithoutTime(new Date()) + ' 00:00:01',
-        endDate: getDateWithoutTime(new Date()) + ' 23:59:59',
+        startDate: orderDate + ' 00:00:01',
+        endDate: orderDate + ' 23:59:59',
         // productName: selectedProduct.name,
         //productCategory: selectedProduct.categorySize.name,
         productSize: selectedProduct?.categorySize?.name,

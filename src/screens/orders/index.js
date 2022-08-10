@@ -82,40 +82,23 @@ const OrdersScreen = ({navigation}) => {
   const {loginError, accessToken} = useSelector(x => x.users);
   //console.log("token is redux",accessToken)
 
-  // useEffect(() => {
-  //   getAllKeys = async () => {
-  //     let keys = [];
-  //     try {
-  //       keys = await AsyncStorage.getAllKeys();
-  //     } catch (e) {
-  //       // read key error
-  //     }
-
-  //     // console.log('final date', subtractOneDayFromTime(new Date(), 1));
-  //     //console.log('All storage keys', keys);
-  //   };
-  //   getAllKeys();
-  //   // console.log('value==========', getDateWithoutTime(selectedOrderDate));
-  //   //console.log('value=============',dateFormat(selectedOrderDate, "yyyy-mm-dd"));
-  // }, [orderDate]);
-
-  useEffect(() => {
-    fetchAllData();
-  }, [isDispatched, statusState, selectedTab, selectedOrderDate]);
-
   useEffect(() => {
     dispatch(getAllRiders());
     dispatch(getAllProducts('', 0, 0, null));
   }, []);
 
-  // useEffect(() => {
-  //   const unsubscribe = navigation.addListener('focus', () => {
-  //     fetchAllData(statusState);
-  //   });
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      fetchAllData();
+    });
 
-  //   dispatch(getAllOrderedProducts(statusState));
-  //   return unsubscribe;
-  // }, [navigation, statusState, selectedTab]);
+    fetchAllData();
+    return unsubscribe;
+  }, [isDispatched, statusState, selectedTab, selectedOrderDate]);
+
+  // useEffect(() => {
+  //   fetchAllData();
+  // }, [isDispatched, statusState, selectedTab, selectedOrderDate]);
 
   const fetchAllData = () => {
     dispatch(

@@ -1,3 +1,4 @@
+import {set} from 'lodash';
 import {Alert} from 'react-native';
 import {get} from 'react-native/Libraries/Utilities/PixelRatio';
 import client from '../../utils/Api';
@@ -136,6 +137,57 @@ export const getAllOrderedProductsStats = date => {
       });
   };
 };
+
+export const getAllOrderedProductsMiniStats = date => {
+  console.log('About to get all orders mini stats', date);
+
+  return dispatch => {
+    dispatch({
+      type: 'GET_ALL_PRODUCTS_STATS_MINI_PENDING',
+      loading: true,
+      error: null,
+    });
+    var getUrl = `/orders/count/minis?startDate=${date + ' 00:00:01'}&endDate=${
+      date + ' 23:59:59'
+    }`;
+
+    console.log('geturl', getUrl);
+    return client
+      .get(getUrl)
+      .then(response => {
+        if (response?.data) {
+          console.log(
+            'Order minis stats gotten successfully',
+            response?.data?.recordCount,
+          );
+          if (response?.data?.isSuccessful) {
+            dispatch({
+              type: 'GET_ALL_PRODUCTS_STATS_MINI_SUCCESS',
+              loading: false,
+              data: response?.data?.results,
+            });
+            return response?.data?.results;
+          } else {
+            alert(response?.data?.message);
+            dispatch({
+              type: 'GET_ALL_PRODUCTS_STATS_MINI_FAILED',
+              loading: false,
+              error: response?.data?.message,
+            });
+          }
+        }
+      })
+      .catch(error => {
+        console.log('Getting orders minis stats failed', error);
+        // handleError(error, dispatch, 'get orders list');
+        dispatch({
+          type: 'GET_ALL_PRODUCTS_STATS_MINI_FAILED',
+          loading: false,
+          error: error.message,
+        });
+      });
+  };
+};
 export const saveOrderDate = date => {
   return async dispatch => {
     await dispatch({
@@ -144,8 +196,15 @@ export const saveOrderDate = date => {
     });
   };
 };
-export const getAllOrderedProductsStatsById = (id, miniProductId, date) => {
+export const getAllOrderedProductsStatsById = payload => {
+  let id = payload.productid;
+  let miniProductId = payload.mini_productid || '';
+  let setId = payload.setid || '';
+  let date = payload.date;
+  let orderId = payload.orderid || '';
+
   console.log('About to get stats with id', id);
+
   return dispatch => {
     dispatch({
       type: 'GET_SINGLE_PRODUCT_STAT_PENDING',
@@ -153,7 +212,7 @@ export const getAllOrderedProductsStatsById = (id, miniProductId, date) => {
       error: null,
     });
 
-    var getUrl = `/orders/count/${id}?miniProductId=${miniProductId}&startDate=${
+    var getUrl = `/orders/count/${id}?miniProductId=${miniProductId}&setId=${setId}&orderId=${orderId}&startDate=${
       date + ' 00:00:01'
     }&endDate=${date + ' 23:59:59'}`;
     //var url = `/orders/count/${id}`;
@@ -172,8 +231,8 @@ export const getAllOrderedProductsStatsById = (id, miniProductId, date) => {
               loading: false,
               data: response?.data?.results,
             });
-
-            // dispatch(getAllOrderedProductsStats(date));
+            //dispatch(getAllOrderedProducts('all', date));
+            dispatch(getAllOrderedProductsStats(date));
             return response?.data?.results;
           } else {
             alert(response?.data?.message);
@@ -184,7 +243,6 @@ export const getAllOrderedProductsStatsById = (id, miniProductId, date) => {
             });
           }
         }
-      
       })
       .catch(error => {
         console.log('getting stat failed', error);
@@ -287,7 +345,7 @@ export const getAllOrderedProducts = (status = 'all', orderDate) => {
             orderDate,
           );
           //refresh list
-         // getAllOrderedProducts('all', orderDate);
+          // getAllOrderedProducts('all', orderDate);
           //}
 
           if (response?.data?.isSuccessful) {
@@ -325,7 +383,7 @@ const handleCompleteOrdersStatus = (orders, dispatch, orderDate) => {
     orders?.map(fullOrderItem => {
       // console.log('fulfilled status', fullOrderItem?.isfulfilled);
       let count = 0;
-      let tempArray=[]
+      let tempArray = [];
       if (fullOrderItem.isfulfilled == false) {
         //console.log('inside ');
         fullOrderItem?.products &&
@@ -388,7 +446,7 @@ export const updateOrderListProductCount = (payload, date) => {
               loading: false,
               data: response?.data?.results,
             });
-           // dispatch(getAllOrderedProductsStats(date));
+            // dispatch(getAllOrderedProductsStats(date));
             dispatch(getAllOrderedProducts('all', date));
             if (parseInt(payload?.surplusCount) > 0) {
               dispatch(getAllSurplus(date));
@@ -684,7 +742,7 @@ export const updateCompleteStatusForOrder = (id, payload, orderDate) => {
               data: response?.data?.results,
             });
 
-           //dispatch(getAllOrderedProducts('all', orderDate));
+            //dispatch(getAllOrderedProducts('all', orderDate));
             return response?.data?.results;
           } else {
             dispatch({
