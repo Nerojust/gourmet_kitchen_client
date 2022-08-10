@@ -1,4 +1,4 @@
-import React, {} from 'react';
+import React from 'react';
 import {
   StyleSheet,
   View,
@@ -7,11 +7,7 @@ import {
   Platform,
 } from 'react-native';
 import moment from 'moment';
-import {
-  wp,
-  fp,
-  deviceHeight,
-} from '../utils/responsive-screen';
+import {wp, fp, deviceHeight} from '../utils/responsive-screen';
 import ProductSansBold from './Text/ProductSansBold';
 import {COLOURS} from '../utils/Colours';
 import SettingsSelector from './SettingsSelector';
@@ -64,7 +60,7 @@ export const BackViewHeader = ({
         <TouchableOpacity onPress={toggleDateModal} style={{flex: 0.25}}>
           <Image
             source={require('../assets/images/calendar.png')}
-            style={[styles.deleteImage, {tintColor: COLOURS.gray4}]}
+            style={[styles.calendarImage, {tintColor: COLOURS.gray4}]}
             resizeMode={'contain'}
           />
         </TouchableOpacity>
@@ -149,7 +145,7 @@ export const BackViewSurplus = ({
         <TouchableOpacity onPress={toggleDateModal} style={{flex: 0.3}}>
           <Image
             source={require('../assets/images/calendar.png')}
-            style={[styles.deleteImage, {tintColor: COLOURS.gray4}]}
+            style={[styles.calendarImage, {tintColor: COLOURS.gray4}]}
             resizeMode={'contain'}
           />
         </TouchableOpacity>
@@ -231,7 +227,7 @@ export const BackViewMoreSettings = ({
       ) : null}
       <ProductSansBold
         style={{
-          fontSize: fp(19),
+          fontSize: fp(16),
           flex: 1.3,
           color: COLOURS.gray2,
           right: displayCalendar ? -wp(10) : 0,
@@ -262,7 +258,7 @@ export const BackViewMoreSettings = ({
           <TouchableOpacity onPress={toggleDateModal} style={{flex: 0.7}}>
             <Image
               source={require('../assets/images/calendar.png')}
-              style={[styles.deleteImage, {tintColor: COLOURS.gray4}]}
+              style={[styles.calendarImage, {tintColor: COLOURS.gray4}]}
               resizeMode={'contain'}
             />
           </TouchableOpacity>
@@ -363,7 +359,7 @@ export const BackViewWithLogout = ({
             <Image
               source={require('../assets/images/logout.png')}
               resizeMode={'contain'}
-              style={{width: 23, height: 23,tintColor:COLOURS.gray}}
+              style={{width: 23, height: 23, tintColor: COLOURS.gray}}
             />
           </TouchableOpacity>
         ) : null}
@@ -388,16 +384,17 @@ const styles = StyleSheet.create({
     flex: 0.9,
   },
   searchImage: {
-    width: wp(18),
-    height: wp(18),
+    width: wp(17),
+    height: wp(17),
     left: wp(-5),
-    marginHorizontal:10,
+    marginHorizontal: 10,
   },
   deleteImage: {
-    width: wp(18),
-    height: wp(18),
+    width: wp(14),
+    height: wp(14),
     marginLeft: 0,
     flex: 1,
+    tintColor: COLOURS.red,
   },
   calendarImage: {
     width: wp(18),

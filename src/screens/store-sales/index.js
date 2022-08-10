@@ -183,10 +183,9 @@ const StoreSalesScreen = ({navigation}) => {
     );
   };
 
-  let tempObj = {};
   const handleClick = item => {
     var stringData = 'Available Bread List \n';
-
+  
     let dataproducts = groupBy(surplus, 'productsize');
     // console.log('finalllll array', dataproducts);
 

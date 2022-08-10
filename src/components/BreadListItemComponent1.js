@@ -1,7 +1,8 @@
 //import liraries
 import React, {Component, useState} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
 import {COLOURS} from '../utils/Colours';
+import {IMAGES} from '../utils/Images';
 import {deviceHeight, deviceWidth, fp} from '../utils/responsive-screen';
 import ProductSans from './Text/ProductSans';
 
@@ -36,9 +37,23 @@ const BreadListItemComponent1 = ({indexKey, keyItem, keyValue, onClick}) => {
                   ]}>
                   {key}
                 </ProductSans>
-                <ProductSans style={[styles.productName, {flex: 0.4}]}>
+                <ProductSans style={[styles.productName, {flex: 0.2}]}>
                   {value?.sum || '0'}
                 </ProductSans>
+
+                {/* {value?.products && value?.status == 'incomplete' ? (
+                  <Image
+                    source={IMAGES.infoImage}
+                    style={{
+                      width: 15,
+                      height: 15,
+                      flex: 0.2,
+                    }}
+                    resizeMode="contain"
+                  />
+                ) : (
+                  <Image style={{flex: 0.2}} />
+                )} */}
               </View>
               <View
                 style={{height: 0.3, width: 100, backgroundColor: COLOURS.gray}}

@@ -77,50 +77,81 @@ const OrdersScreen = ({navigation}) => {
   const [selectedOrderDate, setSelectedOrderDate] = useState(new Date());
   const [open, setOpen] = useState(false);
   const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false);
-  const [isSuccessDispatchModalVisible, setIsSuccessDispatchModalVisible] = useState(false);
+  const [isSuccessDispatchModalVisible, setIsSuccessDispatchModalVisible] =
+    useState(false);
   const {loginError, accessToken} = useSelector(x => x.users);
   //console.log("token is redux",accessToken)
-
-  // useEffect(() => {
-  //   getAllKeys = async () => {
-  //     let keys = [];
-  //     try {
-  //       keys = await AsyncStorage.getAllKeys();
-  //     } catch (e) {
-  //       // read key error
-  //     }
-
-  //     // console.log('final date', subtractOneDayFromTime(new Date(), 1));
-  //     //console.log('All storage keys', keys);
-  //   };
-  //   getAllKeys();
-  //   // console.log('value==========', getDateWithoutTime(selectedOrderDate));
-  //   //console.log('value=============',dateFormat(selectedOrderDate, "yyyy-mm-dd"));
-  // }, [orderDate]);
-
-  useEffect(() => {
-    fetchAllData();
-  }, [isDispatched, statusState, selectedTab, selectedOrderDate]);
 
   useEffect(() => {
     dispatch(getAllRiders());
     dispatch(getAllProducts('', 0, 0, null));
   }, []);
 
-  // useEffect(() => {
-  //   const unsubscribe = navigation.addListener('focus', () => {
-  //     fetchAllData(statusState);
-  //   });
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      fetchAllData();
+    });
 
-  //   dispatch(getAllOrderedProducts(statusState));
-  //   return unsubscribe;
-  // }, [navigation, statusState, selectedTab]);
+    fetchAllData();
+    return unsubscribe;
+  }, [isDispatched, statusState, selectedTab, selectedOrderDate]);
+
+  // useEffect(() => {
+  //   fetchAllData();
+  // }, [isDispatched, statusState, selectedTab, selectedOrderDate]);
 
   const fetchAllData = () => {
     dispatch(
       getAllOrderedProducts(statusState, getDateWithoutTime(selectedOrderDate)),
     );
   };
+  // useEffect(() => {
+  //   //update status where necessary
+
+  //   if (orders && orders.length > 0) {
+  //     //console.log('here ');
+  //     let count = 0;
+  //     orders?.map(fullOrderItem => {
+  //       // console.log('fulfilled status', fullOrderItem?.isfulfilled);
+  //       let tempArray = [];
+  //       if (fullOrderItem.isfulfilled == false) {
+  //         //console.log('inside ');
+  //         fullOrderItem?.products &&
+  //           fullOrderItem?.products.map(async oneItem => {
+  //             if (
+  //               oneItem.isfulfilled &&
+  //               oneItem.quantity == oneItem.fulfilledquantity
+  //             ) {
+  //               count++;
+  //             }
+  //             if (count == fullOrderItem?.products.length) {
+  //               console.log(
+  //                 'this order has its products all fulfilled, complete it ' +
+  //                   fullOrderItem?.id,
+  //               );
+  //               let payload = {
+  //                 status: 'completed',
+  //                 isfulfilled: true,
+  //               };
+  //               dispatch(
+  //                 updateCompleteStatusForOrder(
+  //                   fullOrderItem?.id,
+  //                   payload,
+  //                   orderDate,
+  //                 ),
+  //               );
+  //               count = 0;
+  //             }
+  //             //'count', count);
+  //           });
+  //       }
+  //     });
+  //     if (count > 0) {
+  //       fetchAllData();
+  //       count = 0;
+  //     }
+  //   }
+  // }, []);
 
   const onRefresh = async () => {
     fetchAllData();

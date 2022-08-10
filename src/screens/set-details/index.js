@@ -31,7 +31,7 @@ const SetDetailsScreen = ({navigation, route}) => {
   const dispatch = useDispatch();
   const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false);
 
-  console.log('set details', route.params.set);
+  //console.log('set details', route.params.set);
   var setItems = route?.params?.set?.products;
   var {
     name,
@@ -108,11 +108,12 @@ const SetDetailsScreen = ({navigation, route}) => {
       </View>
     );
   };
+
   const handleDelete = item => {
     console.log('item', item);
-    if (item == 'delete') {
+   // if (item == 'delete') {
       handleDeleteSet();
-    }
+    //}
   };
   const handleDeleteSet = () => {
     console.log('delete clicked');
@@ -138,6 +139,7 @@ const SetDetailsScreen = ({navigation, route}) => {
       {cancelable: true},
     );
   };
+
   const showSuccessDialog = () => {
     setIsSuccessModalVisible(!isSuccessModalVisible);
 
@@ -146,6 +148,7 @@ const SetDetailsScreen = ({navigation, route}) => {
       navigation.goBack();
     }, DIALOG_TIMEOUT);
   };
+  
   const renderSuccessModal = () => (
     <CustomSuccessModal
       isModalVisible={isSuccessModalVisible}
@@ -160,9 +163,9 @@ const SetDetailsScreen = ({navigation, route}) => {
           <BackViewMoreSettings
             backText={route.params.set.name + ' Details'}
             onClose={() => navigation.goBack()}
-            shouldDisplayDelete
+            displayDelete
             shouldDisplayBackArrow={true}
-            handleClick={handleDelete}
+            performDelete={() => handleDelete()}
           />
           <FlatList
             data={[]}
@@ -171,7 +174,6 @@ const SetDetailsScreen = ({navigation, route}) => {
               <>
                 {renderSuccessModal()}
                 {renderDetails()}
-                
               </>
             }
             renderItem={null}

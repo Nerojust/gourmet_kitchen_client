@@ -10,6 +10,7 @@ import {
   SafeAreaView,
   Keyboard,
   Platform,
+  Image,
 } from 'react-native';
 
 import ProductSans from './Text/ProductSans';
@@ -89,13 +90,13 @@ const BreadSizeComponent = ({
                   style={{
                     flexDirection: 'column',
                     width: '100%',
-                    paddingHorizontal: 20,
+                   
                   }}>
                   <View
                     style={{
                       flexDirection: 'row',
                       width: '100%',
-                      paddingBottom: value?.set ? 20 : 0,
+                      paddingBottom: value?.products ? 20 : 0,
                     }}>
                     <ProductSans
                       style={[
@@ -111,25 +112,60 @@ const BreadSizeComponent = ({
                     </ProductSans>
                   </View>
 
-                  {value?.set
-                    ? value?.set?.products.map((item, i) => {
+                  {value?.products
+                    ? value?.products.map((item, i) => {
                         // console.log("iii",item)
 
                         return (
-                          <ProductSans
-                            style={[
-                              styles.productName,
-                              {paddingVertical: 5, fontWeight: '500'},
-                            ]}
-                            key={Math.random()}>
-                            {i +
-                              1 +
-                              '.) ' +
-                              item?.productname +
-                              ' (' +
-                              item?.productsize +
-                              ')'}
-                          </ProductSans>
+                          <View
+                            style={{flexDirection: 'row', paddingVertical: 5}}>
+                            <ProductSans
+                              style={[
+                                styles.productName,
+                                {fontWeight: '500', flex: 0.16},
+                              ]}
+                              key={Math.random()}>
+                              {i + 1 + '.) '}
+                            </ProductSans>
+
+                            <ProductSans
+                              style={[
+                                styles.productName,
+                                {flex: 1, fontWeight: '500'},
+                              ]}
+                              key={Math.random()}>
+                              {item?.productname}
+                            </ProductSans>
+
+                            <ProductSans
+                              style={[
+                                styles.productName,
+                                {flex: 0.5, fontWeight: '500'},
+                              ]}
+                              key={Math.random()}>
+                              {item?.productsize + ')'}
+                            </ProductSans>
+
+                            {item?.isfulfilled ? (
+                              <Image
+                                source={IMAGES.urlGood}
+                                style={{
+                                  width: 15,
+                                  height: 15,
+                                }}
+                                resizeMode="contain"
+                              />
+                            ) : (
+                              <Image
+                                source={IMAGES.errorImage}
+                                style={{
+                                  width: 15,
+                                  height: 15,
+                                }}
+                                resizeMode="contain"
+                              />
+                            )}
+                          </View>
                         );
                       })
                     : null}

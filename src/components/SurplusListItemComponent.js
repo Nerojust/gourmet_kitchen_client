@@ -13,7 +13,7 @@ const SurplusListItemComponent = ({
   handleEditClick,
   handleNormalClick,
 }) => {
-  //console.log('item', item);
+  //console.log('item', item.productsize);
   let count;
   let tempCount = 0;
   if (item?.details) {
@@ -26,6 +26,7 @@ const SurplusListItemComponent = ({
   } else {
     count = item?.count;
   }
+
   return (
     <TouchableOpacity
       style={styles.customerNameView}
@@ -67,7 +68,7 @@ const SurplusListItemComponent = ({
         <View style={{marginRight: 10}}>
           <ProductSans style={styles.labelText}>SIZE</ProductSans>
           <ProductSans style={styles.quantityName}>
-            {item.details ? 'Mini' : item?.productsize.trim()}
+            {item?.productsize.trim()}
           </ProductSans>
         </View>
         <View>
@@ -130,7 +131,7 @@ const styles = StyleSheet.create({
     fontSize: fp(13),
     color: COLOURS.labelTextColor,
     paddingTop: 3,
-    paddingBottom: 10,
+    paddingBottom: 5,
     // left: 12,
   },
 });

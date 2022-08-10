@@ -1,5 +1,6 @@
 const initialState = {
   sets: [],
+  setOrders:[],
   setsOrder: {},
   setsLoading: false,
   createSetsLoading: false,
@@ -73,7 +74,25 @@ export default (state = initialState, action) => {
         error: action.error,
       };
 
-    case 'GET_ALL_SETS_PENDING':
+    case 'GET_ALL_ORDERS_SETS_PENDING':
+      return {
+        ...state,
+        setsLoading: action.loading,
+      };
+    case 'GET_ALL_ORDERS_SETS_SUCCESS':
+      return {
+        ...state,
+        setOrders: action.data,
+        setsLoading: action.loading,
+      };
+    case 'GET_ALL_ORDERS_SETS_FAILED':
+      return {
+        ...state,
+        setsLoading: action.loading,
+        error: action.error,
+      };
+  
+      case 'GET_ALL_SETS_PENDING':
       return {
         ...state,
         setsLoading: action.loading,

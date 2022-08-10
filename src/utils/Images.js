@@ -26,6 +26,8 @@ export const IMAGES = {
   storeSetup: require('../assets/images/storesetup.png'),
   urlError: require('../assets/images/urlerror.png'),
   urlGood: require('../assets/images/urlgood.png'),
+  errorImage: require('../assets/images/error.png'),
+  infoImage: require('../assets/images/info.png'),
   arrowRight_: require('../assets/images/arrow_right.png'),
   settingsImage: require('../assets/images/settings.png'),
   dispatchImage: require('../assets/images/dispatch.png'),

@@ -548,6 +548,7 @@ const NewSetScreen = ({navigation}) => {
       </View>
     );
   };
+  
   const handleLoadProductsBottomSheet = () => {
     dismissTextInput(setNameRef);
     showBottomSheet(productSheetRef);
