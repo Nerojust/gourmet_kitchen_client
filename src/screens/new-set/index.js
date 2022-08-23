@@ -421,6 +421,10 @@ const NewSetScreen = ({navigation}) => {
         alert('Zupa product association is required');
         return;
       }
+      if (!selectedZupaProduct?.categorySize?.name) {
+        alert('Zupa product association is required');
+        return;
+      }
 
       var productArray = [];
       newBasketArray.map((data, i) => {
@@ -440,7 +444,7 @@ const NewSetScreen = ({navigation}) => {
         products: productArray,
         zupaSetAssociatedId: selectedZupaProduct?.id,
         zupaSetName: selectedZupaProduct?.name,
-        zupaSetCategorySize: selectedZupaProduct.categorySize.name,
+        zupaSetCategorySize: selectedZupaProduct?.categorySize?.name,
       };
 
       console.log('order payload', orderPayload);
@@ -548,7 +552,7 @@ const NewSetScreen = ({navigation}) => {
       </View>
     );
   };
-  
+
   const handleLoadProductsBottomSheet = () => {
     dismissTextInput(setNameRef);
     showBottomSheet(productSheetRef);
