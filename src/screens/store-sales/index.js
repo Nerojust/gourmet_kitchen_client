@@ -1,5 +1,5 @@
 //import liraries
-import React, {Component, useState, useEffect} from 'react';
+import React, {Component, useState, useEffect, useRef} from 'react';
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   RefreshControl,
   Platform,
   Alert,
+  ScrollView,
 } from 'react-native';
 import {COLOURS} from '../../utils/Colours';
 import {BackViewMoreSettings, BackViewSurplus} from '../../components/Header';
@@ -22,12 +23,17 @@ import {
   sortArrayData,
   sortArrayByDateDesc,
   groupBy,
+  showBottomSheet,
+  dismissBottomSheetDialog,
 } from '../../utils/utils';
 import AddComponent from '../../components/AddComponent';
 import LoaderShimmerComponent from '../../components/LoaderShimmerComponent';
 import ProductSans from '../../components/Text/ProductSans';
 import {useSelector, useDispatch} from 'react-redux';
-import {getAllSurplus} from '../../store/actions/surplus';
+import {
+  getAllSurplus,
+  getAllSurplusProducts,
+} from '../../store/actions/surplus';
 import SurplusListItemComponent from '../../components/SurplusListItemComponent';
 import SearchInputComponent from '../../components/SearchInputComponent';
 import {getDateWithoutTime} from '../../utils/DateFilter';
@@ -35,13 +41,23 @@ import {saveOrderDate} from '../../store/actions/orders';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
 import {sum} from 'lodash';
+import SurplusProductItemComponent from '../../components/SurplusProductItemComponent';
+import {
+  BottomSheetBreadSizeComponent,
+  BottomSheetSurplusSizeComponent,
+} from '../../components/BottomSheetComponent';
 var _ = require('lodash');
 // create a component
 const StoreSalesScreen = ({navigation}) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const {surplus, surplusLoading, updateSurplusLoading, createSurplusLoading} =
-    useSelector(x => x.surplus);
-  // console.log("surplus redux",surplus)
+  const {
+    surplus,
+    surplusProducts,
+    surplusLoading,
+    updateSurplusLoading,
+    createSurplusLoading,
+  } = useSelector(x => x.surplus);
+  //console.log("surplus redux",surplus)
   const [isSearchClicked, setIsSearchClicked] = useState(false);
   var surplusData = Object.assign([], surplus);
   const [filteredSurplusData, setFilteredSurplusData] = useState(surplusData);
@@ -53,7 +69,9 @@ const StoreSalesScreen = ({navigation}) => {
   const [open, setOpen] = useState(false);
   const [copiedText, setCopiedText] = useState('');
   const [selectedOrderDate, setSelectedOrderDate] = useState(new Date());
-
+  const surplusProductRef = useRef();
+  const [selectedItem, setSelectedItem] = useState({});
+  const [selectedItemName, setSelectedItemName] = useState('');
   // useEffect(() => {
   //   const unsubscribe = navigation.addListener('focus', () => {
   //     dispatch(getAllSurplus(getDateWithoutTime(selectedOrderDate)));
@@ -65,19 +83,135 @@ const StoreSalesScreen = ({navigation}) => {
 
   useEffect(() => {
     if (selectedOrderDate) {
+      dispatch(getAllSurplusProducts(getDateWithoutTime(selectedOrderDate)));
+    }
+  }, [selectedOrderDate]);
+
+  useEffect(() => {
+    if (selectedOrderDate) {
       dispatch(getAllSurplus(getDateWithoutTime(selectedOrderDate)));
     }
   }, [selectedOrderDate]);
 
   const renderItems = ({item, index}) => {
     return (
-      <SurplusListItemComponent
+      <SurplusProductItemComponent
         item={item}
         handleEditClick={handleChangeSurplusClick}
         handleNormalClick={handleNormalClick}
       />
     );
   };
+  // const renderItems = ({item, index}) => {
+  //   return (
+  //     <SurplusListItemComponent
+  //       item={item}
+  //       handleEditClick={handleChangeSurplusClick}
+  //       handleNormalClick={handleNormalClick}
+  //     />
+  //   );
+  // };
+
+  const displaySurplusProductsListView = () => {
+    let dataproducts = groupBy(surplusProducts, 'name');
+
+    return (
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+        }>
+        {Object.entries(dataproducts ? dataproducts : {}).length > 0 ? (
+          Object.entries(dataproducts ? dataproducts : {}).map(
+            ([key, value], i) => {
+              //console.log(`${key} ${value}`);
+              // console.log('iii', i);
+              return (
+                <View key={key + i}>
+                  <SurplusProductItemComponent
+                    indexKey={i}
+                    keyItem={key}
+                    keyValue={value}
+                    onClick={handleClick}
+                  />
+                </View>
+              );
+            },
+          )
+        ) : (
+          <View>
+            {!surplusLoading ? (
+              <View
+                style={{
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  flex: 1,
+                  top: Platform.OS == 'ios' ? 300 : 0,
+                  marginTop: Platform.OS == 'android' ? 300 : 0,
+                }}>
+                <ProductSans
+                  style={{fontSize: 16, color: COLOURS.textInputColor}}>
+                  No record found
+                </ProductSans>
+              </View>
+            ) : null}
+          </View>
+        )}
+      </ScrollView>
+    );
+  };
+  const handleClick = item => {
+    //console.log('clicked', item);
+    // if (selectedTab != 2) {
+    Object.entries(item).map(([key, value]) => {
+      //console.log('itemmmmm', value);
+      setSelectedItemName(value?.name);
+    });
+    setSelectedItem(item);
+    // showBottomSheet(surplusProductRef);
+    navigation.navigate('UpdateSizeSale', {
+      surplusData: item,
+      date: getDateWithoutTime(selectedOrderDate),
+    });
+    // }
+  };
+
+  const handleSingleItemPress = (key, value) => {
+   // console.log('inside key', key, 'value', value);
+    dismissBottomSheetDialog(surplusProductRef);
+    // navigation.navigate('BreadListDetails', {
+    //   bread: value,
+    //   date: selectedOrderDate,
+    //   isMini: selectedTab == 2,
+    // });
+  };
+  const [insertedSizeValue, setInsertedSizeValue] = useState();
+  const handleInsertValueTextChange = insertText => {
+    console.log('text change value', insertText);
+  };
+
+  const handleCreateSizeNetworkRequest = () => {
+    console.log('Button clicked');
+  };
+
+  const renderBottomSheet = () => {
+    // console.log("selected",selectedItem)
+    return (
+      <BottomSheetSurplusSizeComponent
+        sheetRef={surplusProductRef}
+        dataSource={selectedItem}
+        handleInsertValueTextChange={handleInsertValueTextChange}
+        insertedSizeValue={insertedSizeValue}
+        handleCreateSizeNetworkRequest={handleCreateSizeNetworkRequest}
+        closeAction={handleClose}
+        itemName={selectedItemName}
+        handleSingleItemPress={handleSingleItemPress}
+      />
+    );
+  };
+  const handleClose = () => {
+    dismissBottomSheetDialog(surplusProductRef);
+  };
+
   const renderDatePicker = () => {
     return (
       <DatePicker
@@ -183,9 +317,9 @@ const StoreSalesScreen = ({navigation}) => {
     );
   };
 
-  const handleClick = item => {
+  const handleCopyClick = item => {
     var stringData = 'Available Bread List \n';
-  
+
     let dataproducts = groupBy(surplus, 'productsize');
     // console.log('finalllll array', dataproducts);
 
@@ -229,7 +363,7 @@ const StoreSalesScreen = ({navigation}) => {
             performSearch={handleSearch}
             shouldDisplayBackArrow={true}
             displayCalendar
-            handleClick={handleClick}
+            handleClick={handleCopyClick}
             toggleDateModal={toggleDateModal}
             displayDelete={false}
             performDelete={handleDeleteOrders}
@@ -246,7 +380,7 @@ const StoreSalesScreen = ({navigation}) => {
           ) : null}
 
           {renderDatePicker()}
-
+          {renderBottomSheet()}
           <View
             style={{
               justifyContent: 'center',
@@ -260,13 +394,15 @@ const StoreSalesScreen = ({navigation}) => {
                 : surplus && sortArrayByDate(surplus, 'productname').length}
             </ProductSans>
           </View>
+          {displaySurplusProductsListView()}
 
-          <FlatList
-            data={
-              searchInputValue.length > 0
-                ? filteredSurplusData
-                : surplus && sortArrayByDate(surplus, 'productname')
-            }
+          {/* <FlatList
+            // data={
+            //   searchInputValue.length > 0
+            //     ? filteredSurplusData
+            //     : surplus && sortArrayByDate(surplus, 'productname')
+            // }
+            data={surplusProducts}
             renderItem={renderItems}
             keyExtractor={item => item.id}
             refreshControl={
@@ -291,10 +427,10 @@ const StoreSalesScreen = ({navigation}) => {
                 ) : null}
               </View>
             }
-          />
+          /> */}
 
           <LoaderShimmerComponent isLoading={surplusLoading} />
-          <AddComponent goto={goToNewSurplus} />
+          {/* <AddComponent goto={goToNewSurplus} /> */}
         </KeyboardObserverComponent>
       </DismissKeyboard>
     </ViewProviderComponent>

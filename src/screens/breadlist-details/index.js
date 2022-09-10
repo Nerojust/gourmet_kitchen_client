@@ -61,7 +61,8 @@ const BreadListDetailsScreen = ({navigation, route}) => {
   //console.log('count item', countItem);
   var {productid, setid, mini_productid, orderid} = route.params.bread;
   var selectedOrderDate = route.params.date;
-
+  var isMini = route.params.isMini;
+  //console.log('ismini', isMini);
   //console.log('order id', route.params.bread.name);
   //console.log('item',  route.params.bread.productid);
   const [foundSurplus, setFoundSurplus] = useState();
@@ -91,9 +92,11 @@ const BreadListDetailsScreen = ({navigation, route}) => {
   }, [productid, shouldDismissPage]);
 
   const fetchAllData = () => {
+    setIsLoading(true);
     dispatch(getAllSurplus(getDateWithoutTime(selectedOrderDate))).then(
       resultData => {
         if (resultData) {
+          console.log('result surplus', resultData);
           let fSurplus = resultData.find(item => {
             // console.log(item.productname)
             if (mini_productid) {
@@ -125,10 +128,11 @@ const BreadListDetailsScreen = ({navigation, route}) => {
             setid,
             date: getDateWithoutTime(selectedOrderDate),
             orderid,
+            isMini,
           };
           dispatch(getAllOrderedProductsStatsById(payload)).then(result => {
             if (result) {
-              // console.log('full bread count profile', result);
+             // console.log('full bread count profile', result);
               //pick the first object data because they are all the same values except sum
               setCategory(result[0]?.category);
               setProductsize(result[0]?.productsize);
@@ -136,8 +140,12 @@ const BreadListDetailsScreen = ({navigation, route}) => {
               setOrderProductIdFromPayload(result[0]?.id);
               setName(result[0]?.name);
               //calculate all the sum values together
-              setCount(() => addAllCounts(result));
+              setCount(parseInt(result[0]?.sum));
+
+              setHasDateLoaded(true);
             }
+
+            setIsLoading(false);
           });
         }
       },
@@ -373,6 +381,7 @@ const BreadListDetailsScreen = ({navigation, route}) => {
       productid: productid,
       mini_productid,
       surplusCount,
+      isMini,
     };
 
     var surplusPayload = {
@@ -382,6 +391,7 @@ const BreadListDetailsScreen = ({navigation, route}) => {
       surplusCount,
       wasFulfilledFromSurplus: shouldUseSurplusTofulfill,
       orderProductIdFromPayload,
+      isMini,
     };
 
     console.log(

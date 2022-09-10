@@ -26,8 +26,51 @@ export const createSurplus = (orderPayload, date) => {
             loading: false,
           });
           //alert('Order created successfully');
+          dispatch(getAllSurplusProducts(date));
+
+          // dispatch(getAllSurplus(date));
+          //dispatch(getAllOrderedProductsStats(date));
+          return response.data?.results;
+        }
+      })
+      .catch(error => {
+        console.log('Error creating surplus ', error);
+        handleError(error, dispatch, 'get surplus list');
+        dispatch({
+          type: 'CREATE_SURPLUS_FAILED',
+          loading: false,
+          error: error.message,
+        });
+      });
+  };
+};
+export const createSurplusProduct = (orderPayload, date) => {
+  console.log('About to create a new surplus product', date);
+  //console.log("order payload", orderPayload);
+  return dispatch => {
+    dispatch({
+      type: 'CREATE_SURPLUS_PENDING',
+      loading: true,
+      error: null,
+    });
+    var getUrl = `/surplusProducts`;
+    console.log('surplus products create url', getUrl);
+    return client
+      .post(getUrl, orderPayload)
+      .then(response => {
+        //console.log("surplus",response)
+        if (response.data?.isSuccessful) {
+          console.log('surplus product created successfully');
+
+          dispatch({
+            type: 'CREATE_SURPLUS_SUCCESS',
+            loading: false,
+          });
+          //alert('Order created successfully');
+          dispatch(getAllSurplusProducts(date));
+
           dispatch(getAllSurplus(date));
-          dispatch(getAllOrderedProductsStats(date));
+          //dispatch(getAllOrderedProductsStats(date));
           return response.data?.results;
         }
       })
@@ -51,8 +94,8 @@ export const getAllSurplus = date => {
       loading: true,
       error: null,
     });
-    var getUrl = `/surplus?startDate=${date + 'T00:00:01'}&endDate=${
-      date + 'T23:59:59'
+    var getUrl = `/surplus?startDate=${date + ' 00:00:01'}&endDate=${
+      date + ' 23:59:59'
     }`;
 
     console.log('geturl surplus', getUrl);
@@ -86,6 +129,55 @@ export const getAllSurplus = date => {
         handleError(error, dispatch, 'get surplus list');
         dispatch({
           type: 'GET_ALL_SURPLUS_FAILED',
+          loading: false,
+          error: error.message,
+        });
+      });
+  };
+};
+export const getAllSurplusProducts = date => {
+  console.log('About to get all surplus products');
+  return dispatch => {
+    dispatch({
+      type: 'GET_ALL_SURPLUS_PRODUCTS_PENDING',
+      loading: true,
+      error: null,
+    });
+    var getUrl = `/surplusProducts?startDate=${date + ' 00:00:01'}&endDate=${
+      date + ' 23:59:59'
+    }`;
+
+    console.log('geturl surplus', getUrl);
+    return client
+      .get(getUrl)
+      .then(response => {
+        if (response?.data) {
+          console.log(
+            'Surplus products gotten successfully',
+            response?.data?.recordCount,
+          );
+          if (response?.data?.isSuccessful) {
+            dispatch({
+              type: 'GET_ALL_SURPLUS_PRODUCTS_SUCCESS',
+              loading: false,
+              data: response?.data?.results,
+            });
+            return response?.data?.results;
+          } else {
+            alert(response?.data?.message);
+            dispatch({
+              type: 'GET_ALL_SURPLUS_PRODUCTS_FAILED',
+              loading: false,
+              error: response?.data?.message,
+            });
+          }
+        }
+      })
+      .catch(error => {
+        console.log('Getting surplus failed', error);
+        handleError(error, dispatch, 'get surplus product list');
+        dispatch({
+          type: 'GET_ALL_SURPLUS_PRODUCTS_FAILED',
           loading: false,
           error: error.message,
         });

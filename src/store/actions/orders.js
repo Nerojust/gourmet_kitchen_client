@@ -87,6 +87,56 @@ export const getSalesAnalytics = date => {
       });
   };
 };
+export const getAllStructureBreadList = (date, state) => {
+  console.log('About to get all orders stats', date);
+
+  return dispatch => {
+    dispatch({
+      type: 'GET_STRUCTURE_PRODUCTS_STATS_PENDING',
+      loading: true,
+      error: null,
+    });
+    var getUrl = `/orders/count/state/${state}?startDate=${
+      date + ' 00:00:01'
+    }&endDate=${date + ' 23:59:59'}`;
+
+    console.log('geturl', getUrl);
+    return client
+      .get(getUrl)
+      .then(response => {
+        if (response?.data) {
+          console.log(
+            'Order stats gotten successfully',
+            response?.data?.recordCount,
+          );
+          if (response?.data?.isSuccessful) {
+            dispatch({
+              type: 'GET_STRUCTURE_PRODUCTS_STATS_SUCCESS',
+              loading: false,
+              data: response?.data?.results,
+            });
+            return response?.data?.results;
+          } else {
+            alert(response?.data?.message);
+            dispatch({
+              type: 'GET_STRUCTURE_PRODUCTS_STATS_FAILED',
+              loading: false,
+              error: response?.data?.message,
+            });
+          }
+        }
+      })
+      .catch(error => {
+        console.log('Getting orders stats failed', error);
+        // handleError(error, dispatch, 'get orders list');
+        dispatch({
+          type: 'GET_STRUCTURE_PRODUCTS_STATS_FAILED',
+          loading: false,
+          error: error.message,
+        });
+      });
+  };
+};
 export const getAllOrderedProductsStats = date => {
   console.log('About to get all orders stats', date);
 
@@ -202,6 +252,7 @@ export const getAllOrderedProductsStatsById = payload => {
   let setId = payload.setid || '';
   let date = payload.date;
   let orderId = payload.orderid || '';
+  let isMini = payload.isMini;
 
   console.log('About to get stats with id', id);
 
@@ -212,7 +263,7 @@ export const getAllOrderedProductsStatsById = payload => {
       error: null,
     });
 
-    var getUrl = `/orders/count/${id}?miniProductId=${miniProductId}&setId=${setId}&orderId=${orderId}&startDate=${
+    var getUrl = `/orders/count/${id}?miniProductId=${miniProductId}&setId=${setId}&orderId=${orderId}&&isMini=${isMini}&startDate=${
       date + ' 00:00:01'
     }&endDate=${date + ' 23:59:59'}`;
     //var url = `/orders/count/${id}`;

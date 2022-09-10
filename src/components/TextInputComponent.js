@@ -34,7 +34,7 @@ const TextInputComponent = ({
       ]}
       blurOnSubmit={false}
       placeholder={placeholder}
-      placeholderTextColor={COLOURS.textInputColor}
+      placeholderTextColor={COLOURS.gray}
       onChangeText={handleTextChange}
       underlineColor={COLOURS.white}
       defaultValue={defaultValue && defaultValue.trim()}

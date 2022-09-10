@@ -33,6 +33,7 @@ import {deviceHeight, deviceWidth, fp} from '../../utils/responsive-screen';
 import {
   getAllOrderedProductsMiniStats,
   getAllOrderedProductsStats,
+  getAllStructureBreadList,
   saveOrderDate,
 } from '../../store/actions/orders';
 
@@ -57,10 +58,10 @@ import SliderAnalyticsComponent from '../../components/SliderAnalyticsComponent'
 const BreadListScreen = ({navigation}) => {
   const dispatch = useDispatch();
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const {orderedProducts, ordersLoading, orderDate} = useSelector(
+  const {orderedProducts, allBreadList, ordersLoading, orderDate} = useSelector(
     x => x.orders,
   );
-  //console.log('pending bread list', orderedProducts);
+  //console.log('pending bread list', allBreadList);
   var orderProductsData = Object.assign([], orderedProducts);
   const [filteredOrdersData, setFilteredOrdersData] =
     useState(orderProductsData);
@@ -116,41 +117,17 @@ const BreadListScreen = ({navigation}) => {
    * all breads with all sizes
    */
   const getAllLoavesData = () => {
-    setHasLoaded(false);
-
     dispatch(
-      getAllOrderedProductsStats(getDateWithoutTime(selectedOrderDate)),
-    ).then((result, i) => {
-      if (result) {
-        //console.log("result ",result)
-
-        setHasLoaded(true);
-        handleAllLoavesStructure(result);
-      }
-    });
+      getAllStructureBreadList(getDateWithoutTime(selectedOrderDate), 'all'),
+    );
   };
   /**
    * only breads without minis in size
    */
   const getFullLoavesData = () => {
     dispatch(
-      getAllOrderedProductsStats(getDateWithoutTime(selectedOrderDate)),
-    ).then((result, i) => {
-      if (result) {
-        //console.log("result ",result)
-        let filteredResult = result.filter(
-          element =>
-            !element.productsize.toLowerCase().includes('mini <') &&
-            !element.productsize.toLowerCase().includes('mini >') &&
-            !element.productsize.toLowerCase().includes('mini'),
-        );
-        //console.log('filtered result', filteredResult);
-        setFullLoavesArray(filteredResult);
-
-        setHasLoaded(true);
-        handleFullLoavesStructure(filteredResult);
-      }
-    });
+      getAllStructureBreadList(getDateWithoutTime(selectedOrderDate), 'full'),
+    );
   };
 
   const getMinisData = () => {
@@ -168,124 +145,10 @@ const BreadListScreen = ({navigation}) => {
         setMiniArray(filteredResult);
 
         setHasLoaded(true);
-        handleMinisStructure(filteredResult);
+        handleMinisStructure(result);
       }
     });
   };
-
-  /**
-   * only breads with mini sizes, adding minis from sets in list too
-   */
-  // const getMinisData = () => {
-  //   //console.log('called mini');
-  //   setHasLoaded(false);
-  //   dispatch(getAllOrderSets()).then(setResult => {
-  //     if (setResult) {
-  //       dispatch(
-  //         getAllOrderedProductsStats(getDateWithoutTime(selectedOrderDate)),
-  //       ).then((result, i) => {
-  //         if (result) {
-  //           let tempWithSetArray = [];
-
-  //           //first we need to extract all the minis from the sets available
-  //           setResult.forEach((oneSet, iset) => {
-  //             //console.log("one set dd",oneSet.products)
-  //             result.map((singleItem, i) => {
-  //               //console.log("found",singleItem.products)
-  //               //check if the product id matches that from the set
-  //               if (
-  //                 oneSet.zupasetid.trim() == singleItem?.productid.trim()
-  //                 //singleItem.name.toLowerCase().includes('supreme')
-  //               ) {
-  //                 //found a match
-  //                 // console.log('set ' + iset, oneSet.zupasetname);
-  //                 // console.log('set pdt size', oneSet.products.length);
-
-  //                 //scan through the found set products
-  //                 oneSet?.products.map((foundSetProduct, i) => {
-
-  //                     if (
-  //                       (foundSetProduct &&
-  //                         foundSetProduct.productsize
-  //                           .toLowerCase()
-  //                           .includes('mini <')) ||
-  //                       foundSetProduct.productsize
-  //                         .toLowerCase()
-  //                         .includes('mini >')
-  //                     ) {
-  //                       //if the set product has either <>4 recreate the default object and populate the data into a temp array
-  //                       let obj = {};
-  //                       obj.name = foundSetProduct.productname;
-  //                       obj.productid = foundSetProduct.productid;
-  //                       obj.productsize = foundSetProduct.productsize;
-  //                       obj.sum = foundSetProduct.quantity;
-  //                       obj.setid = foundSetProduct.setid;
-  //                       obj.orderid = singleItem.products[0]?.orderid
-  //                       obj.products = oneSet.products
-
-  //                       tempWithSetArray.push(obj);
-  //                     }
-
-  //                 });
-  //               }
-  //             });
-  //           });
-  //           setMinisOnly(result);
-  //           setMinisSetOnly(tempWithSetArray);
-
-  //           //we now have the arranged object set minis, ready to be added to the default list
-  //           //merge both arrays
-  //           let newResult = result.concat(tempWithSetArray);
-  //           //now filter through the merged arrays for only minis
-  //           let filteredResult = result.filter(
-  //             element =>
-  //               element.productsize.toLowerCase().includes('mini <') ||
-  //               element.productsize.toLowerCase().includes('mini >'),
-  //           );
-  //           // console.log('filtered minis', filteredResult);
-  //           setMiniArray(filteredResult);
-
-  //           // //now find all the sets ordered
-  //           // setResult.forEach((oneSet, iset) => {
-  //           //   //console.log('one set dd', oneSet.products);
-  //           //   filteredResult.map((singleItem, i) => {
-  //           //     if (oneSet.zupasetid.trim() == singleItem?.productid.trim()) {
-  //           //       //console.log('set ' + iset, oneSet.zupasetname);
-  //           //       setArray.push(singleItem);
-  //           //     }
-  //           //   });
-  //           // }),
-  //           //   //now reconstruct the sets found
-  //           //   setArray.map((item, i) => {
-  //           //     if (item) {
-  //           //       //console.log('item', item);
-  //           //       setResult.map((oneSet, i) => {
-  //           //         if (oneSet) {
-  //           //           if (item.productid == oneSet.zupasetid) {
-  //           //             // console.log('one set', oneSet);
-  //           //             let obj = {};
-  //           //             obj = item;
-  //           //             obj.set = oneSet;
-  //           //             //console.log('obj', obj);
-  //           //             finalArrayData.push(obj);
-  //           //           }
-  //           //         }
-  //           //       });
-  //           //     }
-  //           //   });
-
-  //           //var difference = _.difference(filteredResult, setResult);
-  //           //console.log(difference);
-
-  //           //console.log("final",finalArrayData)
-  //           setHasLoaded(true);
-  //           handleMinisStructure(filteredResult);
-  //           // handleMinisStructure(difference);
-  //         }
-  //       });
-  //     }
-  //   });
-  // };
 
   const handleAllLoavesStructure = results => {
     //console.log('all loaves array size', results);
@@ -418,14 +281,14 @@ const BreadListScreen = ({navigation}) => {
 
   const handleClick = item => {
     //console.log('clicked', item);
-    if (selectedTab != 2) {
+    // if (selectedTab != 2) {
     Object.entries(item).map(([key, value]) => {
-      console.log('itemmmmm', value);
+      //console.log('itemmmmm', value);
       setSelectedItemName(value?.name);
     });
     setSelectedItem(item);
     showBottomSheet(breadRef);
-    }
+    // }
   };
   const handleClick1 = item => {
     //console.log('clicked', item);
@@ -520,21 +383,23 @@ const BreadListScreen = ({navigation}) => {
         refreshControl={
           <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
         }>
-        {Object.entries(finalObjectArray).length > 0 ? (
-          Object.entries(finalObjectArray).map(([key, value], i) => {
-            //console.log(`${key} ${value}`);
-            // console.log('iii', i);
-            return (
-              <View key={key + i}>
-                <BreadListItemComponent1
-                  indexKey={i}
-                  keyItem={key}
-                  keyValue={value}
-                  onClick={handleClick}
-                />
-              </View>
-            );
-          })
+        {Object.entries(allBreadList[1] ? allBreadList[1] : {}).length > 0 ? (
+          Object.entries(allBreadList[1] ? allBreadList[1] : {}).map(
+            ([key, value], i) => {
+              //console.log(`${key} ${value}`);
+              // console.log('iii', i);
+              return (
+                <View key={key + i}>
+                  <BreadListItemComponent1
+                    indexKey={i}
+                    keyItem={key}
+                    keyValue={value}
+                    onClick={handleClick}
+                  />
+                </View>
+              );
+            },
+          )
         ) : (
           <View>
             {!ordersLoading ? (
@@ -564,21 +429,23 @@ const BreadListScreen = ({navigation}) => {
         refreshControl={
           <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
         }>
-        {Object.entries(finalFullLoavesArray).length > 0 ? (
-          Object.entries(finalFullLoavesArray).map(([key, value], i) => {
-            // console.log(`${key} ${value}`);
-            // console.log('iii', i);
-            return (
-              <View key={key + i}>
-                <BreadListItemComponent1
-                  indexKey={i}
-                  keyItem={key}
-                  keyValue={value}
-                  onClick={handleClick}
-                />
-              </View>
-            );
-          })
+        {Object.entries(allBreadList[1] ? allBreadList[1] : {}).length > 0 ? (
+          Object.entries(allBreadList[1] ? allBreadList[1] : {}).map(
+            ([key, value], i) => {
+              // console.log(`${key} ${value}`);
+              // console.log('iii', i);
+              return (
+                <View key={key + i}>
+                  <BreadListItemComponent1
+                    indexKey={i}
+                    keyItem={key}
+                    keyValue={value}
+                    onClick={handleClick}
+                  />
+                </View>
+              );
+            },
+          )
         ) : (
           <View>
             {!ordersLoading ? (
@@ -652,6 +519,7 @@ const BreadListScreen = ({navigation}) => {
     navigation.navigate('BreadListDetails', {
       bread: value,
       date: selectedOrderDate,
+      isMini: selectedTab == 2,
     });
   };
 
@@ -736,7 +604,7 @@ const BreadListScreen = ({navigation}) => {
 
           {renderDatePicker()}
 
-          {hasLoaded && !ordersLoading ? (
+          {!ordersLoading ? (
             <View
               style={{
                 justifyContent: 'center',
@@ -750,10 +618,12 @@ const BreadListScreen = ({navigation}) => {
                 ? filteredOrdersData.length
                 : sortArrayByDate(orderedProducts, 'name').length} */}
                 {selectedTab == 0
-                  ? sortArrayByDate(orderedProducts, 'name').length
+                  ? // ? sortArrayByDate(orderedProducts, 'name').length
+                    allBreadList[0]
                   : null}
                 {selectedTab == 1
-                  ? sortArrayByDate(fullLoavesArray, 'name').length
+                  ? // ? sortArrayByDate(fullLoavesArray, 'name').length
+                    allBreadList[0]
                   : null}
                 {selectedTab == 2
                   ? sortArrayByDate(miniArray, 'name').length

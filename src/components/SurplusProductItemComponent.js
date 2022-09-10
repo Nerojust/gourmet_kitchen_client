@@ -7,7 +7,12 @@ import {deviceHeight, deviceWidth, fp} from '../utils/responsive-screen';
 import ProductSans from './Text/ProductSans';
 
 // create a component
-const BreadListItemComponent1 = ({indexKey, keyItem, keyValue, onClick}) => {
+const SurplusProductItemComponent = ({
+  indexKey,
+  keyItem,
+  keyValue,
+  onClick,
+}) => {
   //console.log('item', keyValue);
 
   const renderDetailsList = () => {
@@ -17,53 +22,57 @@ const BreadListItemComponent1 = ({indexKey, keyItem, keyValue, onClick}) => {
           //console.log(`${key} ${value}`); // "a 5", "b 7", "c 9"
 
           return (
-            <View key={indexKey + Math.random()}>
-              <View
-                style={{height: 0.3, width: 100, backgroundColor: COLOURS.gray}}
-              />
-              <View
-                style={{
-                  flexDirection: 'row',
-                  paddingVertical: 5,
-                  alignContent: 'center',
-                  alignItems: 'center',
-                }}
-                //onPress={toggleModal}
-              >
-                <ProductSans
-                  style={[
-                    styles.productName,
-                    {
-                      color: COLOURS.labelTextColor,
-                      fontWeight: '400',
-                      flex: 0.65,
-                      paddingRight: 10,
-                    },
-                  ]}>
-                  {key}
-                </ProductSans>
-                <ProductSans style={[styles.productName, {flex: 0.2}]}>
-                  {value?.sum || '0'}
-                </ProductSans>
-
-                {value?.products && value?.status == 'incomplete' ? (
-                  <Image
-                    source={IMAGES.infoImage}
+            <>
+              {value?.surplus ? (
+                <View key={indexKey + Math.random()}>
+                  <View
                     style={{
-                      width: 10,
-                      height: 10,
-                      flex: 0.2,
+                      height: 0.3,
+                      width: 100,
+                      backgroundColor: COLOURS.gray,
                     }}
-                    resizeMode="contain"
                   />
-                ) : (
-                  <Image style={{flex: 0.2}} />
-                )}
-              </View>
-              <View
-                style={{height: 0.3, width: 100, backgroundColor: COLOURS.gray}}
-              />
-            </View>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      paddingVertical: 5,
+                      alignContent: 'center',
+                      alignItems: 'center',
+                    }}
+                    //onPress={toggleModal}
+                  >
+                    <ProductSans
+                      style={[
+                        styles.productName,
+                        {
+                          color: COLOURS.labelTextColor,
+                          fontWeight: '400',
+                          flex: 0.65,
+                          paddingRight: 10,
+                        },
+                      ]}>
+                      {value?.surplus?.productsize}
+                      {/* {value?.surplus?.productsize.includes('Mini >') ||
+                      value?.surplus?.productsize.includes('Mini <')
+                        ? 'Mini'
+                        : value?.surplus?.productsize} */}
+                    </ProductSans>
+                    {value.surplus ? (
+                      <ProductSans style={[styles.productName, {flex: 0.2}]}>
+                        {value?.surplus?.count || '0'}
+                      </ProductSans>
+                    ) : null}
+                  </View>
+                  <View
+                    style={{
+                      height: 0.3,
+                      width: 100,
+                      backgroundColor: COLOURS.gray,
+                    }}
+                  />
+                </View>
+              ) : null}
+            </>
           );
         })}
       </View>
@@ -157,4 +166,4 @@ const styles = StyleSheet.create({
 });
 
 //make this component available to the app
-export default BreadListItemComponent1;
+export default SurplusProductItemComponent;

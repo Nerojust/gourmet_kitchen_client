@@ -52,11 +52,11 @@ const LoginScreen = ({navigation}) => {
   // const [email, setEmail] = useState('zupa@intelia.io');
   // const [password, setPassword] = useState('Pass#Secret');
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  // const [email, setEmail] = useState('');
+  // const [password, setPassword] = useState('');
 
-  // const [email, setEmail] = useState('nerojust4@gmail.com');
-  // const [password, setPassword] = useState('123456');
+  const [email, setEmail] = useState('nerojust4@gmail.com');
+  const [password, setPassword] = useState('123456');
 
   // const [email, setEmail] = useState('fredBakim@gmail.com');
   // const [password, setPassword] = useState('123456');

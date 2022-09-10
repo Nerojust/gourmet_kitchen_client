@@ -1,5 +1,6 @@
 const initialState = {
   surplus: [],
+  surplusProducts:[],
   surplusOrder: {},
   surplusLoading: false,
   createSurplusLoading: false,
@@ -73,6 +74,23 @@ export default (state = initialState, action) => {
         error: action.error,
       };
 
+    case 'GET_ALL_SURPLUS_PRODUCTS_PENDING':
+      return {
+        ...state,
+        surplusLoading: action.loading,
+      };
+    case 'GET_ALL_SURPLUS_PRODUCTS_SUCCESS':
+      return {
+        ...state,
+        surplusProducts: action.data,
+        surplusLoading: action.loading,
+      };
+    case 'GET_ALL_SURPLUS_PRODUCTS_FAILED':
+      return {
+        ...state,
+        surplusLoading: action.loading,
+        error: action.error,
+      };
     case 'GET_ALL_SURPLUS_PENDING':
       return {
         ...state,

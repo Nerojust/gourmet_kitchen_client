@@ -206,10 +206,10 @@ const TransactionsScreen = ({navigation}) => {
   return (
     <ViewProviderComponent>
       <HeaderComponent
-        name={'Transac...  ' + moment(selectedOrderDate).format('LL')}
+        name={'Transactions  ' + moment(selectedOrderDate).format('LL')}
         isDashboard
         displayCalendar
-        shouldDisplaySettingIcon
+        shouldDisplaySettingIcon={false}
         //handleSettingsClick={handleSettingsClick}
         toggleDateModal={toggleDateModal}
         performSearch={handleSearch}

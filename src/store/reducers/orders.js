@@ -7,6 +7,7 @@ const initialState = {
   minisArray:[],
   orderedProductsStats: [],
   orderedProducts: [],
+  allBreadList:{},
   riderAnalytics: [],
   order: {},
   countItem: {},
@@ -300,6 +301,23 @@ export default (state = initialState, action) => {
         error: action.error,
       };
 
+    case 'GET_STRUCTURE_PRODUCTS_STATS_PENDING':
+      return {
+        ...state,
+        ordersLoading: action.loading,
+      };
+    case 'GET_STRUCTURE_PRODUCTS_STATS_SUCCESS':
+      return {
+        ...state,
+        allBreadList: action.data,
+        ordersLoading: action.loading,
+      };
+    case 'GET_STRUCTURE_PRODUCTS_STATS_FAILED':
+      return {
+        ...state,
+        ordersLoading: action.loading,
+        error: action.error,
+      };
     case 'GET_ALL_PRODUCTS_STATS_PENDING':
       return {
         ...state,

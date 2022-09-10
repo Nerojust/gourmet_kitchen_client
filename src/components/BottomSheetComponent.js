@@ -7,6 +7,8 @@ import DeliveryListComponent from './DeliveryListComponent';
 import RiderListComponent from './RiderListComponent';
 import BreadSizeComponent from './BreadSizeComponent';
 import BreadSizeComponent1 from './BreadSizeComponent1';
+import SurplusProductSizeComponent from './SurplusProductSizeComponent';
+import {ScrollView, TouchableWithoutFeedback} from 'react-native';
 
 export function BottomSheetProductComponent({
   sheetRef,
@@ -156,6 +158,65 @@ export function BottomSheetBreadSizeComponent({
           handleSingleItemPress(key, value)
         }
       />
+    </RBSheet>
+  );
+}
+export function BottomSheetSurplusSizeComponent({
+  sheetRef,
+  dataSource,
+  handleInsertValueTextChange,
+  insertedSizeValue,
+  handleCreateSizeNetworkRequest,
+  handleSingleItemPress,
+  closeAction,
+  itemName,
+}) {
+  return (
+    <RBSheet
+      ref={sheetRef}
+      animationType={'slide'}
+      closeDuration={0}
+      openDuration={0}
+      closeOnDragDown={true}
+      closeOnPressMask={true}
+      dragFromTopOnly={false}
+      closeOnPressBack={true}
+      keyboardAvoidingViewEnabled={true}
+      //height={deviceHeight / 1.04}
+      height={Platform.OS == 'ios' ? deviceHeight / 1.2 : deviceHeight / 1.3}
+      customStyles={{
+        wrapper: {
+          backgroundColor: COLOURS.transparentColour,
+        },
+        draggableIcon: {
+          width: 0,
+          top: 5,
+        },
+        container: {
+          borderTopLeftRadius: 20,
+          borderTopRightRadius: 20,
+          borderColor: COLOURS.lightGray,
+          borderWidth: 0.4,
+          backgroundColor: COLOURS.white,
+          //marginBottom: 20,
+        },
+      }}
+      >
+      <ScrollView>
+        <TouchableWithoutFeedback>
+          <SurplusProductSizeComponent
+            dataSource={dataSource}
+            handleInsertValueTextChange={handleInsertValueTextChange}
+            insertedSizeValue={insertedSizeValue}
+            handleCreateSizeNetworkRequest={handleCreateSizeNetworkRequest}
+            closeAction={closeAction}
+            itemName={itemName}
+            handleSingleItemPress={(key, value) =>
+              handleSingleItemPress(key, value)
+            }
+          />
+        </TouchableWithoutFeedback>
+      </ScrollView>
     </RBSheet>
   );
 }

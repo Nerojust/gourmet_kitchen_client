@@ -1,4 +1,4 @@
-import React, {useMemo} from 'react';
+import React, {useMemo, useState} from 'react';
 import {
   TouchableOpacity,
   StyleSheet,
@@ -28,12 +28,27 @@ import {ACTIVE_OPACITY} from '../utils/Constants';
 import {IMAGES} from '../utils/Images';
 import RefreshComponent from './RefreshComponent';
 
-const BreadSizeComponent = ({
+const SurplusProductSizeComponent = ({
   dataSource,
   handleSingleItemPress,
+  handleInsertValueTextChange,
+  insertedSizeValue,
+  handleCreateSizeNetworkRequest,
   closeAction,
   itemName,
 }) => {
+  const [sizes, setSizes] = useState(dataSource);
+
+  const handleSizeChange = (index, text) => {
+    const _sizes = [...dataSource];
+
+    console.log('Sizes at '+dataSource[index].categorysize+ " index:"+ index, text);
+    // _sizes[index].surplus.count = text;
+    // console.log('text', text);
+    // setSizes(_sizes);
+    // console.log('sizes are ', _sizes);
+  };
+
   return (
     <SafeAreaView
       style={{
@@ -41,7 +56,7 @@ const BreadSizeComponent = ({
         backgroundColor: COLOURS.white,
         borderTopLeftRadius: 10,
         borderTopRightRadius: 10,
-        flex: 1,
+        // flex: 1,
       }}>
       <>
         <TouchableOpacity
@@ -51,7 +66,7 @@ const BreadSizeComponent = ({
           <ProductSans
             style={{
               color: COLOURS.zupaBlue,
-              fontSize: 12,
+              fontSize: fp(14),
             }}>
             Close
           </ProductSans>
@@ -61,31 +76,37 @@ const BreadSizeComponent = ({
           style={[
             styles.productName,
             {
-              color: COLOURS.labelTextColor,
+              color: COLOURS.textInputColor,
               textAlign: 'center',
               paddingVertical: 10,
               paddingHorizontal: 20,
+              fontSize: fp(18),
             },
           ]}>
-          {'Select a size to fulfill for \n' + itemName}
+          {itemName}
         </ProductSans>
 
         <ScrollView>
-          {Object.entries(dataSource).map(([key, value]) => {
-            //console.log('item detail', `${key} ${value?.set}`); // "a 5", "b 7", "c 9"
+          {dataSource.map((oneItem, i) => {
+            //console.log('item detail', ` ${oneItem.categorysize}`);
             return (
               <TouchableOpacity
+                activeOpacity={0.8}
                 style={{
                   flexDirection: 'row',
                   justifyContent: 'center',
                   paddingHorizontal: 27,
-                  paddingVertical: 20,
+                  paddingVertical: 4,
                   backgroundColor: COLOURS.lightGray4,
                   borderRadius: 10,
                   marginVertical: 5,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  alignContent: 'center',
                 }}
                 key={Math.random()}
-                onPress={() => handleSingleItemPress(key, value)}>
+                // onPress={() => handleSingleItemPress(key, value)}
+              >
                 <View
                   style={{
                     flexDirection: 'column',
@@ -95,7 +116,10 @@ const BreadSizeComponent = ({
                     style={{
                       flexDirection: 'row',
                       width: '100%',
-                      paddingBottom: value?.products ? 20 : 0,
+                      //paddingBottom: value?.products ? 20 : 0,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      alignContent: 'center',
                     }}>
                     <ProductSans
                       style={[
@@ -104,86 +128,49 @@ const BreadSizeComponent = ({
                           flex: 0.65,
                         },
                       ]}>
-                      {key}
+                      {oneItem.categorysize}
                     </ProductSans>
-                    <ProductSans style={[styles.productName, {flex: 0.4}]}>
-                      {value?.sum || '0'}
-                    </ProductSans>
+                    <TextInputComponent
+                      placeholder={'Insert value'}
+                      handleTextChange={text => handleSizeChange(i, text)}
+                      defaultValue={dataSource[i]?.surplus?.count.toString()}
+                      returnKeyType={'go'}
+                      keyboardType={'phone-pad'}
+                      secureTextEntry={false}
+                      capitalize={'sentences'}
+                      heightfigure={50}
+                      props={{borderColor: COLOURS.blue, flex: 0.35}}
+                      onSubmitEditing={() => Keyboard.dismiss()}
+                    />
                   </View>
-
-                  {value?.products
-                    ? value?.products.map((item, i) => {
-                        // console.log("iii",item)
-
-                        return (
-                          <View
-                            style={{
-                              flexDirection: 'row',
-                              paddingVertical: 5,
-                              alignContent: 'center',
-                              alignItems: 'center',
-                            }}>
-                            <ProductSans
-                              style={[
-                                styles.productName,
-                                {fontWeight: '500', flex: 0.16},
-                              ]}
-                              key={Math.random()}>
-                              {i + 1 + '.) '}
-                            </ProductSans>
-
-                            <ProductSans
-                              style={[
-                                styles.productName,
-                                {flex: 1, fontWeight: '500'},
-                              ]}
-                              key={Math.random()}>
-                              {item?.productname}
-                            </ProductSans>
-
-                            <ProductSans
-                              style={[
-                                styles.productName,
-                                {flex: 0.5, fontWeight: '500'},
-                              ]}
-                              key={Math.random()}>
-                              {item?.productsize + ')'}
-                            </ProductSans>
-
-                            {item?.isfulfilled ? (
-                              <Image
-                                source={IMAGES.urlGood}
-                                style={{
-                                  width: 15,
-                                  height: 15,
-                                }}
-                                resizeMode="contain"
-                              />
-                            ) : (
-                              <Image
-                                source={IMAGES.errorImage}
-                                style={{
-                                  width: 12,
-                                  height: 12,
-                                }}
-                                resizeMode="contain"
-                              />
-                            )}
-                          </View>
-                        );
-                      })
-                    : null}
                 </View>
               </TouchableOpacity>
             );
           })}
+
+          <TouchableOpacity
+            onPress={handleCreateSizeNetworkRequest}
+            style={{
+              marginTop: 15,
+              justifyContent: 'center',
+              backgroundColor: COLOURS.blue,
+              height: 50,
+              borderRadius: 10,
+              marginHorizontal: 25,
+              alignItems: 'center',
+            }}>
+            <Text
+              style={{color: COLOURS.white, fontSize: 14, fontWeight: '700'}}>
+              Submit
+            </Text>
+          </TouchableOpacity>
         </ScrollView>
       </>
     </SafeAreaView>
   );
 };
 
-export default BreadSizeComponent;
+export default SurplusProductSizeComponent;
 
 const styles = StyleSheet.create({
   itemView: {
