@@ -64,7 +64,7 @@ const StoreSalesScreen = ({navigation}) => {
   //console.log('redux surplus', surplus);
   const dispatch = useDispatch();
   const [isSearchCleared, setIsSearchCleared] = useState(false);
-
+  const [hasDataLoaded, setHasDataLoaded] = useState(false);
   const [isTabClicked, setIsTabClicked] = useState(false);
   const [open, setOpen] = useState(false);
   const [selectedOrderDate, setSelectedOrderDate] = useState(new Date());
@@ -76,6 +76,10 @@ const StoreSalesScreen = ({navigation}) => {
     // if (selectedOrderDate) {
     fetchAllData();
     //}
+  }, [selectedOrderDate, offset, selectedTab]);
+
+  useEffect(() => {
+    dispatch(getAllSurplus(getDateWithoutTime(selectedOrderDate)));
   }, [selectedOrderDate, offset, selectedTab]);
 
   const fetchAllData = () => {
@@ -96,8 +100,11 @@ const StoreSalesScreen = ({navigation}) => {
         offset,
         status,
       ),
-    );
+    ).then(result => {
+      setHasDataLoaded(true);
+    });
   };
+
   const getOnlyActiveSurplusProducts = () => {
     // dispatch(clearSurplusData());
     dispatch(
@@ -107,7 +114,9 @@ const StoreSalesScreen = ({navigation}) => {
         offset,
         status,
       ),
-    );
+    ).then(result => {
+      setHasDataLoaded(true);
+    });
   };
   const getOnlyInActiveSurplusProducts = () => {
     // dispatch(clearSurplusData());
@@ -118,7 +127,9 @@ const StoreSalesScreen = ({navigation}) => {
         offset,
         status,
       ),
-    );
+    ).then(result => {
+      setHasDataLoaded(true);
+    });
   };
   const displaySurplusProductsListView = () => {
     dataproducts = groupBy(
@@ -138,7 +149,8 @@ const StoreSalesScreen = ({navigation}) => {
         }
         removeClippedSubviews={true} // Unmount components when outside of window
       >
-        {Object.entries(dataproducts ? dataproducts : {}).length > 0 ? (
+        {Object.entries(dataproducts ? dataproducts : {}).length > 0 &&
+        !surplusLoading ? (
           Object.entries(dataproducts ? dataproducts : {}).map(
             ([key, value], i) => {
               //console.log(`${key} ${value}`);
@@ -454,6 +466,7 @@ const StoreSalesScreen = ({navigation}) => {
             </>
           ) : null}
 
+         
           <LoaderShimmerComponent isLoading={surplusLoading} />
         </KeyboardObserverComponent>
       </DismissKeyboard>
