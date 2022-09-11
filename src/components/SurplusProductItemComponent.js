@@ -22,7 +22,7 @@ const SurplusProductItemComponent = ({
           //console.log(`${key} ${value}`); // "a 5", "b 7", "c 9"
 
           return (
-            <>
+            <View key={indexKey + Math.random()}>
               {value?.surplus ? (
                 <View key={indexKey + Math.random()}>
                   <View
@@ -72,7 +72,7 @@ const SurplusProductItemComponent = ({
                   />
                 </View>
               ) : null}
-            </>
+            </View>
           );
         })}
       </View>

@@ -1,125 +1,123 @@
 //import liraries
-import React, {Component, useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
   StyleSheet,
-  FlatList,
   RefreshControl,
   Platform,
   Alert,
+  TouchableOpacity,
   ScrollView,
+  ActivityIndicator,
 } from 'react-native';
 import {COLOURS} from '../../utils/Colours';
-import {BackViewMoreSettings, BackViewSurplus} from '../../components/Header';
+import {BackViewSurplus} from '../../components/Header';
 import {KeyboardObserverComponent} from '../../components/KeyboardObserverComponent';
 
 import Clipboard from '@react-native-clipboard/clipboard';
 
 import ViewProviderComponent from '../../components/ViewProviderComponent';
-import {
-  DismissKeyboard,
-  sortArrayByDate,
-  sortArrayData,
-  sortArrayByDateDesc,
-  groupBy,
-  showBottomSheet,
-  dismissBottomSheetDialog,
-} from '../../utils/utils';
-import AddComponent from '../../components/AddComponent';
+import {DismissKeyboard, sortArrayByDate, groupBy} from '../../utils/utils';
 import LoaderShimmerComponent from '../../components/LoaderShimmerComponent';
 import ProductSans from '../../components/Text/ProductSans';
 import {useSelector, useDispatch} from 'react-redux';
 import {
+  clearSurplusData,
   getAllSurplus,
   getAllSurplusProducts,
+  updateSurplusProductData,
 } from '../../store/actions/surplus';
-import SurplusListItemComponent from '../../components/SurplusListItemComponent';
 import SearchInputComponent from '../../components/SearchInputComponent';
 import {getDateWithoutTime} from '../../utils/DateFilter';
 import {saveOrderDate} from '../../store/actions/orders';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
-import {sum} from 'lodash';
 import SurplusProductItemComponent from '../../components/SurplusProductItemComponent';
-import {
-  BottomSheetBreadSizeComponent,
-  BottomSheetSurplusSizeComponent,
-} from '../../components/BottomSheetComponent';
+import {LIMIT_FIGURE} from '../../utils/Constants';
+import SliderAnalyticsComponent from '../../components/SliderAnalyticsComponent';
 var _ = require('lodash');
 // create a component
 const StoreSalesScreen = ({navigation}) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const {
-    surplus,
-    surplusProducts,
-    surplusLoading,
-    updateSurplusLoading,
-    createSurplusLoading,
-  } = useSelector(x => x.surplus);
-  //console.log("surplus redux",surplus)
+  const {surplus, surplusProducts, totalCount, surplusLoading} = useSelector(
+    x => x.surplus,
+  );
+  //console.log('totalCount redux', totalCount);
+  // console.log('surplus pdts redux', surplusProducts.length);
   const [isSearchClicked, setIsSearchClicked] = useState(false);
   var surplusData = Object.assign([], surplus);
   const [filteredSurplusData, setFilteredSurplusData] = useState(surplusData);
-  const [finalMiniArray, setFinalMiniArray] = useState({});
+  const [selectedTab, setSelectedTab] = useState(0);
   const [searchInputValue, setSearchInputValue] = useState('');
   //console.log('redux surplus', surplus);
   const dispatch = useDispatch();
   const [isSearchCleared, setIsSearchCleared] = useState(false);
+
+  const [isTabClicked, setIsTabClicked] = useState(false);
   const [open, setOpen] = useState(false);
-  const [copiedText, setCopiedText] = useState('');
   const [selectedOrderDate, setSelectedOrderDate] = useState(new Date());
-  const surplusProductRef = useRef();
-  const [selectedItem, setSelectedItem] = useState({});
-  const [selectedItemName, setSelectedItemName] = useState('');
-  // useEffect(() => {
-  //   const unsubscribe = navigation.addListener('focus', () => {
-  //     dispatch(getAllSurplus(getDateWithoutTime(selectedOrderDate)));
-  //     //Put your Data loading function here instead of my loadData()
-  //   });
-
-  //   return unsubscribe;
-  // }, [navigation, selectedOrderDate]);
+  const [offset, setOffset] = useState(0);
+  let dataproducts;
 
   useEffect(() => {
-    if (selectedOrderDate) {
-      dispatch(getAllSurplusProducts(getDateWithoutTime(selectedOrderDate)));
-    }
-  }, [selectedOrderDate]);
+    // if (selectedOrderDate) {
+    fetchAllData();
+    //}
+  }, [selectedOrderDate, offset, selectedTab]);
 
-  useEffect(() => {
-    if (selectedOrderDate) {
-      dispatch(getAllSurplus(getDateWithoutTime(selectedOrderDate)));
+  const fetchAllData = () => {
+    if (selectedTab == 0) {
+      getAllTheSurplusProducts();
+    } else if (selectedTab == 1) {
+      getOnlyActiveSurplusProducts();
+    } else if (selectedTab == 2) {
+      getOnlyInActiveSurplusProducts();
     }
-  }, [selectedOrderDate]);
-
-  const renderItems = ({item, index}) => {
-    return (
-      <SurplusProductItemComponent
-        item={item}
-        handleEditClick={handleChangeSurplusClick}
-        handleNormalClick={handleNormalClick}
-      />
+  };
+  const getAllTheSurplusProducts = () => {
+    dispatch(clearSurplusData());
+    dispatch(
+      getAllSurplusProducts(
+        getDateWithoutTime(selectedOrderDate),
+        LIMIT_FIGURE,
+        offset,
+        'all',
+      ),
     );
   };
-  // const renderItems = ({item, index}) => {
-  //   return (
-  //     <SurplusListItemComponent
-  //       item={item}
-  //       handleEditClick={handleChangeSurplusClick}
-  //       handleNormalClick={handleNormalClick}
-  //     />
-  //   );
-  // };
-
+  const getOnlyActiveSurplusProducts = () => {
+    dispatch(clearSurplusData());
+    dispatch(
+      getAllSurplusProducts(
+        getDateWithoutTime(selectedOrderDate),
+        LIMIT_FIGURE,
+        offset,
+        'active',
+      ),
+    );
+  };
+  const getOnlyInActiveSurplusProducts = () => {
+    dispatch(clearSurplusData());
+    dispatch(
+      getAllSurplusProducts(
+        getDateWithoutTime(selectedOrderDate),
+        LIMIT_FIGURE,
+        offset,
+        'inactive',
+      ),
+    );
+  };
   const displaySurplusProductsListView = () => {
-    let dataproducts = groupBy(surplusProducts, 'name');
+    dataproducts = groupBy(surplusProducts, 'name');
 
     return (
       <ScrollView
         refreshControl={
           <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
-        }>
+        }
+        removeClippedSubviews={true} // Unmount components when outside of window
+      >
         {Object.entries(dataproducts ? dataproducts : {}).length > 0 ? (
           Object.entries(dataproducts ? dataproducts : {}).map(
             ([key, value], i) => {
@@ -159,59 +157,39 @@ const StoreSalesScreen = ({navigation}) => {
       </ScrollView>
     );
   };
+
   const handleClick = item => {
-    //console.log('clicked', item);
-    // if (selectedTab != 2) {
-    Object.entries(item).map(([key, value]) => {
-      //console.log('itemmmmm', value);
-      setSelectedItemName(value?.name);
-    });
-    setSelectedItem(item);
-    // showBottomSheet(surplusProductRef);
+    setOffset(0);
     navigation.navigate('UpdateSizeSale', {
       surplusData: item,
       date: getDateWithoutTime(selectedOrderDate),
+      offset: 0,
     });
-    // }
   };
 
-  const handleSingleItemPress = (key, value) => {
-   // console.log('inside key', key, 'value', value);
-    dismissBottomSheetDialog(surplusProductRef);
-    // navigation.navigate('BreadListDetails', {
-    //   bread: value,
-    //   date: selectedOrderDate,
-    //   isMini: selectedTab == 2,
-    // });
+  const handlePage = () => {
+    //console.log('offset before ', offset);
+    setOffset(offset + LIMIT_FIGURE);
+    //console.log('offset after ', offset);
   };
-  const [insertedSizeValue, setInsertedSizeValue] = useState();
-  const handleInsertValueTextChange = insertText => {
-    console.log('text change value', insertText);
-  };
-
-  const handleCreateSizeNetworkRequest = () => {
-    console.log('Button clicked');
-  };
-
-  const renderBottomSheet = () => {
-    // console.log("selected",selectedItem)
+  const displayLoadMoreButton = () => {
     return (
-      <BottomSheetSurplusSizeComponent
-        sheetRef={surplusProductRef}
-        dataSource={selectedItem}
-        handleInsertValueTextChange={handleInsertValueTextChange}
-        insertedSizeValue={insertedSizeValue}
-        handleCreateSizeNetworkRequest={handleCreateSizeNetworkRequest}
-        closeAction={handleClose}
-        itemName={selectedItemName}
-        handleSingleItemPress={handleSingleItemPress}
-      />
+      //Footer View with Load More button
+      <View style={styles.footer}>
+        <TouchableOpacity
+          activeOpacity={0.9}
+          onPress={handlePage}
+          //On Click of button calling getData function to load more data
+          style={styles.loadMoreBtn}>
+          {surplusLoading ? (
+            <ActivityIndicator color="white" style={{marginLeft: 0}} />
+          ) : (
+            <Text style={styles.btnText}>Load more</Text>
+          )}
+        </TouchableOpacity>
+      </View>
     );
   };
-  const handleClose = () => {
-    dismissBottomSheetDialog(surplusProductRef);
-  };
-
   const renderDatePicker = () => {
     return (
       <DatePicker
@@ -225,8 +203,13 @@ const StoreSalesScreen = ({navigation}) => {
         onConfirm={date => {
           console.log('date result', date);
           setOpen(false);
+          //set offset back to zero
+          setOffset(0);
           setSelectedOrderDate(date);
           dispatch(saveOrderDate(getDateWithoutTime(date)));
+          //clear the redux array
+          dispatch(clearSurplusData());
+          // console.log('offset after date is ', offset);
         }}
         onCancel={() => {
           setOpen(false);
@@ -241,33 +224,22 @@ const StoreSalesScreen = ({navigation}) => {
     setOpen(!open);
   };
 
-  const handleChangeSurplusClick = item => {
-    navigation.navigate('StoreSalesDetails', {
-      surplus: item,
-      edit: true,
-      date: getDateWithoutTime(selectedOrderDate),
-    });
-  };
-  const handleNormalClick = item => {
-    navigation.navigate('StoreSalesDetails', {
-      surplus: item,
-      edit: false,
-      date: getDateWithoutTime(selectedOrderDate),
-    });
-  };
-  const goToNewSurplus = item => {
-    navigation.navigate('AddStoreSale', {
-      date: getDateWithoutTime(selectedOrderDate),
-    });
-  };
   const onRefresh = () => {
-    // console.log('refreshed');
-    dispatch(getAllSurplus(getDateWithoutTime(selectedOrderDate)));
+    dispatch(clearSurplusData());
+    dispatch(
+      getAllSurplusProducts(
+        getDateWithoutTime(selectedOrderDate),
+        LIMIT_FIGURE,
+        0,
+      ),
+    );
   };
+
   const handleSearch = () => {
     setIsSearchClicked(!isSearchClicked);
     handleCancelSearch();
   };
+
   const handleSearchChange = text => {
     if (text) {
       sortArrayByDate(surplus, 'productname').sort((a, b) => {
@@ -295,6 +267,7 @@ const StoreSalesScreen = ({navigation}) => {
     setSearchInputValue('');
     setIsSearchCleared(true);
   };
+
   const handleDeleteOrders = () => {
     //console.log('delete clicked');
 
@@ -350,7 +323,30 @@ const StoreSalesScreen = ({navigation}) => {
     Clipboard.setString(stringData);
     alert('Surplus copied to clipboard');
   };
-
+  const handleAllTab = () => {
+    //console.log('Tab 1');
+    selectTab(0);
+  };
+  const handleActiveTab = () => {
+    //console.log('Tab 2');
+    selectTab(1);
+  };
+  const handleInActiveTab = () => {
+    //console.log('Tab 3');
+    selectTab(2);
+  };
+  const selectTab = tabIndex => {
+    if (tabIndex == 0) {
+      setSelectedTab(tabIndex);
+      setIsTabClicked(true);
+    } else if (tabIndex == 1) {
+      setSelectedTab(tabIndex);
+      setIsTabClicked(true);
+    } else if (tabIndex == 2) {
+      setSelectedTab(tabIndex);
+      setIsTabClicked(true);
+    }
+  };
   return (
     <ViewProviderComponent>
       <DismissKeyboard>
@@ -358,7 +354,7 @@ const StoreSalesScreen = ({navigation}) => {
           <BackViewSurplus
             backText={'Store Sales: ' + moment(selectedOrderDate).format('LL')}
             onClose={() => navigation.goBack()}
-            shouldDisplayIcon={surplus && surplus.length > 0}
+            shouldDisplayIcon={surplusProducts && surplusProducts.length > 0}
             shouldDisplaySettingIcon
             performSearch={handleSearch}
             shouldDisplayBackArrow={true}
@@ -379,58 +375,45 @@ const StoreSalesScreen = ({navigation}) => {
             />
           ) : null}
 
-          {renderDatePicker()}
-          {renderBottomSheet()}
-          <View
-            style={{
-              justifyContent: 'center',
-              alignItems: 'flex-end',
-              paddingRight: 20,
-            }}>
-            <ProductSans style={{fontSize: 12, color: COLOURS.labelTextColor}}>
-              Total count:
-              {searchInputValue.length > 0
-                ? filteredSurplusData.length
-                : surplus && sortArrayByDate(surplus, 'productname').length}
-            </ProductSans>
-          </View>
-          {displaySurplusProductsListView()}
+          <SliderAnalyticsComponent
+            isTabClicked={isTabClicked}
+            name1={'All'}
+            name2={'Active'}
+            name3={'Inactive'}
+            selectedTab={selectedTab}
+            onPress1={handleAllTab}
+            onPress2={handleActiveTab}
+            onPress3={handleInActiveTab}
+          />
 
-          {/* <FlatList
-            // data={
-            //   searchInputValue.length > 0
-            //     ? filteredSurplusData
-            //     : surplus && sortArrayByDate(surplus, 'productname')
-            // }
-            data={surplusProducts}
-            renderItem={renderItems}
-            keyExtractor={item => item.id}
-            refreshControl={
-              <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
-            }
-            ListEmptyComponent={
-              <View>
-                {!surplusLoading ? (
-                  <View
-                    style={{
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      flex: 1,
-                      top: Platform.OS == 'ios' ? 300 : 0,
-                      marginTop: Platform.OS == 'android' ? 300 : 0,
-                    }}>
-                    <ProductSans
-                      style={{fontSize: 16, color: COLOURS.textInputColor}}>
-                      No record found
-                    </ProductSans>
-                  </View>
-                ) : null}
+          {renderDatePicker()}
+          {!surplusLoading ? (
+            <>
+              <View
+                style={{
+                  justifyContent: 'center',
+                  alignItems: 'flex-end',
+                  paddingRight: 20,
+                }}>
+                <ProductSans
+                  style={{fontSize: 12, color: COLOURS.labelTextColor}}>
+                  Total count:
+                  {searchInputValue.length > 0
+                    ? filteredSurplusData.length
+                    : surplusProducts &&
+                      Object.entries(groupBy(surplusProducts, 'name')).length}
+                </ProductSans>
               </View>
-            }
-          /> */}
+
+              {displaySurplusProductsListView()}
+
+              {totalCount != surplusProducts.length
+                ? displayLoadMoreButton()
+                : null}
+            </>
+          ) : null}
 
           <LoaderShimmerComponent isLoading={surplusLoading} />
-          {/* <AddComponent goto={goToNewSurplus} /> */}
         </KeyboardObserverComponent>
       </DismissKeyboard>
     </ViewProviderComponent>
@@ -444,6 +427,25 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: COLOURS.zupa_gray_bg,
+  },
+  footer: {
+    padding: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
+  loadMoreBtn: {
+    padding: 10,
+    backgroundColor: COLOURS.zupaBlue,
+    borderRadius: 5,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  btnText: {
+    color: 'white',
+    fontSize: 15,
+    textAlign: 'center',
   },
 });
 

@@ -1,8 +1,26 @@
 import client from '../../utils/Api';
+import {LIMIT_FIGURE} from '../../utils/Constants';
 import {dateFilterParser} from '../../utils/DateFilter';
 import {clearStorage, handleError, handleLogout} from '../../utils/utils';
 import {getAllOrderedProductsStats} from './orders';
 
+export const clearSurplusData = () => {
+  console.log('surplus cleared');
+  return dispatch => {
+    dispatch({
+      type: 'CLEAR_SURPLUS_STATE',
+    });
+  };
+};
+export const updateSurplusProductData = data => {
+  console.log('surplus pdt data added', data.length);
+  return dispatch => {
+    dispatch({
+      type: 'SET_SURPLUS_PRODUCTS',
+      data: data,
+    });
+  };
+};
 export const createSurplus = (orderPayload, date) => {
   console.log('About to create a new surplus', date);
   //console.log("order payload", orderPayload);
@@ -26,6 +44,7 @@ export const createSurplus = (orderPayload, date) => {
             loading: false,
           });
           //alert('Order created successfully');
+
           dispatch(getAllSurplusProducts(date));
 
           // dispatch(getAllSurplus(date));
@@ -44,7 +63,7 @@ export const createSurplus = (orderPayload, date) => {
       });
   };
 };
-export const createSurplusProduct = (orderPayload, date) => {
+export const createSurplusProduct = (orderPayload, date, offset) => {
   console.log('About to create a new surplus product', date);
   //console.log("order payload", orderPayload);
   return dispatch => {
@@ -62,14 +81,16 @@ export const createSurplusProduct = (orderPayload, date) => {
         if (response.data?.isSuccessful) {
           console.log('surplus product created successfully');
 
+          dispatch(clearSurplusData());
           dispatch({
             type: 'CREATE_SURPLUS_SUCCESS',
             loading: false,
+            data: response?.data?.results,
           });
           //alert('Order created successfully');
-          dispatch(getAllSurplusProducts(date));
+          dispatch(getAllSurplusProducts(date, LIMIT_FIGURE, offset));
 
-          dispatch(getAllSurplus(date));
+          //dispatch(getAllSurplus(date));
           //dispatch(getAllOrderedProductsStats(date));
           return response.data?.results;
         }
@@ -135,7 +156,7 @@ export const getAllSurplus = date => {
       });
   };
 };
-export const getAllSurplusProducts = date => {
+export const getAllSurplusProducts = (date, limit, offset, status) => {
   console.log('About to get all surplus products');
   return dispatch => {
     dispatch({
@@ -145,7 +166,7 @@ export const getAllSurplusProducts = date => {
     });
     var getUrl = `/surplusProducts?startDate=${date + ' 00:00:01'}&endDate=${
       date + ' 23:59:59'
-    }`;
+    }&limit=${limit}&offset=${offset}&status=${status}`;
 
     console.log('geturl surplus', getUrl);
     return client
@@ -161,6 +182,7 @@ export const getAllSurplusProducts = date => {
               type: 'GET_ALL_SURPLUS_PRODUCTS_SUCCESS',
               loading: false,
               data: response?.data?.results,
+              count: response?.data?.totalCount,
             });
             return response?.data?.results;
           } else {

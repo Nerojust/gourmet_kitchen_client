@@ -141,7 +141,7 @@ const BreadListDetailsScreen = ({navigation, route}) => {
               setName(result[0]?.name);
               //calculate all the sum values together
               setCount(parseInt(result[0]?.sum));
-
+              
               setHasDateLoaded(true);
             }
 

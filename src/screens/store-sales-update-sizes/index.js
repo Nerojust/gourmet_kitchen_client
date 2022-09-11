@@ -28,6 +28,8 @@ const StoreSalesUpdateSizesScreen = ({navigation, route}) => {
   const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false);
   const {createSurplusLoading} = useSelector(x => x.surplus);
   const orderDate = route?.params?.date;
+  const offset = route?.params?.offset;
+  //console.log("offset is ",offset)
   const [sizes, setSizes] = useState([]);
 
   useEffect(() => {
@@ -93,7 +95,7 @@ const StoreSalesUpdateSizesScreen = ({navigation, route}) => {
                     {oneItem.categorysize}
                   </ProductSans>
                   <TextInputComponent
-                    placeholder={'Insert value'}
+                    placeholder={'Insert number only'}
                     handleTextChange={text => handleSizeChange(i, text)}
                     defaultValue={dataSource[i]?.surplus?.count.toString()}
                     returnKeyType={'go'}
@@ -104,12 +106,6 @@ const StoreSalesUpdateSizesScreen = ({navigation, route}) => {
                     heightfigure={50}
                     //widthFigure={deviceWidth / 1.15}
                     props={{borderColor: COLOURS.lightGray3, flex: 0.35}}
-                    // handleTextInputFocus={() => {
-                    //   setIsSurplusCountFocused(true);
-                    // }}
-                    // handleBlur={() => {
-                    //   setIsSurplusCountFocused(false);
-                    // }}
                     onSubmitEditing={() => Keyboard.dismiss()}
                   />
                 </View>
@@ -137,7 +133,7 @@ const StoreSalesUpdateSizesScreen = ({navigation, route}) => {
       </ScrollView>
     );
   };
-  
+
   const handleSizeChange = (index, text) => {
     sizes.map((size, i) => {
       // console.log('index : ' + index + ' sub index: ' + i);
@@ -153,7 +149,7 @@ const StoreSalesUpdateSizesScreen = ({navigation, route}) => {
     let payload = {
       products: sizes,
     };
-    dispatch(createSurplusProduct(payload, orderDate)).then(result => {
+    dispatch(createSurplusProduct(payload, orderDate, offset)).then(result => {
       if (result) {
         showSuccessDialog();
       }

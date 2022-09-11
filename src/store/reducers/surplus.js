@@ -1,6 +1,6 @@
 const initialState = {
   surplus: [],
-  surplusProducts:[],
+  surplusProducts: [],
   surplusOrder: {},
   surplusLoading: false,
   createSurplusLoading: false,
@@ -10,6 +10,7 @@ const initialState = {
   deleteSurplusLoading: false,
   hasDeletedSurplus: false,
   error: '',
+  totalCount: 0,
 };
 
 export default (state = initialState, action) => {
@@ -18,6 +19,12 @@ export default (state = initialState, action) => {
       return {
         ...state,
         surplus: [],
+        surplusProducts: [],
+      };
+    case 'SET_SURPLUS_PRODUCTS':
+      return {
+        ...state,
+        surplusProducts: [...state.surplusProducts, ...action.data],
       };
 
     case 'CREATE_SURPLUS_PENDING':
@@ -82,7 +89,8 @@ export default (state = initialState, action) => {
     case 'GET_ALL_SURPLUS_PRODUCTS_SUCCESS':
       return {
         ...state,
-        surplusProducts: action.data,
+        surplusProducts: [...state.surplusProducts, ...action.data],
+        totalCount: action.count,
         surplusLoading: action.loading,
       };
     case 'GET_ALL_SURPLUS_PRODUCTS_FAILED':
@@ -113,7 +121,7 @@ export default (state = initialState, action) => {
       return {
         ...state,
         updateSurplusLoading: action.loading,
-        isSurplusUpdated:false
+        isSurplusUpdated: false,
       };
     case 'UPDATE_SURPLUS_SUCCESS':
       return {
@@ -129,11 +137,11 @@ export default (state = initialState, action) => {
         error: action.error,
       };
 
-      case 'DEDUCT_SURPLUS_PENDING':
+    case 'DEDUCT_SURPLUS_PENDING':
       return {
         ...state,
         deductSurplusLoading: action.loading,
-        isSurplusUpdated:false
+        isSurplusUpdated: false,
       };
     case 'DEDUCT_SURPLUS_SUCCESS':
       return {
