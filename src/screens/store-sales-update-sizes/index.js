@@ -29,6 +29,7 @@ const StoreSalesUpdateSizesScreen = ({navigation, route}) => {
   const {createSurplusLoading} = useSelector(x => x.surplus);
   const orderDate = route?.params?.date;
   const offset = route?.params?.offset;
+  const selectedTab = route?.params?.tab;
   //console.log("offset is ",offset)
   const [sizes, setSizes] = useState([]);
 
@@ -149,7 +150,7 @@ const StoreSalesUpdateSizesScreen = ({navigation, route}) => {
     let payload = {
       products: sizes,
     };
-    dispatch(createSurplusProduct(payload, orderDate, offset)).then(result => {
+    dispatch(createSurplusProduct(payload, orderDate, offset,selectedTab)).then(result => {
       if (result) {
         showSuccessDialog();
       }

@@ -1,6 +1,8 @@
 const initialState = {
   surplus: [],
   surplusProducts: [],
+  activeSurplusProducts: [],
+  inactiveSurplusProducts: [],
   surplusOrder: {},
   surplusLoading: false,
   createSurplusLoading: false,
@@ -20,6 +22,9 @@ export default (state = initialState, action) => {
         ...state,
         surplus: [],
         surplusProducts: [],
+        activeSurplusProducts: [],
+        inactiveSurplusProducts: [],
+
       };
     case 'SET_SURPLUS_PRODUCTS':
       return {
@@ -90,6 +95,8 @@ export default (state = initialState, action) => {
       return {
         ...state,
         surplusProducts: [...state.surplusProducts, ...action.data],
+        activeSurplusProducts: action.data,
+        inactiveSurplusProducts: action.data,
         totalCount: action.count,
         surplusLoading: action.loading,
       };

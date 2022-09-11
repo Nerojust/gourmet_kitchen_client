@@ -18,7 +18,13 @@ import {KeyboardObserverComponent} from '../../components/KeyboardObserverCompon
 import Clipboard from '@react-native-clipboard/clipboard';
 
 import ViewProviderComponent from '../../components/ViewProviderComponent';
-import {DismissKeyboard, sortArrayByDate, groupBy} from '../../utils/utils';
+import {
+  DismissKeyboard,
+  sortArrayByDate,
+  groupBy,
+  sortArrayData,
+  sortArrayByDateDesc,
+} from '../../utils/utils';
 import LoaderShimmerComponent from '../../components/LoaderShimmerComponent';
 import ProductSans from '../../components/Text/ProductSans';
 import {useSelector, useDispatch} from 'react-redux';
@@ -40,9 +46,14 @@ var _ = require('lodash');
 // create a component
 const StoreSalesScreen = ({navigation}) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const {surplus, surplusProducts, totalCount, surplusLoading} = useSelector(
-    x => x.surplus,
-  );
+  const {
+    surplus,
+    surplusProducts,
+    activeSurplusProducts,
+    inactiveSurplusProducts,
+    totalCount,
+    surplusLoading,
+  } = useSelector(x => x.surplus);
   //console.log('totalCount redux', totalCount);
   // console.log('surplus pdts redux', surplusProducts.length);
   const [isSearchClicked, setIsSearchClicked] = useState(false);
@@ -59,6 +70,7 @@ const StoreSalesScreen = ({navigation}) => {
   const [selectedOrderDate, setSelectedOrderDate] = useState(new Date());
   const [offset, setOffset] = useState(0);
   let dataproducts;
+  const [status, setStatus] = useState('all');
 
   useEffect(() => {
     // if (selectedOrderDate) {
@@ -76,41 +88,49 @@ const StoreSalesScreen = ({navigation}) => {
     }
   };
   const getAllTheSurplusProducts = () => {
-    dispatch(clearSurplusData());
+    // dispatch(clearSurplusData());
     dispatch(
       getAllSurplusProducts(
         getDateWithoutTime(selectedOrderDate),
         LIMIT_FIGURE,
         offset,
-        'all',
+        status,
       ),
     );
   };
   const getOnlyActiveSurplusProducts = () => {
-    dispatch(clearSurplusData());
+    // dispatch(clearSurplusData());
     dispatch(
       getAllSurplusProducts(
         getDateWithoutTime(selectedOrderDate),
         LIMIT_FIGURE,
         offset,
-        'active',
+        status,
       ),
     );
   };
   const getOnlyInActiveSurplusProducts = () => {
-    dispatch(clearSurplusData());
+    // dispatch(clearSurplusData());
     dispatch(
       getAllSurplusProducts(
         getDateWithoutTime(selectedOrderDate),
         LIMIT_FIGURE,
         offset,
-        'inactive',
+        status,
       ),
     );
   };
   const displaySurplusProductsListView = () => {
-    dataproducts = groupBy(surplusProducts, 'name');
-
+    dataproducts = groupBy(
+      status == 'all'
+        ? surplusProducts
+        : status == 'active'
+        ? sortArrayByDateDesc(activeSurplusProducts)
+        : status == 'inactive'
+        ? sortArrayData(inactiveSurplusProducts, 'name')
+        : null,
+      'name',
+    );
     return (
       <ScrollView
         refreshControl={
@@ -164,6 +184,7 @@ const StoreSalesScreen = ({navigation}) => {
       surplusData: item,
       date: getDateWithoutTime(selectedOrderDate),
       offset: 0,
+      tab: selectedTab,
     });
   };
 
@@ -231,6 +252,7 @@ const StoreSalesScreen = ({navigation}) => {
         getDateWithoutTime(selectedOrderDate),
         LIMIT_FIGURE,
         0,
+        status,
       ),
     );
   };
@@ -325,15 +347,24 @@ const StoreSalesScreen = ({navigation}) => {
   };
   const handleAllTab = () => {
     //console.log('Tab 1');
+    dispatch(clearSurplusData());
+    setOffset(0);
     selectTab(0);
+    setStatus('all');
   };
   const handleActiveTab = () => {
     //console.log('Tab 2');
+    dispatch(clearSurplusData());
+    setOffset(0);
     selectTab(1);
+    setStatus('active');
   };
   const handleInActiveTab = () => {
     //console.log('Tab 3');
+    dispatch(clearSurplusData());
+    setOffset(0);
     selectTab(2);
+    setStatus('inactive');
   };
   const selectTab = tabIndex => {
     if (tabIndex == 0) {
@@ -400,14 +431,24 @@ const StoreSalesScreen = ({navigation}) => {
                   Total count:
                   {searchInputValue.length > 0
                     ? filteredSurplusData.length
-                    : surplusProducts &&
-                      Object.entries(groupBy(surplusProducts, 'name')).length}
+                    : Object.entries(
+                        groupBy(
+                          status == 'all'
+                            ? surplusProducts
+                            : status == 'active'
+                            ? activeSurplusProducts
+                            : status == 'inactive'
+                            ? inactiveSurplusProducts
+                            : null,
+                          'name',
+                        ),
+                      ).length}
                 </ProductSans>
               </View>
 
               {displaySurplusProductsListView()}
 
-              {totalCount != surplusProducts.length
+              {totalCount != surplusProducts.length && selectedTab == 0
                 ? displayLoadMoreButton()
                 : null}
             </>

@@ -63,7 +63,12 @@ export const createSurplus = (orderPayload, date) => {
       });
   };
 };
-export const createSurplusProduct = (orderPayload, date, offset) => {
+export const createSurplusProduct = (
+  orderPayload,
+  date,
+  offset,
+  selectedTab,
+) => {
   console.log('About to create a new surplus product', date);
   //console.log("order payload", orderPayload);
   return dispatch => {
@@ -88,7 +93,9 @@ export const createSurplusProduct = (orderPayload, date, offset) => {
             data: response?.data?.results,
           });
           //alert('Order created successfully');
-          dispatch(getAllSurplusProducts(date, LIMIT_FIGURE, offset));
+          let status =
+            selectedTab == 0 ? 'all' : selectedTab == 1 ? 'active' : 'inactive';
+          dispatch(getAllSurplusProducts(date, LIMIT_FIGURE, offset, status));
 
           //dispatch(getAllSurplus(date));
           //dispatch(getAllOrderedProductsStats(date));
@@ -156,7 +163,7 @@ export const getAllSurplus = date => {
       });
   };
 };
-export const getAllSurplusProducts = (date, limit, offset, status) => {
+export const getAllSurplusProducts = (date, limit, offset, status = 'all') => {
   console.log('About to get all surplus products');
   return dispatch => {
     dispatch({
