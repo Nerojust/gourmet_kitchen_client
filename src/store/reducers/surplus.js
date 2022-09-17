@@ -9,6 +9,7 @@ const initialState = {
   updateSurplusLoading: false,
   isSurplusUpdated: false,
   deductSurplusLoading: false,
+  isSurplusProductCreated:false,
   deleteSurplusLoading: false,
   hasDeletedSurplus: false,
   error: '',
@@ -47,6 +48,27 @@ export default (state = initialState, action) => {
       return {
         ...state,
         createSurplusLoading: action.loading,
+        error: action.error,
+      };
+    
+      case 'CREATE_SURPLUS_PRODUCT_PENDING':
+      return {
+        ...state,
+        isSurplusProductCreated:false,
+        createSurplusLoading: action.loading,
+      };
+    case 'CREATE_SURPLUS_PRODUCT_SUCCESS':
+      return {
+        ...state,
+        //surplus: action.data,
+        isSurplusProductCreated:true,
+        createSurplusLoading: action.loading,
+      };
+    case 'CREATE_SURPLUS_PRODUCT_FAILED':
+      return {
+        ...state,
+        createSurplusLoading: action.loading,
+        isSurplusProductCreated:false,
         error: action.error,
       };
 

@@ -50,7 +50,9 @@ const OrderProductComponent = ({item, handleClick, handleDispatchClick}) => {
           {item.isset ? (
             <View style={{alignItems: 'flex-end', paddingVertical: 5}}>
               <ProductSansBold style={[styles.itemsText, {fontWeight: '300'}]}>
-                {item?.setname ? item?.setname : 'Set'}
+                {item?.setname && item?.setname != 'none'
+                  ? item?.setname
+                  : 'Set'}
               </ProductSansBold>
             </View>
           ) : null}
@@ -134,7 +136,7 @@ const OrderProductComponent = ({item, handleClick, handleDispatchClick}) => {
                   <ProductSans style={styles.delayHeaderText}>
                     Delayed by
                   </ProductSans>
-                  <ProductSans style={styles.delayText}>
+                  <ProductSans style={[styles.delayText, {fontSize: fp(13)}]}>
                     {getReadableDateAndTime(item?.createdat)}
                   </ProductSans>
                 </View>
@@ -174,7 +176,7 @@ const OrderProductComponent = ({item, handleClick, handleDispatchClick}) => {
                     left: 0,
                     marginTop: 0,
                     color: COLOURS.white,
-                    fontSize: fp(12),
+                    fontSize: fp(11),
                     fontWeight: 'bold',
                   },
                 ]}>
@@ -204,7 +206,7 @@ const OrderProductComponent = ({item, handleClick, handleDispatchClick}) => {
                     left: 0,
                     marginTop: 0,
                     color: COLOURS.white,
-                    fontSize: fp(12),
+                    fontSize: fp(11),
                     fontWeight: 'bold',
                   },
                 ]}>
@@ -253,7 +255,7 @@ const styles = StyleSheet.create({
     color: COLOURS.labelTextColor,
   },
   delayText: {
-    fontSize: Platform.OS == 'android' ? fp(14) : fp(15),
+    fontSize: Platform.OS == 'android' ? fp(13) : fp(14),
     color: COLOURS.yellow1,
     fontWeight: 'bold',
   },

@@ -454,6 +454,7 @@ const handleCompleteOrdersStatus = (orders, dispatch, orderDate) => {
                 status: 'completed',
                 isfulfilled: true,
               };
+              
               dispatch(
                 updateCompleteStatusForOrder(
                   fullOrderItem?.id,
@@ -498,7 +499,7 @@ export const updateOrderListProductCount = (payload, date) => {
               data: response?.data?.results,
             });
             // dispatch(getAllOrderedProductsStats(date));
-            dispatch(getAllOrderedProducts('all', date));
+            //dispatch(getAllOrderedProducts('all', date));
             if (parseInt(payload?.surplusCount) > 0) {
               dispatch(getAllSurplus(date));
             }
@@ -907,6 +908,7 @@ export const updateOrderAllItemsByOrderId = (
             if (!isDashboard) {
               dispatch(getOrder(id));
             }
+            dispatch(clearEverythingOrders());
             dispatch(
               getAllOrderedProducts('all', getDateWithoutTime(orderDate)),
             );

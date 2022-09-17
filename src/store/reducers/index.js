@@ -12,7 +12,8 @@ import roles from './roles';
 import riders from './riders';
 import dispatch from './dispatch';
 import messages from './messages';
-import kuda from './kuda'
+import kuda from './kuda';
+import config from './config';
 
 export default combineReducers({
   orders,
@@ -27,5 +28,6 @@ export default combineReducers({
   riders,
   dispatch,
   messages,
-  kuda
+  kuda,
+  config,
 });

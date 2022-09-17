@@ -1,10 +1,11 @@
 //import liraries
-import React, {useState, useEffect} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {
   View,
   Text,
   StyleSheet,
   RefreshControl,
+  FlatList,
   Platform,
   Alert,
   TouchableOpacity,
@@ -40,8 +41,11 @@ import {saveOrderDate} from '../../store/actions/orders';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
 import SurplusProductItemComponent from '../../components/SurplusProductItemComponent';
+import VersionInfo from 'react-native-version-info';
 import {LIMIT_FIGURE} from '../../utils/Constants';
 import SliderAnalyticsComponent from '../../components/SliderAnalyticsComponent';
+import SliderStoreSalesComponent from '../../components/SliderStoreSalesComponent';
+import SurplusProductItemComponent2 from '../../components/SurplusProductItemComponent2';
 var _ = require('lodash');
 // create a component
 const StoreSalesScreen = ({navigation}) => {
@@ -50,19 +54,24 @@ const StoreSalesScreen = ({navigation}) => {
     surplus,
     surplusProducts,
     activeSurplusProducts,
+    isSurplusProductCreated,
     inactiveSurplusProducts,
     totalCount,
     surplusLoading,
   } = useSelector(x => x.surplus);
-  //console.log('totalCount redux', totalCount);
+  // console.log('isSurplusProductCreated redux', isSurplusProductCreated);
   // console.log('surplus pdts redux', surplusProducts.length);
   const [isSearchClicked, setIsSearchClicked] = useState(false);
-  var surplusData = Object.assign([], surplus);
+  var surplusData = Object.assign(
+    [],
+    selectedTab == 0 ? surplusProducts : activeSurplusProducts,
+  );
   const [filteredSurplusData, setFilteredSurplusData] = useState(surplusData);
   const [selectedTab, setSelectedTab] = useState(0);
   const [searchInputValue, setSearchInputValue] = useState('');
   //console.log('redux surplus', surplus);
   const dispatch = useDispatch();
+  const scrollViewRef = useRef(null);
   const [isSearchCleared, setIsSearchCleared] = useState(false);
   const [hasDataLoaded, setHasDataLoaded] = useState(false);
   const [isTabClicked, setIsTabClicked] = useState(false);
@@ -71,16 +80,13 @@ const StoreSalesScreen = ({navigation}) => {
   const [offset, setOffset] = useState(0);
   let dataproducts;
   const [status, setStatus] = useState('all');
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     // if (selectedOrderDate) {
     fetchAllData();
     //}
-  }, [selectedOrderDate, offset, selectedTab]);
-
-  useEffect(() => {
-    dispatch(getAllSurplus(getDateWithoutTime(selectedOrderDate)));
-  }, [selectedOrderDate, offset, selectedTab]);
+  }, [selectedOrderDate, selectedTab, isSurplusProductCreated]);
 
   const fetchAllData = () => {
     if (selectedTab == 0) {
@@ -90,9 +96,11 @@ const StoreSalesScreen = ({navigation}) => {
     } else if (selectedTab == 2) {
       getOnlyInActiveSurplusProducts();
     }
+    dispatch(getAllSurplus(getDateWithoutTime(selectedOrderDate)))
   };
+
   const getAllTheSurplusProducts = () => {
-    // dispatch(clearSurplusData());
+    dispatch(clearSurplusData());
     dispatch(
       getAllSurplusProducts(
         getDateWithoutTime(selectedOrderDate),
@@ -102,11 +110,13 @@ const StoreSalesScreen = ({navigation}) => {
       ),
     ).then(result => {
       setHasDataLoaded(true);
+      //scrollViewRef.current.scrollToEnd({animated: true});
+      // console.log("hello here",Object.values(groupBy(surplusProducts), 'name'));
     });
   };
 
   const getOnlyActiveSurplusProducts = () => {
-    // dispatch(clearSurplusData());
+    dispatch(clearSurplusData());
     dispatch(
       getAllSurplusProducts(
         getDateWithoutTime(selectedOrderDate),
@@ -134,11 +144,9 @@ const StoreSalesScreen = ({navigation}) => {
   const displaySurplusProductsListView = () => {
     dataproducts = groupBy(
       status == 'all'
-        ? surplusProducts
-        : status == 'active'
-        ? sortArrayByDateDesc(activeSurplusProducts)
-        : status == 'inactive'
-        ? sortArrayData(inactiveSurplusProducts, 'name')
+        ? searchInputValue.length > 0
+          ? sortArrayByDateDesc(filteredSurplusData)
+          : sortArrayByDateDesc(surplusProducts)
         : null,
       'name',
     );
@@ -147,6 +155,11 @@ const StoreSalesScreen = ({navigation}) => {
         refreshControl={
           <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
         }
+        ref={scrollViewRef}
+        // onContentSizeChange={() => {
+        //   scrollViewRef.current?.scrollToEnd();
+        // }}
+        pagingEnabled={false}
         removeClippedSubviews={true} // Unmount components when outside of window
       >
         {Object.entries(dataproducts ? dataproducts : {}).length > 0 &&
@@ -190,20 +203,14 @@ const StoreSalesScreen = ({navigation}) => {
     );
   };
 
-  const handleClick = item => {
-    setOffset(0);
-    navigation.navigate('UpdateSizeSale', {
-      surplusData: item,
-      date: getDateWithoutTime(selectedOrderDate),
-      offset: 0,
-      tab: selectedTab,
-    });
+  const renderDetails = ({item}) => {
+    return <SurplusProductItemComponent2 item={item} onClick={handleClick} />;
   };
 
   const handlePage = () => {
     //console.log('offset before ', offset);
+    //scrollViewRef.current.scrollToEnd({animated: true});
     setOffset(offset + LIMIT_FIGURE);
-    //console.log('offset after ', offset);
   };
   const displayLoadMoreButton = () => {
     return (
@@ -214,7 +221,7 @@ const StoreSalesScreen = ({navigation}) => {
           onPress={handlePage}
           //On Click of button calling getData function to load more data
           style={styles.loadMoreBtn}>
-          {surplusLoading ? (
+          {isLoading ? (
             <ActivityIndicator color="white" style={{marginLeft: 0}} />
           ) : (
             <Text style={styles.btnText}>Load more</Text>
@@ -223,6 +230,16 @@ const StoreSalesScreen = ({navigation}) => {
       </View>
     );
   };
+  const handleClick = item => {
+    setOffset(0);
+    navigation.navigate('UpdateSizeSale', {
+      surplusData: item,
+      date: getDateWithoutTime(selectedOrderDate),
+      offset: 0,
+      tab: selectedTab,
+    });
+  };
+
   const renderDatePicker = () => {
     return (
       <DatePicker
@@ -276,23 +293,28 @@ const StoreSalesScreen = ({navigation}) => {
 
   const handleSearchChange = text => {
     if (text) {
-      sortArrayByDate(surplus, 'productname').sort((a, b) => {
-        // console.log('dddd', a);
-        if (b.productname > a.productname) return -1;
-        if (b.productname < a.productname) return 1;
-        return 0;
-      });
-      const newData = sortArrayByDate(surplus, 'productname')?.filter(item => {
-        const itemData = item?.productname
-          ? item?.productname.toUpperCase()
-          : ''.toUpperCase();
-        const textData = text.toUpperCase();
-        return itemData.indexOf(textData) > -1;
-      });
+      const newData =
+        selectedTab == 0
+          ? surplusProducts.filter(item => {
+              const itemData = item?.name
+                ? item?.name.toUpperCase()
+                : ''.toUpperCase();
+              const textData = text.toUpperCase();
+              return itemData.indexOf(textData) > -1;
+            })
+          : activeSurplusProducts.filter(item => {
+              const itemData = item?.name
+                ? item?.name.toUpperCase()
+                : ''.toUpperCase();
+              const textData = text.toUpperCase();
+              return itemData.indexOf(textData) > -1;
+            });
       setFilteredSurplusData(newData);
       setSearchInputValue(text);
     } else {
-      setFilteredSurplusData(surplus);
+      setFilteredSurplusData(
+        selectedTab == 0 ? surplusProducts : activeSurplusProducts,
+      );
       setSearchInputValue(text);
     }
   };
@@ -300,6 +322,9 @@ const StoreSalesScreen = ({navigation}) => {
   const handleCancelSearch = () => {
     setSearchInputValue('');
     setIsSearchCleared(true);
+    //dispatch(clearSurplusData());
+    setOffset(0);
+    // fetchAllData();
   };
 
   const handleDeleteOrders = () => {
@@ -357,27 +382,21 @@ const StoreSalesScreen = ({navigation}) => {
     Clipboard.setString(stringData);
     alert('Surplus copied to clipboard');
   };
+
   const handleAllTab = () => {
     //console.log('Tab 1');
-    dispatch(clearSurplusData());
-    setOffset(0);
     selectTab(0);
     setStatus('all');
   };
+
   const handleActiveTab = () => {
     //console.log('Tab 2');
-    dispatch(clearSurplusData());
+    // dispatch(clearSurplusData());
     setOffset(0);
     selectTab(1);
     setStatus('active');
   };
-  const handleInActiveTab = () => {
-    //console.log('Tab 3');
-    dispatch(clearSurplusData());
-    setOffset(0);
-    selectTab(2);
-    setStatus('inactive');
-  };
+
   const selectTab = tabIndex => {
     if (tabIndex == 0) {
       setSelectedTab(tabIndex);
@@ -397,7 +416,7 @@ const StoreSalesScreen = ({navigation}) => {
           <BackViewSurplus
             backText={'Store Sales: ' + moment(selectedOrderDate).format('LL')}
             onClose={() => navigation.goBack()}
-            shouldDisplayIcon={surplusProducts && surplusProducts.length > 0}
+            shouldDisplayIcon={true}
             shouldDisplaySettingIcon
             performSearch={handleSearch}
             shouldDisplayBackArrow={true}
@@ -418,20 +437,20 @@ const StoreSalesScreen = ({navigation}) => {
             />
           ) : null}
 
-          <SliderAnalyticsComponent
+          <SliderStoreSalesComponent
             isTabClicked={isTabClicked}
             name1={'All'}
             name2={'Active'}
-            name3={'Inactive'}
+            // name3={'Inactive'}
             selectedTab={selectedTab}
             onPress1={handleAllTab}
             onPress2={handleActiveTab}
-            onPress3={handleInActiveTab}
+            //onPress3={handleInActiveTab}
           />
 
           {renderDatePicker()}
-          {!surplusLoading ? (
-            <>
+          <>
+            {!surplusLoading ? (
               <View
                 style={{
                   justifyContent: 'center',
@@ -443,30 +462,59 @@ const StoreSalesScreen = ({navigation}) => {
                   Total count:
                   {searchInputValue.length > 0
                     ? filteredSurplusData.length
-                    : Object.entries(
-                        groupBy(
-                          status == 'all'
-                            ? surplusProducts
-                            : status == 'active'
-                            ? activeSurplusProducts
-                            : status == 'inactive'
-                            ? inactiveSurplusProducts
-                            : null,
-                          'name',
-                        ),
-                      ).length}
+                    : selectedTab == 0
+                    ? surplusProducts.length
+                    : activeSurplusProducts.length}
                 </ProductSans>
               </View>
+            ) : null}
 
-              {displaySurplusProductsListView()}
+            <FlatList
+              data={
+                searchInputValue.length > 0
+                  ? filteredSurplusData
+                  : selectedTab == 0
+                  ? surplusProducts
+                  : activeSurplusProducts
+              }
+              keyboardShouldPersistTaps={'handled'}
+              renderItem={renderDetails}
+              refreshControl={
+                <RefreshControl
+                  refreshing={isRefreshing}
+                  onRefresh={onRefresh}
+                />
+              }
+              keyExtractor={item => Math.random()}
+              ListEmptyComponent={
+                <View>
+                  {!surplusLoading ? (
+                    <View
+                      style={{
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        flex: 1,
+                        top: Platform.OS == 'ios' ? 300 : 0,
+                        marginTop: Platform.OS == 'android' ? 300 : 0,
+                      }}>
+                      <ProductSans
+                        style={{fontSize: 16, color: COLOURS.textInputColor}}>
+                        No record found
+                      </ProductSans>
+                    </View>
+                  ) : null}
+                </View>
+              }
+            />
 
-              {totalCount != surplusProducts.length && selectedTab == 0
-                ? displayLoadMoreButton()
-                : null}
-            </>
-          ) : null}
+            {/* {selectedTab == 0
+              ? displaySurplusProductsListView()
+              : displayActiveSurplusProductsListView()}
 
-         
+            {totalCount != surplusProducts.length && selectedTab == 0
+              ? displayLoadMoreButton()
+              : null} */}
+          </>
           <LoaderShimmerComponent isLoading={surplusLoading} />
         </KeyboardObserverComponent>
       </DismissKeyboard>

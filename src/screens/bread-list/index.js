@@ -58,9 +58,14 @@ import SliderAnalyticsComponent from '../../components/SliderAnalyticsComponent'
 const BreadListScreen = ({navigation}) => {
   const dispatch = useDispatch();
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const {orderedProducts, allBreadList, ordersLoading, orderDate} = useSelector(
-    x => x.orders,
-  );
+  const {
+    orderedProducts,
+    allBreadList,
+    ordersLoading,
+    orderDate,
+    isOrderUpdated,
+  } = useSelector(x => x.orders);
+  console.log('isOrderUpdated redux', isOrderUpdated);
   //console.log('pending bread list', allBreadList);
   var orderProductsData = Object.assign([], orderedProducts);
   const [filteredOrdersData, setFilteredOrdersData] =
@@ -91,17 +96,17 @@ const BreadListScreen = ({navigation}) => {
   const [miniArray, setMiniArray] = useState([]);
   const [minisOnly, setMinisOnly] = useState();
   const [minisSetOnly, setMinisSetOnly] = useState();
-  useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      fetchAllData();
-    });
-    fetchAllData();
-    return unsubscribe;
-  }, [selectedOrderDate, selectedTab]);
-
   // useEffect(() => {
+  //   const unsubscribe = navigation.addListener('focus', () => {
+  //     fetchAllData();
+  //   });
   //   fetchAllData();
+  //   return unsubscribe;
   // }, [selectedOrderDate, selectedTab]);
+
+  useEffect(() => {
+    fetchAllData();
+  }, [selectedOrderDate, selectedTab, isOrderUpdated]);
 
   const fetchAllData = () => {
     if (selectedTab == 0) {
@@ -148,92 +153,6 @@ const BreadListScreen = ({navigation}) => {
         handleMinisStructure(result);
       }
     });
-  };
-
-  const handleAllLoavesStructure = results => {
-    //console.log('all loaves array size', results);
-    if (results) {
-      let dataproducts = groupBy(results, 'name');
-      //console.log('result', dataproducts);
-      if (dataproducts) {
-        Object.keys(dataproducts).forEach((item, i) => {
-          const data = {};
-          dataproducts[item].forEach(element => {
-            //console.log('one element', element);
-            if (
-              element.productsize === 'Mini < 4' ||
-              element.productsize === 'Mini > 4'
-            ) {
-              // console.log('getting here', data['Mini'], element.sum);
-              let sumValue;
-              if (data['Mini']) {
-                sumValue = parseInt(data['Mini'].sum) + parseInt(element.sum);
-
-                data['Mini'].sum = sumValue;
-              } else {
-                data['Mini'] = element;
-              }
-            } else {
-              //console.log('else block');
-              data[element.productsize] = element;
-            }
-          });
-          // console.log('res', data);
-          tempObj[item] = data;
-        });
-        const sortedData = Object.fromEntries(
-          Object.keys(tempObj)
-            .sort()
-            .map(key => [key, tempObj[key]]),
-        );
-        // console.log("sorted",sortedData)
-        setFinalObjectArray(sortedData);
-      }
-    }
-  };
-
-  const handleFullLoavesStructure = results => {
-    //console.log('full loaves array size', results);
-
-    if (results) {
-      let dataproducts = groupBy(results, 'name');
-      // console.log('result', dataproducts);
-      if (dataproducts) {
-        Object.keys(dataproducts).forEach((item, i) => {
-          // console.log("mini item",item)
-          const data = {};
-          dataproducts[item].forEach(element => {
-            //console.log('one element', item, element);
-            if (
-              element.productsize === 'Mini < 4' ||
-              element.productsize === 'Mini > 4'
-            ) {
-              // console.log('getting here', data['Mini'], element.sum);
-              let sumValue;
-              if (data['Mini']) {
-                sumValue = parseInt(data['Mini'].sum) + parseInt(element.sum);
-
-                data['Mini'].sum = sumValue;
-              } else {
-                data['Mini'] = element;
-              }
-            } else {
-              //console.log('else block');
-              data[element.productsize] = element;
-            }
-          });
-          // console.log('res', data);
-          tempObj[item] = data;
-        });
-        const sortedData = Object.fromEntries(
-          Object.keys(tempObj)
-            .sort()
-            .map(key => [key, tempObj[key]]),
-        );
-
-        setFinalFullLoavesArray(sortedData);
-      }
-    }
   };
 
   const handleMinisStructure = results => {
