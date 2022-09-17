@@ -73,7 +73,7 @@ export const createSurplusProduct = (
   //console.log("order payload", orderPayload);
   return dispatch => {
     dispatch({
-      type: 'CREATE_SURPLUS_PENDING',
+      type: 'CREATE_SURPLUS_PRODUCT_PENDING',
       loading: true,
       error: null,
     });
@@ -86,11 +86,11 @@ export const createSurplusProduct = (
         if (response.data?.isSuccessful) {
           console.log('surplus product created successfully');
 
-          dispatch(clearSurplusData());
+          //dispatch(clearSurplusData());
           dispatch({
-            type: 'CREATE_SURPLUS_SUCCESS',
+            type: 'CREATE_SURPLUS_PRODUCT_SUCCESS',
             loading: false,
-            data: response?.data?.results,
+           // data: response?.data?.results,
           });
           //alert('Order created successfully');
           let status =
@@ -106,7 +106,7 @@ export const createSurplusProduct = (
         console.log('Error creating surplus ', error);
         handleError(error, dispatch, 'get surplus list');
         dispatch({
-          type: 'CREATE_SURPLUS_FAILED',
+          type: 'CREATE_SURPLUS_PRODUCT_FAILED',
           loading: false,
           error: error.message,
         });

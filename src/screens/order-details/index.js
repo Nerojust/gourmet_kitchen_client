@@ -157,6 +157,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
     updateOrderLoading,
     ordersLoading,
     deleteAllOrdersLoading,
+    isOrderProductUpdated,
     isOrderPatched,
   } = useSelector(state => state.orders);
   const {createNoteLoading, updateNoteLoading} = useSelector(
@@ -189,6 +190,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
   const [data, setData] = useState();
   //console.log('order details redux ', dispatchMesssage);
   const [isDone, setIsDone] = useState(false);
+  
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       if (id) {

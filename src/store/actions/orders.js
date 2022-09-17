@@ -498,7 +498,7 @@ export const updateOrderListProductCount = (payload, date) => {
               data: response?.data?.results,
             });
             // dispatch(getAllOrderedProductsStats(date));
-            dispatch(getAllOrderedProducts('all', date));
+            //dispatch(getAllOrderedProducts('all', date));
             if (parseInt(payload?.surplusCount) > 0) {
               dispatch(getAllSurplus(date));
             }

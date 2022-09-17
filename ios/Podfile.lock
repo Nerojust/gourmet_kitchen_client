@@ -265,6 +265,8 @@ PODS:
     - React
   - react-native-splash-screen (3.3.0):
     - React-Core
+  - react-native-version-info (1.1.1):
+    - React-Core
   - React-perflogger (0.64.2)
   - React-RCTActionSheet (0.64.2):
     - React-Core/RCTActionSheetHeaders (= 0.64.2)
@@ -390,6 +392,7 @@ DEPENDENCIES:
   - react-native-shimmer (from `../node_modules/react-native-shimmer`)
   - react-native-sms (from `../node_modules/react-native-sms`)
   - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
+  - react-native-version-info (from `../node_modules/react-native-version-info`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
   - React-RCTAnimation (from `../node_modules/react-native/Libraries/NativeAnimation`)
@@ -469,6 +472,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-sms"
   react-native-splash-screen:
     :path: "../node_modules/react-native-splash-screen"
+  react-native-version-info:
+    :path: "../node_modules/react-native-version-info"
   React-perflogger:
     :path: "../node_modules/react-native/ReactCommon/reactperflogger"
   React-RCTActionSheet:
@@ -541,6 +546,7 @@ SPEC CHECKSUMS:
   react-native-shimmer: 2fdba9953215a29106febc9d147caa31a0080a8a
   react-native-sms: 31fbb9d6ebb565ad32e409eaf9dc70329936a129
   react-native-splash-screen: 4312f786b13a81b5169ef346d76d33bc0c6dc457
+  react-native-version-info: a106f23009ac0db4ee00de39574eb546682579b9
   React-perflogger: 25373e382fed75ce768a443822f07098a15ab737
   React-RCTActionSheet: af7796ba49ffe4ca92e7277a5d992d37203f7da5
   React-RCTAnimation: 6a2e76ab50c6f25b428d81b76a5a45351c4d77aa

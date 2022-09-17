@@ -51,6 +51,7 @@ const OrdersScreen = ({navigation}) => {
     orders,
     deleteAllOrdersLoading,
     error,
+    isOrderUpdated,
     ordersLoading,
     updateOrderLoading,
     orderDate,
@@ -87,18 +88,24 @@ const OrdersScreen = ({navigation}) => {
     dispatch(getAllProducts('', 0, 0, null));
   }, []);
 
-  useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      fetchAllData();
-    });
-
-    fetchAllData();
-    return unsubscribe;
-  }, [isDispatched, statusState, selectedTab, selectedOrderDate]);
-
   // useEffect(() => {
+  //   const unsubscribe = navigation.addListener('focus', () => {
+  //     fetchAllData();
+  //   });
+
   //   fetchAllData();
+  //   return unsubscribe;
   // }, [isDispatched, statusState, selectedTab, selectedOrderDate]);
+
+  useEffect(() => {
+    fetchAllData();
+  }, [
+    isDispatched,
+    statusState,
+    selectedTab,
+    selectedOrderDate,
+    isOrderUpdated,
+  ]);
 
   const fetchAllData = () => {
     dispatch(

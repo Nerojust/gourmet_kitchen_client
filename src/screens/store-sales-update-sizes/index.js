@@ -17,8 +17,11 @@ import TextInputComponent from '../../components/TextInputComponent';
 import {useDispatch, useSelector} from 'react-redux';
 import LoaderShimmerComponent from '../../components/LoaderShimmerComponent';
 import CustomSuccessModal from '../../components/CustomSuccessModal';
-import {DIALOG_TIMEOUT} from '../../utils/Constants';
-import {createSurplusProduct} from '../../store/actions/surplus';
+import {DIALOG_TIMEOUT, LIMIT_FIGURE} from '../../utils/Constants';
+import {
+  createSurplusProduct,
+  getAllSurplusProducts,
+} from '../../store/actions/surplus';
 import ProductSans from '../../components/Text/ProductSans';
 
 // create a component
@@ -35,7 +38,7 @@ const StoreSalesUpdateSizesScreen = ({navigation, route}) => {
 
   useEffect(() => {
     // console.log('sizes are ', sizes);
-    let data = dataSource?.map((oneItem, index) => {
+    let data = dataSource?.products?.map((oneItem, index) => {
       return {
         name: oneItem?.name,
         productSize: oneItem?.categorysize,
@@ -52,7 +55,7 @@ const StoreSalesUpdateSizesScreen = ({navigation, route}) => {
   const renderDetails = () => {
     return (
       <ScrollView>
-        {dataSource.map((oneItem, i) => {
+        {dataSource?.products.map((oneItem, i) => {
           //console.log('item detail', ` ${oneItem.categorysize}`);
           return (
             <TouchableOpacity
@@ -93,12 +96,14 @@ const StoreSalesUpdateSizesScreen = ({navigation, route}) => {
                         flex: 0.5,
                       },
                     ]}>
-                    {oneItem.categorysize}
+                    {oneItem?.categorysize}
                   </ProductSans>
                   <TextInputComponent
                     placeholder={'Insert number only'}
                     handleTextChange={text => handleSizeChange(i, text)}
-                    defaultValue={dataSource[i]?.surplus?.count.toString()}
+                    defaultValue={dataSource?.products[
+                      i
+                    ]?.surplus?.count.toString()}
                     returnKeyType={'go'}
                     keyboardType={'default'}
                     secureTextEntry={false}
@@ -150,7 +155,9 @@ const StoreSalesUpdateSizesScreen = ({navigation, route}) => {
     let payload = {
       products: sizes,
     };
-    dispatch(createSurplusProduct(payload, orderDate, offset,selectedTab)).then(result => {
+    dispatch(
+      createSurplusProduct(payload, orderDate, offset, selectedTab),
+    ).then(result => {
       if (result) {
         showSuccessDialog();
       }
@@ -177,7 +184,7 @@ const StoreSalesUpdateSizesScreen = ({navigation, route}) => {
     <ViewProviderComponent>
       <KeyboardObserverComponent>
         <BackViewMoreSettings
-          backText={dataSource[0]?.name}
+          backText={dataSource?.name}
           onClose={() => navigation.goBack()}
           shouldDisplayBackArrow={true}
           displayDelete={false}

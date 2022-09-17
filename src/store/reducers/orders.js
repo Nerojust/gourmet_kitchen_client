@@ -157,18 +157,21 @@ export default (state = initialState, action) => {
       return {
         ...state,
         isOrderProductUpdated: false,
+        isOrderUpdated: false,
         ordersLoading: action.loading,
       };
     case 'UPDATE_ORDER_RESCHEDULE_SUCCESS':
       return {
         ...state,
         isOrderProductUpdated: true,
+        isOrderUpdated: true,
         ordersLoading: action.loading,
       };
     case 'UPDATE_ORDER_RESCHEDULE_FAILED':
       return {
         ...state,
         isOrderProductUpdated: false,
+        isOrderUpdated: false,
         ordersLoading: action.loading,
         error: action.error,
       };
@@ -177,18 +180,21 @@ export default (state = initialState, action) => {
       return {
         ...state,
         isOrderProductUpdated: false,
+        isOrderUpdated: false,
         ordersLoading: action.loading,
       };
     case 'UPDATE_ORDER_PRODUCT_SUCCESS':
       return {
         ...state,
         isOrderProductUpdated: true,
+        isOrderUpdated: true,
         ordersLoading: action.loading,
       };
     case 'UPDATE_ORDER_PRODUCT_FAILED':
       return {
         ...state,
         isOrderProductUpdated: false,
+        isOrderUpdated: false,
         ordersLoading: action.loading,
         error: action.error,
       };
@@ -339,17 +345,20 @@ export default (state = initialState, action) => {
     case 'GET_SINGLE_PRODUCT_STAT_PENDING':
       return {
         ...state,
+        isOrderUpdated:false,
         ordersLoading: action.loading,
       };
     case 'GET_SINGLE_PRODUCT_STAT_SUCCESS':
       return {
         ...state,
         countItem: action.data,
+        isOrderUpdated:true,
         ordersLoading: action.loading,
       };
     case 'GET_SINGLE_PRODUCT_STAT_FAILED':
       return {
         ...state,
+        isOrderUpdated:false,
         ordersLoading: action.loading,
         error: action.error,
       };
@@ -357,6 +366,7 @@ export default (state = initialState, action) => {
     case 'UPDATE_SINGLE_ORDER_PENDING':
       return {
         ...state,
+        isOrderUpdated:false,
         updateOrderLoading: action.loading,
       };
     case 'UPDATE_SINGLE_ORDER_SUCCESS':
@@ -414,6 +424,7 @@ export default (state = initialState, action) => {
     case 'UPDATE_SURPLUS_STATUS_ORDER_ITEM_PENDING':
       return {
         ...state,
+        isOrderUpdated: false,
         updateSurplusOrderLoading: action.loading,
       };
     case 'UPDATE_SURPLUS_STATUS_ORDER_ITEM_SUCCESS':
@@ -433,6 +444,7 @@ export default (state = initialState, action) => {
     case 'UPDATE_OVEN_COUNT_PENDING':
       return {
         ...state,
+        isOrderUpdated:false,
         updateOrderLoading: action.loading,
       };
     case 'UPDATE_OVEN_COUNT_SUCCESS':

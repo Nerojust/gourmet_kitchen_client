@@ -21,6 +21,7 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import call from 'react-native-phone-call';
 import {DrawerActions} from '@react-navigation/routers';
 import moment from 'moment';
+import VersionInfo from 'react-native-version-info';
 import RNImmediatePhoneCall from 'react-native-immediate-phone-call';
 import {useSelector} from 'react-redux';
 import {useDispatch} from 'react-redux';
@@ -81,7 +82,9 @@ export const dismissBottomSheetDialog = ref => {
     ref.current.close();
   }
 };
-
+export const getAppVersionNumber = () => {
+  return VersionInfo.buildVersion;
+};
 export const showBottomSheet = ref => {
   if (ref.current) {
     ref.current.open();
@@ -340,7 +343,7 @@ export const INDEX_PAGE_SIZE_DEFAULT = 50;
 export const INDEX_PAGE_SIZE_OPTIONS = [5, 10, 20, 30, 50, 100];
 
 export const handleLogout = (response, dispatch) => {
- // console.log('eeee', response);
+  // console.log('eeee', response);
   if (response == '[Error: Request failed with status code 401]') {
     alert('Session Expired', 'Your session has expired. Please login again');
     dispatch(clearEverythingOrders());
@@ -600,6 +603,7 @@ export const sortArrayByDateDesc = array => {
     return da - db;
   });
 };
+
 export const removeItemValue = async key => {
   try {
     await AsyncStorage.removeItem(key);
