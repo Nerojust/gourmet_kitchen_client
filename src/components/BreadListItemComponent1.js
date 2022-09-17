@@ -36,7 +36,7 @@ const BreadListItemComponent1 = ({indexKey, keyItem, keyValue, onClick}) => {
                     {
                       color: COLOURS.labelTextColor,
                       fontWeight: '400',
-                      flex: 0.65,
+                      flex: 0.8,
                       paddingRight: 10,
                     },
                   ]}>
@@ -81,7 +81,7 @@ const BreadListItemComponent1 = ({indexKey, keyItem, keyValue, onClick}) => {
           justifyContent: 'center',
           alignItems: 'center',
         }}>
-        <View style={{flex: 0.9, paddingRight: 5}}>
+        <View style={{flex: 1, paddingRight: 5}}>
           <ProductSans style={styles.productName}>{keyItem || ''}</ProductSans>
         </View>
         {renderDetailsList()}
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     //flex: 1,
   },
   productName: {
-    fontSize: fp(16),
+    fontSize: fp(15),
     color: COLOURS.textInputColor,
     fontWeight: 'bold',
   },

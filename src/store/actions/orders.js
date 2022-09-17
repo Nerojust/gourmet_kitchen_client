@@ -454,6 +454,7 @@ const handleCompleteOrdersStatus = (orders, dispatch, orderDate) => {
                 status: 'completed',
                 isfulfilled: true,
               };
+              
               dispatch(
                 updateCompleteStatusForOrder(
                   fullOrderItem?.id,
@@ -907,6 +908,7 @@ export const updateOrderAllItemsByOrderId = (
             if (!isDashboard) {
               dispatch(getOrder(id));
             }
+            dispatch(clearEverythingOrders());
             dispatch(
               getAllOrderedProducts('all', getDateWithoutTime(orderDate)),
             );

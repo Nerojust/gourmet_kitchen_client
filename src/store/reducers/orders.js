@@ -4,10 +4,10 @@ const initialState = {
   phoneArray: [],
   orders: [],
   analytics: [],
-  minisArray:[],
+  minisArray: [],
   orderedProductsStats: [],
   orderedProducts: [],
-  allBreadList:{},
+  allBreadList: {},
   riderAnalytics: [],
   order: {},
   countItem: {},
@@ -17,11 +17,12 @@ const initialState = {
   analyticsLoading: false,
   createOrderLoading: false,
   updateSurplusOrderLoading: false,
-  isOrderProductUpdated:false,
+  isOrderProductUpdated: false,
   updateOrderLoading: false,
   isOrderUpdated: false,
-  salesAverage:{},
-  getSalesLoading:false,
+  shouldRefresh:false,
+  salesAverage: {},
+  getSalesLoading: false,
   error: '',
   orderDate: getDateWithoutTime(new Date()),
 };
@@ -46,14 +47,13 @@ export default (state = initialState, action) => {
         riderAnalytics: [],
       };
 
-
     case 'CLEAR_ANALYTICS_STATE':
       return {
         ...state,
         analytics: [],
         orderedProductsStats: [],
         riderAnalytics: [],
-        salesAverage:{}
+        salesAverage: {},
       };
     case 'SAVE_ORDER_DATE':
       return {
@@ -135,8 +135,8 @@ export default (state = initialState, action) => {
         getSalesLoading: action.loading,
         error: action.error,
       };
-  
-      case 'GET_SINGLE_ORDERED_PRODUCTS_PENDING':
+
+    case 'GET_SINGLE_ORDERED_PRODUCTS_PENDING':
       return {
         ...state,
         ordersLoading: action.loading,
@@ -176,7 +176,7 @@ export default (state = initialState, action) => {
         error: action.error,
       };
 
-      case 'UPDATE_ORDER_PRODUCT_PENDING':
+    case 'UPDATE_ORDER_PRODUCT_PENDING':
       return {
         ...state,
         isOrderProductUpdated: false,
@@ -202,18 +202,21 @@ export default (state = initialState, action) => {
       return {
         ...state,
         isOrderPatched: false,
+        isOrderUpdated: false,
         ordersLoading: action.loading,
       };
     case 'UPDATE_ORDER_DISPATCH_SUCCESS':
       return {
         ...state,
         isOrderPatched: true,
+        isOrderUpdated: true,
         ordersLoading: action.loading,
       };
     case 'UPDATE_ORDER_DISPATCH_FAILED':
       return {
         ...state,
         isOrderPatched: false,
+        isOrderUpdated: false,
         ordersLoading: action.loading,
         error: action.error,
       };
@@ -288,8 +291,8 @@ export default (state = initialState, action) => {
         ordersLoading: action.loading,
         error: action.error,
       };
-  
-      case 'GET_ALL_ORDERED_PRODUCTS_STATS_PENDING':
+
+    case 'GET_ALL_ORDERED_PRODUCTS_STATS_PENDING':
       return {
         ...state,
         ordersLoading: action.loading,
@@ -345,20 +348,20 @@ export default (state = initialState, action) => {
     case 'GET_SINGLE_PRODUCT_STAT_PENDING':
       return {
         ...state,
-        isOrderUpdated:false,
+        isOrderUpdated: false,
         ordersLoading: action.loading,
       };
     case 'GET_SINGLE_PRODUCT_STAT_SUCCESS':
       return {
         ...state,
         countItem: action.data,
-        isOrderUpdated:true,
+        isOrderUpdated: true,
         ordersLoading: action.loading,
       };
     case 'GET_SINGLE_PRODUCT_STAT_FAILED':
       return {
         ...state,
-        isOrderUpdated:false,
+        isOrderUpdated: false,
         ordersLoading: action.loading,
         error: action.error,
       };
@@ -366,15 +369,17 @@ export default (state = initialState, action) => {
     case 'UPDATE_SINGLE_ORDER_PENDING':
       return {
         ...state,
-        isOrderUpdated:false,
+        isOrderUpdated: false,
         updateOrderLoading: action.loading,
       };
+
     case 'UPDATE_SINGLE_ORDER_SUCCESS':
       return {
         ...state,
         isOrderUpdated: true,
         updateOrderLoading: action.loading,
       };
+
     case 'UPDATE_SINGLE_ORDER_FAILED':
       return {
         ...state,
@@ -386,14 +391,17 @@ export default (state = initialState, action) => {
     case 'UPDATE_COMPLETE_ORDER_PENDING':
       return {
         ...state,
+        isOrderUpdated: false,
         updateOrderLoading: action.loading,
       };
+
     case 'UPDATE_COMPLETE_ORDER_SUCCESS':
       return {
         ...state,
         isOrderUpdated: true,
         updateOrderLoading: action.loading,
       };
+
     case 'UPDATE_COMPLETE_ORDER_FAILED':
       return {
         ...state,
@@ -406,13 +414,16 @@ export default (state = initialState, action) => {
       return {
         ...state,
         updateOrderLoading: action.loading,
+        isOrderUpdated: false,
       };
+
     case 'UPDATE_ORDER_SPECIAL_NOTE_SUCCESS':
       return {
         ...state,
         isOrderUpdated: true,
         updateOrderLoading: action.loading,
       };
+
     case 'UPDATE_ORDER_SPECIAL_NOTE_FAILED':
       return {
         ...state,
@@ -427,12 +438,14 @@ export default (state = initialState, action) => {
         isOrderUpdated: false,
         updateSurplusOrderLoading: action.loading,
       };
+
     case 'UPDATE_SURPLUS_STATUS_ORDER_ITEM_SUCCESS':
       return {
         ...state,
         isOrderUpdated: true,
         updateSurplusOrderLoading: action.loading,
       };
+
     case 'UPDATE_SURPLUS_STATUS_ORDER_ITEM_FAILED':
       return {
         ...state,
@@ -444,15 +457,17 @@ export default (state = initialState, action) => {
     case 'UPDATE_OVEN_COUNT_PENDING':
       return {
         ...state,
-        isOrderUpdated:false,
+        isOrderUpdated: false,
         updateOrderLoading: action.loading,
       };
+
     case 'UPDATE_OVEN_COUNT_SUCCESS':
       return {
         ...state,
         isOrderUpdated: true,
         updateOrderLoading: action.loading,
       };
+
     case 'UPDATE_OVEN_COUNT_FAILED':
       return {
         ...state,

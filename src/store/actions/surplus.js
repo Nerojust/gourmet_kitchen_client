@@ -92,10 +92,11 @@ export const createSurplusProduct = (
             loading: false,
            // data: response?.data?.results,
           });
+          
           //alert('Order created successfully');
-          let status =
-            selectedTab == 0 ? 'all' : selectedTab == 1 ? 'active' : 'inactive';
-          dispatch(getAllSurplusProducts(date, LIMIT_FIGURE, offset, status));
+          // let status =
+          //   selectedTab == 0 ? 'all' : selectedTab == 1 ? 'active' : 'inactive';
+          // dispatch(getAllSurplusProducts(date, LIMIT_FIGURE, offset, status));
 
           //dispatch(getAllSurplus(date));
           //dispatch(getAllOrderedProductsStats(date));

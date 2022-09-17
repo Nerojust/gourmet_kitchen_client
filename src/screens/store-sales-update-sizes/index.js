@@ -19,6 +19,7 @@ import LoaderShimmerComponent from '../../components/LoaderShimmerComponent';
 import CustomSuccessModal from '../../components/CustomSuccessModal';
 import {DIALOG_TIMEOUT, LIMIT_FIGURE} from '../../utils/Constants';
 import {
+  clearSurplusData,
   createSurplusProduct,
   getAllSurplusProducts,
 } from '../../store/actions/surplus';
@@ -160,6 +161,7 @@ const StoreSalesUpdateSizesScreen = ({navigation, route}) => {
     ).then(result => {
       if (result) {
         showSuccessDialog();
+       
       }
     });
   };

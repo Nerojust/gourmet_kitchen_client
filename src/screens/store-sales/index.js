@@ -88,10 +88,6 @@ const StoreSalesScreen = ({navigation}) => {
     //}
   }, [selectedOrderDate, selectedTab, isSurplusProductCreated]);
 
-  useEffect(() => {
-    dispatch(getAllSurplus(getDateWithoutTime(selectedOrderDate)));
-  }, [selectedOrderDate, selectedTab]);
-
   const fetchAllData = () => {
     if (selectedTab == 0) {
       getAllTheSurplusProducts();
@@ -100,6 +96,7 @@ const StoreSalesScreen = ({navigation}) => {
     } else if (selectedTab == 2) {
       getOnlyInActiveSurplusProducts();
     }
+    dispatch(getAllSurplus(getDateWithoutTime(selectedOrderDate)))
   };
 
   const getAllTheSurplusProducts = () => {
@@ -119,7 +116,7 @@ const StoreSalesScreen = ({navigation}) => {
   };
 
   const getOnlyActiveSurplusProducts = () => {
-    // dispatch(clearSurplusData());
+    dispatch(clearSurplusData());
     dispatch(
       getAllSurplusProducts(
         getDateWithoutTime(selectedOrderDate),
@@ -453,22 +450,24 @@ const StoreSalesScreen = ({navigation}) => {
 
           {renderDatePicker()}
           <>
-            <View
-              style={{
-                justifyContent: 'center',
-                alignItems: 'flex-end',
-                paddingRight: 20,
-              }}>
-              <ProductSans
-                style={{fontSize: 12, color: COLOURS.labelTextColor}}>
-                Total count:
-                {searchInputValue.length > 0
-                  ? filteredSurplusData.length
-                  : selectedTab == 0
-                  ? surplusProducts.length
-                  : activeSurplusProducts.length}
-              </ProductSans>
-            </View>
+            {!surplusLoading ? (
+              <View
+                style={{
+                  justifyContent: 'center',
+                  alignItems: 'flex-end',
+                  paddingRight: 20,
+                }}>
+                <ProductSans
+                  style={{fontSize: 12, color: COLOURS.labelTextColor}}>
+                  Total count:
+                  {searchInputValue.length > 0
+                    ? filteredSurplusData.length
+                    : selectedTab == 0
+                    ? surplusProducts.length
+                    : activeSurplusProducts.length}
+                </ProductSans>
+              </View>
+            ) : null}
 
             <FlatList
               data={

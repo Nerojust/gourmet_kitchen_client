@@ -15,6 +15,7 @@ import OrderProductComponent from '../../components/OrderProductComponent';
 import ViewProviderComponent from '../../components/ViewProviderComponent';
 import DatePicker from 'react-native-date-picker';
 import {
+  clearEverythingOrders,
   deleteAllOrders,
   getAllOrderedProducts,
   saveOrderDate,
@@ -42,7 +43,13 @@ import {DIALOG_TIMEOUT} from '../../utils/Constants';
 import {useMemo} from 'react';
 import {BottomSheetRiderComponent} from '../../components/BottomSheetComponent';
 import {getAllRiders} from '../../store/actions/riders';
-import {dismissBottomSheetDialog, showBottomSheet} from '../../utils/utils';
+import {
+  dismissBottomSheetDialog,
+  getAppVersionNumber,
+  showBottomSheet,
+} from '../../utils/utils';
+import {getAllConfig} from '../../store/actions/config';
+import RNExitApp from 'react-native-exit-app';
 
 // create a component
 const OrdersScreen = ({navigation}) => {
@@ -60,6 +67,10 @@ const OrdersScreen = ({navigation}) => {
   const {riders, rider, ridersLoading, updateRidersLoading} = useSelector(
     state => state.riders,
   );
+  const {configArray, config, configLoading} = useSelector(
+    state => state.config,
+  );
+  // console.log('config redux', configArray);
   const [selectedOrderItem, setSelectedOrderItem] = useState();
   const [isDispatched, setIsDispatched] = useState(false);
   var ordersData = Object.assign([], orders);
@@ -88,26 +99,56 @@ const OrdersScreen = ({navigation}) => {
     dispatch(getAllProducts('', 0, 0, null));
   }, []);
 
-  // useEffect(() => {
-  //   const unsubscribe = navigation.addListener('focus', () => {
-  //     fetchAllData();
-  //   });
-
-  //   fetchAllData();
-  //   return unsubscribe;
-  // }, [isDispatched, statusState, selectedTab, selectedOrderDate]);
-
   useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      fetchAllData();
+    });
+
     fetchAllData();
-  }, [
-    isDispatched,
-    statusState,
-    selectedTab,
-    selectedOrderDate,
-    isOrderUpdated,
-  ]);
+    return unsubscribe;
+  }, [isDispatched, statusState, selectedTab, selectedOrderDate]);
+
+  // useEffect(() => {
+  //   fetchAllData();
+  // }, [
+  //   isDispatched,
+  //   statusState,
+  //   selectedTab,
+  //   selectedOrderDate,
+  //   isOrderUpdated,
+  // ]);
 
   const fetchAllData = () => {
+    dispatch(getAllConfig()).then(result => {
+      console.log(
+        'DB version:',
+        result[0].value,
+        'App version',
+        getAppVersionNumber(),
+      );
+      //if the DB version is higher, then show the dialog to update the app
+      if (parseInt(result[0]?.value) > parseInt(getAppVersionNumber())) {
+        // console.log(
+        //   'DB version:',
+        //   result[0].value,
+        //   'App version',
+        //   getAppVersionNumber(),
+        // );
+        Alert.alert(
+          'Update Alert',
+          `Please update your app to the latest version`,
+          [
+            {
+              text: 'OK',
+              onPress: () => {
+                RNExitApp.exitApp();
+              },
+            },
+          ],
+          {cancelable: false},
+        );
+      }
+    });
     dispatch(
       getAllOrderedProducts(statusState, getDateWithoutTime(selectedOrderDate)),
     );
@@ -207,6 +248,7 @@ const OrdersScreen = ({navigation}) => {
         {
           text: 'Yes',
           onPress: () => {
+          
             dispatch(
               updateOrderAllItemsByOrderId(item?.id, orderDate, true),
             ).then(result => {
@@ -264,7 +306,7 @@ const OrdersScreen = ({navigation}) => {
           // console.log("dispdjfkdljlsjdflksdjfsdf")
           setSelectedRider({});
           showSuccessDialogDispatch(false);
-          fetchAllData();
+          //fetchAllData();
         }
       },
     );
@@ -578,6 +620,7 @@ const OrdersScreen = ({navigation}) => {
       <LoaderShimmerComponent isLoading={updateOrderLoading} />
       <LoaderShimmerComponent isLoading={deleteAllOrdersLoading} />
       <LoaderShimmerComponent isLoading={ordersLoading} />
+      <LoaderShimmerComponent isLoading={configLoading} />
     </ViewProviderComponent>
   );
 };

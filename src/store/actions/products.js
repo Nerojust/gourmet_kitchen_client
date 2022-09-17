@@ -69,7 +69,7 @@ export const getAllProducts = (keyword, limit, offset) => {
     //console.log("kk", kk);
     keyword = kk[0] + '%20' + kk[1];
   } else {
-    console.log('keyword is a single word');
+    //console.log('keyword is a single word');
   }
   return dispatch => {
     dispatch({

@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
     //flex: 1,
   },
   productName: {
-    fontSize: fp(16),
+    fontSize: fp(15),
     color: COLOURS.textInputColor,
     fontWeight: 'bold',
   },
