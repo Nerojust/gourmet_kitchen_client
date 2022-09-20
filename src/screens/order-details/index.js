@@ -190,7 +190,7 @@ const OrderDetailsScreen = ({navigation, route}) => {
   const [data, setData] = useState();
   //console.log('order details redux ', dispatchMesssage);
   const [isDone, setIsDone] = useState(false);
-  
+
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       if (id) {
@@ -395,7 +395,9 @@ const OrderDetailsScreen = ({navigation, route}) => {
                     styles.custName,
                     {alignSelf: 'flex-end', fontWeight: '300'},
                   ]}>
-                  {order?.setname}
+                  {order?.setname && order?.setname != 'none'
+                    ? order?.setname
+                    : 'Set'}
                 </ProductSansBold>
               ) : null}
               {order?.products &&

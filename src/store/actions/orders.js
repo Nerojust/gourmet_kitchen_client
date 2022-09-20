@@ -19,6 +19,7 @@ export const setOrderStatus = status => {
 };
 
 export const clearEverythingOrders = () => {
+  console.log("cleared all orders from redux")
   return dispatch => {
     dispatch({
       type: 'CLEAR_ORDERS_STATE',
@@ -908,10 +909,10 @@ export const updateOrderAllItemsByOrderId = (
             if (!isDashboard) {
               dispatch(getOrder(id));
             }
-            dispatch(clearEverythingOrders());
+            // dispatch(clearEverythingOrders());
             dispatch(
               getAllOrderedProducts('all', getDateWithoutTime(orderDate)),
-            );
+             );
             return response?.data?.results;
           } else {
             alert(response?.data?.message);

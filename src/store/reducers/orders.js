@@ -41,6 +41,7 @@ export default (state = initialState, action) => {
         orders: [],
         phoneArray: [],
         orders: [],
+        minisArray:[],
         analytics: [],
         orderedProductsStats: [],
         orderedProducts: [],

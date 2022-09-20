@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   ScrollView,
   ActivityIndicator,
+  Keyboard,
 } from 'react-native';
 import {COLOURS} from '../../utils/Colours';
 import {BackViewSurplus} from '../../components/Header';
@@ -91,12 +92,10 @@ const StoreSalesScreen = ({navigation}) => {
   const fetchAllData = () => {
     if (selectedTab == 0) {
       getAllTheSurplusProducts();
-    } else if (selectedTab == 1) {
+    } else {
       getOnlyActiveSurplusProducts();
-    } else if (selectedTab == 2) {
-      getOnlyInActiveSurplusProducts();
     }
-    dispatch(getAllSurplus(getDateWithoutTime(selectedOrderDate)))
+    dispatch(getAllSurplus(getDateWithoutTime(selectedOrderDate)));
   };
 
   const getAllTheSurplusProducts = () => {
@@ -108,11 +107,7 @@ const StoreSalesScreen = ({navigation}) => {
         offset,
         status,
       ),
-    ).then(result => {
-      setHasDataLoaded(true);
-      //scrollViewRef.current.scrollToEnd({animated: true});
-      // console.log("hello here",Object.values(groupBy(surplusProducts), 'name'));
-    });
+    );
   };
 
   const getOnlyActiveSurplusProducts = () => {
@@ -124,112 +119,14 @@ const StoreSalesScreen = ({navigation}) => {
         offset,
         status,
       ),
-    ).then(result => {
-      setHasDataLoaded(true);
-    });
-  };
-  const getOnlyInActiveSurplusProducts = () => {
-    // dispatch(clearSurplusData());
-    dispatch(
-      getAllSurplusProducts(
-        getDateWithoutTime(selectedOrderDate),
-        LIMIT_FIGURE,
-        offset,
-        status,
-      ),
-    ).then(result => {
-      setHasDataLoaded(true);
-    });
-  };
-  const displaySurplusProductsListView = () => {
-    dataproducts = groupBy(
-      status == 'all'
-        ? searchInputValue.length > 0
-          ? sortArrayByDateDesc(filteredSurplusData)
-          : sortArrayByDateDesc(surplusProducts)
-        : null,
-      'name',
-    );
-    return (
-      <ScrollView
-        refreshControl={
-          <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
-        }
-        ref={scrollViewRef}
-        // onContentSizeChange={() => {
-        //   scrollViewRef.current?.scrollToEnd();
-        // }}
-        pagingEnabled={false}
-        removeClippedSubviews={true} // Unmount components when outside of window
-      >
-        {Object.entries(dataproducts ? dataproducts : {}).length > 0 &&
-        !surplusLoading ? (
-          Object.entries(dataproducts ? dataproducts : {}).map(
-            ([key, value], i) => {
-              //console.log(`${key} ${value}`);
-              // console.log('iii', i);
-              return (
-                <View key={key + i}>
-                  <SurplusProductItemComponent
-                    indexKey={i}
-                    keyItem={key}
-                    keyValue={value}
-                    onClick={handleClick}
-                  />
-                </View>
-              );
-            },
-          )
-        ) : (
-          <View>
-            {!surplusLoading ? (
-              <View
-                style={{
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  flex: 1,
-                  top: Platform.OS == 'ios' ? 300 : 0,
-                  marginTop: Platform.OS == 'android' ? 300 : 0,
-                }}>
-                <ProductSans
-                  style={{fontSize: 16, color: COLOURS.textInputColor}}>
-                  No record found
-                </ProductSans>
-              </View>
-            ) : null}
-          </View>
-        )}
-      </ScrollView>
     );
   };
+
 
   const renderDetails = ({item}) => {
     return <SurplusProductItemComponent2 item={item} onClick={handleClick} />;
   };
 
-  const handlePage = () => {
-    //console.log('offset before ', offset);
-    //scrollViewRef.current.scrollToEnd({animated: true});
-    setOffset(offset + LIMIT_FIGURE);
-  };
-  const displayLoadMoreButton = () => {
-    return (
-      //Footer View with Load More button
-      <View style={styles.footer}>
-        <TouchableOpacity
-          activeOpacity={0.9}
-          onPress={handlePage}
-          //On Click of button calling getData function to load more data
-          style={styles.loadMoreBtn}>
-          {isLoading ? (
-            <ActivityIndicator color="white" style={{marginLeft: 0}} />
-          ) : (
-            <Text style={styles.btnText}>Load more</Text>
-          )}
-        </TouchableOpacity>
-      </View>
-    );
-  };
   const handleClick = item => {
     setOffset(0);
     navigation.navigate('UpdateSizeSale', {
