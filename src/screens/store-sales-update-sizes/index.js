@@ -161,7 +161,6 @@ const StoreSalesUpdateSizesScreen = ({navigation, route}) => {
     ).then(result => {
       if (result) {
         showSuccessDialog();
-       
       }
     });
   };

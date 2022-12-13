@@ -99,26 +99,26 @@ const OrdersScreen = ({navigation}) => {
     dispatch(getAllProducts('', 0, 0, null));
   }, []);
 
-  useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      fetchAllData();
-    });
-
-    fetchAllData();
-    return unsubscribe;
-  }, [isDispatched, statusState, selectedTab, selectedOrderDate]);
-
   // useEffect(() => {
-  //   fetchAllData();
-  // }, [
-  //   isDispatched,
-  //   statusState,
-  //   selectedTab,
-  //   selectedOrderDate,
-  //   isOrderUpdated,
-  // ]);
+  //   const unsubscribe = navigation.addListener('focus', () => {
+  //     fetchAllData();
+  //   });
 
-  const fetchAllData = () => {
+  //   fetchAllData();
+  //   return unsubscribe;
+  // }, [isDispatched, statusState, selectedTab, selectedOrderDate]);
+
+  useEffect(() => {
+    fetchAllData();
+  }, [
+    // isDispatched,
+    statusState,
+    selectedTab,
+    selectedOrderDate,
+    isOrderUpdated,
+    isSuccessDispatchModalVisible
+  ]);
+  useEffect(() => {
     dispatch(getAllConfig()).then(result => {
       console.log(
         'DB version:',
@@ -149,57 +149,13 @@ const OrdersScreen = ({navigation}) => {
         );
       }
     });
+  }, []);
+
+  const fetchAllData = () => {
     dispatch(
       getAllOrderedProducts(statusState, getDateWithoutTime(selectedOrderDate)),
     );
   };
-  // useEffect(() => {
-  //   //update status where necessary
-
-  //   if (orders && orders.length > 0) {
-  //     //console.log('here ');
-  //     let count = 0;
-  //     orders?.map(fullOrderItem => {
-  //       // console.log('fulfilled status', fullOrderItem?.isfulfilled);
-  //       let tempArray = [];
-  //       if (fullOrderItem.isfulfilled == false) {
-  //         //console.log('inside ');
-  //         fullOrderItem?.products &&
-  //           fullOrderItem?.products.map(async oneItem => {
-  //             if (
-  //               oneItem.isfulfilled &&
-  //               oneItem.quantity == oneItem.fulfilledquantity
-  //             ) {
-  //               count++;
-  //             }
-  //             if (count == fullOrderItem?.products.length) {
-  //               console.log(
-  //                 'this order has its products all fulfilled, complete it ' +
-  //                   fullOrderItem?.id,
-  //               );
-  //               let payload = {
-  //                 status: 'completed',
-  //                 isfulfilled: true,
-  //               };
-  //               dispatch(
-  //                 updateCompleteStatusForOrder(
-  //                   fullOrderItem?.id,
-  //                   payload,
-  //                   orderDate,
-  //                 ),
-  //               );
-  //               count = 0;
-  //             }
-  //             //'count', count);
-  //           });
-  //       }
-  //     });
-  //     if (count > 0) {
-  //       fetchAllData();
-  //       count = 0;
-  //     }
-  //   }
-  // }, []);
 
   const onRefresh = async () => {
     fetchAllData();
@@ -227,12 +183,8 @@ const OrdersScreen = ({navigation}) => {
 
   const displayFulfillAllDialog = (showRiderSheet = false, item) => {
     let count = item?.products.length;
-    let msg;
-    if (count > 1) {
-      msg = 'items';
-    } else {
-      msg = 'item';
-    }
+    let msg = count > 1 ? 'items' : 'item';
+
     Alert.alert(
       'Alert',
       `Do you want to ${
@@ -248,7 +200,6 @@ const OrdersScreen = ({navigation}) => {
         {
           text: 'Yes',
           onPress: () => {
-          
             dispatch(
               updateOrderAllItemsByOrderId(item?.id, orderDate, true),
             ).then(result => {
@@ -257,8 +208,6 @@ const OrdersScreen = ({navigation}) => {
                   showBottomSheet(ridersSheetRef);
                 } else {
                   showSuccessDialogDispatch();
-                  // setIsDispatched(true);
-                  //setIsDone(true);
                 }
               }
             });
@@ -295,7 +244,6 @@ const OrdersScreen = ({navigation}) => {
   };
   const handlePatchDisptach = rider => {
     //console.log('Patch dispatch');
-    // setHasPatchedDispatch(false);
     let payload = {
       riderId: rider?.id,
     };
@@ -303,10 +251,8 @@ const OrdersScreen = ({navigation}) => {
     dispatch(updateOrderDispatchByOrderId(selectedOrderItem?.id, payload)).then(
       result => {
         if (result) {
-          // console.log("dispdjfkdljlsjdflksdjfsdf")
           setSelectedRider({});
           showSuccessDialogDispatch(false);
-          //fetchAllData();
         }
       },
     );
@@ -499,7 +445,7 @@ const OrdersScreen = ({navigation}) => {
         date={selectedOrderDate || new Date()}
         //minimumDate={subtractOneDayFromTime(new Date(), 1)}
         onConfirm={date => {
-          console.log('date result', date);
+          // console.log('date result', date);
           setOpen(false);
           setSelectedOrderDate(date);
           dispatch(saveOrderDate(getDateWithoutTime(date)));

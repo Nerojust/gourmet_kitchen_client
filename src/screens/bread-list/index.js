@@ -65,7 +65,7 @@ const BreadListScreen = ({navigation}) => {
     orderDate,
     isOrderUpdated,
   } = useSelector(x => x.orders);
-  console.log('isOrderUpdated redux', isOrderUpdated);
+  //console.log('isOrderUpdated redux', isOrderUpdated);
   //console.log('pending bread list', allBreadList);
   var orderProductsData = Object.assign([], orderedProducts);
   const [filteredOrdersData, setFilteredOrdersData] =
