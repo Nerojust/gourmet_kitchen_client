@@ -132,54 +132,105 @@ const LoginScreen = ({navigation}) => {
     );
   };
 
+  // const renderInputFields = () => {
+  //   return (
+  //     <>
+  //       <TextInputComponent
+  //         defaultValue={email}
+  //         handleTextChange={handleEmail}
+  //         placeholder="Email"
+  //         heightfigure={50}
+  //         widthFigure={deviceWidth / 1.15}
+  //         returnKeyType={'next'}
+  //         placeholderTextColor={COLOURS.gray5}
+  //         keyboardType={'email-address'}
+  //         props={
+  //           isEmailFocused
+  //             ? {borderColor: COLOURS.blue, color: COLOURS.textInputColor}
+  //             : {borderColor: COLOURS.zupa_gray_bg}
+  //         }
+  //         handleTextInputFocus={() => setIsEmailFocused(true)}
+  //         handleBlur={() => setIsEmailFocused(false)}
+  //         onSubmitEditing={() => passwordRef.current.focus()}
+  //       />
+
+  //       <View style={{marginVertical: 10}} />
+
+  //       <TextInputComponent
+  //         defaultValue={password.trim()}
+  //         handleTextChange={handlePassword}
+  //         refValue={passwordRef}
+  //         heightfigure={50}
+  //         widthFigure={deviceWidth / 1.15}
+  //         returnKeyType={'done'}
+  //         //keyboardType={'email-address'}
+  //         placeholder="Password"
+  //         placeholderTextColor={COLOURS.gray5}
+  //         secureTextEntry
+  //         props={
+  //           isPasswordFocused
+  //             ? {borderColor: COLOURS.blue, color: COLOURS.textInputColor}
+  //             : {borderColor: COLOURS.zupa_gray_bg}
+  //         }
+  //         handleTextInputFocus={() => setIsPasswordFocused(true)}
+  //         handleBlur={() => setIsPasswordFocused(false)}
+  //         onSubmitEditing={onSubmit}
+  //       />
+  //       <View style={{marginVertical: 10}} />
+  //     </>
+  //   );
+  // };
+
+
   const renderInputFields = () => {
+    const emailTextInputProps = {
+      defaultValue: email,
+      handleTextChange: handleEmail,
+      placeholder: "Email",
+      heightfigure: 50,
+      widthFigure: deviceWidth / 1.15,
+      returnKeyType: 'next',
+      placeholderTextColor: COLOURS.gray5,
+      keyboardType: 'email-address',
+      props: isEmailFocused
+        ? { borderColor: COLOURS.blue, color: COLOURS.textInputColor }
+        : { borderColor: COLOURS.zupa_gray_bg },
+      handleTextInputFocus: () => setIsEmailFocused(true),
+      handleBlur: () => setIsEmailFocused(false),
+      onSubmitEditing: () => passwordRef.current.focus()
+    };
+  
+    const passwordTextInputProps = {
+      defaultValue: password.trim(),
+      handleTextChange: handlePassword,
+      refValue: passwordRef,
+      heightfigure: 50,
+      widthFigure: deviceWidth / 1.15,
+      returnKeyType: 'done',
+      placeholder: "Password",
+      placeholderTextColor: COLOURS.gray5,
+      secureTextEntry: true,
+      props: isPasswordFocused
+        ? { borderColor: COLOURS.blue, color: COLOURS.textInputColor }
+        : { borderColor: COLOURS.zupa_gray_bg },
+      handleTextInputFocus: () => setIsPasswordFocused(true),
+      handleBlur: () => setIsPasswordFocused(false),
+      onSubmitEditing: onSubmit
+    };
+  
     return (
       <>
-        <TextInputComponent
-          defaultValue={email}
-          handleTextChange={handleEmail}
-          placeholder="Email"
-          heightfigure={50}
-          widthFigure={deviceWidth / 1.15}
-          returnKeyType={'next'}
-          placeholderTextColor={COLOURS.gray5}
-          keyboardType={'email-address'}
-          props={
-            isEmailFocused
-              ? {borderColor: COLOURS.blue, color: COLOURS.textInputColor}
-              : {borderColor: COLOURS.zupa_gray_bg}
-          }
-          handleTextInputFocus={() => setIsEmailFocused(true)}
-          handleBlur={() => setIsEmailFocused(false)}
-          onSubmitEditing={() => passwordRef.current.focus()}
-        />
-
-        <View style={{marginVertical: 10}} />
-
-        <TextInputComponent
-          defaultValue={password.trim()}
-          handleTextChange={handlePassword}
-          refValue={passwordRef}
-          heightfigure={50}
-          widthFigure={deviceWidth / 1.15}
-          returnKeyType={'done'}
-          //keyboardType={'email-address'}
-          placeholder="Password"
-          placeholderTextColor={COLOURS.gray5}
-          secureTextEntry
-          props={
-            isPasswordFocused
-              ? {borderColor: COLOURS.blue, color: COLOURS.textInputColor}
-              : {borderColor: COLOURS.zupa_gray_bg}
-          }
-          handleTextInputFocus={() => setIsPasswordFocused(true)}
-          handleBlur={() => setIsPasswordFocused(false)}
-          onSubmitEditing={onSubmit}
-        />
-        <View style={{marginVertical: 10}} />
+        <TextInputComponent {...emailTextInputProps} />
+  
+        <View style={{ marginVertical: 10 }} />
+  
+        <TextInputComponent {...passwordTextInputProps} />
+  
+        <View style={{ marginVertical: 10 }} />
       </>
     );
   };
+  
 
   const renderBottomRow = () => {
     return (
